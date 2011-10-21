@@ -1,0 +1,772 @@
+body {
+
+	font-family: "warnock-pro-1","warnock-pro-2", "Warnock Pro", Palatino, Georgia, serif;
+    font-size: 16px;
+	line-height: 32px;
+	text-align: center;
+    color: rgba(7, 20, 38, 1); 
+	
+ 	background-color: rgba(220, 224, 229, 1);
+
+    background-image: -webkit-gradient(linear, left top, right top, color-stop(0, white), color-stop(0.5, white), color-stop(0.5, rgba(220, 224, 229, 1)), color-stop(1, rgba(220, 224, 229, 1)));
+    background-image: -moz-linear-gradient(left center, white 0%, white 50%, rgba(220, 224, 229, 1) 50%, rgba(220, 224, 229, 1) 100%);
+
+    min-width: 9px;
+    
+	margin: 0px;
+	padding: 0px;
+
+}
+
+#canvas {
+
+    display: block;
+	text-align: left;
+
+    width: 992px;
+
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: auto;
+	margin-right: auto;
+	
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+	
+}
+
+#canvas > header {
+
+	width: 928px;
+	height: 96px;
+
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: 32px;
+	margin-right: 32px;
+
+    padding-top: 0px;
+    padding-bottom: 32px;
+    padding-left: 0px;
+    padding-right: 0px;
+    
+/*     background-color: rgba(255, 255, 255, 1.0); */
+    background: rgba(255,255,255,1) url(../images/dots-grey.png) bottom repeat-x;
+    
+    float:left;        
+
+}
+
+#canvas > header > h1 {
+
+    text-transform: uppercase;
+    font-family: futura-pt-1,futura-pt-2,"Futura Std",sans-serif;
+    font-size: 48px;
+	font-weight: 700;	
+	line-height: 64px;
+	
+	width: 432px;
+	
+	margin-left: 0px;
+	margin-bottom: 0px;
+	margin-right: 0px;
+	margin-top: 0px;
+	
+	padding-top: 32px;
+	padding-bottom: 0px;
+	padding-left: 8px;
+	padding-right: 8px;
+	
+    background-color: rgba(255,255,255,1);
+/* background-color: red; */
+    float: left;
+}
+
+#canvas > header a {
+
+    text-decoration: none;
+/*     color: rgba(7, 20, 38, 1); */
+    color: rgba(99, 121, 150, 1);
+
+}
+
+/*
+nav {
+
+	width: 912px;
+	float: left;
+
+    font-size: 24px;
+    color: rgba(99, 121, 150, 1);
+
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: 32px;
+	margin-right: 0px;
+	
+    padding-top: 16px;
+	padding-bottom: 48px;
+	padding-left: 8px;
+	padding-right: 8px;
+	
+    background-color: rgba(255, 255, 255, 1);
+    background-color: olive;
+
+}
+*/
+
+nav {
+
+ 	width: 448px;
+	float: left;
+
+    font-size: 24px;
+    color: rgba(99, 121, 150, 1);
+
+	margin-top: 16px;
+	margin-bottom: 0px;
+	margin-left: 32px;
+	margin-right: 0px;
+	
+    padding-top: 32px;
+	padding-bottom: 16px;
+	padding-left: 0px;
+	padding-right: 0px;
+	
+    background-color: rgba(255, 255, 255, 1);
+/*     background-color: olive; */
+
+/*     clear: both; */
+
+}
+
+nav ul {
+
+    letter-spacing: 2px;
+
+    font-family: futura-pt-1,futura-pt-2,"Futura Std",sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    text-transform: uppercase;    
+    font-size: 14px;
+
+    color: rgba(150, 104, 99, 1);
+
+    list-style: none;
+/*     background-color: yellow; */
+
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	margin-right: 0px;
+ 
+    padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+	
+	float: left;
+    
+}
+
+nav ul li {
+    
+/*     background-color: aqua; */
+    
+    float: left;
+    
+    width: 104px;
+    
+    margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	margin-right: 40px;
+ 
+    padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 8px;
+	padding-right: 8px;
+
+}
+
+nav ul li.last-li {
+
+/*     background-color: yellow; */
+    margin-right: 0px;
+
+}
+
+nav ul li.active {
+
+    color: rgba(255, 255, 255, 1);
+    background-color: rgba(150, 104, 99, 1);
+    
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+
+}
+
+#blurb {
+
+	width: 912px;
+	float: left;
+
+    font-size: 28px;
+/*     color: rgba(99, 121, 150, 1); */
+/*     color: rgba(150, 104, 99, 1); */
+
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: 32px;
+	margin-right: 32px;
+	
+    padding-top: 48px;
+	padding-bottom: 16px;
+	padding-left: 8px;
+	padding-right: 8px;
+	
+    background-color: rgba(255, 255, 255, 1);
+/*     background-color: red; */
+
+}
+
+#blurb .blurb-amp {
+
+    color: rgba(150, 104, 99, 1);
+/*     font-style: italic; */
+/*     font-size: 28px; */
+    
+
+}
+
+article {
+
+	width: 928px;
+	
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: 32px;
+	margin-right: 32px;
+
+	padding-top: 32px;
+	padding-bottom: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+
+    background-color: rgba(255, 255, 255, 1);
+/*     background-color: yellow; */
+
+    float:left;
+
+}
+
+article header {
+
+	width: 928px;
+    height: 64px;
+
+    float: left; 
+    
+    margin-bottom: 16px;
+    
+/*     background-color: aqua;  */
+        
+}
+
+article header h1 {
+
+	margin-left: 0px;
+	margin-bottom: 0px;
+	margin-right: 0px;
+	margin-top: 0px;
+
+	font-size: 32px;
+	font-style: italic;
+	font-weight: normal;
+
+	width: 592px;
+	
+	padding-top: 16px;
+	padding-bottom: 16px;
+	padding-left: 8px;
+	padding-right: 8px;
+    
+    float:left;
+
+}
+
+article header h1.small {
+
+    letter-spacing: 2px;
+
+    font-family: futura-pt-1,futura-pt-2,"Futura Std",sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    text-transform: uppercase;    
+    font-size: 14px;
+
+    color: rgba(150, 104, 99, 1);
+
+}
+
+article > h2 {
+
+	margin-left: 0px;
+	margin-bottom: 0px;
+	margin-right: 0px;
+	margin-top: 0px;
+
+	font-size: 24px;
+	font-style: italic;
+	font-weight: normal;
+
+	width: 592px;
+	
+	padding-top: 16px;
+	padding-bottom: 16px;
+	padding-left: 8px;
+	padding-right: 8px;
+    
+    float:left;
+
+}
+
+article p {
+
+	font-size: 18px;
+	text-align: left;
+	
+    width: 592px;
+/*     width: 544px; */
+	
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	margin-right: 0px;
+
+	padding-top: 0px;
+	padding-bottom: 32px;
+	padding-left: 8px;
+	padding-right: 8px;
+
+/*     background-color: rgba(0,0,0,0.1); */
+
+/*     background-color: silver; */
+
+}
+
+article aside {
+
+	width: 256px;
+
+	font-size: 14px;
+
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	margin-right: 0px;
+
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 8px;
+	padding-right: 24px;
+
+	float: right;
+	
+/*     background-color: yellow; */
+    
+}
+
+article .stamp {
+
+    color: rgba(99, 121, 150, 1);
+
+	padding-top: 16px;
+    padding-bottom: 16px;
+
+}
+
+article blockquote {
+
+    color: rgba(99, 121, 150, 1);
+	
+	font-size: 18px;
+	text-align: left;
+	
+    width: 528px;   
+	
+	text-indent: 0px;
+	
+	margin-top: 0px;
+	margin-bottom: 32px;
+	margin-left: 0px;
+	margin-right: 0px;
+	
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 40px;
+	padding-right: 40px;	
+	
+/* 	background-color: yellow; */
+
+}
+
+article blockquote.inset {
+
+    width: 368px;
+
+    font-size: 24px;
+    font-style: italic;
+
+/*     padding-top: 32px; */
+
+    float: right;
+/*     display: inline; */
+/*     display: block; */
+    
+/*     background-color: yellow; */
+
+}
+
+article figure {
+
+	margin: 0px;
+	padding: 0px;
+
+	border: 0px;
+	
+    background-color: rgba(255,255,255,1.0);
+
+}
+
+article figcaption {
+
+	width: 256px;
+
+	font-size: 14px;
+
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	margin-right: 0px;
+
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 8px;
+	padding-right: 24px;
+
+    clear: right;
+    float: right;
+
+}
+
+article img {
+
+	margin-top: 0px;
+	margin-bottom: 32px;
+	margin-left: 0px;
+	margin-right: 0px;
+	
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 8px;
+	padding-right: 8px;
+
+	border: 0px;
+	
+	float: left;
+	
+}
+
+article img.full {
+	
+	margin-top: 0px;
+	margin-bottom: 32px;
+	margin-left: 0px;
+	margin-right: 0px;
+	
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 8px;
+	padding-right: 0px;
+
+	float: left;
+
+}
+
+article img.side {
+	
+	width: 256px;
+
+	margin-top: 0px;
+	margin-bottom: 32px;
+	margin-left: 0px;
+	margin-right: 0px;
+
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 8px;
+	padding-right: 24px;
+
+    float: right;
+
+}
+
+article .two-col {
+
+	width: 288px;
+
+/*     background-color: yellow; */
+    
+    margin-top: 0px;
+	margin-bottom: 32px;
+	margin-left: 0px;
+	margin-right: 0px;
+
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 0px;
+	padding-right: 32px;
+	
+    float: left;
+
+}
+
+article .col-last {
+
+    padding-right: 0px;
+
+}
+
+article .two-col > img {
+
+    margin-top: 0px;
+	margin-bottom: 16px;
+	margin-left: 0px;
+	margin-right: 0px;
+
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 8px;
+	padding-right: 8px;
+	
+	float: left;
+
+}
+
+article .two-col > h2 {
+
+    float: left;
+
+    height: 64px;
+    
+    font-size: 20px;
+	font-style: italic;
+	font-weight: normal;
+
+    margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	margin-right: 0px;
+
+	padding-top: 0px;
+	padding-bottom: 16px;
+	padding-left: 8px;
+	padding-right: 8px;
+
+}
+
+article ul.writing {
+
+    font-size: 24px;
+	font-style: italic;
+	font-weight: normal;
+    list-style: none;
+
+	margin-top: 0px;
+	margin-bottom: 32px;
+	margin-left: 0px;
+	margin-right: 0px;
+ 
+    padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 8px;
+	padding-right: 0px;
+	
+	float: left;
+
+}
+
+article ul.writing li {
+
+    float: left;
+    clear: left;
+    
+    margin-top: 0px;
+	margin-bottom: 16px;
+	margin-left: 0px;
+	margin-right: 0px;
+ 
+    padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+
+/*     background-color: yellow; */
+
+}
+
+.button {
+
+    background-color: rgba(99, 121, 150, 1);
+    color: rgba(255,255,255,1);
+    
+    text-transform: uppercase;
+    font-family: futura-pt-1,futura-pt-2,"Futura Std",sans-serif;
+    font-size: 14px;
+
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	margin-right: 0px;
+
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+    
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+
+}
+
+#canvas > footer {
+
+    background: rgba(255,255,255,1) url(../images/dots-grey.png) top repeat-x;
+
+    text-transform: uppercase;
+    font-family: futura-pt-1,futura-pt-2,"Futura Std",sans-serif;
+    font-size: 14px;
+    color: rgba(99, 121, 150, 1);
+
+	width: 928px;
+	height: 64px;
+
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: 32px;
+	margin-right: 32px;
+
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+		
+	float: left;
+
+}
+
+#canvas > footer #notice {
+
+    width: 592px;
+
+    margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	margin-right: 0px;        
+    
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 8px;
+	padding-right: 24px;
+    
+    float: left;
+    
+/*     background-color: yellow; */
+
+}
+
+#canvas footer aside {
+
+	width: 256px;
+
+	font-size: 14px;
+
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	margin-right: 0px;
+
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 8px;
+	padding-right: 24px;
+
+	float: right;
+	
+/*     background-color: olive; */
+    
+}
+
+
+
+/**
+ * Grid
+ */
+#grid{
+
+    /* Dimensions - same width as your grid with gutters */
+    width: 992px;
+
+    /* Grid (left-aligned)
+    position: absolute;
+    top: 0;
+    left: 0;
+    */
+
+    /* Grid (centered) */
+    position: absolute;
+    top: 0;
+    left: 50%;
+    margin-left: -496px;
+
+}
+
+/**
+ * Vertical grid lines
+ *
+ * Set the column width taking the borders into consideration,
+ * and use margins to set column gutters.
+ */
+#grid div.vert{
+
+    width: 127px;
+    border: solid rgba(99, 121, 150, 1);;
+    border-width: 0 1px;
+    margin-right: 31px;
+
+}
+
+#grid div.vert.first-line{
+
+    margin-left: 31px;
+
+}
+
+/**
+ * Horizontal grid lines, defined by your base line height
+ *
+ * Remember, the CSS properties that define the box model:
+ * visible height = height + borders + margins + padding
+ */
+#grid div.horiz{
+
+    /* 20px line height */
+    height: 31px;
+    border-bottom: 1px dotted rgba(99, 121, 150, 1);;
+    margin: 0;
+    padding: 0;
+
+}
