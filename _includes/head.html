@@ -2,7 +2,15 @@
 
     <meta charset="utf-8" />
 
+    {%  if page.layout == 'no-nav' %}
+
     <title>{{ page.title }}</title>
+
+    {% else %}
+
+    <title>{{ page.title }} &mdash; Tommy Ogden</title>
+
+    {% endif %}
 
     <!--[if ! lte IE 6]><!-->
     <link rel="stylesheet" href="/css/screen.css" />

@@ -291,7 +291,7 @@ article header h1 {
 
 }
 
-article header h1.small, article header a {
+article .small, article header a {
 
     letter-spacing: 2px;
     text-decoration: none;
@@ -575,7 +575,7 @@ article .two-col > h2 {
 
 }
 
-article ul.writing {
+article ul.notes {
 
     font-size: 24px;
 	font-style: italic;
@@ -596,7 +596,7 @@ article ul.writing {
 
 }
 
-article ul.writing li {
+article ul.notes li {
 
     float: left;
     clear: left;
@@ -637,6 +637,105 @@ article ul.writing li {
     -moz-border-radius: 4px;
     border-radius: 4px;
 
+}
+
+article .inline-circle {
+
+	vertical-align: text-top;
+
+}
+
+article table {
+
+		padding-bottom: 0px;
+		border-bottom-color: #735148;
+		border-bottom-style: solid;
+		border-bottom-width: 4px;
+		border-spacing: 0px 0px;
+		color: #131413;
+		position: relative;
+		display: inline-block;
+		line-height: 32px;
+		font-size: 12px;
+		
+		margin-top: 0px;
+		margin-bottom: 28px;
+		margin-left: 80px;
+		margin-right: 0px;
+
+	}
+	
+article th.one-col {
+	
+	background-color: #735148;
+	padding-bottom: 0px;
+	padding-top: 0px;
+	font-style: normal;
+	font-weight: normal;
+	text-transform: uppercase;
+	color: #ffffff;
+	margin-right: 16px;
+	width: 64px;
+	padding-right: 8px;
+	padding-left: 8px;
+		
+	}
+	
+article th.one-col-last {
+
+	padding-bottom: 0px;
+	padding-top: 0px;
+	font-style: normal;
+	font-weight: normal;
+	text-transform: uppercase;
+	color: #ffffff;
+	margin-right: 0px;
+	width: 64px;
+	padding-right: 8px;
+	padding-left: 8px;
+	background-color: #735148;
+
+	}
+
+article th.two-col {
+
+	padding-bottom: 0px;
+	padding-top: 0px;
+	margin-right: 16px;
+	font-style: normal;
+	font-weight: normal;
+	text-transform: uppercase;
+	color: #ffffff;
+	width: 144px;
+	padding-right: 8px;
+	padding-left: 8px;
+	background-color: #735148;
+
+	}
+
+article th.two-col-last {
+
+	padding-bottom: 0px;
+	padding-top: 0px;
+	margin-right: 0px;
+	font-style: normal;
+	font-weight: normal;
+	text-transform: uppercase;
+	color: #ffffff;
+	width: 144px;
+	padding-right: 8px;
+	padding-left: 8px;
+	background-color: #735148;
+
+	}
+	
+article td {
+
+	padding-bottom: 0px;
+	padding-top: 0px;
+	margin-right: 16px;
+	padding-right: 8px;
+	padding-left: 8px;
 }
 
 #canvas > footer {

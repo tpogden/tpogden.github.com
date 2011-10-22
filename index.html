@@ -27,7 +27,7 @@ title: Tommy Ogden &mdash; physics, code, songs, adventures.
 	            
 	            <div class="two-col">
 	            
-	                <a href="/newpin"><img src="photos/project-new-pin-2col.png" />
+	                <a href="/newpin/"><img src="photos/project-new-pin-2col.png" />
 	                
 	                <h2>As Neat as a New Pin</h2></a>
 	                           
@@ -43,9 +43,9 @@ title: Tommy Ogden &mdash; physics, code, songs, adventures.
 	            
 	            <div class="two-col">
 	            
-	                <img src="photos/project-pi-2col.png" />
+	                <a href="/pi/"><img src="photos/project-pi-2col.png" />
 	                
-	                <h2>Pickup Sticks &amp; Pi</h2>
+	                <h2>Pickup Sticks &amp; Pi</h2></a>
 	                           
 	            </div>
 	            
@@ -71,9 +71,9 @@ title: Tommy Ogden &mdash; physics, code, songs, adventures.
 	            
 	            <div class="two-col">
 	            
-	                <img src="photos/project-pw-2col.png" />
+	                <a href="/pennineway/"><img src="photos/project-pw-2col.png" />
 	                
-	                <h2>The Pennine Way</h2>
+	                <h2>The Pennine Way</h2></a>
 	                           
 	            </div>
 	            
@@ -103,17 +103,19 @@ title: Tommy Ogden &mdash; physics, code, songs, adventures.
 	
 	            <header>
 	                
-	                <h1 class="small">Writing</h1>
+	                <h1 class="small"><a href="/notes/">Notes</a></h1>
 	                
 	            </header>
 	
-	            <ul class="writing">
+	            <ul class="notes">
 	                
-	                <li>Useful Mac Apps for Scientists</li>
-	                
-	                <li>On 10,000 Days</li>
-	                
-	                <li>On Tasting</li>
+                {% for post in site.posts limit:5 %}
+                    {%  if post.layout == 'note' %} 
+                     
+                    <li><a href="{{ post.url }}">{{ post.title }}</a></li>
+                    
+                    {% endif %}
+                {% endfor %}
 	                
 	            </ul>
 	
@@ -127,11 +129,26 @@ title: Tommy Ogden &mdash; physics, code, songs, adventures.
 	                
 	            </header>
 	    
-	            <aside><span class="button">&rarr; Read my CV</span></aside>
+	            <aside><a class="button" href="/cv/">&rarr; Read my CV</a></aside>
 	    
 	            <p>Born in north Wales, home is Manchester, England. I lived the past two years in Stockholm, Sweden. I study for a PhD in Theoretical Physics at the University of Durham.<!-- <br /> <span class="button">&rarr; Read More</span></p>-->
 	            
-	            <p>To contact me mail t@ogden.eu and I&rsquo;ll typically reply in a day.</p>
+	            <p>To contact me mail 
+	            <script type="text/javascript">
+//<![CDATA[
+<!--
+var x="function f(x){var i,o=\"\",ol=x.length,l=ol;while(x.charCodeAt(l/13)!" +
+"=42){try{x+=x;l+=l;}catch(e){}}for(i=l-1;i>=0;i--){o+=x.charAt(i);}return o" +
+".substr(0,ol);}f(\")76,\\\"gkapzi7zh&7771\\\\>***#310\\\\>we130\\\\m$R530\\" +
+"\\WPVx120\\\\m220\\\\HG]NQ300\\\\300\\\\Ch~7ypwv`M771\\\\3hqoh730\\\\120\\\\"+
+"X$K220\\\\720\\\\200\\\\600\\\\L310\\\\TDL410\\\\410\\\\;(3*!z&>+!?+) \\\"(" +
+"f};o nruter};))++y(^)i(tAedoCrahc.x(edoCrahCmorf.gnirtS=+o;721=%y;++y)76<i(" +
+"fi{)++i;l<i;0=i(rof;htgnel.x=l,\\\"\\\"=o,i rav{)y,x(f noitcnuf\")"          ;
+while(x=eval(x));
+//-->
+//]]>
+                </script>
+                and I&rsquo;ll typically reply in a day.</p>
 	            
 	<!--             <p>To track updates to this site grab the feed, get mail alerts or follow me.</p> -->
 	            

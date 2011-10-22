@@ -1,2 +1,2 @@
 layout: default
-permalink: none
+permalink: /notes/:title
