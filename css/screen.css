@@ -84,38 +84,12 @@ body {
     float: left;
 }
 
-#canvas > header a {
+#canvas > header > h1 > a {
 
     text-decoration: none;
-/*     color: rgba(7, 20, 38, 1); */
     color: rgba(99, 121, 150, 1);
 
 }
-
-/*
-nav {
-
-	width: 912px;
-	float: left;
-
-    font-size: 24px;
-    color: rgba(99, 121, 150, 1);
-
-	margin-top: 0px;
-	margin-bottom: 0px;
-	margin-left: 32px;
-	margin-right: 0px;
-	
-    padding-top: 16px;
-	padding-bottom: 48px;
-	padding-left: 8px;
-	padding-right: 8px;
-	
-    background-color: rgba(255, 255, 255, 1);
-    background-color: olive;
-
-}
-*/
 
 nav {
 
@@ -154,8 +128,8 @@ nav ul {
 
     color: rgba(150, 104, 99, 1);
 
+
     list-style: none;
-/*     background-color: yellow; */
 
 	margin-top: 0px;
 	margin-bottom: 0px;
@@ -171,9 +145,23 @@ nav ul {
     
 }
 
+nav ul li > a {
+
+    letter-spacing: 2px;
+
+    font-family: futura-pt-1,futura-pt-2,"Futura Std",sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    text-transform: uppercase;    
+    font-size: 14px;
+    text-decoration: none;
+
+    color: rgba(150, 104, 99, 1);
+/*     background-color: yellow; */
+
+}
+
 nav ul li {
-    
-/*     background-color: aqua; */
     
     float: left;
     
@@ -205,6 +193,12 @@ nav ul li.active {
     
     -moz-border-radius: 4px;
     border-radius: 4px;
+
+}
+
+nav ul li.active a {
+
+    color: rgba(255, 255, 255, 1);
 
 }
 
@@ -297,9 +291,10 @@ article header h1 {
 
 }
 
-article header h1.small {
+article header h1.small, article header a {
 
     letter-spacing: 2px;
+    text-decoration: none;
 
     font-family: futura-pt-1,futura-pt-2,"Futura Std",sans-serif;
     font-style: normal;
@@ -374,6 +369,8 @@ article aside {
 	padding-right: 24px;
 
 	float: right;
+	
+	display: inline;
 	
 /*     background-color: yellow; */
     
