@@ -3,7 +3,7 @@ layout: notes
 title: Notes
 ---
 
-        {% for post in site.posts limit:1 %}
+        {% for post in site.categories.note limit:1 %}
             
         <article>
 
@@ -13,7 +13,7 @@ title: Notes
                 
                 <aside class="stamp">{{ post.date | {{ post.date | date:"%d %B %Y" }}, {{ post.location }}</aside>
                 
-                <h1><a href="{{ post.url }}">{{ post.title }}</a></h1>
+                <h1><!-- <a href="{{ post.url }}"> -->{{ post.title }}</a><!-- </h1> -->
                 
             </header>
             
@@ -32,12 +32,10 @@ title: Notes
             <h2 class="small" id="archives">Archives</h2>
 
             <ul class="notes"> 
-                {% for post in site.posts %}
-                    {%  if post.layout == 'note' %} 
+                {% for post in site.categories.note offset:1 %}
                      
-                    <li><a href="{{ post.url }}">{{ post.title }}</a> &mdash; <span>{{ post.date | date:"%d %B %Y" }}, {{ post.location }}</span></li>
-                    
-                    {% endif %}
+                    <li><a href="{{ post.url }}">{{ post.title }}</a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="stamp">{{ post.date | date:"%d %B %Y" }}, {{ post.location }}</span></li>
+
                 {% endfor %}
             </ul>
 

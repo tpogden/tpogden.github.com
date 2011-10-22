@@ -378,10 +378,25 @@ article aside {
 
 article .stamp {
 
+	font-size: 14px;
     color: rgba(99, 121, 150, 1);
 
 	padding-top: 16px;
     padding-bottom: 16px;
+
+}
+
+article a {
+
+    color: rgba(150, 104, 99, 1);
+/*     color: rgba(99, 121, 150, 1);     */
+    text-decoration: none;
+
+}
+
+article a:active, article a:hover {
+
+    text-decoration: underline;
 
 }
 
@@ -553,9 +568,11 @@ article .two-col > img {
 
 }
 
-article .two-col > h2 {
+article .two-col > h2{
 
     float: left;
+    color: rgba(0,0,0,1);
+    text-decoration: none;
 
     height: 64px;
     
@@ -612,6 +629,12 @@ article ul.notes li {
 	padding-right: 0px;
 
 /*     background-color: yellow; */
+
+}
+
+article ul.notes li a {
+
+    color: rgba(0,0,0,1);
 
 }
 

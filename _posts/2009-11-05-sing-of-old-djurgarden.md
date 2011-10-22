@@ -2,6 +2,7 @@
 layout: note
 title: Sing of Old Djurg&aring;rden
 location: Stockholm
+category: note
 ---
 
 <div>

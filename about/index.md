@@ -47,7 +47,7 @@ My primary expertise is in Oracle PL/SQL development, particularly for IFS enter
 
 I write songs, and play guitar and piano. My friend Dan Simons and I are the folk-indie-pop group Empty Set. You might like our album As Neat as a New Pin.
 
-Every now and then I go for an adventure. I enjoy running, hiking, kayaking, climbing and leaving for some place I've never gone before.
+Every now and then I go on an adventure. I enjoy running, hiking, kayaking, climbing and leaving for some place I've never gone before.
 
 <blockquote class="inset">'Curiosity, a free mind, belief in good taste and belief in the human race'</blockquote>
 
