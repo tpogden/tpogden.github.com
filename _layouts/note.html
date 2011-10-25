@@ -19,25 +19,24 @@
                     <h1>{{ page.title }}</h1>
 
                 </header>
-
           
                 {{ content }}
           
-            </article>
-            
-            <nav id="links">
+                <nav id="links">
         
-                {% if page.previous.url %} 
-                <span id="prev"><a href="{{page.previous.url}}" title="Previous: 
-    {{page.previous.title}}">&larr; {{page.previous.title}}</a></span>
-                {% endif %} 
-                
-                {% if page.next.url %} 
-                <span id="next"><a href="{{page.next.url}}" title="Next: 
-    {{page.next.title}}">{{page.next.title}} &rarr; </a></span>
-                {% endif %}
+                    {% if page.previous.url %} 
+                    <span id="prev"><a href="{{page.previous.url}}" title="Previous: 
+        {{page.previous.title}}">&larr; Previous ({{page.previous.title}})</a></span>
+                    {% endif %} 
+                    
+                    {% if page.next.url %} 
+                    <span id="next"><a href="{{page.next.url}}" title="Next: 
+        {{page.next.title}}">Next ({{page.next.title}}) &rarr; </a></span>
+                    {% endif %}
             
-            </nav>
+                </nav>
+          
+            </article>
             
             {% include footer.html %}    
             

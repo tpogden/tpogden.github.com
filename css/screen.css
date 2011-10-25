@@ -771,6 +771,65 @@ article iframe {
 
 }
 
+nav#links {
+
+    font-size: 14px;
+    
+	margin-top: 0px;
+	margin-bottom: 32px;
+	margin-left: 0px;
+	margin-right: 0px;
+    
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-left: 8px;
+    padding-right: 8px;
+    
+/*     background-color: silver; */
+    
+    width: 592px;
+
+}
+
+nav#links a {
+
+/*     text-decoration: none; */
+/*     color: rgba(19, 20, 19, 1); */
+
+}
+
+#prev {
+
+/*     background-color: yellow; */
+    float: left;
+    
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	margin-right: 0px;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+
+}
+
+#next {
+
+/*     background-color: red; */
+    float: right;
+    
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	margin-right: 0px;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+
+}
+
 #canvas > footer {
 
     background: rgba(255,255,255,1) url(../images/dots-grey.png) top repeat-x;
