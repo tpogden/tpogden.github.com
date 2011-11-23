@@ -546,6 +546,13 @@ article img.side-flush {
 
 }
 
+article img.inline-circle {
+
+    float: none;
+	vertical-align: text-top;
+
+}
+
 article .two-col {
 
 	width: 288px;
