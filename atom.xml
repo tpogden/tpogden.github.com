@@ -1,0 +1,27 @@
+---
+layout: nil
+---
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+ 
+ <title>Tommy Ogden</title>
+ <link href="http://tommyogden.com/atom.xml" rel="self"/>
+ <link href="http://tommyogden.com/"/>
+ <updated>{{ site.time | date_to_xmlschema }}</updated>
+ <id>http://tommyogden.com/</id>
+ <author>
+   <name>Tommy Ogden</name>
+   <email>t@ogden.eu</email>
+ </author>
+
+ {% for post in site.posts limit:10%}
+ <entry>
+   <title>{{ post.title }}</title>
+   <link href="http://tommyogden.com{{ post.url }}"/>
+   <updated>{{ post.date | date_to_xmlschema }}</updated>
+   <id>http://tommyogden.com{{ post.id }}</id>
+   <content type="html">{{ post.content | xml_escape }}</content>
+ </entry>
+ {% endfor %}
+ 
+</feed>
