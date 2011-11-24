@@ -406,6 +406,12 @@ article a:active, article a:hover {
 
 }
 
+article .new-thought {
+
+/* 	font-variant: small-caps; */
+
+}
+
 article blockquote {
 
     color: rgba(99, 121, 150, 1);
