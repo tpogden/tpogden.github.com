@@ -7,7 +7,8 @@ body {
     color: rgba(7, 20, 38, 1); 
 	
  	background-color: rgba(220, 224, 229, 1);
-
+/*  	background-color: rgba(255, 255, 255, 1); */
+ 	
     background-image: -webkit-gradient(linear, left top, right top, color-stop(0, white), color-stop(0.5, white), color-stop(0.5, rgba(220, 224, 229, 1)), color-stop(1, rgba(220, 224, 229, 1)));
     background-image: -moz-linear-gradient(left center, white 0%, white 50%, rgba(220, 224, 229, 1) 50%, rgba(220, 224, 229, 1) 100%);
 
@@ -87,8 +88,10 @@ body {
 #canvas > header > h1 > a {
 
     text-decoration: none;
+/*     color: rgba(58, 137, 201, 1); */
+/*     color: rgba(27, 50, 95, 1); */
     color: rgba(99, 121, 150, 1);
-
+    
 }
 
 nav {
@@ -128,7 +131,6 @@ nav ul {
 
     color: rgba(150, 104, 99, 1);
 
-
     list-style: none;
 
 	margin-top: 0px;
@@ -157,6 +159,7 @@ nav ul li > a {
     text-decoration: none;
 
     color: rgba(150, 104, 99, 1);
+/*     color: rgba(242, 108, 79, 1);     */
 /*     background-color: yellow; */
 
 }
@@ -472,7 +475,7 @@ article figcaption {
 	font-size: 14px;
 
 	margin-top: 0px;
-	margin-bottom: 0px;
+	margin-bottom: 32px;
 	margin-left: 0px;
 	margin-right: 0px;
 
@@ -530,7 +533,7 @@ article img.side {
 	padding-top: 0px;
 	padding-bottom: 0px;
 	padding-left: 8px;
-	padding-right: 24px;
+	padding-right: 8px;
 
     float: right;
 
@@ -781,6 +784,29 @@ article iframe {
         border: 0px; 
         
 /*         background-color: red; */
+
+}
+
+.pin-title { 
+    
+    font-size: 20px;
+    text-decoration: none;
+/*     color: #00a; */
+
+}
+
+.pin-description { 
+
+/*     color: #555;  */
+
+}
+
+.pin-tag { 
+
+    font-size: 16px;
+/*     color:#18c; */
+    text-decoration:none;
+/*     font-size:0.9em; */
 
 }
 
