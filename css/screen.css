@@ -5,12 +5,24 @@ body {
 	line-height: 32px;
 	text-align: center;
     color: rgba(7, 20, 38, 1); 
-	
- 	background-color: rgba(220, 224, 229, 1);
+
+/*  	background-color: rgba(27, 50, 95, 1); */
+ 	 	background-color: rgba(233, 242, 249, 1);		
+/*  	background-color: rgba(220, 224, 229, 1); */
 /*  	background-color: rgba(255, 255, 255, 1); */
  	
+/*
     background-image: -webkit-gradient(linear, left top, right top, color-stop(0, white), color-stop(0.5, white), color-stop(0.5, rgba(220, 224, 229, 1)), color-stop(1, rgba(220, 224, 229, 1)));
     background-image: -moz-linear-gradient(left center, white 0%, white 50%, rgba(220, 224, 229, 1) 50%, rgba(220, 224, 229, 1) 100%);
+*/
+
+/*
+    background-image: -webkit-gradient(linear, left top, right top, color-stop(0, white), color-stop(0.5, white), color-stop(0.5, rgba(27, 50, 95, 1)), color-stop(1, rgba(27, 50, 95, 1)));
+    background-image: -moz-linear-gradient(left center, white 0%, white 50%, rgba(27, 50, 95, 1) 50%, rgba(27, 50, 95, 1) 100%);
+*/
+
+    background-image: -webkit-gradient(linear, left top, right top, color-stop(0, white), color-stop(0.5, white), color-stop(0.5, rgba(233, 242, 249, 1)), color-stop(1, rgba(233, 242, 249, 1)));
+    background-image: -moz-linear-gradient(left center, white 0%, white 50%, rgba(233, 242, 249, 1) 50%, rgba(233, 242, 249, 1) 100%);
 
     min-width: 9px;
     
@@ -56,7 +68,9 @@ body {
 /*     background-color: rgba(255, 255, 255, 1.0); */
     background: rgba(255,255,255,1) url(../images/dots-grey.png) bottom repeat-x;
     
-    float:left;        
+    float:left;
+    
+    border-right: rgba(156,196,228,0.25) 2px solid;
 
 }
 
@@ -88,9 +102,7 @@ body {
 #canvas > header > h1 > a {
 
     text-decoration: none;
-/*     color: rgba(58, 137, 201, 1); */
-/*     color: rgba(27, 50, 95, 1); */
-    color: rgba(99, 121, 150, 1);
+    color: rgba(58, 137, 201, 1);
     
 }
 
@@ -100,7 +112,7 @@ nav {
 	float: left;
 
     font-size: 24px;
-    color: rgba(99, 121, 150, 1);
+    color: rgba(58, 137, 201, 1);
 
 	margin-top: 16px;
 	margin-bottom: 0px;
@@ -129,7 +141,7 @@ nav ul {
     text-transform: uppercase;    
     font-size: 14px;
 
-    color: rgba(150, 104, 99, 1);
+    color: rgba(242, 108, 79, 1);
 
     list-style: none;
 
@@ -158,8 +170,7 @@ nav ul li > a {
     font-size: 14px;
     text-decoration: none;
 
-    color: rgba(150, 104, 99, 1);
-/*     color: rgba(242, 108, 79, 1);     */
+    color: rgba(242, 108, 79, 1);
 /*     background-color: yellow; */
 
 }
@@ -192,7 +203,7 @@ nav ul li.last-li {
 nav ul li.active {
 
     color: rgba(255, 255, 255, 1);
-    background-color: rgba(150, 104, 99, 1);
+    background-color: rgba(242, 108, 79, 1);
     
     -moz-border-radius: 4px;
     border-radius: 4px;
@@ -211,8 +222,8 @@ nav ul li.active a {
 	float: left;
 
     font-size: 28px;
-/*     color: rgba(99, 121, 150, 1); */
-/*     color: rgba(150, 104, 99, 1); */
+/*     color: rgba(27, 50, 95, 1); */
+/*     color: rgba(242, 108, 79, 1); */
 
 	margin-top: 0px;
 	margin-bottom: 0px;
@@ -227,11 +238,13 @@ nav ul li.active a {
     background-color: rgba(255, 255, 255, 1);
 /*     background-color: red; */
 
+    border-right: rgba(156,196,228,0.25) 2px solid;
+
 }
 
 #blurb .blurb-amp {
 
-    color: rgba(150, 104, 99, 1);
+    color: rgba(242, 108, 79, 1);
 /*     font-style: italic; */
 /*     font-size: 28px; */
     
@@ -256,6 +269,8 @@ article {
 /*     background-color: yellow; */
 
     float:left;
+
+    border-right: rgba(156,196,228,0.25) 2px solid;
 
 }
 
@@ -305,7 +320,7 @@ article .small, article header a {
     text-transform: uppercase;    
     font-size: 14px;
 
-    color: rgba(150, 104, 99, 1);
+    color: rgba(242, 108, 79, 1);
 
 }
 
@@ -388,7 +403,7 @@ article aside {
 article .stamp {
 
 	font-size: 14px;
-    color: rgba(99, 121, 150, 1);
+    color: rgba(58, 137, 201, 1);
 
 	padding-top: 16px;
     padding-bottom: 16px;
@@ -397,8 +412,8 @@ article .stamp {
 
 article a {
 
-    color: rgba(150, 104, 99, 1);
-/*     color: rgba(99, 121, 150, 1);     */
+    color: rgba(242, 108, 79, 1);
+/*     color: rgba(58, 137, 201, 1);     */
     text-decoration: none;
 
 }
@@ -417,7 +432,7 @@ article .new-thought {
 
 article blockquote {
 
-    color: rgba(99, 121, 150, 1);
+    color: rgba(58, 137, 201, 1);
 	
 	font-size: 18px;
 	text-align: left;
@@ -674,7 +689,7 @@ article ul.notes li a {
 
 .button {
 
-    background-color: rgba(99, 121, 150, 1);
+    background-color: rgba(58, 137, 201, 1);
     color: rgba(255,255,255,1);
     
     text-transform: uppercase;
@@ -705,7 +720,7 @@ article .inline-circle {
 article table {
 
 		padding-bottom: 0px;
-		border-bottom-color: rgba(99, 121, 150, 1);
+		border-bottom-color: rgba(58, 137, 201, 1);
 		border-bottom-style: solid;
 		border-bottom-width: 2px;
 		border-spacing: 0px 0px;
@@ -727,7 +742,7 @@ article table {
 	
 article th {
 
-	background-color: rgba(99, 121, 150, 1);
+	background-color: rgba(58, 137, 201, 1);
     font-family: futura-pt-1,futura-pt-2,"Futura Std",sans-serif;
     font-style: normal;
 	font-weight: normal;
@@ -876,7 +891,7 @@ nav#links a {
     text-transform: uppercase;
     font-family: futura-pt-1,futura-pt-2,"Futura Std",sans-serif;
     font-size: 14px;
-    color: rgba(99, 121, 150, 1);
+    color: rgba(58, 137, 201, 1);
 
 	width: 928px;
 	height: 64px;
@@ -892,6 +907,8 @@ nav#links a {
     padding-right: 0px;
 		
 	float: left;
+	
+    border-right: rgba(156,196,228,0.25) 2px solid;	
 
 }
 
@@ -970,7 +987,7 @@ nav#links a {
 #grid div.vert{
 
     width: 127px;
-    border: solid rgba(99, 121, 150, 1);;
+    border: solid rgba(58, 137, 201, 1);;
     border-width: 0 1px;
     margin-right: 31px;
 
@@ -992,7 +1009,7 @@ nav#links a {
 
     /* 20px line height */
     height: 31px;
-    border-bottom: 1px dotted rgba(99, 121, 150, 1);;
+    border-bottom: 1px dotted rgba(58, 137, 201, 1);;
     margin: 0;
     padding: 0;
 
