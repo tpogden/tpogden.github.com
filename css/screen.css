@@ -437,19 +437,19 @@ article blockquote {
 	font-size: 18px;
 	text-align: left;
 	
-    width: 528px;   
+    width: 496px;   
 	
 	text-indent: 0px;
 	
 	margin-top: 0px;
-	margin-bottom: 32px;
+	margin-bottom: 0px;
 	margin-left: 0px;
 	margin-right: 0px;
 	
 	padding-top: 0px;
 	padding-bottom: 0px;
-	padding-left: 40px;
-	padding-right: 40px;	
+	padding-left: 0px;
+	padding-right: 0px;
 	
 /* 	background-color: yellow; */
 
