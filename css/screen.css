@@ -352,6 +352,36 @@ article h2 a {
 
 }
 
+
+article > h3 {
+
+	margin-left: 0px;
+	margin-bottom: 0px;
+	margin-right: 0px;
+	margin-top: 0px;
+
+	font-size: 20px;
+
+	font-style: italic;
+	font-weight: normal;
+
+	width: 592px;
+	
+	padding-top: 16px;
+	padding-bottom: 16px;
+	padding-left: 8px;
+	padding-right: 8px;
+    
+    float:left;
+
+}
+
+article h3 a {
+
+    color: rgba(0,0,0,1);
+
+}
+
 article p {
 
 	font-size: 18px;
