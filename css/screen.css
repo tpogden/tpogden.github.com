@@ -218,21 +218,22 @@ nav ul li.active a {
 
 #blurb {
 
-	width: 912px;
+	width: 400px;
 	float: left;
 
-    font-size: 28px;
+    font-size: 24px;
 /*     color: rgba(27, 50, 95, 1); */
 /*     color: rgba(242, 108, 79, 1); */
+/*     font-style: italic; */
 
 /*     text-align: center; */
 
-	margin-top: 0px;
+	margin-top: 16px;
 	margin-bottom: 0px;
 	margin-left: 32px;
-	margin-right: 32px;
+	margin-right: 0px;
 	
-    padding-top: 48px;
+    padding-top: 32px;
 	padding-bottom: 16px;
 	padding-left: 8px;
 	padding-right: 8px;
@@ -240,7 +241,7 @@ nav ul li.active a {
     background-color: rgba(255, 255, 255, 1);
 /*     background-color: red; */
 
-    border-right: rgba(156,196,228,0.25) 2px solid;
+/*     border-right: rgba(156,196,228,0.25) 2px solid; */
 
 }
 

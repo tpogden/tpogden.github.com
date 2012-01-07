@@ -9,17 +9,17 @@ category: note
 
 <img src="/png/mina-fem-fuglesang.png" />
 
-Christer Fuglesang är en docent av partikelfysik inom Stockholms Universitet, och också, som du ser, ar nu en rymdfarare! Hon är Sveriges förste och hittills ende rymdfarare. Jag drömmer jag kan följa med honom ut i rymden!
+Christer Fuglesang är en docent av partikelfysik inom Stockholms Universitet, och också, som du ser, ar nu en rymdfarare. Hon är Sveriges förste och hittills ende rymdfarare. Jag drömmer jag kan följa med honom ut i rymden!
 
 <img src="/png/mina-fem-robyn.png" />
 
-Er vet Robin Miriam Carlsson! Hon är en svensk popsångerska och låtskrivare. Hon var född, och bor i Stockholm. 
+Er vet Robin Miriam Carlsson. Hon är en svensk popsångerska och låtskrivare. Hon var född, och bor i Stockholm. 
 
-Hon har redan släpptes två album i år, Body Talk Pt. 1 och Pt. 2, och ska släpp annan, Pt. 3,  snart --- Hon arbetar mycket hårt!
+Hon har redan släpptes två album i år, Body Talk Pt. 1 och Pt. 2, och ska släpp annan, Pt. 3,  snart --- Hon arbetar mycket hårt.
 
 <img src="/png/mina-fem-lekman.png" />
 
-Jens Lekman är en annan svensk popmusiker, från Göteborg, men nu hon bor i Melbourne, Australien. Han är min hjälte! Jag har sett Jens många gånger, i Manchester, London, Malmö, Barcelona och Stockholm. I sommar, jag träffade honom på en pub i Manchester, och och vi drack en öl och pratade om  hur vi missade Sverige. Det var kul.
+Jens Lekman är en annan svensk popmusiker, från Göteborg, men nu hon bor i Melbourne, Australien. Han är min hjälte. Jag har sett Jens många gånger, i Manchester, London, Malmö, Barcelona och Stockholm. I sommar, jag träffade honom på en pub i Manchester, och och vi drack en öl och pratade om  hur vi missade Sverige. Det var kul.
 
 Hon har släpptes tre album: When I Said I Wanted to Be Your Dog, Oh You're So Silent Jens och Night Falls Over Kortedala, och nästa år en annan.
 
