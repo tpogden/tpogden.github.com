@@ -225,6 +225,8 @@ nav ul li.active a {
 /*     color: rgba(27, 50, 95, 1); */
 /*     color: rgba(242, 108, 79, 1); */
 
+/*     text-align: center; */
+
 	margin-top: 0px;
 	margin-bottom: 0px;
 	margin-left: 32px;
@@ -852,7 +854,7 @@ article iframe {
 /*     color:#18c; */
     text-decoration:none;
 /*     font-size:0.9em; */
-
+    
 }
 
 nav#links {
