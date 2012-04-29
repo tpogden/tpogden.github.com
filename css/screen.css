@@ -1,6 +1,6 @@
 body {
 
-	font-family: "warnock-pro-1","warnock-pro-2", "Warnock Pro", Palatino, Georgia, serif;
+	font-family: "adobe-garamond-pro-1","adobe-garamond-pro-2", Palatino, Georgia, serif;
     font-size: 16px;
 	line-height: 32px;
 	text-align: center;
@@ -22,7 +22,7 @@ body {
 */
 
     background-image: -webkit-gradient(linear, left top, right top, color-stop(0, white), color-stop(0.5, white), color-stop(0.5, rgba(233, 242, 249, 1)), color-stop(1, rgba(233, 242, 249, 1)));
-    background-image: -moz-linear-gradient(left center, white 0%, white 50%, rgba(233, 242, 249, 1) 50%, rgba(233, 242, 249, 1) 100%);
+    background-image: -moz-linear-gradient(left center, white 0%, white 50%, rgba(233, 242, 249, 1) 50%, rgba(233, 242, 249, 1) 100%); This was last version!
 
     min-width: 9px;
     
@@ -78,7 +78,7 @@ body {
 
     text-transform: uppercase;
     font-family: futura-pt-1,futura-pt-2,"Futura Std",sans-serif;
-    font-size: 48px;
+    font-size: 32px;
 	font-weight: 700;	
 	line-height: 64px;
 	
@@ -921,8 +921,8 @@ nav#links a {
 
     background: rgba(255,255,255,1) url(../images/dots-grey.png) top repeat-x;
 
-    text-transform: uppercase;
-    font-family: futura-pt-1,futura-pt-2,"Futura Std",sans-serif;
+/*     text-transform: uppercase; */
+/*     font-family: futura-pt-1,futura-pt-2,"Futura Std",sans-serif; */
     font-size: 14px;
     color: rgba(58, 137, 201, 1);
 
