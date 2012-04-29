@@ -11,23 +11,23 @@ title: About
 
 </header>
 
-I'm reading for a PhD in Theoretical Physics at the University of Durham. I work in the Atomic & Molecular Physics group. My areas of interest are atomic physics and quantum optics. I look at how interactions and entanglement between atoms and light might be used to store and manipulate information for a quantum computer.
+I'm reading for a PhD in Theoretical Physics at the [University of Durham](http://www.durham.ac.uk/). I work in the [Atomic & Molecular Physics](http://massey.dur.ac.uk/) group. My areas of interest are atomic physics and quantum optics. I look at how interactions and entanglement between atoms and light might be used to store and manipulate information for a quantum computer.
 
 <div>
 
 <aside><a class="button" href="/cv/">&rarr; Read my CV</a></aside>
 
-<p>I received a bachelor of science honours degree in Mathematics &amp; Physics from the University of Warwick and then a master of science degree in Computational Physics from Stockholms Universitet. In between I worked as a graduate Electrical Engineer for Biwater. I worked in teams that built four clean water plants in Cambridgeshire and Suffolk. I designed the electrics and the control software.</p>
+<p>I received a bachelor of science honours degree in Mathematics &amp; Physics from the <a href="http://warwick.ac.uk/">University of Warwick</a> and a master of science degree in Computational Physics from <a href="http://www.su.se/">Stockholms Universitet</a>. In between I worked as a graduate Electrical Engineer for <a href="http://www.biwater.com/">Biwater</a>. I worked in teams that built four clean water plants in Cambridgeshire and Suffolk. I designed the electrics and the control software.</p>
 
 </div>
 
-I write songs, and play guitar and piano. My friend Dan Simons and I are the folk-indie-pop group Empty Set.
+I write songs, and play guitar and piano. My friend Dan Simons and I are the folk-indie-pop group [Empty Set](http://emptyset.co.uk).
 
 <div>
 
 <aside>I'm not currently looking for work but do mail {% include mail_dinorwic.html %} if you have an especially interesting project you'd like to talk to me about.</aside>
 
-<p>When not doing science or music I write code professionally for clients including multinational manufacturing and scientific services companies. My primary expertise is in Oracle PL/SQL development, particularly for IFS enterprise software. For this purpose I founded Dinorwic, a limited company in England &amp; Wales.</p>
+<p>When not doing science or music I write code professionally for clients including multinational manufacturing and scientific services companies. My primary expertise is in <a href="http://www.oracle.com/technetwork/database/features/plsql/index.html">Oracle PL/SQL</a> development, particularly for IFS enterprise software. For this purpose I founded Dinorwic, a limited company in England &amp; Wales.</p>
 
 </div>
 
