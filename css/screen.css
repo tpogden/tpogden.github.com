@@ -171,7 +171,12 @@ nav ul li > a {
     text-decoration: none;
 
     color: rgba(242, 108, 79, 1);
-/*     background-color: yellow; */
+
+}
+
+nav ul li > a:hover {
+
+    text-decoration: underline;
 
 }
 
@@ -215,6 +220,8 @@ nav ul li.active a {
     color: rgba(255, 255, 255, 1);
 
 }
+
+
 
 #blurb {
 
@@ -717,6 +724,28 @@ article ul.notes li {
 article ul.notes li a {
 
     color: rgba(0,0,0,1);
+
+}
+
+article ol {
+
+    width: 592px;
+	
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	margin-right: 0px;
+
+	padding-top: 0px;
+	padding-bottom: 32px;
+	padding-left: 8px;
+	padding-right: 8px;
+
+    background-color: yellow;
+
+}
+
+article ol li {
 
 }
 
