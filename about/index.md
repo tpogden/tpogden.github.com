@@ -15,28 +15,20 @@ I'm reading for a PhD in Theoretical Physics at the [University of Durham](http:
 
 <div>
 
-<aside><a class="button" href="/cv/">&rarr; Read my CV</a></aside>
+<aside><a href='/cv/' class='button'>&rarr; Read my CV</a></aside>
 
-<p>I received a bachelor of science honours degree in Mathematics &amp; Physics from the <a href="http://warwick.ac.uk/">University of Warwick</a> and a master of science degree in Computational Physics from <a href="http://www.su.se/">Stockholms Universitet</a>. In between I worked as a graduate Electrical Engineer for <a href="http://www.biwater.com/">Biwater</a>. I worked in teams that built four clean water plants in Cambridgeshire and Suffolk. I designed the electrics and the control software.</p>
-
-</div>
-
-I write songs, and play guitar and piano. My friend Dan Simons and I are the folk-indie-pop group [Empty Set](http://emptyset.co.uk).
-
-<div>
-
-<aside>I'm not currently looking for work but do mail {% include mail_dinorwic.html %} if you have an especially interesting project you'd like to talk to me about.</aside>
-
-<p>When not doing science or music I write code professionally for clients including multinational manufacturing and scientific services companies. My primary expertise is in <a href="http://www.oracle.com/technetwork/database/features/plsql/index.html">Oracle PL/SQL</a> development, particularly for IFS enterprise software. For this purpose I founded Dinorwic, a limited company in England &amp; Wales.</p>
+<p>I received my BSc honours degree in Mathematics &amp; Physics from the <a href='http://warwick.ac.uk/'>University of Warwick</a> in 2004 and my MSc in Computational Physics from <a href='http://www.su.se/'>Stockholms Universitet</a> in 2009.</p>
 
 </div>
+
+Between those degrees I worked as a graduate Electrical Engineer for [Biwater](http://www.biwater.com/). I designed the electrics and control software for four new clean water plants in Cambridgeshire and Suffolk. I then founded a consultancy, Dinorwic, and wrote Oracle code professionally for clients including multinational scientific services and manufacturing companies. 
+
+I write music, and play guitar and piano. My friend Dan Simons and I are the folk-indie-pop group [Empty Set](http://emptyset.co.uk/). We do short songs, often about science and love.
 
 Every now and then I go on an adventure. I enjoy running, hiking, kayaking, climbing and leaving for some place I’ve never gone before.
 
-E.M. Forster said the ideals of humanism are 'curiosity, a free mind, belief in good taste and belief in the human race'. I go along with that.
+E.M. Forster said his ideals were 'curiosity, a free mind, belief in good taste and belief in the human race'. I go along with that.
 
 ##Colophon
 
-Written in [Markdown](http://daringfireball.net/projects/markdown/), powered by [Jekyll](http://github.com/mojombo/jekyll), built with [Coda](http://www.panic.com/coda/) and hosted on [GitHub Pages](http://pages.github.com/). 
-
-Text is set in Adobe Garamond Pro and headers are in Futura, supplied by [Typekit](https://typekit.com/).
+Written in [Markdown](http://daringfireball.net/projects/markdown/), powered by [Jekyll](http://github.com/mojombo/jekyll), built with [Coda](http://www.panic.com/coda/) and hosted on [GitHub Pages](http://pages.github.com/). Text is set in Adobe Garamond Pro and headers in Futura, supplied by [Typekit](https://typekit.com/).
