@@ -17,7 +17,7 @@ I'm reading for a PhD in Theoretical Physics at the [University of Durham](http:
 
 <aside><a href='/cv/' class='button'>&rarr; Read my CV</a></aside>
 
-<p>I received my BSc honours degree in Mathematics &amp; Physics from the <a href='http://warwick.ac.uk/'>University of Warwick</a> in 2004 and my MSc in Computational Physics from <a href='http://www.su.se/'>Stockholms Universitet</a> in 2009.</p>
+<p>I received my BSc honours degree in Mathematics &amp; Physics from the <a href='http://warwick.ac.uk/'>University of Warwick</a> in 2004 and my MSc in Computational Physics from <a href='http://www.su.se/'>Stockholms Universitet</a> in 2011.</p>
 
 </div>
 
