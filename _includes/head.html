@@ -6,9 +6,13 @@
 
     <title>{{ page.title }}</title>
 
+    {%  elsif page.layout == 'about' %}
+
+    <title>{{ page.title }} Tommy Ogden</title>
+
     {% else %}
 
-    <title>{{ page.title }} &mdash; Tommy Ogden</title>
+    <title>{{ page.title }} by Tommy Ogden</title>
 
     {% endif %}
 
