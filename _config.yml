@@ -1,2 +1,3 @@
-layout: default
-permalink: /notes/:title
+auto:       true
+server:     true
+permalink:  /:categories/:title
