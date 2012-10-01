@@ -22,48 +22,12 @@ title: Photos
             <p>I shoot with a <a href="http://www.dpreview.com/reviews/canong11/" title="Canon G11">Canon G11</a> and edit in <a href="http://www.apple.com/aperture/" title="Apple Aperture">Aperture</a>. I trim everything to 16 &times; 9 because constraints are good.</p>
 
         </section>
-
+        
         <section>
-
-        {% for post in site.categories.photos %}
-            {% unless post.next %}
-            
-                <h4>{{ post.date | date: '%Y' }}&mdash;</h4>
-      
-            {% else %}
-            
-            {% capture year %}{{ post.date | date: '%Y' }}{% endcapture %}
-            {% capture nyear %}{{ post.next.date | date: '%Y' }}{% endcapture %}
-            
-            {% if year != nyear %}
-            
-                <h4>{{ post.date | date: '%Y' }}&mdash;</h4>
-            
-            {% endif %}
-      
-            {% endunless %}
-
-                <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
-        {% endfor %}
-        </section>
         
-        
-<!-- 
             <h4>2012&mdash;</h4>       
 
-            {% for post in site.categories.photos offset:0 %}
-                              
-            <aside><span class="stamp">{{ post.date | date:"%d %B %Y" }}, {{ post.location }}</span></aside>
-                     
-            <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
-            
-            <p>{{ post.description }}</p>
-
-            {% endfor %}
- -->
-
- <!-- 
-           <h2>Normandy, August 2012</h2>
+            <h2>Normandy, August 2012</h2>
 
             <p>A visit with good friends to France.
 
@@ -90,7 +54,6 @@ title: Photos
             <h2>★ Favourites of 2010</h2>
             
             <p>Photos from Didsbury, Uppsala, Snowdonia, Stockholm, Gothenburg and the Isle of Angelsey.</p>
- -->
 
 
         </section>

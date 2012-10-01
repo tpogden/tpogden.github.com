@@ -2,7 +2,8 @@
 layout: note
 title: Sing of Old Djurg&aring;rden
 location: Stockholm
-category: note
+category: notes
+description: Here's a description of the Djurgarden article.
 ---
 
 <div>

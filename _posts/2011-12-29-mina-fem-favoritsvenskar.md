@@ -2,7 +2,8 @@
 layout: note
 title: Mina Fem Favoritsvenskar
 location: Port Dinorwic
-category: note
+category: notes
+description: Here's a description of the Mina Fem note.
 ---
 
 <img src="/png/mina-fem.png" />
