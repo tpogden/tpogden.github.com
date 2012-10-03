@@ -23,14 +23,14 @@ title: Photos
 
         </section>
 
-{% for post in site.categories.photos %}
-{% unless post.next %}
-        
         <section>
+
+{% for post in site.categories.photos %}
+<!-- {% unless post.next %} -->
             
-            <h4>{{ post.date | date: '%Y' }}&mdash;</h4>
+<!--             <h4>{{ post.date | date: '%Y' }}&mdash;</h4> -->
       
-{% else %}
+<!-- {% else %} -->
             
 {% capture year %}{{ post.date | date: '%Y' }}{% endcapture %}
 {% capture nyear %}{{ post.next.date | date: '%Y' }}{% endcapture %}
@@ -45,7 +45,7 @@ title: Photos
             
 {% endif %}
       
-{% endunless %}
+<!-- {% endunless %} -->
 
                 <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
                 
