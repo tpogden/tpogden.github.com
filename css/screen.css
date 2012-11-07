@@ -77,35 +77,21 @@ a:hover {
 
 }
 
-#canvas > header > #logo-canvas {
-	
-	width: 64px;
-	height: 64px;
-	
-/* 
-	margin-left: 0px;
-	margin-bottom: 0px;
-	margin-right: 208px;
-	margin-top: 0px;
-	
-	padding-top: 32px;
-	padding-bottom: 0px;
-	padding-left: 8px;
-	padding-right: 8px;
-    
-    float: left;
- */
+#canvas #logo {
+
+/*     background-color: silver; */
+
 }
 
 #canvas > header > a {
 
     color: rgba(189,54,19,1);
     text-decoration: none;
-    border-bottom: none;
+    border-bottom: 0px solid;
     
 	margin-left: 0px;
 	margin-bottom: 0px;
-	margin-right: 208px;
+	margin-right: 224px;
 	margin-top: 0px;
 	
 	padding-top: 32px;
@@ -114,59 +100,6 @@ a:hover {
 	padding-right: 0px;
     
     float: left;
-
-}
-
-/* 
-#canvas > header > a:hover,
-#canvas > header > a:active {
-
-    border-bottom: solid 1px;
-
-}
- */
-
-#canvas > header > h1 {
-
-    text-transform: uppercase;
-/*     font-family: "Symbol"; */
-/*     font-family: "Apple Symbols"; */
-/*     font-family: "Nanum Pen Script"; */
-    font-family: "AppleMyungjo Regular";
-    font-size: 48px;
-	line-height: 64px;
-	
-	width: 272px;
-	
-	margin-left: 0px;
-	margin-bottom: 0px;
-	margin-right: 0px;
-	margin-top: 0px;
-	
-	padding-top: 32px;
-	padding-bottom: 0px;
-	padding-left: 8px;
-	padding-right: 8px;
-
-    color: rgba(163,155,153,1);
-    
-    float: left;
-}
-
-#canvas > header > h1 a {
-
-    color: rgba(189,54,19,1);
-    text-decoration: none;
-    border-bottom: none;
-
-}
-
-#canvas > header > h1 a:hover,
-#canvas > header > h1 a:active {
-
-    color: rgba(189,54,19,1);
-    text-decoration: none;
-    border-bottom: solid 1px;
 
 }
 
@@ -328,7 +261,8 @@ section > h2 {
 	font-size: 22px;
 	font-weight: normal;
 
-	width: 912px;	
+    width: 592px;
+/* 	width: 912px;	 */
 	
 	padding-top: 16px;
 	padding-bottom: 16px;
@@ -403,7 +337,7 @@ section > h4 {
 	font-size: 14px;
     color: rgba(113,107,105,1);
 
-	padding-top: 16px;
+	padding-top: 0px;
     padding-bottom: 16px;
 
 }
