@@ -79,8 +79,6 @@ a:hover {
 
 #canvas #logo {
 
-/*     background-color: silver; */
-
 }
 
 #canvas > header > a {
@@ -208,6 +206,7 @@ nav ul li.active a {
 	padding-right: 0px;
 
     float: left;
+    clear: both;
 
 }
 
@@ -220,9 +219,9 @@ nav ul li.active a {
     float: left; 
     
     margin-bottom: 16px;
-            
-/*     background-color: silver;  */
-            
+         
+    clear: both;
+                        
 }
 
 #canvas article header h1,
@@ -262,7 +261,6 @@ section > h2 {
 	font-weight: normal;
 
     width: 592px;
-/* 	width: 912px;	 */
 	
 	padding-top: 16px;
 	padding-bottom: 16px;
@@ -280,36 +278,10 @@ section > h2 a {
 
 }
 
-/* 
-article > h3,
-section > h3 {
-
-    font-family: "Goudy Bookletter 1911";
-
-	margin-left: 0px;
-	margin-bottom: 0px;
-	margin-right: 0px;
-	margin-top: 0px;
-
-	font-size: 22px;
-	font-weight: normal;
-
-	width: 912px;	
-	
-	padding-top: 16px;
-	padding-bottom: 16px;
-	padding-left: 8px;
-	padding-right: 8px;
-    
-    float:left;
-
-}
- */
-
 article > h4,
 section > h4 {
 
-    color:    rgba(189,54,19,1);
+    color: rgba(189,54,19,1);
 
     font-family: "Goudy Bookletter 1911";
 	font-size: 20px;
@@ -403,9 +375,7 @@ aside {
 	padding-right: 24px;
 
 	float: right;
-	
 	display: inline;
-	
 	clear: right;
     
 }
@@ -415,7 +385,6 @@ aside {
 	width: 240px;
 
     background-color: rgba(208,199,198,0.3);
-/*     background-color: rgba(163,155,153,0.25);     */
     color:  rgba(38,32,31,1);
     border-radius: 4px;
 
@@ -439,8 +408,6 @@ aside {
     font-weight: normal;
     
     line-height: 32px;
-    
-/*     background-color: yellow; */
     
     margin-top: 16px;
 	margin-bottom: 16px;
@@ -618,9 +585,7 @@ table {
         padding-left: 0px;
         padding-right: 0px;
         
-        
-
-	}
+}
 	
 th {
 
@@ -640,7 +605,6 @@ th.one-col {
 	
 	width: 144px;
     padding-left: 8px;	
-/* 	padding-right: 48px; */
 		
 	}
 
@@ -648,7 +612,6 @@ th.two-col {
 
 	width: 304px;
     padding-left: 8px;
-/*     padding-right: 48px; */
 
 	}
 
@@ -656,7 +619,7 @@ th.col-last {
 
 	margin-right: 0px;
 
-	}
+}
 	
 td {
 
