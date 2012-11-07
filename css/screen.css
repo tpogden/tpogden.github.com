@@ -1,23 +1,23 @@
 /* Colors
 
-White:  rgba(242,237,236,1);
-Black:  rgba(38,32,31,1);
+White:  rgba(245,243,242,1);
+Black:  rgba(53,48,47,1);
 Red:    rgba(189,54,19,1);
-Grey:   rgba(163,155,153,1);
+Grey:   rgba(113,107,105,1);
+Light:  rgba(208,199,198,1);
 
 */
 
 body {
 
-    font-family: "Adobe Garamond Pro", serif;
+    font-family: "adobe-garamond-pro-1", "adobe-garamond-pro-2", "Adobe Garamond Pro", serif;
     font-size: 18px;
 	line-height: 32px;
 	text-align: center;
 	
-	color: rgba(38,32,31,1);
-    background-color: rgba(242,237,236,0.75);
+	color: rgba(53,48,47,1);
+    background-color: rgba(245,243,242,1);
 
-	
 	margin: 0px;
 	padding: 0px;
 	
@@ -25,9 +25,9 @@ body {
 
 a {
 
-	color: rgba(38,32,31,1);
+	color: rgba(53,48,47,1);
 	text-decoration: none;
-    border-bottom: solid 1px rgba(163,155,153,0.5);
+    border-bottom: solid 1px rgba(208,199,198,1);
 
 }
 
@@ -73,11 +73,58 @@ a:hover {
     padding-left: 0px;
     padding-right: 0px;
     
-    background-color: rgba(0,0,0,0);
+    float: left;
+
+}
+
+#canvas > header > #logo-canvas {
+	
+	width: 64px;
+	height: 64px;
+	
+/* 
+	margin-left: 0px;
+	margin-bottom: 0px;
+	margin-right: 208px;
+	margin-top: 0px;
+	
+	padding-top: 32px;
+	padding-bottom: 0px;
+	padding-left: 8px;
+	padding-right: 8px;
+    
+    float: left;
+ */
+}
+
+#canvas > header > a {
+
+    color: rgba(189,54,19,1);
+    text-decoration: none;
+    border-bottom: none;
+    
+	margin-left: 0px;
+	margin-bottom: 0px;
+	margin-right: 208px;
+	margin-top: 0px;
+	
+	padding-top: 32px;
+	padding-bottom: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
     
     float: left;
 
 }
+
+/* 
+#canvas > header > a:hover,
+#canvas > header > a:active {
+
+    border-bottom: solid 1px;
+
+}
+ */
 
 #canvas > header > h1 {
 
@@ -101,8 +148,7 @@ a:hover {
 	padding-left: 8px;
 	padding-right: 8px;
 
-    color: rgba(163,155,153,1);	
-    background-color: rgba(0,0,0,0);
+    color: rgba(163,155,153,1);
     
     float: left;
 }
@@ -110,7 +156,6 @@ a:hover {
 #canvas > header > h1 a {
 
     color: rgba(189,54,19,1);
-/*     color: rgba(163,155,153,1); */
     text-decoration: none;
     border-bottom: none;
 
@@ -130,7 +175,7 @@ nav {
  	width: 608px;
 	float: left;
 
-    color: rgba(242, 108, 79, 1);
+    color: rgba(208,199,198,1);
     
     font-family: "Goudy Bookletter 1911";
     font-style: normal;
@@ -170,8 +215,8 @@ nav ul {
 
 nav ul li > a {
     
-    color: rgba(163,155,153,1);
-/*     color: rgba(189,54,19,1); */
+    color: rgba(113,107,105,1);
+
     border-bottom: solid 0px;
 
 }
@@ -229,8 +274,6 @@ nav ul li.active a {
 	padding-left: 0px;
 	padding-right: 0px;
 
-    background-color: rgba(0,0,0,0);
-
     float: left;
 
 }
@@ -282,10 +325,10 @@ section > h2 {
 	margin-right: 0px;
 	margin-top: 0px;
 
-	font-size: 24px;
+	font-size: 22px;
 	font-weight: normal;
 
-	width: 592px;
+	width: 912px;	
 	
 	padding-top: 16px;
 	padding-bottom: 16px;
@@ -296,11 +339,43 @@ section > h2 {
 
 }
 
+article > h2 a,
+section > h2 a {
+
+    border-bottom: 0px;
+
+}
+
+/* 
+article > h3,
+section > h3 {
+
+    font-family: "Goudy Bookletter 1911";
+
+	margin-left: 0px;
+	margin-bottom: 0px;
+	margin-right: 0px;
+	margin-top: 0px;
+
+	font-size: 22px;
+	font-weight: normal;
+
+	width: 912px;	
+	
+	padding-top: 16px;
+	padding-bottom: 16px;
+	padding-left: 8px;
+	padding-right: 8px;
+    
+    float:left;
+
+}
+ */
+
 article > h4,
 section > h4 {
 
     color:    rgba(189,54,19,1);
-/*     color:   rgba(163,155,153,1); */
 
     font-family: "Goudy Bookletter 1911";
 	font-size: 20px;
@@ -326,16 +401,20 @@ section > h4 {
 
     font-family: "Goudy Bookletter 1911";
 	font-size: 14px;
-    color: rgba(163,155,153,1);
+    color: rgba(113,107,105,1);
 
 	padding-top: 16px;
     padding-bottom: 16px;
 
 }
 
-p {
+.align-right {
 
-/* 	text-align: left; */
+    text-align: right;
+
+}
+
+p {
 	
     width: 592px;
 	
@@ -348,8 +427,6 @@ p {
 	padding-bottom: 16px;
 	padding-left: 8px;
 	padding-right: 8px;
-
-    background-color: rgba(0,0,0,0);
 
 }
 
@@ -368,15 +445,21 @@ p {
 	
 }
 
+.description {
+
+    font-style: italic;
+
+}
+
 aside {
 
 	width: 256px;
 
 	font-size: 14px;
-    color:  rgba(163,155,153,1);
+    color:  rgba(113,107,105,1);
 
-	margin-top: 0px;
-	margin-bottom: 0px;
+	margin-top: 16px;
+	margin-bottom: 16px;
 	margin-left: 0px;
 	margin-right: 0px;
 
@@ -388,8 +471,72 @@ aside {
 	float: right;
 	
 	display: inline;
+	
+	clear: right;
     
 }
+
+.sidebox {
+
+	width: 240px;
+
+    background-color: rgba(208,199,198,0.3);
+/*     background-color: rgba(163,155,153,0.25);     */
+    color:  rgba(38,32,31,1);
+    border-radius: 4px;
+
+	margin-top: 0px;
+	margin-bottom: 32px;
+	margin-left: 8px;
+	margin-right: 8px;
+    
+    padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 16px;
+	padding-right: 16px;
+    
+}
+
+.sidebox h1 {
+
+    font-family: "Goudy Bookletter 1911";
+    font-style: normal;
+    font-size: 20px;
+    font-weight: normal;
+    
+    line-height: 32px;
+    
+/*     background-color: yellow; */
+    
+    margin-top: 16px;
+	margin-bottom: 16px;
+	margin-left: 0px;
+	margin-right: 0px;
+
+}
+
+.sidebox ul {
+
+    list-style: none;
+
+	margin-top: 0px;
+	margin-bottom: 16px;
+	margin-left: 0px;
+	margin-right: 0px;
+
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+    
+}
+
+.sidebox ul li {
+
+    list-style: none;
+    
+}
+
 
 figure {
 
@@ -454,8 +601,6 @@ img.full {
 	padding-left: 0px;
 	padding-right: 0px;
 
-    background-color: rgba(38,32,31,1);
-
 	float: left;
 
 }
@@ -473,12 +618,121 @@ img.side {
 	padding-right: 0px;
 
     float: right;
+    clear: right;
 
 }
 
 figure {
 
     clear: both;
+
+}
+
+article blockquote,
+section blockquote {
+
+    width: 496px;
+	
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: 48px;
+	margin-right: 48px;
+
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+
+    color: rgba(113,107,105,1);
+
+}
+
+article blockquote p,
+section blockquote p {
+
+    width: inherit;
+
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	margin-right: 0px;
+
+	padding-top: 16px;
+	padding-bottom: 16px;
+	padding-left: 8px;
+	padding-right: 8px;
+
+}
+
+table {
+
+		padding-bottom: 0px;
+		border-bottom-color: rgba(208,199,198,1);
+		border-bottom-style: solid;
+		border-bottom-width: 1px;
+		border-spacing: 0px 0px;
+		position: relative;
+		display: inline-block;
+		line-height: 32px;
+		
+		margin-top: 0px;
+		margin-bottom: 17px;
+		margin-left: 0px;
+		margin-right: 0px;
+        padding-top: 0px;
+        padding-bottom: 0px;
+        padding-left: 0px;
+        padding-right: 0px;
+        
+        
+
+	}
+	
+th {
+
+	background-color: rgba(208,199,198,1);
+    font-family: "Goudy Bookletter 1911";
+    font-size: 16px;
+	font-weight: normal;
+
+	padding-bottom: 0px;
+	padding-top: 0px;
+	padding-right: 8px;
+	padding-left: 8px;
+	
+}	
+	
+th.one-col {
+	
+	width: 144px;
+    padding-left: 8px;	
+/* 	padding-right: 48px; */
+		
+	}
+
+th.two-col {
+
+	width: 304px;
+    padding-left: 8px;
+/*     padding-right: 48px; */
+
+	}
+
+th.col-last {
+
+	margin-right: 0px;
+
+	}
+	
+td {
+
+    font-size: 14px; */
+
+	padding-bottom: 0px;
+	padding-top: 0px;
+	margin-right: 0px;
+	padding-right: 8px;
+	padding-left: 8px;
 
 }
 
@@ -519,7 +773,7 @@ figure {
     
     float: left;
     
-    color: rgba(163,155,153,1);
+    color: rgba(208,199,198,1);
 
 }
 

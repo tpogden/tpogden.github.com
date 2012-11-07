@@ -13,9 +13,51 @@ title: About
 
 ## Me
 
+<aside class="sidebox">
+
+    <h1>Research in Physics</h1>
+
+    <ul>
+        <li><a href="/papers/">Papers and Reports</a></li>
+        <li><a href="/talks/">Talks and Posters</a></li>
+        <li><a href="/teaching/">Teaching and Outreach</a></li>
+        <li><a href="http://www.jqc.org.uk/people/thomas-ogden/10/">&rarr; Visit my Durham page</a></li>
+    </ul>
+
+</aside>
+
 I study for a PhD in Theoretical Physics at [Durham](http://www.durham.ac.uk/). I work at the [Joint Quantum Centre](http://www.jqc.org.uk). My areas of interest are atomic physics and quantum optics. I look at how we might control atoms and light to make a quantum computer.
 
-I play piano and guitar, and write music as [Empty Set](http://emptyset.co.uk/) with my friend Dan Simons. We do short songs, often about science and love.
+ 
+<!-- 
+<aside class="sidebox">
+
+    <h1>Songwriting</h1>
+
+    <ul>
+        <li><a href="">Records</a></li>
+        <li><a href="">Interviews</a></li>
+        <li><a href="/">&rarr; Visit the Empty Set site</a></li>
+    </ul>
+
+</aside>
+ -->
+
+
+I play piano and guitar, and write music for the band [Empty Set](http://emptyset.co.uk/). We do short songs, often about science and love.
+
+<!-- 
+<aside class="sidebox">
+
+    <h1>Code</h1>
+
+    <ul>
+        <li><a href="/">&rarr; Visit the Dinorwic site</a></li>
+        <li><a href="/">&rarr; Visit my GitHub Repos</a></li>
+    </ul>
+
+</aside>
+ -->
 
 I run, kayak, hike, climb and like to leave for places I've never gone before.
 
@@ -45,4 +87,6 @@ That summer I came back to Britain to be with my girlfriend Livy, taking a posit
 
 ## Colophon
 
-Written in [Markdown](http://daringfireball.net/projects/markdown/), powered by [Jekyll](http://github.com/mojombo/jekyll), built with [BB Edit](http:///) and hosted on [GitHub Pages](http://pages.github.com/). Body text is set in Adobe Garamond Pro and headers in Goudy Bookletter 1911, supplied by [Typekit](https://typekit.com/).
+Written in [Markdown](http://daringfireball.net/projects/markdown/), powered by [Jekyll](http://github.com/mojombo/jekyll) and hosted on [GitHub](http://pages.github.com/).
+
+Body text is set in Adobe Garamond Pro and headers in Goudy Bookletter 1911, supplied by [Typekit](https://typekit.com/).

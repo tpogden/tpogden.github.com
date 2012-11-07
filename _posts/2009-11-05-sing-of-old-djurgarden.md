@@ -3,7 +3,7 @@ layout: note
 title: Sing of Old Djurg&aring;rden
 location: Stockholm
 category: notes
-description: Here's a description of the Djurgarden article.
+description: A match report of Djurg&aring;rden&rsquo;s crucial end-of-season game against Gefle at the Olympic stadium.
 ---
 
 <div>

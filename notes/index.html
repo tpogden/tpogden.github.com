@@ -21,7 +21,7 @@ title: Notes
  
                 <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
                 
-                <p>{{ post.description }}</p> 
+                <p class="description"><em>{{ post.description }}</em></p> 
         
 {% capture year_a %}{{ post.date | date: '%Y' }}{% endcapture %}
         
@@ -43,7 +43,7 @@ title: Notes
 
                 <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
                 
-                <p>{{ post.description }}</p>  
+                <p class="description">{{ post.description }}</p>  
 
 {% capture year_a %}{{ post.date | date: '%Y' }}{% endcapture %}
 
