@@ -108,7 +108,7 @@ nav {
 
     color: rgba(208,199,198,1);
     
-    font-family: "Goudy Bookletter 1911";
+    font-family: "goudy-bookletter-1911-1","goudy-bookletter-1911-2","Goudy Bookletter 1911",serif;
     font-style: normal;
     font-size: 16px;
 
@@ -229,7 +229,7 @@ nav ul li.active a {
 
 	width: 592px;
 
-    font-family: "Goudy Bookletter 1911";
+    font-family: "goudy-bookletter-1911-1","goudy-bookletter-1911-2","Goudy Bookletter 1911",serif;
 	font-size: 32px;
 	font-weight: normal;
 
@@ -250,7 +250,7 @@ nav ul li.active a {
 article > h2,
 section > h2 {
 
-    font-family: "Goudy Bookletter 1911";
+    font-family: "goudy-bookletter-1911-1","goudy-bookletter-1911-2","Goudy Bookletter 1911",serif;
 
 	margin-left: 0px;
 	margin-bottom: 0px;
@@ -283,7 +283,7 @@ section > h4 {
 
     color: rgba(189,54,19,1);
 
-    font-family: "Goudy Bookletter 1911";
+    font-family: "goudy-bookletter-1911-1","goudy-bookletter-1911-2","Goudy Bookletter 1911",serif;
 	font-size: 20px;
 	font-weight: normal;
 	
@@ -305,7 +305,7 @@ section > h4 {
 
 .stamp {
 
-    font-family: "Goudy Bookletter 1911";
+    font-family: "goudy-bookletter-1911-1","goudy-bookletter-1911-2","Goudy Bookletter 1911",serif;
 	font-size: 14px;
     color: rgba(113,107,105,1);
 
@@ -346,7 +346,7 @@ p {
 .big {
 
 	font-size: 26px;
-    font-family: "Goudy Bookletter 1911";
+    font-family: "goudy-bookletter-1911-1","goudy-bookletter-1911-2","Goudy Bookletter 1911",serif;
 	line-height: 48px;    
 	
 }
@@ -402,7 +402,7 @@ aside {
 
 .sidebox h1 {
 
-    font-family: "Goudy Bookletter 1911";
+    font-family: "goudy-bookletter-1911-1","goudy-bookletter-1911-2","Goudy Bookletter 1911",serif;
     font-style: normal;
     font-size: 20px;
     font-weight: normal;
@@ -590,7 +590,7 @@ table {
 th {
 
 	background-color: rgba(208,199,198,1);
-    font-family: "Goudy Bookletter 1911";
+    font-family: "goudy-bookletter-1911-1","goudy-bookletter-1911-2","Goudy Bookletter 1911",serif;
     font-size: 16px;
 	font-weight: normal;
 
@@ -636,7 +636,7 @@ td {
 #canvas > footer {
 
     font-size: 14px;
-    font-family: "Goudy Bookletter 1911";
+    font-family: "goudy-bookletter-1911-1","goudy-bookletter-1911-2","Goudy Bookletter 1911",serif;
 
 	width: 928px;
 	height: 64px;
