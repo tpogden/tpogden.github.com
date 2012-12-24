@@ -7,58 +7,41 @@ title: Photos
 
                 <header>
                 
+                    <img class="side" src="/png/canon-g11-2col.png"/>
+                
                     <h1>{{ page.title }}</h1>
     
                 </header>
                 
-<!-- 
-            <figure>
-            
-                <img class="side" src="/jpg/canon-g11-2col.jpg"/>
-            
-            </figure>
- -->
+                <p>I shoot with a Canon 350D or a Canon G11 and edit in Aperture. Everything is 16&nbsp;&times;&nbsp;9 because constraints are good.</p>
+                
+            </section>
 
-            <!-- <p>For a couple of years I&rsquo;ve been learning how to shoot and edit better photos. I&rsquo;ll let you decide if there&rsquo;s any notable improvement.</p> -->
+                
+        {% for post in site.categories.photos limit:7 %}
             
-            <p>I shoot with a Canon 350D or a Canon G11 and edit in <a href="http://www.apple.com/aperture/" title="Apple Aperture">Aperture</a>. Everything is 16&nbsp;&times;&nbsp;9 because constraints are good.</p>
-
+        <section>
+            
+            <header> 
+                
+                <aside class="stamp">{{ post.date | {{ post.date | date:"%d %B %Y" }}, {{ post.location }}</aside>
+                
+                <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
+                
+            </header>
+            
+            {{ post.content}}
+            
+            <footer>
+            
+            </footer>
+         
         </section>
-
-{% for post in site.categories.photos limit:1 %}
-
+            
+        {% endfor %}
+        
         <section>
         
-            <h4>{{ post.date | date: '%Y' }}</h4>
-
-                <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
-                
-                <p class="description">{{ post.description }}</p>  
+            <aside><a class="button" href="/photos/archive/">&rarr; View more photos</a></aside>
         
-{% capture year_a %}{{ post.date | date: '%Y' }}{% endcapture %}
-        
-{% endfor %}
-
-{% for post in site.categories.photos offset:1 %}
-
-{% capture year_b %}{{ post.date | date: '%Y' }}{% endcapture %}
-
-{% if year_b != year_a %} 
-
-            </section>
-                
-            <section>
-            
-                <h4>{{ post.date | date: '%Y' }}</h4>
-        
-{% endif %}
-
-                <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
-                
-                <p class="description">{{ post.description }}</p>  
-
-{% capture year_a %}{{ post.date | date: '%Y' }}{% endcapture %}
-
-{% endfor %}
-        
-            </section>  
+        </section>

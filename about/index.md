@@ -15,12 +15,10 @@ title: About
 
 <aside class="sidebox">
 
-    <h1>Research in Physics</h1>
+    <h1>My work</h1>
 
     <ul>
-        <li><a href="/papers/">Papers and Reports</a></li>
-        <li><a href="/talks/">Talks and Posters</a></li>
-        <li><a href="/teaching/">Teaching and Outreach</a></li>
+<!--         <li><a href="/research/">Research in Physics</a></li> -->
         <li><a href="http://www.jqc.org.uk/people/thomas-ogden/10/">&rarr; Visit my Durham page</a></li>
     </ul>
 
@@ -59,27 +57,9 @@ I play piano and guitar, and write music for the band [Empty Set](http://emptyse
 </aside>
  -->
 
-I run, kayak, hike, climb and like to leave for places I've never gone before.
-
-<!-- 
-I think curiosity and persistence are what you need to be a good physicist, in fact a good most things. And 'goddamnit be kind'.
- -->
+I run, climb, kayak, hike and like to leave for places I've never gone before.
 
 I'm not as worried as I look.
-
-<!-- 
-## Previously
-
-I was born in north Wales and grew up in Manchester. Both feel like home.
-
-I started learning computers aged ten, when I wrote a program to tell me which fixture was next in my Subbuteo league and update the table when I put in the result. I started my first web 'enterprise' in 1997, when I was fourteen and the web was just a toddler. I made a homepage for a local company and built my school's first site. I still find making websites fun, so I often tinker here.
-
-I got my bachelor's degree in Mathematics &amp; Physics from the [University of Warwick](http://warwick.ac.uk/) in 2004. I then worked as a graduate Electrical Engineer, designing the electrics and control software for four clean water plants in Cambridgeshire and Suffolk. I then founded a consultancy, Dinorwic, and developed software for clients including multinational companies in manufacturing and scientific services.
-
-I always loved thinking about science, so I decided to return to solving problems of the physical sort in 2009,  at the same time fulfilling a dream to move to Sweden. After two years of living in  beautiful Stockholm, I took my master's degree in Computational Physics from [Stockholms Universitet](http://www.su.se/) in 2011.
-
-That summer I came back to Britain to be with my girlfriend Livy, taking a position at Durham, and here we happily are.
- -->
 
 ## This site
 
