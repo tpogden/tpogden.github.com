@@ -41,6 +41,16 @@ I study for a PhD in Theoretical Physics at [Durham](http://www.durham.ac.uk/). 
 </aside>
  -->
 
+<aside class="sidebox">
+
+    <h1>Social</h1>
+
+    <ul>   
+        <li><a href="http://twitter.com/tommyogden">&rarr; Follow me on Twitter</a></li>
+        <li><a href="http://github.com/tommyogden">&rarr; Follow me on GitHub</a></li>         
+    </ul>
+
+</aside>
 
 I play piano and guitar, and write music for the band [Empty Set](http://emptyset.co.uk/). We do short songs, often about science and love.
 
@@ -64,6 +74,8 @@ I'm not as worried as I look.
 ## This site
 
 'Link or it didn't happen.'
+
+You can keep up with this site using [RSS](/atom.xml) or by following me on [Twitter](http://twitter.com/tommyogden).
 
 ## Colophon
 
