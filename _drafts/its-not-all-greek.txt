@@ -1,0 +1,35 @@
+# It's not all Greek
+
+Naming variables well is hard. There are many chapters in many books, both language-specific books and general coding books, dedicated to the subject. There's probably books dedicated to it.
+
+In the python course I helped teach last Michaelmas term at Durham, I 'a', 'b', 'c' as they came to them, but to use descriptors like list_of_random_walkers.
+
+But as the variables we use are linked to mathematical notation, well-known shorthand already exists, and it makes sense to use it in code.
+
+For example.
+
+momentum_of_electron = mass_of_electron * velocity_of_electron. We're going to see p = m*v.
+
+However, a pattern I often see in code is using pseud-greek instead of the well-known greek letters. 
+Using p for /rho (the greek letter rho), u for /mu (the greek letter mu) * . This is bad practice.
+
+Call the variable rho, mu or eta. They're only one or two characters longer, and you save the someone reading it as 'p'.
+
+No rule is good without an exception! I break this rule in one case,
+
+After introducing parameters I add the relevant dimensions, along with a description if necessary. For example, in Matlab 
+
+omega_mu = 1.2; % [MHz] microwave Rabi frequency
+
+num_atoms = 2; [] 
+
+r_min = 0.5; % [um] min atomic separation
+
+See what I did? I used u for mu. Argh! But in the square brackets, it's clearly a unit. And there's only one SI prefix. Alternatives might be to use [mum] (mums?!), [\mu m] to show tex notation, but the space makes it confusing. I think [um] here is clear. 
+
+/Omega for Ohms
+
+CASSIUS: Did Cicero say any thing?
+CASCA: Ay, he spoke Greek.
+
+* uTorrent does this.

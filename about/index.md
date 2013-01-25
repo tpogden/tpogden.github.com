@@ -11,7 +11,12 @@ title: About
 
 </header>
 
-## Me
+<figure>
+
+    <img class="full" src="/jpg/2012-12-y-lliwedd/2012-12-y-lliwedd-005.jpg" />
+    <figcaption></figcaption>
+                
+</figure>
 
 <aside class="sidebox">
 
@@ -67,7 +72,7 @@ I play piano and guitar, and write music for the band [Empty Set](http://emptyse
 </aside>
  -->
 
-I run, climb, kayak, hike and like to leave for places I've never gone before.
+I enjoy running, moutaineering, kayaking, hiking and leaving for places I've never gone before.
 
 I'm not as worried as I look.
 

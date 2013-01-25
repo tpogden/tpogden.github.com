@@ -10,7 +10,7 @@ description: A site for comics writer and drawer Ben Dorning.
 
 <aside>Ben also did the fine illustrations for our Empty Set record <a href="/new-pin"><em>As Neat as a New Pin</em></a>.</aside>
 
-My friend Ben Dorning is, in his own words, 'a comics writer and drawer'. Ben's comics are great, so I was glad to have the chance to help him out by designing and developing a web home for Ben's comics &mdash; [templeroy.com](http://templeroy.com/). Go enjoy them.
+My friend Ben Dorning is 'a comics writer and drawer'. Ben's comics are great, so I was glad to have the chance to help him out by designing and developing a web home for them &mdash; [templeroy.com](http://templeroy.com/). Go enjoy them.
 
 <figure>
 
