@@ -4,115 +4,13 @@ title: Random Walks
 location: Durham
 category: notes
 description:
-published: false
+published: true
 ---
-
-    <style>
-    
-        .axis path,
-        .axis line {
-            fill: none;
-            stroke: black;
-            shape-rendering: crispEdges;
-        }
-
-        .axis text {
-            font-family: sans-serif;
-            font-size: 11px;
-        }
-
-    </style>
 
     <script type="text/javascript" src="/js/d3/d3.v3.js"></script>
     
     <p>Here's a random walk.</p>
     
-    <script type="text/javascript">
-		
-        var w = 592;
-        var h = 64;
-		
-		var pos = w/2; // start in centre
-
-        var walker_size = 4;
-
-        var step_size = w/10;
-
-        var num_steps = 20;
-
-        var delay = 1000;
-        
-        var step = 0; // step counter
-        
-        function get_new_pos(pos_i) { // combine with the take_random_walk function I think
-         
-            var pos_next;
-         
-            if (Math.random() < 0.5) {
-                pos_next = pos_i + step_size;
-            } else {
-                pos_next = pos_i - step_size;
-            }
-
-            return pos_next;
-        
-        };
-
-		function take_random_walk() {
-        
-            pos = get_new_pos(pos);
-            
-            walker.transition()
-                  .attr("cx", pos);
-            
-            step++;
-            
-            if (step < num_steps) {
-                
-                window.setTimeout(function() {
-                    take_random_walk();
-                }, delay);                
-		
-		    }
-		
-		};
-			
-		// Create the SVG object
-        var svg = d3.select("article")
-                    .append("svg")
-                    .attr("width", w)
-                    .attr("height", h)
-                    .classed("d3", true);
-
-        // Create scale
-        var x_scale = d3.scale.linear()
-                              .domain([-5, 5])
-                              .range([0, w]);
-                        
-        // Create an axis
-        var x_axis = d3.svg.axis()
-                       .scale(x_scale)
-                       .orient("bottom");
-
-        svg.append("g")
-            .attr("class", "axis")
-            .call(x_axis);
-
-        // Draw the walker
-        var walker = svg.append("circle");
-        walker.attr("cx", pos)
-              .attr("cy", h/2)
-              .attr("r",walker_size)
-              .attr("fill","black");
-        
-        take_random_walk();
-			
-    </script>
+    <div id="section-1"><button>Run</button></div>
     
-    <p>Here's some text after the random walks.</p>
-    
-    <script>
-    
-    
-    
-    </script>
+    <script src="/js/random-walks-1.js" type="text/javascript"></script>
