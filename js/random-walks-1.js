@@ -32,7 +32,7 @@ function walk_the_walker(walk, walker, i, step_delay) {
     setTimeout(function() {
         console.log("Walker pos:" + walk[i]);
         walker.transition()
-              .attr("cx",x_scale(walk[i]));
+              .attr("cx",x_scale_1(walk[i]));
         i++;
         if (i < walk.length) {
             walk_the_walker(walk, walker, i, step_delay);
@@ -52,19 +52,19 @@ var svg_1 = d3.select("article")
               .classed("d3-panel", true);
     
 // Horizontal scale
-var x_scale = d3.scale.linear()
-                .domain([-5, 5])
-                .range([8, w+8]);    
+var x_scale_1 = d3.scale.linear()
+                  .domain([-5, 5])
+                  .range([8, w+8]);    
 
 // Vertical scale
-var y_scale = d3.scale.linear()
-                .domain([0, 1])
-                .range([0, h]);
+var y_scale_1 = d3.scale.linear()
+                  .domain([0, 1])
+                  .range([0, h]);
     
 // Walker
 var walker_1 = svg_1.append("circle");
-walker_1.attr("cx", x_scale(0))
-        .attr("cy", y_scale(0.5))
+walker_1.attr("cx", x_scale_1(0))
+        .attr("cy", y_scale_1(0.5))
         .attr("r", walker_size)
         .classed("d3-red", true);
 
