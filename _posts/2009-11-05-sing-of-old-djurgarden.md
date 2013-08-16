@@ -8,9 +8,10 @@ description: A match report of Djurg&aring;rden&rsquo;s crucial end-of-season ga
 
 <div>
 <aside>Originally published on <a href="http://badgekissers.blogspot.com/2009/11/sing-of-old-djurgarden-now-sing.html">Badgekissers</a>.</aside>
-
-<p>Monday morning conversations with my neighbour Niklas over breakfast have been downcast these past few weeks. 'How did Djurg&aring;rden get on this weekend?', I'll ask tentatively, over the ever-gurgling kitchen coffee-machine. 'Not good. We lost again.' comes the familiar reply, as I stir my tea. 'How about Liverpool?'. 'Ah, don't ask.'</p>
 </div>
+
+
+Monday morning conversations with my neighbour Niklas over breakfast have been downcast these past few weeks. 'How did Djurg&aring;rden get on this weekend?', I'll ask tentatively, over the ever-gurgling kitchen coffee-machine. 'Not good. We lost again.' comes the familiar reply, as I stir my tea. 'How about Liverpool?'. 'Ah, don't ask.'
 
 Finding a Stockholm football team to follow has been a task I've put off since my move to Sweden, with plenty else to keep me occupied. Hammarby were the team I'd considered beforehand, but Djurg&aring;rden turned out to be the local team when I found a place to live. 'The Blue Stripes' play at the beautiful old Olympic stadium, built for the 1912 summer games. It sits between my new home in the north of the city and the campus of Kungliga Tekniska H&ouml;gskolan where I study, so I pass it on my daily walk.
 

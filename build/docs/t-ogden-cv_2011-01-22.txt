@@ -1,0 +1,81 @@
+Tommy Ogden ~ Curriculum Vitae
+1713, Studentbacken 21, 11557, Stockholm, Sweden
++44 7834 421 552    tommy@tommyogden.com
+
+
+PROFESSIONAL EXPERIENCE
+
+Founder & Software Developer
+Dinorwic, Stockholm
+Jul '10-
+
+~   Founded a consultancy to support my Masters study during academic holidays. PL/SQL & Oracle development and business analytics. Serving clients in scientific analysis and manufacturing industries.
+
+Oracle PL/SQL Developer
+Biwater, Manchester
+Jan '07-Jun '09
+
+~   Worked on implementation of an ERP system for the Biwater group in 2007.
+~   Migrated data from a legacy system and developed application layers. 
+~   Designed suites of reporting tools for finance, project management, commerical, supply chain and payroll functions.
+
+Graduate Electrical Engineer
+Biwater, Peterborough
+Jun '05-Dec '06
+
+~   Led electrical and control system design on an £11m programme of work to maintain water supply to the town of Newmarket. 
+~   Managed subcontracts for electrical installation, motor control centres, generators, transformers and telemetry.
+~   Developed and tested Programmable Logic Controller software to automate plant operation.
+
+
+EDUCATION
+
+MSc in Computational Physics
+Stockholms Universitet
+Aug '09-
+
+~   Courses in mathematical methods, numerical analysis, high-performance computing, quantum chemistry, simulation methods and molecular physics. Masters project on reorientational dynamics of nitrate anions in solution.
+
+BSc (Hons) in Mathematics & Physics
+University of Warwick
+Oct '01-Jun '04
+
+~   Degree project on magnetohydrodynamics in the solar corona.
+
+A Levels
+Oulder Hill Sixth Form
+Sep '99-Jun '01
+
+~   Mathematics, Further Mathematics, Physics, Computing, Chemistry (1 year), General Studies.
+
+SKILLS
+
+Languages
+
+~   Native:	    English. 
+~   Foreign:    Swedish (basic: 2 years of university courses and residence),
+                French (basic: GCSE and 1 year of university courses).
+
+Programming
+
+~   Languages:  C++, PL/SQL, Fortran, Matlab, Ruby.
+~   Databases:  Oracle, MySQL.
+~   Markup:     HTML, CSS, TeΧ.
+
+Design
+
+~   Tools:      Photoshop, Illustrator, InDesign, Crystal Reports.
+
+
+ACTIVITIES
+
+Music
+
+~   Certified by ABRSM to grade 5 in piano, violin and music theory.
+~   Write, sing, play guitar and ukulele for the folk-pop group Empty Set.
+~   Released a critically-acclaimed debut album in 2009.
+
+Pursuits
+
+~   Hiked the 429km Pennine Way national trail solo for two weeks in 2009.
+~   In training to run the Stockholm Marathon in May 2011.
