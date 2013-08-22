@@ -1,3 +1,5 @@
+(function() {
+
 var w = 594 - 2;
 var h = 64 - 2;
 
@@ -32,13 +34,13 @@ function walk_the_walker(walk, walker, i, step_delay) {
     setTimeout(function() {
         console.log("Walker pos:" + walk[i]);
         walker.transition()
-              .attr("cx",x_scale_1(walk[i]));
+              .attr("cx",x_scale(walk[i]));
         i++;
         if (i < walk.length) {
             walk_the_walker(walk, walker, i, step_delay);
         }
         else {
-            button_1.attr('disabled', null);
+            run_button.attr('disabled', null);
         }
     }, step_delay)
     return walk;   
@@ -52,29 +54,31 @@ var svg_1 = d3.select("article")
               .classed("d3-panel", true);
     
 // Horizontal scale
-var x_scale_1 = d3.scale.linear()
+var x_scale = d3.scale.linear()
                   .domain([-5, 5])
                   .range([8, w+8]);    
 
 // Vertical scale
-var y_scale_1 = d3.scale.linear()
+var y_scale = d3.scale.linear()
                   .domain([0, 1])
                   .range([0, h]);
     
 // Walker
-var walker_1 = svg_1.append("circle");
-walker_1.attr("cx", x_scale_1(0))
-        .attr("cy", y_scale_1(0.5))
+var walker = svg_1.append("circle");
+walker.attr("cx", x_scale(0))
+        .attr("cy", y_scale(0.5))
         .attr("r", walker_size)
         .classed("d3-red", true);
 
 // Run button
-button_1 = d3.select("button")
+run_button = d3.select("#button-1")
              .attr('disabled', null)
              .on("click", function() {
-                if (button_1.attr('disabled') != true) {
-                    button_1.attr('disabled', true);
-                    walk_the_walker(take_random_walk(start_pos,num_steps,step_size), walker_1, 0,                  
+                if (run_button.attr('disabled') != true) {
+                    run_button.attr('disabled', true);
+                    walk_the_walker(take_random_walk(start_pos,num_steps,step_size), walker, 0,                  
                     step_delay);
                 }
              });
+
+})()
