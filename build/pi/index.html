@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    
+
+    <title>Pickup Sticks &amp; Pi by Tommy Ogden</title>
+
+    
+
+    <link href="/atom.xml" rel="alternate" title="Atom Feed" type="application/atom+xml" />
+
+<!--     <link rel="shortcut icon" href="/png/favicon.png"> -->
+
+    <!--[if ! lte IE 6]><!-->
+    <link rel="stylesheet" href="/css/screen.css" />
+    <!--<![endif]-->
+
+    <!--[if lte IE 6]>
+    <link rel="stylesheet" href="http://universal-ie6-css.googlecode.com/files/ie6.1.1.css" media="screen, projection">
+    <![endif]-->
+
+    <!-- MathJax -->
+    <script type="text/javascript"
+        src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+
+</head>
+
+<!-- Typekit -->
+    <script type="text/javascript" src="http://use.typekit.com/xeb1hul.js"></script>
+    <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+    
+
+    <body>
+    
+        <div id="canvas">
+        
+                    <header>
+        
+            <a href="/"><svg id="logo" xmlns="http://www.w3.org/2000/svg" version="1.1" width="64px" height="64px" viewBox="0 0 64 64">
+   <circle cx="32" cy="32" r="24" style="stroke: rgba(189,54,19,1); stroke-width:3px" fill="none"/> 
+   <line x1="22" y1="22" x2="42" y2="42" style="stroke: rgba(189,54,19,1); stroke-width:3px; stroke-linecap: round;" />
+   <line x1="42" y1="22" x2="22" y2="42" style="stroke: rgba(189,54,19,1); stroke-width:3px; stroke-linecap: round;" />
+</svg></a>
+<!-- 
+        
+            <a href="/"><canvas id="logo-canvas" width="64" height="64"></canvas></a>
+
+            <script src="/js/logo.js"></script>
+            
+            <script>
+                drawLogo();
+            </script>
+ -->
+
+<!--             <h1><a href="/">&otimes;</a></h1> -->
+            <nav>
+
+                <ul>
+                    <li><a href="/about/">About</a></li>
+                    <li class="active"><a href="/projects/">Projects</a></li>
+                    <li><a href="/notes/">Notes</a></li>
+                    <li class="last-li"><a href="/photos/">Photos</a></li>
+                </ul>
+	
+            </nav>
+
+        </header>
+          
+            <article>
+          
+                <header>
+
+                    <aside class="stamp">March 2011, Stockholm</aside>
+
+                    <h1>Pickup Sticks &amp; Pi</h1>
+
+                </header>
+          
+                
+                
+                <p class="description">Measure &pi; just by dropping sticks on a table and counting them. A demonstration of Buffon’s needle using the HTML5 canvas.</p>
+                
+                
+          
+                            <aside><a class="button" href="#play">&rarr; Play the Game!</a></aside>
+            
+            <p>We all learn at school that \( \pi \) is the ratio of a circle&rsquo;s circumference to its diameter, but \( \pi \) turns up all over the place in mathematics. For example, did you know you can measure \( \pi \) just by dropping sticks on a table and counting them? This is because \( \pi \) has  a role in statistics too. Below you can try it for yourself, first we&rsquo;ll visit the story of how this remarkable trick was discovered.</p>
+
+            <h2>Buffon&rsquo;s Needle</h2>
+
+
+
+            <p>In 1777, a French philosopher called Georges-Louis Leclerc, Comte de Buffon, wrote out a very elegant theorem which turned out to be the earliest problem in geometric probability.&sup1;</p>
+            
+                        <aside>&sup1;Connor & Robertson.</aside>          
+            
+            <p>Buffon discovered that if you draw a set of equally-spaced parallel lines (say, \( d \) centimetres apart) and drop sticks on them which are shorter than the spacing (say \( l \) centimetres long, where \( l \) is less than \( d \)), then the probability&sup2; of a stick crossing a line is \[ \frac{2 l}{\pi d}.\]
+            
+            </p>
+            
+            <aside>&sup2; Allen & Tildesley, p110.</aside>  
+            
+            <p>This means that if you drop lots of sticks randomly and count how many cross the parallel lines, you can calculate what \( \pi \) is by rearranging the formula:
+            
+            \[ \pi = \frac{c d}{2ls} \]
+            
+            where \( s \) is the number of sticks you drop and \( c \) is the number that crossed a line.</p>
+            
+            <p>Isn&rsquo;t that remarkable? Buffon had worked out that you can calculate \( \pi \) just by dropping a bunch of sticks on a table &mdash; no circles required! The problem is known as Buffon&rsquo;s Needle.</p>
+            
+            <p>As usual in statistics, we want to take a big sample to get an estimate close to the true probability. If I ask 5 people &lsquo;are you left handed?&rsquo; and you ask 500 people the same, we know that your bigger sample is likely to give us the better idea of what proportion of people are left handed in the whole country. The same applies here &mdash; to get a good sample we need to drop a lot of sticks.</p>
+            
+            <p>Perhaps that&rsquo;s why it took a long time after Buffon&rsquo;s discovery for somebody to actually try it themselves, but in 1901 the Italian mathematician Mario Lazzerini gave it a go. He span around and dropped over 3,400 sticks onto the floor, counted up the number that crossed over lines and estimated \( \pi \) to be 3.1415929. We know \( \pi \) to be 3.1415927&hellip;, so he was correct in the first 6 digits, an error of 0.000006%. That&rsquo;s good! Suspiciously good in fact, and so improbable that it&rsquo;s more likely he cheated (Hoist by his own probabilistic petard?).</p>
+            
+            <h2>Monte Carlo</h2>
+            
+            <p>What Lazzerini did we would today call a simulation. Simulations have become vastly easier and more important now that we can use computers to do the legwork for us. I&rsquo;m sure a dizzy Lazzerini would&rsquo;ve appreciated one. Simulations like this, where we use randomness (or, usually, pseudo-randomness) to give us a sample of results, are called Monte Carlo methods, after the European city famous for its casino.&sup3;</p>
+            
+            <aside>&sup3; Thijssen, p295.</aside>
+            
+            <p>Monte Carlo methods are very useful in physics, as we can model a large system with a huge number of possible states with a much smaller, but representative subset.&#8308; It has important uses in thermal physics, molecular modelling, astrophysics and weather forecasting. And, as Buffon showed 200 years ago, can even be used to calculate \( \pi \).</p>
+            
+            <aside>&#8308; Schroeder, p346.</aside>
+            
+            <p>Have a go yourself with the simulator below!</p>
+
+        </article>    
+
+        <article id="play">
+                
+                <h2>Play</h2>
+                
+                <p>Number of sticks dropped: <span id="stick-count">0</span><br />
+                Number that crossed a line: <span id="cross-count">0</span></p>
+                
+                <p class="big">Your estimate of \( \pi \): <span id="estimate">0</span></p>
+
+            <aside>
+                 <form class="side" id="sticks-form">
+                    <label>Number of sticks to drop:</label>
+                    <select id="num-sticks-select" size="1">
+                        <option value="10">10</option>
+                        <option value="100" selected="selected">100</option>
+                        <option value="1000">1,000</option>
+                        <option value="10000">10,000</option>
+                    </select>
+                </form>
+                </aside>
+
+
+                <p>Error: <span id="error-percent">0</span>%</p>
+
+                <aside><strong>Click on the board!</strong> Each time you click, <span id="num-sticks">100</span> sticks will be dropped and the number that cross a line will be counted. I dropped 10 to start you off.<br /><br />
+                
+                Does the estimate get better as you drop more sticks (i.e. does the error get smaller)? How close to \( \pi \) can you get after 100,000 sticks, or 1,000,000?
+                </aside>
+
+                <canvas id="pickup-canvas" width="480" height="640"></canvas>
+
+                <script src="/js/pickup-2.js"></script>
+    
+                <script>
+                    initGame(
+                        document.getElementById('pickup-canvas'),
+                        document.getElementById('stick-count'),
+                        document.getElementById('cross-count'),
+                        document.getElementById('estimate'),
+                        document.getElementById('error-percent'),
+                        document.getElementById('num-sticks-select'),
+                        document.getElementById('num-sticks')
+                        );
+                </script>
+                
+                <aside>Note: The game uses the HTML5 Canvas element, so you&rsquo;ll need a fairly modern browser for it to work.</aside>
+
+        </article>
+        
+                <article id="references">
+
+            <header>
+                
+                <h1>References & Credits</h1>
+                
+            </header>
+
+            <p>Jos Thijssen. <em>Computational Physics</em>. Cambridge University Press, second edition, March 2007.</p>
+            
+            <p>Daniel V. Schroeder. <em>An Introduction to Thermal Physics</em>, Addison Wesley, first edition, August 1999.</p>
+            
+            <p>M. P. Allen and D. J. Tildesley.	<em>Computer Simulation of Liquids</em>, Clarendon Press, first edition, June 1989.</p>
+
+            <p>Mark Pilgrim. <a href="http://diveintohtml5.org/canvas.html"><em>Dive Into HTML5</em></a>.</p>
+
+            <p>J. J. O&rsquo;Connor and E. F. Robertson. <a href="http://www-history.mcs.st-andrews.ac.uk/Biographies/Buffon.html"><em>Georges Louis Leclerc Comte de Buffon</em></a>.
+            
+            <p>Eric W. Weisstein. <a href="http://mathworld.wolfram.com/BuffonsNeedleProblem.html"><em>Buffon's Needle Problem</em></a>. From MathWorld &mdash; A Wolfram Web Resource.</p>
+            
+            <h3>Ants Use Buffon&rsquo;s Needle</h3>
+
+            <p><a href="http://twitter.com/matthewcobb">Matthew Cobb</a> pointed me to this fascinating paper which describes how <a href="http://www.le.ac.uk/bl/ebm3/Mugford.pdf">ants use Buffon&rsquo;s Needle</a> to determine, before initiating an emigration, if a nest has sufficient area to house their colony.</p>
+          
+            </article>
+            
+                    <footer>
+                
+            <p id="notice"><!-- &copy; -->Copyright 2009&ndash;2013 Thomas P. Ogden.</p>
+ 
+        </footer>    
+            
+        </div> <!--/canvas-->
+    
+    	    <!-- jQuery -->
+    <script type="text/javascript" src="/js/jquery-1.6.3.min.js"></script>
+    
+    <!-- Hashgrid -->
+    <script type="text/javascript" src="/js/hashgrid.js"></script>
+    
+    <!-- Google Analytics Tracking Code -->
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-8796292-1']);
+      _gaq.push(['_trackPageview']);
+    
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    
+    </script>
+    
+    </body>
+    
+</html>

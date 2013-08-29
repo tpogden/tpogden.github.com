@@ -8,9 +8,9 @@ permalink: /lapland/likes-long-walks
 published: false
 ---
 
-Four years ago I went for a walk. In one go I trekked the Pennine Way over the hills of north England, from Derbyshire to Scotland. It took two weeks, I was on my own on the moors mostly, it was great.
+Four years ago I went for a walk. I picked up my backpack and trekked the Pennine Way over the hills of north England, from Derbyshire to Scotland. It took two weeks, I was on my own on the moors mostly, it was great.
 
-A couple of months later I left Britain to live in Sweden. Soon after arriving, I was talking to Ida, a fellow outdoors-botherer[1], about long treks. 'You should do the Kungsleden', she said.
+A couple of months later I left Britain to live in Sweden. Soon after arriving, I was talking to my friend Ida, a fellow outdoors-botherer[outdoors], about long treks. 'You should do the Kungsleden', she said.
 
 Kungsleden ('The King's Trail') is a 430 kilometre route across arctic Sweden, from Abisko at the top down to Hemavan through Lapland, Europe's last proper wilderness. You can hike it when the snow melt is gone in the late summer or cross-country ski it in the winter.
 
@@ -20,31 +20,22 @@ Two years later, with a PhD position and a patient girlfriend waiting for me, I 
 
 ***
 
-February this year, over a year since I left Sweden, I found an unexpected email in my inbox. The whole message was just one short and cryptic question: 'Do you still have your backpack?' It was a good friend of mine from Stockholm, Niklas. Having mentioned the idea of Kungsleden to him a few times over beers at Carmen, I guessed what he was getting at and grinned. Yes, I still have the old pack.
+February this year, over a year since I left Sweden, I found an unexpected email in my inbox. The whole message was just one short and cryptic question: 'Do you still have your backpack?' It was a good friend of mine from Stockholm, Niklas. Having mentioned the idea of Kungsleden to him a few times over beers at Carmen, I guessed what he was getting at. Yes, I still have the old pack.
  
-So we're going to trek the Kungsleden. Or actually, we're not. The trail itself is 'a highway for tourists' says Nik[2]. Though it made me laugh to hear a marked-in-some-places path called a highway, I too am happy being off the beaten track. Between my time hiking around the hills of Britain and Nik's national service in the wilds of Sweden, I think we've got enough experience with a map and compass.
-
-We're going to start at Abisko but then trek our own route through Lapland to arrive at Kvikkjokk, [X] miles away as the crow flies, which is certainly not the way we'll go. 
+So we're going to trek the Kungsleden. Or actually, we're not. The trail itself is 'a highway for tourists' says Nik. Though I think highway is probably an exaggeration, I too am happy venturing off the beaten track in search of adventure. Our plan is to start at Abisko but set off away from the trail and south through Lapland, aiming to arrive in the village of Kvikkjokk two weeks later.
 
 There'll be no farmers' fields to cross, and being able to camp anywhere we like [allmansraten], we can make our own route. The thing I love looking at the map is it's all physical.
 crossing rivers, climbing hills, taking rowboats across lakes.
 
-PW there were places along the way I could get food, and pubs to finish a day's hike with a pint. In Lapland, there'll be nobody for hundreds of miles. Just Reindeer and Elk.
-
-[carry tent, sleeping bags, mats, stove, food] everything with us. Heavy packs. 'What animals can you hunt?'
+PW there were places along the way I could get food, and pubs to finish a day's hike with a pint. In Lapland, there'll be nobody for hundreds of miles. Just Reindeer, Elk and us.
 
 ***
 
-To study the maps and plan our adventure, Nik came to Manchester a couple of weeks ago. As well as 
+To study the maps and plan our expedition, Nik came to Manchester a couple of weeks ago. Finding the 
 
+As well as showing Nik around a few of the best pubs in town[manc], we took a train into the Peak District to go up Kinder Scout. We set off up the popular route up Jacob's Ladder and soon after a bright start, the wind picked up and it started belting it down with rain. I'd left my walking trousers in Durham so was walking wearing jeans, which got heavy and stuck to my legs. Nik's jacket leaked. Finding no shelter in sight we stood on the ridge in the rain, drank tea and ate wet sandwiches. It was good sign for the adventure ahead though as despite being soaked through both of us remained in good spirits, catching up and telling jokes.
 
-
-To plan the adventure over the maps, take me through the first draft itinerary and start an equipment list, Niklas came to Manchester a couple of weeks ago. As well as exploring the city (Marble Arch, Britons Protection, Lass O'Gowrie)
-
-along with Science Museum and Football museum, where the embarrassingly obvious penalty shootout score was Wales 0 Sweden 3.
-We even found a book in John Rylands
-
-We also went up Kinder Scout. Taking the popular route up Jacob's Ladder, Left the path at Kinder Downfall and took a bearing. It was belting it down with rain. Worse, I'd left my walking trousers in so was wearing jeans, heavy and stuck to my legs. Nik's jacket leaked. Soaked through, both of us remained in good spirits, catching up on life and telling jokes. We stood  in the rain and drank tea. On the way down the sun came out. 'I prefer this side of the hill, it's drier'
+We left the path at Kinder Downfall and took a bearing to navigate the streams between those towering walls of peat over to the lumpy rocks of Crowden Tower. On the way back down to Edale the sun came out and we'd pretty much baked out by the time we left the tops to head back down. 'I prefer this side of the hill, it's drier', noted Nik. We stopped at the Old Nag's Head to sup a pint before catching the train back to the city.
 
 ***
 
@@ -52,5 +43,5 @@ The plan then is that at the end of July I'll fly into Arlanda, meet Niklas, and
 
 ***
 
-[1] I found most Swedes like the outdoors, which is good as they've got loads of it.
-[3] and a couple other Swedes I talked to about it. Going off piste up there is not that uncommon, apparently.
+[outdoors] I found most Swedes like the outdoors, which is good as they've got loads of it.
+[manc]

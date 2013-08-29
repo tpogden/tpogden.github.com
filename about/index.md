@@ -29,22 +29,7 @@ title: About
 
 </aside>
 
-I study for a PhD in Theoretical Physics at [Durham](http://www.durham.ac.uk/). I work at the [Joint Quantum Centre](http://www.jqc.org.uk). My areas of interest are atomic physics and quantum optics. I look at how we might control atoms and light to make a quantum computer.
-
- 
-<!-- 
-<aside class="sidebox">
-
-    <h1>Songwriting</h1>
-
-    <ul>
-        <li><a href="">Records</a></li>
-        <li><a href="">Interviews</a></li>
-        <li><a href="/">&rarr; Visit the Empty Set site</a></li>
-    </ul>
-
-</aside>
- -->
+I study for a PhD in Theoretical Physics at [Durham](http://www.durham.ac.uk/), working at the [Joint Quantum Centre](http://www.jqc.org.uk). My areas of research are atomic physics and quantum optics. I look at how we might control atoms and light to make a quantum computer.
 
 <aside class="sidebox">
 
@@ -59,20 +44,7 @@ I study for a PhD in Theoretical Physics at [Durham](http://www.durham.ac.uk/). 
 
 I play piano and guitar, and write music for the band [Empty Set](http://emptyset.co.uk/). We do short songs, often about science and love.
 
-<!-- 
-<aside class="sidebox">
-
-    <h1>Code</h1>
-
-    <ul>
-        <li><a href="/">&rarr; Visit the Dinorwic site</a></li>
-        <li><a href="/">&rarr; Visit my GitHub Repos</a></li>
-    </ul>
-
-</aside>
- -->
-
-I enjoy running, moutaineering, kayaking, hiking and leaving for places I've never gone before.
+Born in north Wales, home is Manchester and I spent two years living in Stockholm, Sweden. I enjoy running, moutaineering, kayaking, hiking and leaving for places I've never gone before.
 
 I'm not as worried as I look.
 
