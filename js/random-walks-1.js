@@ -6,10 +6,10 @@ var h = 64 - 2;
 var walker_size = 8;
 
 var start_pos = 0;
-var num_steps = 10;
+var num_steps = 20;
 var step_size = 1;
 
-var step_delay = 500;
+var step_delay = 500; // [ms]
 
 function take_random_walk(pos_start, num_steps, step_size) {
 
@@ -35,14 +35,8 @@ function walk_the_walker(walk, walker, i, step_delay) {
         i++;
         if (i < walk.length) {
             walk_the_walker(walk, walker, i, step_delay);
-<<<<<<< HEAD
         } else {
             button_1.attr('disabled', null);
-=======
-        }
-        else {
-            run_button.attr('disabled', null);
->>>>>>> master
         }
     }, step_delay)
     return walk;   

@@ -1,18 +1,3 @@
-<<<<<<< HEAD
-var w = 594 - 2;
-var h = 320-2;
-
-var x_step = w/10;
-var num_steps = 20;
-var delay = 1000;
-
-var y_step = h/10;
-
-var walker_size = 4;
-
-var x_pos = w/2;
-var y_pos = 0;
-=======
 (function() {
 
 // Variables
@@ -29,7 +14,6 @@ var step_size = 1;
 var step_delay = 500;
 
 var y_step = h/10;
-
 
 function take_random_step(pos, step_size) {
     if (Math.random() < 0.5) {
@@ -57,21 +41,12 @@ function get_line_data(random_walk) {
     }
     return line_data
 }
->>>>>>> master
 
 // Move the walker along the walk
 function walk_the_walker(walk, walker, i, step_delay) {
     setTimeout(function() {
         console.log("Walker pos:" + walk[i]);
         walker.transition()
-<<<<<<< HEAD
-              .attr("cx",x_scale(walk[i]));
-        i++;
-        if (i < walk.length) {
-            walk_the_walker(walk, walker, i, step_delay);
-        } else {
-            button_1.attr('disabled', null);
-=======
               .attr("cx",x_scale(walk[i]))
               .attr("cy",y_scale(i));
         i++;
@@ -80,33 +55,10 @@ function walk_the_walker(walk, walker, i, step_delay) {
         }
         else {
             run_button.attr('disabled', null);
->>>>>>> master
         }
     }, step_delay)
     return walk;   
 }
-
-<<<<<<< HEAD
-// Create the SVG object
-var svg_2 = d3.select("article")
-            .append("svg")
-            .attr("width", w+2*8-2)
-            .attr("height", h)
-            .classed("d3-panel", true);
-
-// Create an axis
-//         var x_axis_2 = d3.svg_2.axis()
-//                        .scale(x_scale)
-//                        .orient("bottom");
-
-// Walker
-var walker_2 = svg_2.append("circle");
-walker_2.attr("cx", x_scale(0))
-        .attr("cy", y_scale(0.5))
-        .attr("r", walker_size)
-        .classed("d3-red", true);
-=======
-
 
 // Horizontal scale
 var x_scale = d3.scale.linear()
@@ -132,8 +84,6 @@ walker.attr("cx", x_scale(0))
         .attr("r", walker_size)
         .classed("d3-red", true);
 
-var walker_line = svg_2.append("path");
-
 
 // Run button
 run_button = d3.select("#button-2")
@@ -146,13 +96,4 @@ run_button = d3.select("#button-2")
                 }
              });
 
-var walk = take_random_walk(0,10,1)
-
-console.log("Walk:" + walk);
-
-var line_data = get_line_data(walk)
-
-console.log("Line data:" + line_data[5].pos);
-
 })()
->>>>>>> master
