@@ -15,7 +15,6 @@ var step_delay = 500;
 
 var y_step = h/10;
 
-
 function take_random_step(pos, step_size) {
     if (Math.random() < 0.5) {
         pos_next = pos + step_size;
@@ -61,8 +60,6 @@ function walk_the_walker(walk, walker, i, step_delay) {
     return walk;   
 }
 
-
-
 // Horizontal scale
 var x_scale = d3.scale.linear()
                 .domain([-5, 5])
@@ -87,8 +84,6 @@ walker.attr("cx", x_scale(0))
         .attr("r", walker_size)
         .classed("d3-red", true);
 
-var walker_line = svg_2.append("path");
-
 
 // Run button
 run_button = d3.select("#button-2")
@@ -100,13 +95,5 @@ run_button = d3.select("#button-2")
                     step_delay);
                 }
              });
-
-var walk = take_random_walk(0,10,1)
-
-console.log("Walk:" + walk);
-
-var line_data = get_line_data(walk)
-
-console.log("Line data:" + line_data[5].pos);
 
 })()

@@ -6,25 +6,22 @@ var h = 64 - 2;
 var walker_size = 8;
 
 var start_pos = 0;
-var num_steps = 10;
+var num_steps = 20;
 var step_size = 1;
 
-var step_delay = 500;
-
-function take_random_step(pos, step_size) {
-    if (Math.random() < 0.5) {
-        pos_next = pos + step_size;
-    } else {
-        pos_next = pos - step_size;
-    }
-    return pos_next;
-}
+var step_delay = 500; // [ms]
 
 function take_random_walk(pos_start, num_steps, step_size) {
+
     var random_walk = new Array();
     random_walk[0] = pos_start;
+    
     for (i = 0; i < num_steps; i++) {
-        random_walk[i+1] = take_random_step(random_walk[i], step_size);
+        if (Math.random() < 0.5) {
+            random_walk[i+1] = random_walk[i] + step_size;
+        } else {
+            random_walk[i+1] = random_walk[i] - step_size;
+        }
     }
     return random_walk;
 }
@@ -38,9 +35,8 @@ function walk_the_walker(walk, walker, i, step_delay) {
         i++;
         if (i < walk.length) {
             walk_the_walker(walk, walker, i, step_delay);
-        }
-        else {
-            run_button.attr('disabled', null);
+        } else {
+            button_1.attr('disabled', null);
         }
     }, step_delay)
     return walk;   
