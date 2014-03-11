@@ -53,7 +53,7 @@ function dropSticks(numSticks) {
     estimateElem.innerHTML = estimate.toPrecision(7);
 
     errorPercent = 100*Math.abs(pi - estimate)/pi;
-    errorPercentElem.innerHTML = errorPercent.toPrecision(6);
+    errorPercentElem.innerHTML = errorPercent.toPrecision(2);
 
 }
 
