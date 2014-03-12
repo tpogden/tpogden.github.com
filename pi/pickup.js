@@ -7,6 +7,8 @@ var boardHeight = 1 + numRows * rowHeight;
 var stickLength = 50;
 var pi = 3.14159265;
 
+var lineThicknessCorrection = -0.034
+
 var gCanvasElement;
 var gDrawingContext;
 
@@ -49,7 +51,8 @@ function dropSticks(numSticks) {
     for (var n = 0; n < numSticks; n++)
         dropStick();
 
-    estimate = 1/((crossCount/gStickCount) * colWidth / (2 * stickLength));
+    // estimate = 1/((crossCount/gStickCount) * colWidth / (2 * stickLength));
+    estimate = 2.0*stickLength*gStickCount/crossCount/colWidth + lineThicknessCorrection;
     estimateElem.innerHTML = estimate.toPrecision(7);
 
     errorPercent = 100*Math.abs(pi - estimate)/pi;
