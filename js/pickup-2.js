@@ -29,7 +29,7 @@ var numSticksSelectElem;
 var numSticksElem;
 
 var grey = "#333";
-var brown = "rgba(115,81,72,0.5)";
+var red = "rgba(189,54,19,1)";
 
 function pickupOnClick(e) {
 
@@ -82,7 +82,7 @@ function dropStick() {
     gDrawingContext.lineTo(xEnd, yEnd);
 
     /* draw it! */
-    gDrawingContext.strokeStyle = brown;
+    gDrawingContext.strokeStyle = red;
     gDrawingContext.stroke();
     
     gStickCount += 1;
