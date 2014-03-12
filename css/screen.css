@@ -89,7 +89,7 @@ a:hover {
     
 	margin-left: 0px;
 	margin-bottom: 0px;
-	margin-right: 224px;
+    margin-right: 64px; /* Was 224px, before Twitter link */
 	margin-top: 0px;
 	
 	padding-top: 32px;
@@ -103,7 +103,7 @@ a:hover {
 
 nav {
 
- 	width: 608px;
+    width: 768px; /* Was 608px, before Twitter link */
 	float: left;
 
     color: rgba(208,199,198,1);
