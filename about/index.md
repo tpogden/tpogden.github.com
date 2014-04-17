@@ -13,7 +13,7 @@ title: About
 
 <figure>
 
-    <img class="full" src="/jpg/2012-12-y-lliwedd/2012-12-y-lliwedd-005.jpg" />
+    <img class="full" src="/assets/photos/2014/glen-coe/glen-coe-004.html" />
     <figcaption></figcaption>
                 
 </figure>
