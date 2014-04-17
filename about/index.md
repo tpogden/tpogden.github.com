@@ -5,7 +5,7 @@ title: About
 
 <header>
 
-    <aside class="stamp">October 2012, Durham</aside>
+    <!-- <aside class="stamp">October 2012, Durham</aside> -->
 
     <h1>About</h1>
 
@@ -14,7 +14,7 @@ title: About
 <figure>
 
     <img class="full" src="/assets/photos/2014/glen-coe/glen-coe-004.jpg" />
-    <figcaption></figcaption>
+    <figcaption>&uarr; Preferred habitat.</figcaption>
                 
 </figure>
 
