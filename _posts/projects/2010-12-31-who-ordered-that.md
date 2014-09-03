@@ -3,6 +3,7 @@ layout: project
 title: Who Ordered That?
 location: Stockholm
 category: projects
+tags: web
 published: true
 permalink: /who-ordered-that
 description: A scrapbook of physical curiosity.
