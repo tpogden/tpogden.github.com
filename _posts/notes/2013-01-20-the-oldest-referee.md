@@ -3,6 +3,8 @@ layout: note
 title: The Oldest Referee
 location: Durham
 category: notes
+redirect_from:
+  - /notes/the-oldest-referee/
 description: <span>&lsquo;There are no rules in football, just laws, and I'm the judge and executioner.&rsquo;</span>
 published: true
 ---
