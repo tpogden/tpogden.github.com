@@ -29,7 +29,7 @@ title: About
 
 </aside>
 
-I study for a PhD in Theoretical Physics at [Durham](http://www.durham.ac.uk/), working at the [Joint Quantum Centre](http://www.jqc.org.uk). My areas of research are atomic physics and quantum optics. I look at how we might use atoms and light to control quantum information.
+Hej, I&rsquo;m Tommy Ogden. I study for a PhD in Theoretical Physics at [Durham](http://www.durham.ac.uk/), working at the [Joint Quantum Centre](http://www.jqc.org.uk). My areas of research are atomic physics and quantum optics. I look at how we might use atoms and light to control quantum information.
 
 <aside class="sidebox">
 
@@ -42,9 +42,9 @@ I study for a PhD in Theoretical Physics at [Durham](http://www.durham.ac.uk/), 
 
 </aside>
 
-I play piano and guitar, and write music for the band [Empty Set](http://emptyset.co.uk/). We do short songs, often about science and love.
-
 Born in north Wales, home is Manchester and I spent two years living in Stockholm, Sweden. I enjoy running, moutaineering, kayaking.
+
+I play piano and guitar, and write music for the band [Empty Set](http://emptyset.co.uk/). We do short songs, often about science and love.
 
 You can keep up with this site using [RSS](/atom.xml) or by following me on [Twitter](http://twitter.com/tommyogden).
 
