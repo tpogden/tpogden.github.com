@@ -3,84 +3,60 @@ layout: projects
 title: Projects
 ---
 
-        <section>
-            
-            <header>
-            
-                <h1>Projects</h1>
-
-            </header>
-
-            <aside>&lsquo;Link or it didn't happen.&rsquo;</aside>
-
-            <p>Here&rsquo;s where I put papers published, albums pressed, code shipped and finish lines crossed. Otherwise I might forget.</p>
-
-            </section>
-            
             <section>
 
-            <h4>2012&mdash;</h4>
+                <header>
+                
+                    <h1>{{ page.title }}</h1>
+    
+                </header>
 
-            <h2>Great North Run</h2>
-            
-            <p>A half marathon from Newcastle through Gateshead to the sea at South Shields. 01:44:07</p>
-            
-            <h2>OB Two</h2>
-            
-            <p>A tool for solving the optical Bloch equations for a two-level system.</p>
-            
-            </section>
-            
-            <section>
-            
-            <h4>2011&mdash;</h4>
-            
-            <h2><a href="/nitrate/">Reorientation Dynamics of Nitrate in Water</a></h2>
-            
-            <p>My master of science thesis, a computational study of the behaviour of the nitrate anion in water.</p2>
-            
-            <h2>Stockholm Marathon</h2>
-            
-            <p>My first marathon around the capital of Sweden, run in 03:56:05.</p>
+                <p>Work I've done. Find out about new things here by following on <a href="http://twitter.com/tommyogden">Twitter</a> or by <a href="/atom.xml">RSS</a>.</p>
 
-           <h2><a href="/pi/">Pickup Sticks &amp; Pi</a></h2>
-            
-            <p>Measure &pi; just by dropping sticks on a table and counting them. A demonstration of Buffon’s needle using the HTML5 canvas.</p>
-
-            <h2>Forskarskolan</h2>
-            
-            <p>Teaching six high school students on a two-week summer school in scientific research at Stockholm University.</p>
-
-            <h2>Design of templeroy.com</h2>
-            
-            <p>A website for comics writer and drawer Ben Dorning.</p>
-            
         </section>
+
+{% for post in site.categories.projects limit:1 %}
+
+        <section>
         
-        <section>
+            <img class="side" src="/png/nitrate-orbitals.png" />
+        
+            <h4>{{ post.date | date: '%Y' }}</h4>
 
-            <h4>2010&mdash;</h4>
+                <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
+                
+                <!-- <aside class="stamp">{{ post.date | {{ post.date | date:"%d %B" }}, {{ post.location }}</aside> -->
+                
+                <p class="description">{{ post.description }}</p>  
+        
+        
+        
+{% capture year_a %}{{ post.date | date: '%Y' }}{% endcapture %}
+        
+{% endfor %}
 
-            <h2>Cutout</h2>
+{% for post in site.categories.projects offset:1 %}
+
+{% capture year_b %}{{ post.date | date: '%Y' }}{% endcapture %}
+
+{% if year_b != year_a %} 
+
+            </section>
+                
+            <section>
             
-            <p>Cutout takes a cartesian format (XYZ) molecular file and cuts out the molecules in a given range of a given position, returning a new XYZ file.</p>
+                <h4>{{ post.date | date: '%Y' }}</h4>
+        
+{% endif %}
 
-            <h2>Who Ordered That?</h2>
-            
-            <p>A scrapbook of physical curiosity.</p>
+                <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
+                
+                <!-- <aside class="stamp">{{ post.date | {{ post.date | date:"%d %B" }}, {{ post.location }}</aside> -->
+                
+                <p class="description">{{ post.description }}</p>
 
-        </section>
-         
-        <section> 
-         
-            <h4>2009&mdash;</h4>         
+{% capture year_a %}{{ post.date | date: '%Y' }}{% endcapture %}
 
-            <h2><a href="/newpin/">As Neat as a New Pin</a></h2>
-            
-            <p>The debut album by my folk-indie-pop group Empty Set. Nine original recordings on the subject of absent love and science.</p>
-
-            <h2><a href="/pennineway/">Pennine Way</a></h2>
-            
-            <p>A journal of my long-distance hike from Derbyshire to Scotland over the hills of north England, with maps, profiles and numbers.</p>
-            
-        </section>
+{% endfor %}
+        
+            </section>

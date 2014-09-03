@@ -3,60 +3,98 @@ layout: projects
 title: Projects
 ---
 
-            <section>
+<section>
 
-                <header>
-                
-                    <h1>{{ page.title }}</h1>
-    
-                </header>
+  <header>
+    <h1>{{ page.title }}</h1>    
+  </header>
 
-                <p>Work I've done. Find out about new things here by following on <a href="http://twitter.com/tommyogden">Twitter</a> or by <a href="/atom.xml">RSS</a>.</p>
+  <p>Work I've done. Find out about new things here by following on <a href="http://twitter.com/tommyogden">Twitter</a> or by <a href="/atom.xml">RSS</a>.</p>
 
-        </section>
+</section>
 
-{% for post in site.categories.projects limit:1 %}
+<!-- <section>
 
-        <section>
-        
-            <img class="side" src="/png/nitrate-orbitals.png" />
-        
-            <h4>{{ post.date | date: '%Y' }}</h4>
+  <h4>Journals</h4>
 
-                <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
-                
-                <!-- <aside class="stamp">{{ post.date | {{ post.date | date:"%d %B" }}, {{ post.location }}</aside> -->
-                
-                <p class="description">{{ post.description }}</p>  
-        
-        
-        
-{% capture year_a %}{{ post.date | date: '%Y' }}{% endcapture %}
-        
-{% endfor %}
+    {% for post in site.tags.reading %}
 
-{% for post in site.categories.projects offset:1 %}
+    <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
 
-{% capture year_b %}{{ post.date | date: '%Y' }}{% endcapture %}
+    <p class="description">{{ post.description }}</p>  
 
-{% if year_b != year_a %} 
+    {% endfor %}
 
-            </section>
-                
-            <section>
-            
-                <h4>{{ post.date | date: '%Y' }}</h4>
-        
-{% endif %}
+</section> -->
 
-                <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
-                
-                <!-- <aside class="stamp">{{ post.date | {{ post.date | date:"%d %B" }}, {{ post.location }}</aside> -->
-                
-                <p class="description">{{ post.description }}</p>
+<section>
 
-{% capture year_a %}{{ post.date | date: '%Y' }}{% endcapture %}
+  <h4>Physics</h4>
 
-{% endfor %}
-        
-            </section>
+    {% for post in site.tags.physics %}
+
+    <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
+
+    <!-- <aside class="stamp">{{ post.date | {{ post.date | date:"%d %B %Y" }}</aside> -->
+
+    <p class="description">{{ post.description }}</p>  
+
+    {% endfor %}
+
+</section>
+
+<!-- <section>
+
+  <h4>Code</h4>
+
+    {% for post in site.tags.code %}
+
+    <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
+
+    <p class="description">{{ post.description }}</p>  
+
+    {% endfor %}
+
+</section> -->
+
+<section>
+
+  <h4>Songwriting</h4>
+
+    {% for post in site.tags.songwriting %}
+
+    <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
+
+    <p class="description">{{ post.description }}</p>  
+
+    {% endfor %}
+
+</section>
+
+<section>
+
+  <h4>Adventures</h4>
+
+    {% for post in site.tags.adventures %}
+
+    <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
+
+    <p class="description">{{ post.description }}</p>  
+
+    {% endfor %}
+
+</section>
+
+<section>
+
+  <h4>Websites</h4>
+
+    {% for post in site.tags.web %}
+
+    <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
+
+    <p class="description">{{ post.description }}</p>  
+
+    {% endfor %}
+
+</section>

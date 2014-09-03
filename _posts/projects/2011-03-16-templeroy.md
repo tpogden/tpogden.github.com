@@ -3,6 +3,7 @@ layout: project
 title: Design of templeroy.com
 location: Stockholm
 category: projects
+tags: web
 published: true
 permalink: /templeroy
 description: A site for comics writer and drawer Ben Dorning.
