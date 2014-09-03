@@ -1,8 +1,12 @@
 ---
 layout: note
-title: Sing of Old Djurg&aring;rden
+title: Sing of Old Djurgården
 location: Stockholm
 category: notes
+permalink: /sing-of-old-djurgården/
+redirect_from:
+  - /notes/sing-of-old-djurgarden/
+  - /sing-of-old-djurgarden/
 description: A match report of Djurg&aring;rden&rsquo;s crucial end-of-season game against Gefle at the Olympic stadium.
 ---
 
