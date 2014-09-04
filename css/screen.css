@@ -596,6 +596,10 @@ section blockquote p {
 
 }
 
+/*-----------------------------------------------------------------------------
+    Table Styles
+-----------------------------------------------------------------------------*/
+
 table {
 
 		padding-bottom: 0px;
@@ -663,6 +667,69 @@ td {
 	padding-left: 8px;
 
 }
+
+/*-----------------------------------------------------------------------------
+     Pre/Code Styles
+-----------------------------------------------------------------------------*/
+
+/*code {
+  font: 12px Monaco,"Courier New","DejaVu Sans Mono","Bitstream Vera Sans Mono",monospace;
+  color: #52595d;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  -moz-background-clip: padding;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  padding: 0px 3px;
+  display: inline-block;
+  margin: 0px;
+}*/
+
+div .highlight {
+
+    width: 608px;
+
+  /*-webkit-border-radius: 3px;*/
+  /*-moz-border-radius: 3px;*/
+  border-radius: 4px;
+  /*-moz-background-clip: padding;*/
+  /*-webkit-background-clip: padding-box;*/
+
+  /*-webkit-background-clip: padding-box;*/
+  /*background-clip: padding-box;*/
+
+    display: inline-block;
+
+}
+
+code {
+
+    /*border: 1px solid #ccc;*/
+
+    width: 592px;
+    font: 12px Monaco, monospace;
+
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-left: 8px;
+    padding-right: 8px;
+
+    display: block;
+
+}
+
+
+/*-----------------------------------------------------------------------------
+    D3 Styles (put in a different file?)
+-----------------------------------------------------------------------------*/
 
 svg.d3-panel {
 
