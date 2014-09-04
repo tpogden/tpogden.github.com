@@ -14,48 +14,20 @@ title: Information is Physical
 
 </section>
 
-{% for post in site.categories.notes limit:1 %}
-
 <section>
-        
-  <aside>&nbsp;</aside>
 
-  <h4>{{ post.date | date: '%Y' }}</h4>
+<h4>Recent Posts</h4>
+
+<aside>&nbsp;</aside>
+
+{% for post in site.categories.notes %}
  
-  <aside class="stamp">{{ post.date | {{ post.date | date:"%d %B" }}, {{ post.location }}</aside>
+  <aside class="stamp">{{ post.date | {{ post.date | date:"%d %B %Y" }}, {{ post.location }}</aside>
  
   <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
                 
   <p class="description"><em>{{ post.description }}</em></p> 
-        
-{% capture year_a %}{{ post.date | date: '%Y' }}{% endcapture %}
-        
-{% endfor %}
-
-{% for post in site.categories.notes offset:1 %}
-
-{% capture year_b %}{{ post.date | date: '%Y' }}{% endcapture %}
-
-{% if year_b != year_a %} 
-
-</section>
-                
-<section>
-            
-  <aside>&nbsp;</aside>
-
-  <h4>{{ post.date | date: '%Y' }}</h4>
-        
-{% endif %}
-
-  <aside class="stamp">{{ post.date | {{ post.date | date:"%d %B" }}, {{ post.location }}</aside>
-
-  <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
-                
-  <p class="description">{{ post.description }}</p>  
-
-{% capture year_a %}{{ post.date | date: '%Y' }}{% endcapture %}
-
+    
 {% endfor %}
 
 </section>
