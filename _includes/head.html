@@ -23,7 +23,6 @@
     <!--[if ! lte IE 6]><!-->
     <link rel="stylesheet" href="/css/screen.css" />
     <link rel="stylesheet" href="/css/solarized-dark.css" />
-    <!-- <link rel="stylesheet" href="/css/pygments-monokai.css" /> -->
 
     <!--<![endif]-->
 
@@ -32,6 +31,19 @@
     <![endif]-->
 
     <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          processEscapes: true
+        },
+        styles: {
+          ".MathJax_Display": {
+            "width": "592px !important"
+          }
+        }
+      });
+    </script>
     <script type="text/javascript"
         src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
     </script>
