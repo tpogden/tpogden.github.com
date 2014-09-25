@@ -3,7 +3,7 @@ layout: note
 title: The Two-Step Adams-Bashforth Method with Different Stepsizes
 location: Manchester
 category: notes
-published: true
+published: false
 description: hi
 ---
 

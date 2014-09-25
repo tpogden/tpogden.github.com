@@ -3,7 +3,7 @@ layout: note
 title: Math in Markdown Test
 location: 
 category: notes
-published: true
+published: false
 description: hi
 ---
 

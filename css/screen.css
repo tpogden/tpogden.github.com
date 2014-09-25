@@ -475,11 +475,13 @@ figure {
 
 figcaption {
 
+    color:  rgba(113,107,105,1);
+
 	width: 256px;
 
 	font-size: 14px;
 
-	margin-top: 0px;
+	margin-top: 8px;
 	margin-bottom: 32px;
 	margin-left: 0px;
 	margin-right: 0px;
@@ -533,13 +535,28 @@ img.full {
 
 img.text{
 
-	width: 592px;    
+    border: solid 1px rgba(208,199,198,1);
+
+    width: 592px;    
 
     margin-top: 16px;
     margin-bottom: 40px;
     margin-left: 8px;
     margin-right: 8px;
 
+}
+
+img.text-framed{
+
+    border: solid 1px rgba(208,199,198,1);
+    border-radius: 4px;
+
+    width: 608px;
+
+    margin-top: 8px;
+    margin-bottom: 24px;
+    margin-left: 0px;
+    margin-right: 0px;
 
 }
 
