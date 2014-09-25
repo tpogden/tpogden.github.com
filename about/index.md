@@ -42,9 +42,9 @@ Hej, I&rsquo;m Tommy Ogden. I study for a PhD in Theoretical Physics at [Durham]
 
 </aside>
 
-Born in north Wales, home is Manchester and I spent two years living in Stockholm, Sweden. I enjoy running, moutaineering, kayaking.
+Born in north Wales, home is Manchester and I spent two years living in Stockholm, Sweden. I enjoy distance running, moutaineering and kayaking.
 
-I play piano and guitar, and write music for the band [Empty Set](http://emptyset.co.uk/). We do short songs, often about science and love.
+I play piano and guitar, and write music for the band [Empty Set](http://emptyset.co.uk/).
 
 You can keep up with this site using [RSS](/atom.xml) or by following me on [Twitter](http://twitter.com/tommyogden).
 
