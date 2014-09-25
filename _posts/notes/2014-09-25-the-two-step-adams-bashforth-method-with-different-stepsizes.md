@@ -8,7 +8,8 @@ description: A derivation of the two-step Adams-Bashforth method in the case tha
 <!-- assets_loc: /assets/notes/the-two-step-adams-bashforth-method-with-different-stepsizes/ -->
 ---
 
-<!-- <aside>This post is also available as an <a href="http://tommyogden.com/ipynb/">IPython notebook</a>.</aside> -->
+<aside>This post is also available as an <a href="http://nbviewer.ipython.org/url/tommyogden.com/ipynb/the-two-step-adams-bashforth-method-with-different-stepsizes.ipynb">IPython notebook</a>.</aside>
+
 
 The  Adams-Bashforth family of numerical methods has a well-known derivation
 but I couldn't find a source which gave the two-step method in the case that the
