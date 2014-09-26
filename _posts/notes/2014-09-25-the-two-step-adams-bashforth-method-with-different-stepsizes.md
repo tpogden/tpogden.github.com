@@ -19,7 +19,7 @@ as the Euler method is $\mathcal{O(h^1)}$ I want to make this first step small
 to avoid introducing a large global error. The third point is then calculated
 with the Adams-Bashforth method with different step sizes. From then on the
 Adams-Bashforth method can be used as usual. Another use might be in an
-[adaptive stepsize][adap_step] method, were we want to adjust the stepsizes as
+[adaptive stepsize][adap_step] method, where we want to adjust the stepsizes as
 we go.
 
 [adap_step]: http://en.wikipedia.org/wiki/Adaptive_stepsize
