@@ -585,6 +585,8 @@ figure {
 
 }
 
+
+
 article blockquote,
 section blockquote {
 
@@ -618,6 +620,45 @@ section blockquote p {
 	padding-bottom: 16px;
 	padding-left: 8px;
 	padding-right: 8px;
+
+}
+
+
+/*-----------------------------------------------------------------------------
+    List Styles
+-----------------------------------------------------------------------------*/
+
+section > ul, 
+article > ul {
+
+    width: 592px;
+    
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+
+    padding-top: 16px;
+    padding-bottom: 16px;
+    padding-left: 8px;
+    padding-right: 8px;
+
+}
+
+section > ol, 
+article > ol {
+
+    width: 592px;
+    
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+
+    padding-top: 16px;
+    padding-bottom: 16px;
+    padding-left: 8px;
+    padding-right: 8px;
 
 }
 
@@ -733,7 +774,7 @@ pre > code {
 
 
 /*-----------------------------------------------------------------------------
-    D3 Styles (put in a different file?)
+    D3 Styles (put in a different file!)
 -----------------------------------------------------------------------------*/
 
 svg.d3-panel {
