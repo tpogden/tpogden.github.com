@@ -13,7 +13,7 @@ description: Lorem ipsum
 
     <ul>
         <li><a href="">I. Introduction</a></li>
-        <li><a href="">II. Object Model &amp; Classical Dynamics</a></li>
+        <li><a href="">II. Atoms in Motion</a></li>
     </ul>
 
     <ul>
@@ -26,8 +26,8 @@ I'm starting a little computational physics hobby project, and I'm going to writ
 Why do I want to write a molecular dynamics simulator? 
 
 1. This is a field I've worked and [published][nitrate] in but isn't what I research now. It will be useful to document some of what I know to refer back to. 
-2. Thinking about what readers of *A blog about doing physics with computers* might be interested in, one useful thing I can do is write a good introduction for anyone new to the subject. 
-3. It's this or watching _The Sopranos_ through again.
+2. Thinking about what readers of *A blog about doing physics with computers* might be interested in, one useful thing I can do is write a good introduction for anyone new to the subject.
+3. Visualising molecules bouncing around is fun, and I want to try that in-browser.
 
 <!-- <aside>&nbsp;</aside> -->
 
