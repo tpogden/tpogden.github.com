@@ -39,6 +39,22 @@ description: Lorem ipsum
   
   }
 
+  .play path {
+    stroke: rgba(255,255,255,1);
+    stroke-width: 16px;
+    /*fill: black;*/
+  }
+
+  .play:hover path {
+    fill: rgba(189,54,19,1);
+  }
+
+  .play rect {
+    fill: none;
+    pointer-events: all;
+    cursor: pointer;
+  }
+
 </style>
 
 <script src="http://d3js.org/d3.v3.min.js"></script>
@@ -82,8 +98,6 @@ Maybe `Atoms` should have a collective name like `AtomCollection` or `Ensemble` 
 }
 {% endhighlight %}
 
-
-
 <script src="/assets/notes/moldy-argon-2/js/moldy-argon-2-1.js"></script>
 
 {% highlight cpp %}
@@ -100,3 +114,5 @@ int Atoms::apply_toroidal_box_bc(float box_length_i) {
   return 0;
 }
 {% endhighlight %}
+
+<script src="/assets/notes/moldy-argon-2/js/moldy-argon-2-2.js"></script>

@@ -3,8 +3,9 @@
   var boxLength = 10.0;
   var num_points = 50;
   var circleRad = 6;
+  var delay = 5000;
 
-  var margin = {top: 16, right: 16, bottom: 48, left: 48},
+  var margin = {top: 16, right: 16, bottom: 32, left: 32},
       width = 606 - margin.left - margin.right,
       height = 606 - margin.top - margin.bottom;
 
@@ -82,6 +83,6 @@ setInterval(function() {
     .attr("cx", function (d) { return x(d[0]); } )
     .attr("cy", function (d) { return y(d[1]); } )
 
-}, 2500);
+}, delay);
 
 })()
