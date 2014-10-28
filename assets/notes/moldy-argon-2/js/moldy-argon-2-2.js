@@ -5,8 +5,8 @@
   var circleRad = 6;
   var delay = 50;
 
-  var jsonFile = "/assets/notes/moldy-argon-2/json/moldy-argon-2-2-n.json"
-  // var jsonFile = "/assets/notes/moldy-argon-2/json/moldy-argon-2-2-b.json"
+  // var jsonFile = "/assets/notes/moldy-argon-2/json/moldy-argon-2-2-n.json"
+  var jsonFile = "/assets/notes/moldy-argon-2/json/moldy-argon-2-2-b.json"
   // var jsonFile = "/assets/notes/moldy-argon-2/json/moldy-argon-2-2-t.json"
   // var jsonFile = "/assets/notes/moldy-argon-2/json/moldy-argon-2-2-big.json"
 

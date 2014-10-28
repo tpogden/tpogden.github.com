@@ -75,20 +75,16 @@ description: Lorem ipsum
 
 ## Object Model
 
-We have two classes of object:
+The model is simple, we have two classes of object:
 
-- Atoms: a collection of atoms, with their masses, positions and velocities. Methods to move the atoms around and calculate forces between them.
-- Sim: a simulation, containing an Atoms object and the current time of the simulation. Methods to run the simulator and to save results data to file.
-<aside>
-Maybe `Atoms` should have a collective name like `AtomCollection` or `Ensemble` but Atoms seemed to fit best for me to remember where the atoms are.
-</aside>
+- Atoms: a collection of atoms, with arrays representing their masses, positions and velocities. The Atoms class contains methods to move the atoms around and calculate forces between them.
+- Sim: a simulation, containing an Atoms object and the current time of the simulation. The Sim class contains methods to run the simulator and to save results data to file.
 
-<!-- <figure>
-<img class="text-framed" src="/assets/notes/moldy-argon-2/moldy-argon-object-model.png" />
-<figcaption>How <a href="https://labs.spotify.com/">Spotify</a> builds a product. I can&rsquo;t find the original source of this slide. If you see it on your travels let me know so I can properly credit.</figcaption>
-</figure>
- -->
+<aside>Maybe `Atoms` should have a collective name like `AtomCollection` or `Ensemble` but Atoms works for me to remember where the atoms are.</aside>
 
+The first thing we want to do is decide on the spatial dimensions of our simulation, which we'll do by setting a box length member for Sim. The simulation will then represent a cube (or square in 2D) defined by `box_length`. Then we give the atoms some positions within that box. We don't know, of course, how the atoms will be distributed to begin with so we'll just throw them into the box randomly.
+
+<figure>
 {% highlight cpp %}
  int Atoms::set_pos_random(float box_length_i) {
   ArrayXXf rand_pos(num_dims_, num_atoms_);
@@ -97,8 +93,23 @@ Maybe `Atoms` should have a collective name like `AtomCollection` or `Ensemble` 
   return 0;
 }
 {% endhighlight %}
+<figcaption>Listing 1: Setting the atom positions with a random distribution within the box.</figcaption>
+</figure>
 
+The result of that distribution might look something like this.
+
+<figure>
 <script src="/assets/notes/moldy-argon-2/js/moldy-argon-2-1.js"></script>
+<figcaption>Fig 1:50 atoms given a uniform random distribution in a box of length 10. Note that a random distribution does not mean <em>evenly</em> spaced. Click on the box to generate a new distribution.</figcaption>
+</figure>
+
+## Temperature & Maxwell-Boltzmann Distributions
+
+## Dynamics
+
+<script src="/assets/notes/moldy-argon-2/js/moldy-argon-2-2.js"></script>
+
+## Boundary Conditions
 
 {% highlight cpp %}
 // TODO: Doc
@@ -115,4 +126,4 @@ int Atoms::apply_toroidal_box_bc(float box_length_i) {
 }
 {% endhighlight %}
 
-<script src="/assets/notes/moldy-argon-2/js/moldy-argon-2-2.js"></script>
+## (Conclusions)
