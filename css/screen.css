@@ -655,7 +655,7 @@ article > ul li {
     text-indent: -32px;
 }
 
-article > ul li:before,
+section > ul li:before,
 article > ul li:before {
     content: "×"; /* "•●" */
     font-family: "goudy-bookletter-1911-1", "goudy-bookletter-1911-2",
@@ -690,7 +690,7 @@ article > ol li {
     text-indent: -8px;
 }
 
-article > ol li:before,
+section > ol li:before,
 article > ol li:before {
     display: inline-block;
     content: counter(item) ".";
