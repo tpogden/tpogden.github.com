@@ -643,6 +643,25 @@ article > ul {
     padding-left: 8px;
     padding-right: 8px;
 
+    /*background-color: silver;*/
+
+    list-style: none;
+
+}
+
+section > ul li, 
+article > ul li {
+    padding-left: 8px;
+    text-indent: -32px;
+}
+
+article > ul li:before,
+article > ul li:before {
+    content: "×"; /* "•●" */
+    font-family: "goudy-bookletter-1911-1", "goudy-bookletter-1911-2",
+                 "Goudy Bookletter 1911", serif;
+    padding-right: 16px;
+    color: rgba(113,107,105,1);
 }
 
 section > ol, 
@@ -660,6 +679,26 @@ article > ol {
     padding-left: 8px;
     padding-right: 8px;
 
+    list-style: none;
+    counter-reset: item;
+
+}
+
+section > ol li, 
+article > ol li {
+    padding-left: 8px;
+    text-indent: -8px;
+}
+
+article > ol li:before,
+article > ol li:before {
+    display: inline-block;
+    content: counter(item) ".";
+    counter-increment: item;
+    padding-right: 8px;
+    color: rgba(113,107,105,1);
+    width: 8px;
+    margin-left: -16px;
 }
 
 /*-----------------------------------------------------------------------------
