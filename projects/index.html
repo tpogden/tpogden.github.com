@@ -15,6 +15,22 @@ title: Projects
 
 <section>
 
+  <h4>Code</h4>
+
+    {% for post in site.tags.code %}
+
+    <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
+
+    <!-- <aside class="stamp">{{ post.date | {{ post.date | date:"%d %B %Y" }}</aside> -->
+
+    <p class="description">{{ post.description }}</p>  
+
+    {% endfor %}
+
+</section>
+
+<section>
+
   <h4>Journals</h4>
 
     <h2><a href="/photos/">Photos</a></h2>
