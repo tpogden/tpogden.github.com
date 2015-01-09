@@ -359,6 +359,11 @@ p {
 
 }
 
+.rating {
+    color: rgba(189,54,19,1);
+    font-size: 16px;
+}
+
 aside {
 
 	width: 256px;
