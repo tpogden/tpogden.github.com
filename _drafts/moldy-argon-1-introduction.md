@@ -51,7 +51,7 @@ The idea is to use a computer to solve Newton's equations of motion for a sample
 <img class="text-framed" src="/assets/notes/moldy-argon-1/rahman.png" />
 <figcaption>A Rahman. <a href="http://journals.aps.org/pr/abstract/10.1103/PhysRev.136.A405">Correlations in the Motion of Atoms in Liquid Argon</a>. <em>Phys. Rev</em>, 136 (2A):405–411, 1964</figcaption>
 </figure>
-
+<!-- 
 ## Skateboards
 
 One thing before we start. It's an idea from a talk by an engineer at Spotify on how they build products.
@@ -61,7 +61,7 @@ One thing before we start. It's an idea from a talk by an engineer at Spotify on
 <figcaption>How <a href="https://labs.spotify.com/">Spotify</a> builds a product. I can&rsquo;t find the original source of this slide. If you see it on your travels let me know so I can properly credit.</figcaption>
 </figure>
 
-I'll try to work to this principle. In the next post we'll get a basic molecular dynamics simulator up and running. Let's build a skateboard.
+I'll try to work to this principle. In the next post we'll get a basic molecular dynamics simulator up and running. Let's build a skateboard. -->
 
 {% include send-comments.html %}
 
