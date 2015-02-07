@@ -37,6 +37,7 @@ from my wishlist.
 <ol>
 <li><em><a href="http://amzn.to/1BFVpEh">American Savage</a></em> by Dan Savage</li>
 <li><em><a href="http://amzn.to/1BuKIX6">The Psychopath Test</a></em> by Jon Ronson</li>
+<li><em><a href="http://www.amazon.co.uk/gp/product/0099532085">Knocking on Heaven&rsquo;s Door</a></em> by Lisa Randall {% include star.html %}</li>
 </ol>
 
 </section>
