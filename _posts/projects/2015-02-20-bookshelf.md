@@ -40,6 +40,7 @@ from my wishlist.
 <li><em><a href="http://www.amazon.co.uk/gp/product/0099532085">Knocking on Heaven&rsquo;s Door</a></em> by Lisa Randall {% include star.html %}</li>
 <li><em><a href="http://www.amazon.co.uk/1Q84-Books-1-2-3/dp/0099578077">1Q84, Book 1</a></em> by Haruki Murakami</li>
 <li><em><a href="http://www.amazon.co.uk/Body-Work-Finding-Thread-Together/dp/1591846196/">Body of Work</a></em> by Pamela Slim</li>
+<li><em><a href="http://www.amazon.co.uk/Behind-Beautiful-Forevers-Death-Mumbai/dp/1846274494">Behind the Beautiful Forevers</a></em> by Katherine Boo</li>
 </ol>
 
 </section>
