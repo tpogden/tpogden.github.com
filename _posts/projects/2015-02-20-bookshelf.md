@@ -42,6 +42,8 @@ from my wishlist.
 <li><em><a href="http://www.amazon.co.uk/Body-Work-Finding-Thread-Together/dp/1591846196/">Body of Work</a></em> by Pamela Slim</li>
 <li><em><a href="http://www.amazon.co.uk/Behind-Beautiful-Forevers-Death-Mumbai/dp/1846274494">Behind the Beautiful Forevers</a></em> by Katherine Boo {% include star.html %}</li>
 <li><em><a href="http://www.amazon.co.uk/1Q84-Books-1-2-3/dp/0099578077">1Q84, Book 2</a></em> by Haruki Murakami</li>
+<li><em><a href="http://www.amazon.co.uk/Guards-Discworld-City-Watch-Collection/dp/1473200180/">Guards! Guards!</a></em> by Terry Pratchett</li>
+<li><em><a href="http://www.amazon.co.uk/Einstein-Bohr-Quantum-Dilemma-Information/dp/0521671027">Einstein, Bohr and the Quantum Dilemma</a></em> by Andrew Whitaker<li>
 </ol>
 
 </section>
