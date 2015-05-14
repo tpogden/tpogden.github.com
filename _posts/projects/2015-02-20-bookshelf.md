@@ -44,6 +44,9 @@ from my wishlist.
 <li><em><a href="http://www.amazon.co.uk/1Q84-Books-1-2-3/dp/0099578077">1Q84, Book 2</a></em> by Haruki Murakami</li>
 <li><em><a href="http://www.amazon.co.uk/Guards-Discworld-City-Watch-Collection/dp/1473200180/">Guards! Guards!</a></em> by Terry Pratchett</li>
 <li><em><a href="http://www.amazon.co.uk/Einstein-Bohr-Quantum-Dilemma-Information/dp/0521671027">Einstein, Bohr and the Quantum Dilemma</a></em> by Andrew Whitaker</li>
+<li><em><a href="http://www.amazon.co.uk/All-Pretty-Horses-Border-Trilogy/dp/0330510932/">All the Pretty Horses</a></em> by Cormac McCarthy</li>
+<li><em><a href="http://www.amazon.co.uk/GDP-Brief-but-Affectionate-History/dp/0691169853">GDP: A Brief but Affectionate History</a></em> by Diane Coyle</li>
+
 </ol>
 
 </section>
