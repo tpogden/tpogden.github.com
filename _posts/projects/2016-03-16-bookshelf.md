@@ -1,7 +1,7 @@
 ---
 layout: project
 title: Bookshelf
-location: Durham
+location: Manchester
 category: projects
 tags: reading
 published: true
@@ -28,9 +28,18 @@ from my wishlist.
 
 <h1>Ratings</h1>
 
-<ul>If a book&rsquo;s in the list I read it through and it was good. The best are indicated with <span class="rating">&#9733;</span>.</ul>
+<ul>If a book&rsquo;s in the list I read it through and it was good. Best are indicated with <span class="rating">&#9733;</span>.</ul>
 
 </aside>
+
+<h4>2016</h4>
+
+<ol>
+<li><em><a href="http://www.amazon.co.uk/dp/0552997048">A Short History of Nearly Everything</a></em> by Bill Bryson</li>
+<li><em><a href=" http://www.amazon.co.uk/dp/0349408947">Getting Things Done</a></em> by David Allen</li>
+</ol>
+
+<!-- <li><em><a href="LINK">TITLE</a></em> by AUTHOR</li> -->
 
 <h4>2015</h4>
 
@@ -45,9 +54,26 @@ from my wishlist.
 <li><em><a href="http://www.amazon.co.uk/Guards-Discworld-City-Watch-Collection/dp/1473200180/">Guards! Guards!</a></em> by Terry Pratchett</li>
 <li><em><a href="http://www.amazon.co.uk/Einstein-Bohr-Quantum-Dilemma-Information/dp/0521671027">Einstein, Bohr and the Quantum Dilemma</a></em> by Andrew Whitaker</li>
 <li><em><a href="http://www.amazon.co.uk/All-Pretty-Horses-Border-Trilogy/dp/0330510932/">All the Pretty Horses</a></em> by Cormac McCarthy</li>
-<li><em><a href="http://www.amazon.co.uk/GDP-Brief-but-Affectionate-History/dp/0691169853">GDP: A Brief but Affectionate History</a></em> by Diane Coyle</li>
+<li><em><a href="http://www.amazon.co.uk/GDP-Brief-but-Affectionate-History/dp/0691169853">GDP: A Brief but Affectionate History</a></em> by Diane Coyle {% include star.html %}</li>
+<li><em><a href="http://www.amazon.co.uk/dp/0141029196">Quiet</a></em> by Susan Cain</li>
 
+<li><em><a href="http://www.amazon.co.uk/dp/0141392738">Pietr the Latvian</a></em> by Georges Simenon</li>
+<li><em><a href="http://www.amazon.co.uk/dp/0141393378">The Late Monsieur Gallet</a></em> by Georges Simenon {% include star.html %}</li>
+<li><em><a href="http://www.amazon.co.uk/dp/0099448572">South of the Border, West of the Sun</a></em> by Haruki Murakami</li>
+<li><em><a href="http://www.amazon.co.uk/dp/0099549484">To Kill a Mockingbird</a></em> by Harper Lee {% include star.html %}</li>
+<li><em><a href="http://www.amazon.co.uk/dp/0814751865">New York City: A Short History</a></em> by George J. Lankevich</li>
+<li><em><a href="http://www.amazon.co.uk/dp/014118258X">The Collected Dorothy Parker</a></em> by Dorothy Parker</li>
+<li><em><a href="http://www.amazon.co.uk/dp/0330524933">Cosmopolis</a></em> by Don DeLillo</li>
+<li><em><a href="http://www.amazon.co.uk/dp/141658997X">Inside the Apple</a></em> by Michelle Nevius, James Nevius</li>
+<li><em><a href="http://www.amazon.co.uk/dp/0099576856">Casino Royale</a></em> by Ian Fleming</li>
+<li><em><a href="http://www.amazon.co.uk/dp/1785031139">The Martian</a></em> by Andy Weir</li>
+<li><em><a href="http://www.amazon.co.uk/dp/1784161195">Notes from a Small Island</a></em> by Bill Bryson</li>
+<li><em><a href="http://www.amazon.co.uk/dp/0552998087">The Lost Continent</a></em> by Bill Bryson</li>
+<li><em><a href="http://www.amazon.co.uk/dp/1784161837">In a Sunburned Country</a></em> by Bill Bryson</li>
 </ol>
+
+
+
 
 </section>
 
