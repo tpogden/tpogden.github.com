@@ -538,6 +538,46 @@ img.full {
 
 }
 
+img.half-left {
+    
+    width: 432px;
+    
+    margin-top: 16px;
+    margin-bottom: 40px;
+    margin-left: 8px;
+    margin-right: 8px;
+    
+    /*background-color: grey;*/
+
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-left: 0px;
+    padding-right: 32px;
+
+    float: left;
+
+}
+
+img.half-right {
+    
+    width: 432px;
+    
+    margin-top: 16px;
+    margin-bottom: 40px;
+    margin-left: 8px;
+    margin-right: 8px;
+    
+    background-color: grey;
+
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+
+    float: right;
+
+}
+
 img.text{
 
     border: solid 1px rgba(208,199,198,1);
