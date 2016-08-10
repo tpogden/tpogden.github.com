@@ -37,6 +37,13 @@ from my wishlist.
 <ol>
 <li><em><a href="http://www.amazon.co.uk/dp/0552997048">A Short History of Nearly Everything</a></em> by Bill Bryson</li>
 <li><em><a href=" http://www.amazon.co.uk/dp/0349408947">Getting Things Done</a></em> by David Allen</li>
+<li><em><a href="https://www.amazon.co.uk/dp/0593070097">Creativity Inc.</a></em> by Amy Wallace, Edwin Catmull</li>
+<li><em><a href="https://www.amazon.co.uk/dp/0141393483">Night at the Crossroads</a></em> by Georges Simenon</li>
+<li><em><a href="https://www.amazon.co.uk/dp/0141393459">The Hanged Man of Saint-Pholien</a></em> by Georges Simenon</li>
+<li><em><a href="https://www.amazon.co.uk/dp/0736074600">Advanced Marathoning</a></em> by Pete Pfitzinger</li>
+<li><em><a href="http://www.lurklurk.org/hqse/hqse.html">High Quality Software Engineering</a></em> by David Drysdale</li>  
+<li><em><a href="https://www.amazon.co.uk/dp/0198726074">Capitalism</a></em> by James Fulcher</li>
+<li><em><a href="https://www.amazon.co.uk/dp/0330511246">The Crossing</a></em> by Cormac McCarthy {% include star.html %}</li>
 </ol>
 
 <!-- <li><em><a href="LINK">TITLE</a></em> by AUTHOR</li> -->
