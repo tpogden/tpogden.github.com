@@ -6,10 +6,8 @@ title: Tommy Ogden
 <section>
 
   <header>
-    <!-- <h1>Information is Physical</h1> -->
-    <h2>A blog about doing maths and physics with computers, mostly.</h2>
-
-    <!-- <p class="description">A blog about doing science with computers, mostly.</p> -->
+    <h1>Information is Physical</h1>
+    <p class="description">A blog about doing maths and physics with computers.</p>
   </header>
 
   <!-- <p>&nbsp;</p> -->
@@ -18,44 +16,27 @@ title: Tommy Ogden
 
 <section>
 
-<h4>Recent Posts</h4>
+<h4>Posts</h4>
 
 <aside>&nbsp;</aside>
 
 {% for post in site.categories.notes %}
   <!-- <aside class="stamp">{{ post.date | date: "%Y-%m-%d" }}</aside> -->
-  <h3><a href="{{ post.url }}">{{ post.title }}</a></h3>
+  <h3><a href="{{ post.url }}">{{ post.title }}</a>
+    <span class="stamp">{{ post.date | date: "%Y-%m-%d" }}</span></h3>
   <!-- <p class="description"><em>{{ post.description }}</em></p>  -->
 {% endfor %}
-
-<!-- <ul>
-{% for post in site.categories.notes %}
-  <li>
-  <a href="{{ post.url }}">{{ post.title }}</a>
-  <span class="stamp">{{ post.date | date: "%Y-%m-%d" }}</span>
-  </li>                    
-{% endfor %}
-</ul> -->
-
 
 </section>
 
 <section>
 
-<h4>Photos</h4>
+<h4>Photo Journal</h4>
 
 {% for post in site.categories.photos %}
   <!-- <aside class="stamp">{{ post.date | date: "%Y-%m-%d" }}</aside> -->
-  <h3><a href="{{ post.url }}">{{ post.title }}</a></h3>
+  <h3><a href="{{ post.url }}">{{ post.title }}</a>
+    <span class="stamp">{{ post.date | date: "%Y-%m-%d" }}</span></h3>
 {% endfor %}
-
-<!-- <ul>
-{% for post in site.categories.photos %}
-  <li>
-  <a href="{{ post.url }}">{{ post.title }}</a>
-  <span class="stamp">{{ post.date | date: "%Y-%m-%d" }}</span>
-  </li>                    
-{% endfor %}
-</ul> -->
 
 </section>
