@@ -280,6 +280,41 @@ section h2 a {
 
 }
 
+article h3,
+section h3 {
+
+    /*font-family: "goudy-bookletter-1911-1","goudy-bookletter-1911-2","Goudy Bookletter 1911",serif;*/
+    font-family: "adobe-garamond-pro-1", "adobe-garamond-pro-2", "Adobe Garamond Pro", serif;
+    /*font-style: italic;*/
+
+    margin-left: 0px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
+
+    font-size: 18px;
+    font-weight: normal;
+
+    width: 592px;
+    
+    /*background-color: yellow;*/
+
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 8px;
+    padding-right: 8px;
+    
+    float:left;
+
+}
+
+article h3 a,
+section h3 a {
+
+    border-bottom: 0px;
+
+}
+
 article > h4,
 section > h4 {
 
@@ -309,8 +344,9 @@ section > h4 {
 
     font-family: "goudy-bookletter-1911-1","goudy-bookletter-1911-2","Goudy Bookletter 1911",serif;
 	font-size: 14px;
-    color: rgba(113,107,105,1);
+    color: rgba(208,199,198,1);
 
+    padding-left: 16px;
 	padding-top: 0px;
     padding-bottom: 16px;
 
