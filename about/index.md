@@ -29,7 +29,13 @@ title: About
 
 </aside>
 
-Hej, I&rsquo;m Tommy Ogden. I study for a PhD in Theoretical Physics at [Durham](http://www.durham.ac.uk/), working at the [Joint Quantum Centre](http://www.jqc.org.uk). My areas of research are atomic physics and quantum optics. I look at how we might use atoms and light to control quantum information.
+Hi, I&rsquo;m Tommy Ogden. I'm a Data Scientist, Software Engineer and 
+Theoretical Physicist.
+
+I did my PhD in Theoretical Physics at [Durham](http://www.durham.ac.uk/), 
+working in the [Joint Quantum Centre](http://www.jqc.org.uk).
+
+<!-- My areas of research are atomic physics and quantum optics. I look at how we might use atoms and light to control quantum information. -->
 
 <aside class="sidebox">
 
@@ -44,12 +50,13 @@ Hej, I&rsquo;m Tommy Ogden. I study for a PhD in Theoretical Physics at [Durham]
 
 Born in north Wales, home is Manchester and I spent two years living in Stockholm, Sweden. I enjoy distance running, moutaineering and kayaking.
 
-I play piano and guitar, and write music for the band [Empty Set](http://emptyset.co.uk/).
+<!-- I play piano and guitar, and write music for the band [Empty Set](http://emptyset.co.uk/). -->
 
 You can keep up with this site using [RSS](/atom.xml) or by following me on [Twitter](http://twitter.com/tommyogden).
+<!-- ## Colophon -->
 
-## Colophon
+<!-- Written in [Markdown](http://daringfireball.net/projects/markdown/), powered by [Jekyll](http://github.com/mojombo/jekyll) and hosted on [GitHub](http://pages.github.com/).
 
-Written in [Markdown](http://daringfireball.net/projects/markdown/), powered by [Jekyll](http://github.com/mojombo/jekyll) and hosted on [GitHub](http://pages.github.com/).
+Body text is set in Garamond and headers in Goudy Bookletter 1911. -->
 
-Body text is set in Adobe Garamond Pro and headers in Goudy Bookletter 1911, supplied by [Typekit](https://typekit.com/).
+<!-- , supplied by [Typekit](https://typekit.com/). -->
