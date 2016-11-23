@@ -4,7 +4,7 @@ title: Bookshelf
 location: Manchester
 category: projects
 tags: reading
-published: true
+published: false
 permalink: /bookshelf
 description:
 ---
