@@ -45,6 +45,7 @@ from my wishlist.
 <li><em>Capitalism</em> by James Fulcher</li>
 <li><em>The Crossing</em> by Cormac McCarthy {% include star.html %}</li>
 <li><em>The Secret History</em> by Donna Tartt {% include star.html %}</li>
+<li><em>Prisoners of Geography</em> by Tim Marshall {% include star.html %}</li>
 <li><em>Open City</em> by Tegu Cole</li> 
 <li><em>Travels with Charley</em> by John Steinbeck</li>
 
