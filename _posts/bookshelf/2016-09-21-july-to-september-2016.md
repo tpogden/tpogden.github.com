@@ -11,7 +11,7 @@ redirect_from:
 
 ## Capitalism by James Fulcher
 
-A very short introduction. A brief review of capitalism's history, its emergence
+_A Very Short Introduction._ A brief review of capitalism's history, its emergence
 in Europe and current global reach. The most interesting chapter for me is the
 comparison between different models taken in the United States, Japan and
 Sweden. On the latter:
@@ -39,14 +39,14 @@ border by the teenaged Billy Parham. The first is a dreamlike journey to return
 a wild, pregnant wolf to its Mexican mountain home, the second and third follow
 in fate and circumstance.
 
+<aside>'The horse raising its head above the skyline to listen among the
+constellations and then bending to graze again. He studied those worlds
+sprawled in their pale ignitions upon the nameless night.'</aside>
+
 I can never get enough of McCarthy's runaway sentences and the made-up words
 that sound right as soon as you read them: 'the godmade sun', 'the mute and
 footsore dog', 'the needlethin sweepsecond hand sectoring the dial'. The best
 are often saved for his keen-eyed attention to the animals.
-
-> 'The horse raising its head above the skyline to listen among the
-> constellations and then bending to graze again. He studied those worlds
-> sprawled in their pale ignitions upon the nameless night.'
 
 <aside>{% include star.html %}</aside>
 
