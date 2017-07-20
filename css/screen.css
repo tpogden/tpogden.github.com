@@ -14,13 +14,13 @@ body {
     font-size: 18px;
 	line-height: 32px;
 	text-align: center;
-	
+
 	color: rgba(53,48,47,1);
     background-color: rgba(245,243,242,1);
 
 	margin: 0px;
 	padding: 0px;
-	
+
 }
 
 a {
@@ -34,8 +34,8 @@ a {
 a:active,
 a:hover {
 
-	color: rgba(189,54,19,1);  
-    border-bottom: solid 1px rgba(189,54,19,1);	    
+	color: rgba(189,54,19,1);
+    border-bottom: solid 1px rgba(189,54,19,1);
 
 }
 
@@ -50,12 +50,12 @@ a:hover {
 	margin-bottom: 0px;
 	margin-left: auto;
 	margin-right: auto;
-	
+
 	padding-top: 0px;
 	padding-bottom: 0px;
 	padding-left: 0px;
 	padding-right: 0px;
-	
+
 }
 
 #canvas > header {
@@ -72,32 +72,41 @@ a:hover {
     padding-bottom: 0px;
     padding-left: 0px;
     padding-right: 0px;
-    
+
     float: left;
 
 }
 
-#canvas #logo {
+#canvas > header > h1 {
+
+    font-family: "goudy-bookletter-1911-1","goudy-bookletter-1911-2","Goudy Bookletter 1911",serif;
+	font-size: 16px;
+	font-weight: 600;
+
+    letter-spacing: 4px;
+
+	margin-top: 16px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	margin-right: 0px;
+
+
+    width: 432px;
+
+	padding-top: 32px;
+	padding-bottom: 16px;
+	padding-left: 8px;
+	padding-right: 8px;
+
+    float:left;
 
 }
 
-#canvas > header > a {
+#canvas > header > h1 > a {
 
     color: rgba(189,54,19,1);
     text-decoration: none;
     border-bottom: 0px solid;
-    
-	margin-left: 0px;
-	margin-bottom: 0px;
-    margin-right: 384px; /* Was 224px, before Twitter link, 64px with 4 links */
-	margin-top: 0px;
-	
-	padding-top: 32px;
-	padding-bottom: 0px;
-	padding-left: 0px;
-	padding-right: 0px;
-    
-    float: left;
 
 }
 
@@ -107,7 +116,7 @@ nav {
 	float: left;
 
     color: rgba(208,199,198,1);
-    
+
     font-family: "goudy-bookletter-1911-1","goudy-bookletter-1911-2","Goudy Bookletter 1911",serif;
     font-style: normal;
     font-size: 16px;
@@ -118,7 +127,7 @@ nav {
 	margin-bottom: 0px;
 	margin-left: 32px;
 	margin-right: 0px;
-	
+
     padding-top: 32px;
 	padding-bottom: 16px;
 	padding-left: 0px;
@@ -134,18 +143,18 @@ nav ul {
 	margin-bottom: 0px;
 	margin-left: 0px;
 	margin-right: 0px;
- 
+
     padding-top: 0px;
 	padding-bottom: 0px;
 	padding-left: 0px;
 	padding-right: 0px;
-	
+
 	float: left;
-    
+
 }
 
 nav ul li > a {
-    
+
     color: rgba(113,107,105,1);
 
     border-bottom: solid 0px;
@@ -157,16 +166,16 @@ nav ul li > a:hover {
 }
 
 nav ul li {
-    
+
     float: left;
-    
+
     width: 104px;
-    
+
     margin-top: 0px;
 	margin-bottom: 0px;
 	margin-left: 0px;
 	margin-right: 40px;
- 
+
     padding-top: 0px;
 	padding-bottom: 0px;
 	padding-left: 8px;
@@ -194,7 +203,7 @@ nav ul li.active a {
 #canvas > article {
 
 	width: 928px;
-	
+
 	margin-top: 0px;
 	margin-bottom: 0px;
 	margin-left: 32px;
@@ -216,12 +225,12 @@ nav ul li.active a {
 	width: 928px;
     /*height: 64px;*/
 
-    float: left; 
-    
+    float: left;
+
     margin-bottom: 16px;
-         
+
     clear: both;
-                        
+
 }
 
 #canvas article header h1,
@@ -239,12 +248,12 @@ nav ul li.active a {
 	margin-bottom: 0px;
 	margin-right: 0px;
 	margin-top: 0px;
-	
+
 	padding-top: 16px;
 	padding-bottom: 16px;
 	padding-left: 8px;
 	padding-right: 8px;
-    
+
     float:left;
 
 }
@@ -263,12 +272,12 @@ section h2 {
 	font-weight: normal;
 
     width: 592px;
-	
+
 	padding-top: 16px;
 	padding-bottom: 16px;
 	padding-left: 8px;
 	padding-right: 8px;
-    
+
     float:left;
 
 }
@@ -296,14 +305,14 @@ section h3 {
     font-weight: normal;
 
     width: 592px;
-    
+
     /*background-color: yellow;*/
 
     padding-top: 8px;
     padding-bottom: 8px;
     padding-left: 8px;
     padding-right: 8px;
-    
+
     float:left;
 
 }
@@ -323,19 +332,19 @@ section > h4 {
     font-family: "goudy-bookletter-1911-1","goudy-bookletter-1911-2","Goudy Bookletter 1911",serif;
 	font-size: 20px;
 	font-weight: normal;
-	
+
 	margin-left: 0px;
 	margin-bottom: 0px;
 	margin-right: 0px;
 	margin-top: 0px;
 
 	width: 592px;
-	
+
 	padding-top: 16px;
 	padding-bottom: 16px;
 	padding-left: 8px;
 	padding-right: 8px;
-    
+
     float:left;
 
 }
@@ -359,9 +368,9 @@ section > h4 {
 }
 
 p {
-	
+
     width: 592px;
-	
+
 	margin-top: 0px;
 	margin-bottom: 0px;
 	margin-left: 0px;
@@ -385,8 +394,8 @@ p {
 
 	font-size: 26px;
     font-family: "goudy-bookletter-1911-1","goudy-bookletter-1911-2","Goudy Bookletter 1911",serif;
-	line-height: 48px;    
-	
+	line-height: 48px;
+
 }
 
 .description {
@@ -420,7 +429,7 @@ aside {
 	float: right;
 	display: inline;
 	clear: right;
-    
+
 }
 
 .sidebox {
@@ -435,12 +444,12 @@ aside {
 	margin-bottom: 32px;
 	margin-left: 8px;
 	margin-right: 8px;
-    
+
     padding-top: 0px;
 	padding-bottom: 0px;
 	padding-left: 16px;
 	padding-right: 16px;
-    
+
 }
 
 .sidebox h1 {
@@ -449,9 +458,9 @@ aside {
     font-style: normal;
     font-size: 20px;
     font-weight: normal;
-    
+
     line-height: 32px;
-    
+
     margin-top: 16px;
 	margin-bottom: 16px;
 	margin-left: 0px;
@@ -472,20 +481,20 @@ aside {
 	padding-bottom: 0px;
 	padding-left: 0px;
 	padding-right: 0px;
-    
+
 }
 
 .sidebox ul li {
 
     list-style: none;
-    
+
 }
 
 .button {
 
     background-color:    rgba(189,54,19,1);
     color:  rgba(245,243,242,1);
-    
+
     text-transform: uppercase;
     font-family: "goudy-bookletter-1911-1","goudy-bookletter-1911-2","Goudy Bookletter 1911",serif;
     font-size: 14px;
@@ -499,7 +508,7 @@ aside {
     padding-bottom: 4px;
     padding-left: 8px;
     padding-right: 8px;
-    
+
     -moz-border-radius: 4px;
     border-radius: 4px;
 
@@ -543,7 +552,7 @@ img {
 	margin-bottom: 32px;
 	margin-left: 8px;
 	margin-right: 8px;
-	
+
 	padding-top: 0px;
 	padding-bottom: 0px;
 	padding-left: 0px;
@@ -551,20 +560,20 @@ img {
 
 	border: 0px;
 	border-radius: 4px;
-	
+
 	float: left;
-	
+
 }
 
 img.full {
-	
+
 	width: 912px;
-	
+
 	margin-top: 16px;
 	margin-bottom: 40px;
 	margin-left: 8px;
 	margin-right: 8px;
-	
+
 	padding-top: 0px;
 	padding-bottom: 0px;
 	padding-left: 0px;
@@ -575,14 +584,14 @@ img.full {
 }
 
 img.half-left {
-    
+
     width: 432px;
-    
+
     margin-top: 16px;
     margin-bottom: 40px;
     margin-left: 8px;
     margin-right: 8px;
-    
+
     /*background-color: grey;*/
 
     padding-top: 0px;
@@ -595,14 +604,14 @@ img.half-left {
 }
 
 img.half-right {
-    
+
     width: 432px;
-    
+
     margin-top: 16px;
     margin-bottom: 40px;
     margin-left: 8px;
     margin-right: 8px;
-    
+
     background-color: grey;
 
     padding-top: 0px;
@@ -618,7 +627,7 @@ img.text{
 
     border: solid 1px rgba(208,199,198,1);
 
-    width: 592px;    
+    width: 592px;
 
     margin-top: 16px;
     margin-bottom: 40px;
@@ -695,7 +704,7 @@ article blockquote,
 section blockquote {
 
     width: 496px;
-	
+
 	margin-top: 0px;
 	margin-bottom: 0px;
 	margin-left: 48px;
@@ -732,11 +741,11 @@ section blockquote p {
     List Styles
 -----------------------------------------------------------------------------*/
 
-section > ul, 
+section > ul,
 article > ul {
 
     width: 592px;
-    
+
     margin-top: 0px;
     margin-bottom: 0px;
     margin-left: 0px;
@@ -753,7 +762,7 @@ article > ul {
 
 }
 
-section > ul li, 
+section > ul li,
 article > ul li {
     padding-left: 8px;
     text-indent: -32px;
@@ -768,11 +777,11 @@ article > ul li:before {
     color: rgba(113,107,105,1);
 }
 
-section > ol, 
+section > ol,
 article > ol {
 
     width: 592px;
-    
+
     margin-top: 0px;
     margin-bottom: 0px;
     margin-left: 0px;
@@ -788,7 +797,7 @@ article > ol {
 
 }
 
-section > ol li, 
+section > ol li,
 article > ol li {
     padding-left: 8px;
     text-indent: -8px;
@@ -819,7 +828,7 @@ table {
 		position: relative;
 		display: inline-block;
 		line-height: 32px;
-		
+
 		margin-top: 0px;
 		margin-bottom: 17px;
 		margin-left: 0px;
@@ -828,9 +837,9 @@ table {
         padding-bottom: 0px;
         padding-left: 0px;
         padding-right: 0px;
-        
+
 }
-	
+
 th {
 
 	background-color: rgba(208,199,198,1);
@@ -842,14 +851,14 @@ th {
 	padding-top: 0px;
 	padding-right: 8px;
 	padding-left: 8px;
-	
-}	
-	
+
+}
+
 th.one-col {
-	
+
 	width: 144px;
-    padding-left: 8px;	
-		
+    padding-left: 8px;
+
 	}
 
 th.two-col {
@@ -864,7 +873,7 @@ th.col-last {
 	margin-right: 0px;
 
 }
-	
+
 td {
 
     font-size: 14px; */
@@ -968,7 +977,7 @@ svg.d3-panel {
     padding-bottom: 0px;
     padding-left: 0px;
     padding-right: 0px;
-		
+
 	float: left;
 }
 
@@ -979,15 +988,15 @@ svg.d3-panel {
     margin-top: 0px;
 	margin-bottom: 0px;
 	margin-left: 0px;
-	margin-right: 0px;        
-    
+	margin-right: 0px;
+
 	padding-top: 0px;
 	padding-bottom: 0px;
 	padding-left: 8px;
 	padding-right: 24px;
-    
+
     float: left;
-    
+
     color: rgba(208,199,198,1);
 
 }
