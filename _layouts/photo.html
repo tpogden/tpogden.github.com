@@ -5,13 +5,13 @@
 {% include head.html %}
 
     <body>
-    
+
         <div id="canvas">
-        
-            {% include header_photos.html %}
-          
+
+            {% include header_home.html %}
+
             <article>
-          
+
                 <header>
 
                     <aside class="stamp">{{ page.date | {{ post.date | date:"%B %Y" }}, {{ page.location }}</aside>
@@ -19,29 +19,29 @@
                     <h1>{{ page.title }}</h1>
 
                 </header>
-          
+
                 {% if page.description %}
-                
+
                 <p class="description">{{ page.description }}</p>
-                
+
                 {% endif %}
-          
+
                 {{ content }}
-          
+
                 {% if page.moreurl %}
-          
+
                 <aside>You can see <a href="{{ page.moreurl }}">more photos</a> from this set on Flickr.</aside>
-          
+
                 {% endif %}
-          
+
             </article>
-            
-            {% include footer.html %}    
-            
+
+            {% include footer.html %}
+
         </div> <!--/canvas-->
-    
+
     	{% include scripts.html %}
-    
+
     </body>
-    
+
 </html>

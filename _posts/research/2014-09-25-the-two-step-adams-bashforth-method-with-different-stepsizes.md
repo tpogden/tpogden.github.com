@@ -2,7 +2,7 @@
 layout: note
 title: The Two-Step Adams-Bashforth Method with Different Stepsizes
 location: Manchester
-category: notes
+category: research
 published: true
 description: A derivation of the two-step Adams-Bashforth method in the case that the two stepsizes are different, with an example Python implementation and order of accuracy tests. This could be useful if you're using either a small starting Euler step or adaptive stepsizes.
 <!-- assets_loc: /assets/notes/the-two-step-adams-bashforth-method-with-different-stepsizes/ -->
@@ -149,7 +149,7 @@ def ode_int_ab(func, y_0, t, args={}):
 
     Out:
         y: (array) the approximated solution of the system at each time in t,
-            with the initial value y_0 in the first row.        
+            with the initial value y_0 in the first row.
     """
 
     # Initialise the approximation array
@@ -192,7 +192,7 @@ To test our solver, let's take a simple ODE: $y' = ay$ with intial value $y(0) =
 
 def exp(t, y, args):
     """ An exponential function described as a first-order ODE. """
-    
+
     dydt = args['a']*y
     return dydt
 
@@ -228,8 +228,8 @@ for num_steps in [5, 10, 20]:
 
     t = np.linspace(0., t_max, num_steps+1) # Time steps
     y = ode_int_ab(exp, y_0, t, solve_args)
-    plt.plot(t, y, '-o', label=str(num_steps) + ' steps') 
-    
+    plt.plot(t, y, '-o', label=str(num_steps) + ' steps')
+
 y_known = np.exp(solve_args['a']*t) # Analytic result for comparison
 plt.plot(t, y_known, 'k--', label='known')
 plt.xlabel('$t$'), plt.ylabel('$y$')
@@ -264,9 +264,9 @@ for i, N_i in enumerate(N): # Loop over different numbers of steps
 
     t = np.linspace(0., t_max, N_i+1)
     y_end[i] = ode_int_ab(exp, y_0, t, solve_args)[-1]
-    
+
     stepsize[i] = t_max/N_i
-    
+
 plt.loglog(stepsize, abs(y_end - y_known[-1]), '-o', label='Global error')
 plt.loglog(stepsize, stepsize**order_check,'k--', label='$h^2$')
 plt.xlabel('$h$')
@@ -358,6 +358,6 @@ reduces the global error down to around $h_0 = 10^{-4}$. In general, if we
 **make the Euler step an order of magnitude smaller** we should bring the local
 error from this step in line with that of the first Adams-Bashforth steps.
 
-<p>Comments or corrections welcome, by 
+<p>Comments or corrections welcome, by
 {% include mail_ogden_eu.html %} or <a href="http://twitter.com/tommyogden/">
 tweet</a>.</p>

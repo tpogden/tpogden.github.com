@@ -2,7 +2,7 @@
 layout: note
 title: Random Walks
 location: Durham
-category: notes
+category: research
 redirect_from:
   - /notes/random-walks/
 description: An introduction to random walks in physical models, including Einstein’s explanation of Brownian motion. Using D3 demos we see how such models allow us to link microscopic behaviour to things we can measure in the lab.
@@ -13,7 +13,7 @@ published: true
 
   .red-fill {
 
-    fill: rgba(189,54,19,1); 
+    fill: rgba(189,54,19,1);
 
   }
 
@@ -44,7 +44,7 @@ published: true
   }
 
   .bar {
-    fill: rgba(189,54,19,1); 
+    fill: rgba(189,54,19,1);
     shape-rendering: crispEdges;
     opacity:0.9;
   }
@@ -130,15 +130,15 @@ physics came in the form of a classical problem so we&rsquo;ll start there.</p>
 <h2>Brownian Motion</h2>
 
 <p>In 1827, the Scottish botanist Robert Brown looked through his microscope at
-pollen grains suspended in water and noted that they jittered around in a way 
+pollen grains suspended in water and noted that they jittered around in a way
 he couldn&rsquo;t explain.</p>
 
 <aside>Einstein had a spectacular 1905, coming up with an explanation for the
 photoelectric effect (starting the quantum revolution), special relativity and the mass-energy equivalence as
-well as giving this explanation of Brownian motion. Each of these four would 
+well as giving this explanation of Brownian motion. Each of these four would
 be deserving of a Nobel prize. It is known as the
-<a href="http://en.wikipedia.org/wiki/Annus_Mirabilis_papers"><em>annus 
-mirabilis</em></a> (the miracle year). No physicist has felt truly productive ever since.  
+<a href="http://en.wikipedia.org/wiki/Annus_Mirabilis_papers"><em>annus
+mirabilis</em></a> (the miracle year). No physicist has felt truly productive ever since.
 
 </aside>
 
@@ -152,8 +152,8 @@ dispacement</em> (MSD), which we&rsquo;ll come back to.</p>
 
 <p>The reality of atoms and molecules was not fully accepted at that time, and
 Einstein viewed this model of Brownian motion as a way to give evidence for, or
-to falsify, the atomic theory. He wrote 
-<a href="http://users.physik.fu-berlin.de/~kleinert/files/eins_brownian.pdf"> 
+to falsify, the atomic theory. He wrote
+<a href="http://users.physik.fu-berlin.de/~kleinert/files/eins_brownian.pdf">
 in the paper</a>:</p>
 
 <blockquote>If the movement discussed here can actually be observed (together
@@ -165,7 +165,7 @@ had the prediction of this movement proved to be incorrect, a weighty
 argument would be provided against the molecular-kinetic conception of
 heat.</blockquote>
 
-<p>Experimental verification of the theory was made a few years later by 
+<p>Experimental verification of the theory was made a few years later by
 <a href="http://www.nobelprize.org/nobel_prizes/physics/laureates/1926/perrin-bio.html">Jean
 Perrin</a> &mdash; atoms and molecules were here to stay.</p>
 
@@ -176,7 +176,7 @@ started with. This is an example of a lattice walk, in this case a 1D
 lattice.</p>
 
 <p>We define the walk as a sequence of \(n\) independent integers \(a_n\), each
-with equal probability of being either -1 or 1. Then we define the series 
+with equal probability of being either -1 or 1. Then we define the series
 \( \{ S_n \} \), where
 
 \[ S_n = \sum_{i=0}^{n}{a_n}, \]
@@ -187,7 +187,7 @@ which gives us a starting point for investigating the statistical properties of
 the lattice walk. </p>
 
 <aside>Click to start. The walkers move along the
-horizontal axis, with their paths being tracked in time on the vertical axis and 
+horizontal axis, with their paths being tracked in time on the vertical axis and
 their final positions recorded in the histogram.</aside>
 
 <aside>Note that no walkers land on odd
@@ -198,8 +198,8 @@ numbers. Why is that?</aside>
 <p>A number of runs should show that despite each walker taking its own route,
 the result of many walkers tends toward the same result: a normal
 distribution. I won&rsquo;t derive that distribution here, but fundamentally its
-normality is due to the 
-<a href="http://mathworld.wolfram.com/CentralLimitTheorem.html">central limit 
+normality is due to the
+<a href="http://mathworld.wolfram.com/CentralLimitTheorem.html">central limit
 theorem</a>.</p>
 
 <p>All good, but for any physical system we&rsquo;re trying to model (e.g. Brown&rsquo;s
@@ -208,20 +208,20 @@ walkers  to something we can physically observe. The obvious place to start is
 the question: how far do the walkers get after a certain time, or \( n \) steps?</p>
 
 <p>The mean value \( \langle a_n \rangle \)  of any single step
-is zero, and by addition we find the the mean, or expectation, value of the 
+is zero, and by addition we find the the mean, or expectation, value of the
 walk,
 
 \[ \langle S_n \rangle = \sum_{i=0}^{n}{\langle a_i \rangle} = 0. \]
 
 This we might expect, as with each step having equal probability of going either way
 the most probable distance travelled after a number of steps will be zero &mdash; back where
-the walker started. So in this case the mean displacement is not useful to 
+the walker started. So in this case the mean displacement is not useful to
 us.</p>
 
 <p>Next we might look at the squared distance travelled. This proves more useful
 as \( (-1)^2 = 1^2 = 1 \), so \( \langle a_n^2 \rangle = 1. \) Then
 
-\[ \langle S_n^2 \rangle = \sum_{i=0}^{n}{\langle a_i^2 \rangle} + 
+\[ \langle S_n^2 \rangle = \sum_{i=0}^{n}{\langle a_i^2 \rangle} +
 \sum_{i=0}^{n} \sum_{j \ne i} 2 \langle a_i a_j \rangle = n + 0 = n.\]
 
 So this non-zero <a href="http://www.compsoc.man.ac.uk/~lucky/Democritus/Theory/msd.html">
@@ -245,7 +245,7 @@ particles is something we can observe and measure, so now we have a way to
 check the random walks of a model with reality.</p>
 
 <p>In the next simulation, we&rsquo;ll move up to a 2D lattice, where each walker can
-move on a plane: up, down, left or right with equal probability. We&rsquo;ll set off 50 walkers, 
+move on a plane: up, down, left or right with equal probability. We&rsquo;ll set off 50 walkers,
 and keep track of the MSD as we go in a graph.</p>
 
 <p>The equation for the diffusion coefficient above tells us we should expect
@@ -282,21 +282,21 @@ walks are everywhere in physics, playing an important role in what are known as
 Monte Carlo simulations. I&rsquo;ll write some more about the use of Monte Carlo
 methods in quantum physics in future notes.</p>
 
-<p>I&rsquo;ll be glad of any comments or corrections, by 
+<p>I&rsquo;ll be glad of any comments or corrections, by
 {% include mail_ogden_eu.html %} or <a href="http://twitter.com/tommyogden/">
 tweet</a>.</p>
 
 <h2>References &amp; Further Reading</h2>
 
-<p>Werner Krauth. <em>Statistical Mechanics: Algorithms and Computations</em>, 
+<p>Werner Krauth. <em>Statistical Mechanics: Algorithms and Computations</em>,
 Oxford University Press, November 2006.</p>
 
 <p>Jos Thijssen. <em>Computational Physics</em>. Cambridge University Press, second edition, March 2007.</p>
 
-<p>This simulations are written in javascript and 
+<p>This simulations are written in javascript and
 <a href="http://d3js.org">D3.js</a>.
 
-<p>When writing this note, I found  
+<p>When writing this note, I found
 <a href="http://mixedbit.org/blog/2013/02/10/random_walk_illustrated_with_d3.html">this blogpost</a>
-by Jan Wrobel, who has done something similar to the first simulation. I used his code to improve 
+by Jan Wrobel, who has done something similar to the first simulation. I used his code to improve
 my walk loops.</p>

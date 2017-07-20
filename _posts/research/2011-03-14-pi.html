@@ -2,14 +2,14 @@
 layout: note
 title: Pickup Sticks &amp; Pi
 location: Stockholm
-category: notes
+category: research
 permalink: /pi/
 published: true
 redirect_from:
   - /notes/pi/
 description: Measure &pi; just by dropping sticks on a table and counting them. A demonstration of Buffon’s needle using the HTML5 canvas.
 ---
-            
+
 <aside><a class="button" href="#play">&rarr; Play the Game!</a></aside>
 
 <p>We all learn at school that \( \pi \) is the ratio of a circle&rsquo;s circumference to its diameter, but \( \pi \) turns up all over the place in mathematics. For example, did you know you can measure \( \pi \) just by dropping sticks on a table and counting them? This is because \( \pi \) has  a role in statistics too. Below you can try it for yourself, first we&rsquo;ll visit the story of how this remarkable trick was discovered.</p>
@@ -20,13 +20,13 @@ description: Measure &pi; just by dropping sticks on a table and counting them. 
 
 <p>In 1777, a French philosopher called Georges-Louis Leclerc, Comte de Buffon, wrote out a very elegant theorem which turned out to be the earliest problem in geometric probability.&sup1;</p>
 
-            <aside>&sup1;Connor &amp; Robertson.</aside>          
+            <aside>&sup1;Connor &amp; Robertson.</aside>
 
 <p>Buffon discovered that if you draw a set of equally-spaced parallel lines (say, \( d \) centimetres apart) and drop sticks on them which are shorter than the spacing (say \( l \) centimetres long, where \( l \) is less than \( d \)), then the probability&sup2; of a stick crossing a line is \[ \frac{2 l}{\pi d}.\]
 
 </p>
 
-<aside>&sup2; Allen &amp; Tildesley, p110.</aside>  
+<aside>&sup2; Allen &amp; Tildesley, p110.</aside>
 
 <p>This means that if you drop lots of sticks randomly and count how many cross the parallel lines, you can calculate what \( \pi \) is by rearranging the formula:
 
@@ -52,15 +52,15 @@ where \( s \) is the number of sticks you drop and \( c \) is the number that cr
 
 <p>Have a go yourself with the simulator below!</p>
 
-</article>    
+</article>
 
 <article id="play">
-    
+
     <h2>Play</h2>
-    
+
     <p>Number of sticks dropped: <span id="stick-count">0</span><br />
     Number that crossed a line: <span id="cross-count">0</span></p>
-    
+
     <p class="big">Your estimate of \( \pi \): <span id="estimate">0</span></p>
 
 <aside>
@@ -79,7 +79,7 @@ where \( s \) is the number of sticks you drop and \( c \) is the number that cr
     <p>Error: <span id="error-percent">0</span>%</p>
 
     <aside><strong>Click on the board!</strong> Each time you click, <span id="num-sticks">100</span> sticks will be dropped and the number that cross a line will be counted. I dropped 10 to start you off.<br /><br />
-    
+
     Does the estimate get better as you drop more sticks (i.e. does the error get smaller)? How close to \( \pi \) can you get after 100,000 sticks, or 1,000,000?
     </aside>
 
@@ -98,7 +98,7 @@ where \( s \) is the number of sticks you drop and \( c \) is the number that cr
             document.getElementById('num-sticks')
             );
     </script>
-    
+
     <aside>Note: The game uses the HTML5 Canvas element, so you&rsquo;ll need a fairly modern browser for it to work.</aside>
 
 </article>
@@ -106,9 +106,9 @@ where \( s \) is the number of sticks you drop and \( c \) is the number that cr
 <article id="references">
 
 <header>
-    
+
 <h1>References &amp; Credits</h1>
-    
+
 </header>
 
 <p>Jos Thijssen. <em>Computational Physics</em>. Cambridge University Press, second edition, March 2007.</p>
