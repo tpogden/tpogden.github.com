@@ -490,6 +490,20 @@ aside {
 
 }
 
+.sidebox ol {
+
+	margin-top: 0px;
+	margin-bottom: 16px;
+	margin-left: 16px;
+	margin-right: 0px;
+
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+
+}
+
 .button {
 
     background-color:    rgba(189,54,19,1);
@@ -625,7 +639,7 @@ img.half-right {
 
 img.text{
 
-    border: solid 1px rgba(208,199,198,1);
+    /*border: solid 1px rgba(208,199,198,1);*/
 
     width: 592px;
 
@@ -908,7 +922,8 @@ pre > code {
     /*border: 1px solid #ccc;*/
 
     width: 592px;
-    font: 12px Monaco,"Courier New","DejaVu Sans Mono","Bitstream Vera Sans Mono",monospace;
+    font: 12px Monaco, "Courier New", "DejaVu Sans Mono",
+        "Bitstream Vera Sans Mono", monospace;
 
     margin-top: 0px;
     margin-bottom: 0px;
@@ -924,6 +939,10 @@ pre > code {
 
 }
 
+code {
+    font: 12px Monaco, "Courier New", "DejaVu Sans Mono",
+        "Bitstream Vera Sans Mono", monospace;
+}
 
 /*-----------------------------------------------------------------------------
     D3 Styles (put in a different file!)
