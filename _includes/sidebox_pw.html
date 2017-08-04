@@ -1,0 +1,11 @@
+<aside class="sidebox">
+
+    <h1><a href="/pennine-way/">The Pennine Way</a></h1>
+
+    <ul>
+        {% for post in site.tags.pennine-way reversed %}
+        <li><a href="{{ post.url }}">{{ post.title }}</a></li>
+        {% endfor %}
+    </ul>
+
+</aside>
