@@ -6,6 +6,7 @@ category: research
 published: true
 description:
 assets_loc: assets/notes/sieving-for-primes
+include_math: true
 ---
 
 <aside>This post is also available as a <a href="http://nbviewer.ipython.org/url/{{ site.url}}/{{ page.assets_loc }}/sieving-for-primes.ipynb">Jupyter notebook</a>.</aside>
