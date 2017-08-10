@@ -3,7 +3,7 @@ layout: note
 title: Moldy Argon II&#58; Atoms in Motion
 location: Manchester
 category: notes
-published: true
+published: false
 description: Lorem ipsum
 ---
 
@@ -33,10 +33,10 @@ description: Lorem ipsum
   }
 
   .circle {
-  
+
     fill: rgba(189,54,19,1);
     stroke: white;
-  
+
   }
 
   .play path {
@@ -88,7 +88,7 @@ The first thing we want to do is decide on the spatial dimensions of our simulat
 {% highlight cpp %}
  int Atoms::set_pos_random(float box_length_i) {
   ArrayXXf rand_pos(num_dims_, num_atoms_);
-  rand_pos.setRandom(); rand_pos = rand_pos*box_length_i/2.0;    
+  rand_pos.setRandom(); rand_pos = rand_pos*box_length_i/2.0;
   set_pos(rand_pos);
   return 0;
 }
@@ -115,7 +115,7 @@ The result of that distribution might look something like this.
 // TODO: Doc
 int Atoms::apply_toroidal_box_bc(float box_length_i) {
   for (int idx = 0; idx < num_atoms_; idx++) {
-    for (int d = 0; d < num_dims_; d++) {    
+    for (int d = 0; d < num_dims_; d++) {
       if (pos_.col(idx)[d] < -box_length_i/2) // Low boundary in each dim
         pos_.col(idx)[d] = box_length_i/2;
       else if (pos_.col(idx)[d] > box_length_i/2) // High boundary in each dim

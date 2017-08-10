@@ -3,7 +3,7 @@ layout: note
 title: Moldy Argon I&#58; Introduction
 location: Manchester
 category: notes
-published: true
+published: false
 description: Lorem ipsum
 ---
 
@@ -23,9 +23,9 @@ description: Lorem ipsum
 
 I'm starting a little computational physics hobby project, and I'm going to write about it here as I code. The idea is to build a molecular dynamics model, a key tool in simulating statistical physics. For simplicity, I'm going to ignore any internal degrees of freedom in the molecule (vibration, rotation), which is reasonable if we're modelling an inert element like argon. So the project's called *Moldy Argon*, with a [nod][peaches].
 
-Why do I want to write a molecular dynamics simulator? 
+Why do I want to write a molecular dynamics simulator?
 
-1. This is a field I've worked and [published][nitrate] in but isn't what I research now. It will be useful to document some of what I know to refer back to. 
+1. This is a field I've worked and [published][nitrate] in but isn't what I research now. It will be useful to document some of what I know to refer back to.
 2. Thinking about what readers of *A blog about doing physics with computers* might be interested in, one useful thing I can do is write a good introduction for anyone new to the subject.
 3. Visualising molecules bouncing around is fun, and I want to try that in-browser.
 
@@ -37,7 +37,7 @@ Why do I want to write a molecular dynamics simulator?
 &lsquo;It all works because Avogadro's number is closer to infinity than to ten.&rsquo; I'm fond of Ralph Baierlein's quip on thermal physics because it&rsquo;s a mathematical horror, but physically astute.
 </aside>
 
-Avogadro tells us that any macroscopic bit of matter, like the hot cup of tea sat here on my desk, contains a huge (on the order of $10^{23}$) number of molecules. To model every possible way all these molecules can be arranged, yet alone track how they behave, is clearly impossible. 
+Avogadro tells us that any macroscopic bit of matter, like the hot cup of tea sat here on my desk, contains a huge (on the order of $10^{23}$) number of molecules. To model every possible way all these molecules can be arranged, yet alone track how they behave, is clearly impossible.
 
 
 <aside>
@@ -51,7 +51,7 @@ The idea is to use a computer to solve Newton's equations of motion for a sample
 <img class="text-framed" src="/assets/notes/moldy-argon-1/rahman.png" />
 <figcaption>A Rahman. <a href="http://journals.aps.org/pr/abstract/10.1103/PhysRev.136.A405">Correlations in the Motion of Atoms in Liquid Argon</a>. <em>Phys. Rev</em>, 136 (2A):405–411, 1964</figcaption>
 </figure>
-<!-- 
+<!--
 ## Skateboards
 
 One thing before we start. It's an idea from a talk by an engineer at Spotify on how they build products.
