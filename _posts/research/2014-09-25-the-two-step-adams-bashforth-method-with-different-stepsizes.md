@@ -6,6 +6,7 @@ category: research
 published: true
 description: A derivation of the two-step Adams-Bashforth method in the case that the two stepsizes are different, with an example Python implementation and order of accuracy tests. This could be useful if you're using either a small starting Euler step or adaptive stepsizes.
 <!-- assets_loc: /assets/notes/the-two-step-adams-bashforth-method-with-different-stepsizes/ -->
+include_math: true
 ---
 
 <aside>This post is also available as an <a href="http://nbviewer.ipython.org/url/tommyogden.com/ipynb/the-two-step-adams-bashforth-method-with-different-stepsizes.ipynb">IPython notebook</a>.</aside>
