@@ -1,35 +1,18 @@
 <head>
 
-    <meta charset="utf-8" />
+<meta charset="utf-8" />
 
-    {%  if page.layout == 'no-nav' %}
+<title>{{ page.title }}</title>
 
-    <title>{{ page.title }}</title>
+<link href="/atom.xml" rel="alternate" title="Atom Feed" type="application/atom+xml" />
 
-    {%  elsif page.layout == 'about' %}
+<!-- Icons -->
+<link rel="apple-touch-icon" href="/assets/png/logo_1024.png">
+<link rel="shortcut icon" href="/assets/png/logo_192.png">
 
-    <title>{{ page.title }}</title>
+<link rel="stylesheet" href="/css/styles.css" />
+<link rel="stylesheet" href="/css/solarized-dark.css" />
 
-    {% else %}
-
-    <title>{{ page.title }}</title>
-
-    {% endif %}
-
-    <link href="/atom.xml" rel="alternate" title="Atom Feed" type="application/atom+xml" />
-
-    <!-- Icons -->
-    <link rel="apple-touch-icon" href="/assets/png/logo_1024.png">
-    <link rel="shortcut icon" href="/assets/png/logo_192.png">
-
-    <!--[if ! lte IE 6]><!-->
-    <link rel="stylesheet" href="/css/screen.css" />
-    <link rel="stylesheet" href="/css/solarized-dark.css" />
-
-    <!--<![endif]-->
-
-    <!--[if lte IE 6]>
-    <link rel="stylesheet" href="http://universal-ie6-css.googlecode.com/files/ie6.1.1.css" media="screen, projection">
-    <![endif]-->
+<link href="https://fonts.googleapis.com/css?family=Cormorant+Garamond:500,500i|Goudy+Bookletter+1911" rel="stylesheet">
 
 </head>
