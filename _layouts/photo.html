@@ -4,44 +4,44 @@
 
 {% include head.html %}
 
-    <body>
+<body>
 
-        <div id="canvas">
+<div id="canvas">
 
-            {% include header_home.html %}
+{% include header_home.html %}
 
-            <article>
+<article>
 
-                <header>
+<header>
 
-                    <aside class="stamp">{{ page.date | {{ post.date | date:"%B %Y" }}, {{ page.location }}</aside>
+<aside class="stamp">{{ page.date | date:"%Y-%m-%d" }}</aside>
 
-                    <h1>{{ page.title }}</h1>
+<h1>{{ page.title }}</h1>
 
-                </header>
+</header>
 
-                {% if page.description %}
+{% if page.description %}
 
-                <p class="description">{{ page.description }}</p>
+<p class="description">{{ page.description }}</p>
 
-                {% endif %}
+{% endif %}
 
-                {{ content }}
+{{ content }}
 
-                {% if page.moreurl %}
+{% if page.moreurl %}
 
-                <aside>You can see <a href="{{ page.moreurl }}">more photos</a> from this set on Flickr.</aside>
+<aside>You can see <a href="{{ page.moreurl }}">more photos</a> from this set on Flickr.</aside>
 
-                {% endif %}
+{% endif %}
 
-            </article>
+</article>
 
-            {% include footer.html %}
+{% include footer.html %}
 
-        </div> <!--/canvas-->
+</div> <!--/canvas-->
 
-    	{% include scripts.html %}
+{% include scripts.html %}
 
-    </body>
+</body>
 
 </html>

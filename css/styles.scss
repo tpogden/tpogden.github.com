@@ -1,3 +1,7 @@
+---
+---
+
+
 /* Colors
 
 White:  rgba(245,243,242,1);
@@ -10,7 +14,8 @@ Light:  rgba(208,199,198,1);
 
 body {
 
-    font-family: "adobe-garamond-pro-1", "adobe-garamond-pro-2", "Adobe Garamond Pro", serif;
+    font-family: 'Cormorant Garamond', serif;
+    /* font-family: 'Times New Roman', Times, serif; */
     font-size: 18px;
 	line-height: 32px;
 	text-align: center;
@@ -79,11 +84,11 @@ a:hover {
 
 #canvas > header > h1 {
 
-    font-family: "goudy-bookletter-1911-1","goudy-bookletter-1911-2","Goudy Bookletter 1911",serif;
+    font-family: 'Goudy Bookletter 1911', serif;
 	font-size: 16px;
 	font-weight: 600;
-
     letter-spacing: 4px;
+    text-transform: uppercase;
 
 	margin-top: 16px;
 	margin-bottom: 0px;
@@ -117,7 +122,7 @@ nav {
 
     color: rgba(208,199,198,1);
 
-    font-family: "goudy-bookletter-1911-1","goudy-bookletter-1911-2","Goudy Bookletter 1911",serif;
+    font-family: 'Goudy Bookletter 1911', serif;
     font-style: normal;
     font-size: 16px;
 
@@ -238,7 +243,7 @@ nav ul li.active a {
 
 	width: 592px;
 
-    font-family: "goudy-bookletter-1911-1","goudy-bookletter-1911-2","Goudy Bookletter 1911",serif;
+    font-family: 'Goudy Bookletter 1911', serif;
 	font-size: 32px;
 	font-weight: normal;
 
@@ -261,7 +266,7 @@ nav ul li.active a {
 article h2,
 section h2 {
 
-    font-family: "goudy-bookletter-1911-1","goudy-bookletter-1911-2","Goudy Bookletter 1911",serif;
+    font-family: 'Goudy Bookletter 1911', serif;
 
 	margin-left: 0px;
 	margin-bottom: 0px;
@@ -291,10 +296,6 @@ section h2 a {
 
 article h3,
 section h3 {
-
-    /*font-family: "goudy-bookletter-1911-1","goudy-bookletter-1911-2","Goudy Bookletter 1911",serif;*/
-    font-family: "adobe-garamond-pro-1", "adobe-garamond-pro-2", "Adobe Garamond Pro", serif;
-    /*font-style: italic;*/
 
     margin-left: 0px;
     margin-bottom: 0px;
@@ -329,7 +330,7 @@ section > h4 {
 
     color: rgba(189,54,19,1);
 
-    font-family: "goudy-bookletter-1911-1","goudy-bookletter-1911-2","Goudy Bookletter 1911",serif;
+    font-family: 'Goudy Bookletter 1911', serif;
 	font-size: 20px;
 	font-weight: normal;
 
@@ -351,7 +352,7 @@ section > h4 {
 
 .stamp {
 
-    font-family: "goudy-bookletter-1911-1","goudy-bookletter-1911-2","Goudy Bookletter 1911",serif;
+    font-family: 'Goudy Bookletter 1911', serif;
 	font-size: 14px;
     color: rgba(208,199,198,1);
 
@@ -393,7 +394,7 @@ p {
 .big {
 
 	font-size: 26px;
-    font-family: "goudy-bookletter-1911-1","goudy-bookletter-1911-2","Goudy Bookletter 1911",serif;
+    font-family: 'Goudy Bookletter 1911', serif;
 	line-height: 48px;
 
 }
@@ -454,7 +455,7 @@ aside {
 
 .sidebox h1 {
 
-    font-family: "goudy-bookletter-1911-1","goudy-bookletter-1911-2","Goudy Bookletter 1911",serif;
+    font-family: 'Goudy Bookletter 1911', serif;
     font-style: normal;
     font-size: 20px;
     font-weight: normal;
@@ -510,7 +511,7 @@ aside {
     color:  rgba(245,243,242,1);
 
     text-transform: uppercase;
-    font-family: "goudy-bookletter-1911-1","goudy-bookletter-1911-2","Goudy Bookletter 1911",serif;
+    font-family: 'Goudy Bookletter 1911', serif;
     font-size: 14px;
 
 	margin-top: 0px;
@@ -857,7 +858,7 @@ table {
 th {
 
 	background-color: rgba(208,199,198,1);
-    font-family: "goudy-bookletter-1911-1","goudy-bookletter-1911-2","Goudy Bookletter 1911",serif;
+    font-family: 'Goudy Bookletter 1911', serif;
     font-size: 16px;
 	font-weight: normal;
 
@@ -890,7 +891,7 @@ th.col-last {
 
 td {
 
-    font-size: 14px; */
+    font-size: 14px;
 
 	padding-bottom: 0px;
 	padding-top: 0px;
@@ -982,7 +983,7 @@ svg.d3-panel {
 #canvas > footer {
 
     font-size: 14px;
-    font-family: "goudy-bookletter-1911-1","goudy-bookletter-1911-2","Goudy Bookletter 1911",serif;
+    font-family: 'Goudy Bookletter 1911', serif;
 
 	width: 928px;
 	height: 64px;
