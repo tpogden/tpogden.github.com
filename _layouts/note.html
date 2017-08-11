@@ -4,48 +4,32 @@
 
 {% include head.html %}
 
-    <body>
+<body>
 
-        <div id="canvas">
+<div id="canvas">
 
-            {% include header_home.html %}
+{% include header_home.html %}
 
-            <article>
+<article>
 
-                <header>
-<!--
-                    <aside class="stamp">{{ page.date | {{ post.date | date:"%d %B %Y" }}, {{ page.location }}</aside> -->
+<header>
 
-                    <aside class="stamp">{{ page.date | {{ post.date | date:"%Y-%m-%d" }}</aside>
+<aside class="stamp">{{ page.date | date:"%Y-%m-%d" }}</aside>
 
-                    <h1>{{ page.title }}</h1>
+<h1>{{ page.title }}</h1>
 
-                </header>
+</header>
 
-                {{ content }}
+{{ content }}
 
-<!--                 <nav id="links">
+</article>
 
-                    {% if page.previous.url %}
-                    <span id="prev"><a href="{{page.previous.url}}" title="Previous:
-        {{page.previous.title}}">&larr; Previous ({{page.previous.title}})</a></span>
-                    {% endif %}
+{% include footer.html %}
 
-                    {% if page.next.url %}
-                    <span id="next"><a href="{{page.next.url}}" title="Next:
-        {{page.next.title}}">Next ({{page.next.title}}) &rarr; </a></span>
-                    {% endif %}
+</div> <!--/canvas-->
 
-                </nav> -->
+{% include scripts.html %}
 
-            </article>
-
-            {% include footer.html %}
-
-        </div> <!--/canvas-->
-
-    	{% include scripts.html %}
-
-    </body>
+</body>
 
 </html>
