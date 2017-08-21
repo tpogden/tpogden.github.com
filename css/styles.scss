@@ -60,9 +60,7 @@ a:hover {
     padding-left: 0px;
     padding-right: 0px;
 
-}
-
-#canvas > header {
+  header {
 
     width: 928px;
     height: 96px;
@@ -79,67 +77,67 @@ a:hover {
 
     float: left;
 
-}
+    h1 {
 
-#canvas > header > h1 {
+      font-family: $header-font-stack;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 4px;
+      text-transform: uppercase;
 
-    font-family: $header-font-stack;
-    font-size: 16px;
-    font-weight: 600;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-
-    margin-top: 16px;
-    margin-bottom: 0px;
-    margin-left: 0px;
-    margin-right: 0px;
+      margin-top: 16px;
+      margin-bottom: 0px;
+      margin-left: 0px;
+      margin-right: 0px;
 
 
-    width: 432px;
+      width: 432px;
 
-    padding-top: 32px;
-    padding-bottom: 16px;
-    padding-left: 8px;
-    padding-right: 8px;
+      padding-top: 32px;
+      padding-bottom: 16px;
+      padding-left: 8px;
+      padding-right: 8px;
 
-    float:left;
+      float:left;
 
-}
+      a {
 
-#canvas > header > h1 > a {
+        color: $red;
+        text-decoration: none;
+        border-bottom: 0px solid;
 
-    color: $red;
-    text-decoration: none;
-    border-bottom: 0px solid;
+      }
+
+    }
+
+  }
 
 }
 
 nav {
 
-    width: 448px; /* Was 608px, before Twitter link, 768 with 4 links */
-    float: left;
+  width: 448px; /* Was 608px, before Twitter link, 768 with 4 links */
+  float: left;
 
-    color: $light-grey;
+  color: $light-grey;
 
-    font-family: $header-font-stack;
-    font-style: normal;
-    font-size: 16px;
+  font-family: $header-font-stack;
+  font-style: normal;
+  font-size: 16px;
 
-    letter-spacing: 1px;
+  letter-spacing: 1px;
 
-    margin-top: 16px;
-    margin-bottom: 0px;
-    margin-left: 32px;
-    margin-right: 0px;
+  margin-top: 16px;
+  margin-bottom: 0px;
+  margin-left: 32px;
+  margin-right: 0px;
 
-    padding-top: 32px;
-    padding-bottom: 16px;
-    padding-left: 0px;
-    padding-right: 0px;
+  padding-top: 32px;
+  padding-bottom: 16px;
+  padding-left: 0px;
+  padding-right: 0px;
 
-}
-
-nav ul {
+  ul {
 
     list-style: none;
 
@@ -155,50 +153,52 @@ nav ul {
 
     float: left;
 
-}
+    li a {
 
-nav ul li > a {
+      color: $grey;
+      border-bottom: solid 0px;
+    }
 
-    color: $grey;
+    li {
 
-    border-bottom: solid 0px;
+      float: left;
 
-}
+      width: 104px;
 
-nav ul li {
+      margin-top: 0px;
+      margin-bottom: 0px;
+      margin-left: 32px;
+      margin-right: 8px;
 
-    float: left;
+      padding-top: 0px;
+      padding-bottom: 0px;
+      padding-left: 8px;
+      padding-right: 8px;
 
-    width: 104px;
+    }
 
-    margin-top: 0px;
-    margin-bottom: 0px;
-    margin-left: 32px;
-    margin-right: 8px;
+    li.last-li {
 
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-left: 8px;
-    padding-right: 8px;
+      margin-right: 0px;
 
-}
+    }
 
-nav ul li.last-li {
+    li.active a {
 
-    margin-right: 0px;
+      border-bottom: solid 1px $red;
 
-}
+    }
 
-nav ul li.active a {
+    li:before {
 
-    border-bottom: solid 1px $red;
+      content: initial;
+      padding-right: initial;
+      color: initial;
 
-}
+    }
 
-nav ul li:before {
-    content: initial;
-    padding-right: initial;
-    color: initial;
+  }
+
 }
 
 article, section {
@@ -232,6 +232,22 @@ header {
 
 }
 
+p {
+
+    width: 592px;
+
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+
+    padding-top: 16px;
+    padding-bottom: 16px;
+    padding-left: 8px;
+    padding-right: 8px;
+
+}
+
 h1 {
 
     width: 592px;
@@ -258,81 +274,76 @@ h1 {
 
 h2 {
 
-    font-family: $header-font-stack;
+  font-family: $header-font-stack;
 
-    margin-left: 0px;
-    margin-bottom: 0px;
-    margin-right: 0px;
-    margin-top: 0px;
+  margin-left: 0px;
+  margin-bottom: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
 
-    font-size: 22px;
-    font-weight: normal;
+  font-size: 22px;
+  font-weight: normal;
 
-    width: 592px;
+  width: 592px;
 
-    padding-top: 16px;
-    padding-bottom: 16px;
-    padding-left: 8px;
-    padding-right: 8px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  padding-left: 8px;
+  padding-right: 8px;
 
-    float:left;
+  float:left;
 
-}
-
-h2 a {
-
+  a {
     border-bottom: 0px;
-
+  }
 }
 
 h3 {
 
-    margin-left: 0px;
-    margin-bottom: 0px;
-    margin-right: 0px;
-    margin-top: 0px;
+  margin-left: 0px;
+  margin-bottom: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
 
-    font-size: 18px;
-    font-weight: normal;
+  font-size: 18px;
+  font-weight: normal;
 
-    width: 592px;
+  width: 592px;
 
-    padding-top: 8px;
-    padding-bottom: 8px;
-    padding-left: 8px;
-    padding-right: 8px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 8px;
+  padding-right: 8px;
 
-    float:left;
+  float:left;
 
-}
-
-h3 a {
-
-    border-bottom: 0px;
+  a {
+     border-bottom: 0px;
+  }
 
 }
 
 h4 {
 
-    color: $red;
+  color: $red;
 
-    font-family: $header-font-stack;
-    font-size: 20px;
-    font-weight: normal;
+  font-family: $header-font-stack;
+  font-size: 20px;
+  font-weight: normal;
 
-    margin-left: 0px;
-    margin-bottom: 0px;
-    margin-right: 0px;
-    margin-top: 0px;
+  margin-left: 0px;
+  margin-bottom: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
 
-    width: 592px;
+  width: 592px;
 
-    padding-top: 16px;
-    padding-bottom: 16px;
-    padding-left: 8px;
-    padding-right: 8px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  padding-left: 8px;
+  padding-right: 8px;
 
-    float:left;
+  float:left;
 
 }
 
@@ -351,37 +362,6 @@ h4 {
 .align-right {
 
     text-align: right;
-
-}
-
-p {
-
-    width: 592px;
-
-    margin-top: 0px;
-    margin-bottom: 0px;
-    margin-left: 0px;
-    margin-right: 0px;
-
-    padding-top: 16px;
-    padding-bottom: 16px;
-    padding-left: 8px;
-    padding-right: 8px;
-
-}
-
-::selection {
-
-    background-color: $red;
-    color: rgba(242,237,236,1);
-
-}
-
-.big {
-
-    font-size: 26px;
-    font-family: $header-font-stack;
-    line-height: 48px;
 
 }
 
@@ -491,36 +471,13 @@ aside {
 
 }
 
-.button {
-
-    background-color:    $red;
-    color:  rgba(245,243,242,1);
-
-    text-transform: uppercase;
-    font-family: $header-font-stack;
-    font-size: 14px;
-
-    margin-top: 0px;
-    margin-bottom: 0px;
-    margin-left: 0px;
-    margin-right: 0px;
-
-    padding-top: 4px;
-    padding-bottom: 4px;
-    padding-left: 8px;
-    padding-right: 8px;
-
-    -moz-border-radius: 4px;
-    border-radius: 4px;
-
-}
-
 figure {
 
     margin: 0px;
     padding: 0px;
 
     border: 0px;
+    clear: both;
 
 }
 
@@ -692,47 +649,6 @@ img.side-framed {
     clear: right;
 
 }
-
-figure {
-
-    clear: both;
-
-}
-
-blockquote {
-
-    width: 496px;
-
-    margin-top: 0px;
-    margin-bottom: 0px;
-    margin-left: 48px;
-    margin-right: 48px;
-
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-left: 0px;
-    padding-right: 0px;
-
-    color: $grey;
-
-}
-
-blockquote p {
-
-    width: inherit;
-
-    margin-top: 0px;
-    margin-bottom: 0px;
-    margin-left: 0px;
-    margin-right: 0px;
-
-    padding-top: 16px;
-    padding-bottom: 16px;
-    padding-left: 8px;
-    padding-right: 8px;
-
-}
-
 
 /*-----------------------------------------------------------------------------
     List Styles
