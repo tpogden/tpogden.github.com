@@ -60,144 +60,145 @@ a:hover {
     padding-left: 0px;
     padding-right: 0px;
 
-  header {
+    header {
 
-    width: 928px;
-    height: 96px;
+        width: 928px;
+        height: 96px;
 
-    margin-top: 0px;
-    margin-bottom: 0px;
-    margin-left: 32px;
-    margin-right: 32px;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        margin-left: 32px;
+        margin-right: 32px;
 
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-left: 0px;
-    padding-right: 0px;
+        padding-top: 0px;
+        padding-bottom: 0px;
+        padding-left: 0px;
+        padding-right: 0px;
 
-    float: left;
+        float: left;
 
-    h1 {
+        #home {
 
-      font-family: $header-font-stack;
-      font-size: 16px;
-      font-weight: 600;
-      letter-spacing: 4px;
-      text-transform: uppercase;
+            font-family: $header-font-stack;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 4px;
+            text-transform: uppercase;
 
-      margin-top: 16px;
-      margin-bottom: 0px;
-      margin-left: 0px;
-      margin-right: 0px;
+            margin-top: 16px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+            margin-right: 0px;
 
 
-      width: 432px;
+            width: 432px;
 
-      padding-top: 32px;
-      padding-bottom: 16px;
-      padding-left: 8px;
-      padding-right: 8px;
+            padding-top: 32px;
+            padding-bottom: 16px;
+            padding-left: 8px;
+            padding-right: 8px;
 
-      float:left;
+            float:left;
 
-      a {
+            a {
 
-        color: $red;
-        text-decoration: none;
-        border-bottom: 0px solid;
+                color: $red;
+                text-decoration: none;
+                border-bottom: 0px solid;
 
-      }
+            }
+
+        }
 
     }
-
-  }
 
 }
 
 nav {
 
-  width: 448px; /* Was 608px, before Twitter link, 768 with 4 links */
-  float: left;
+    width: 448px; /* Was 608px, before Twitter link, 768 with 4 links */
+    float: left;
 
-  color: $light-grey;
+    color: $light-grey;
 
-  font-family: $header-font-stack;
-  font-style: normal;
-  font-size: 16px;
+    font-family: $header-font-stack;
+    font-style: normal;
+    font-size: 16px;
 
-  letter-spacing: 1px;
+    letter-spacing: 1px;
 
-  margin-top: 16px;
-  margin-bottom: 0px;
-  margin-left: 32px;
-  margin-right: 0px;
-
-  padding-top: 32px;
-  padding-bottom: 16px;
-  padding-left: 0px;
-  padding-right: 0px;
-
-  ul {
-
-    list-style: none;
-
-    margin-top: 0px;
+    margin-top: 16px;
     margin-bottom: 0px;
-    margin-left: 0px;
+    margin-left: 32px;
     margin-right: 0px;
 
-    padding-top: 0px;
-    padding-bottom: 0px;
+    padding-top: 32px;
+    padding-bottom: 16px;
     padding-left: 0px;
     padding-right: 0px;
 
-    float: left;
+    ul {
 
-    li a {
+        list-style: none;
 
-      color: $grey;
-      border-bottom: solid 0px;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        margin-left: 0px;
+        margin-right: 0px;
+
+        padding-top: 0px;
+        padding-bottom: 0px;
+        padding-left: 0px;
+        padding-right: 0px;
+
+        float: left;
+
+        li a {
+
+            color: $grey;
+            border-bottom: solid 0px;
+        }
+
+        li {
+
+            float: left;
+
+            width: 104px;
+
+            margin-top: 0px;
+            margin-bottom: 0px;
+            margin-left: 32px;
+            margin-right: 8px;
+
+            padding-top: 0px;
+            padding-bottom: 0px;
+            padding-left: 8px;
+            padding-right: 8px;
+
+            .last-li {
+
+                margin-right: 0px;
+
+            }
+
+            .active a {
+
+                border-bottom: solid 1px $red;
+
+            }
+
+        }
+
+        li:before {
+
+            content: "";
+            padding-right: initial;
+            color: initial;
+            text-indent: initial;
+
+        }
+
     }
-
-    li {
-
-      float: left;
-
-      width: 104px;
-
-      margin-top: 0px;
-      margin-bottom: 0px;
-      margin-left: 32px;
-      margin-right: 8px;
-
-      padding-top: 0px;
-      padding-bottom: 0px;
-      padding-left: 8px;
-      padding-right: 8px;
-
-    }
-
-    li.last-li {
-
-      margin-right: 0px;
-
-    }
-
-    li.active a {
-
-      border-bottom: solid 1px $red;
-
-    }
-
-    li:before {
-
-      content: initial;
-      padding-right: initial;
-      color: initial;
-
-    }
-
-  }
 
 }
 
@@ -216,18 +217,6 @@ article, section {
     padding-right: 0px;
 
     float: left;
-    clear: both;
-
-}
-
-header {
-
-    width: 928px;
-
-    float: left;
-
-    margin-bottom: 16px;
-
     clear: both;
 
 }
@@ -264,7 +253,7 @@ h1 {
     margin-top: 0px;
 
     padding-top: 16px;
-    padding-bottom: 16px;
+    padding-bottom: 48px;
     padding-left: 8px;
     padding-right: 8px;
 
@@ -274,76 +263,80 @@ h1 {
 
 h2 {
 
-  font-family: $header-font-stack;
+    font-family: $header-font-stack;
 
-  margin-left: 0px;
-  margin-bottom: 0px;
-  margin-right: 0px;
-  margin-top: 0px;
+    margin-left: 0px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
 
-  font-size: 22px;
-  font-weight: normal;
+    font-size: 22px;
+    font-weight: normal;
 
-  width: 592px;
+    width: 592px;
 
-  padding-top: 16px;
-  padding-bottom: 16px;
-  padding-left: 8px;
-  padding-right: 8px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    padding-left: 8px;
+    padding-right: 8px;
 
-  float:left;
+    float:left;
 
-  a {
-    border-bottom: 0px;
-  }
+    a {
+
+        border-bottom: 0px;
+
+    }
 }
 
 h3 {
 
-  margin-left: 0px;
-  margin-bottom: 0px;
-  margin-right: 0px;
-  margin-top: 0px;
+    margin-left: 0px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
 
-  font-size: 18px;
-  font-weight: normal;
+    font-size: 18px;
+    font-weight: normal;
 
-  width: 592px;
+    width: 592px;
 
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 8px;
-  padding-right: 8px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 8px;
+    padding-right: 8px;
 
-  float:left;
+    float:left;
 
-  a {
-     border-bottom: 0px;
-  }
+    a {
+
+        border-bottom: 0px;
+
+    }
 
 }
 
 h4 {
 
-  color: $red;
+    color: $red;
 
-  font-family: $header-font-stack;
-  font-size: 20px;
-  font-weight: normal;
+    font-family: $header-font-stack;
+    font-size: 20px;
+    font-weight: normal;
 
-  margin-left: 0px;
-  margin-bottom: 0px;
-  margin-right: 0px;
-  margin-top: 0px;
+    margin-left: 0px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
 
-  width: 592px;
+    width: 592px;
 
-  padding-top: 16px;
-  padding-bottom: 16px;
-  padding-left: 8px;
-  padding-right: 8px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    padding-left: 8px;
+    padding-right: 8px;
 
-  float:left;
+    float:left;
 
 }
 
@@ -372,8 +365,10 @@ h4 {
 }
 
 .rating {
+
     color: $red;
     font-size: 16px;
+
 }
 
 aside {
@@ -417,57 +412,50 @@ aside {
     padding-left: 16px;
     padding-right: 16px;
 
-}
+    ul {
 
-.sidebox h1 {
+        list-style: none;
 
-    font-family: $header-font-stack;
-    font-style: normal;
-    font-size: 20px;
-    font-weight: normal;
+        margin-top: 0px;
+        margin-bottom: 16px;
+        margin-left: 0px;
+        margin-right: 0px;
 
-    line-height: 32px;
+        padding-top: 0px;
+        padding-bottom: 0px;
+        padding-left: 0px;
+        padding-right: 0px;
 
-    margin-top: 16px;
-    margin-bottom: 16px;
-    margin-left: 0px;
-    margin-right: 0px;
+        li {
 
-}
+            list-style: none;
 
-.sidebox ul {
+        }
 
-    list-style: none;
+        li:before {
 
-    margin-top: 0px;
-    margin-bottom: 16px;
-    margin-left: 0px;
-    margin-right: 0px;
+            content: initial;
+            padding-right: initial;
+            color: initial;
+            text-indent: 0px;
 
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-left: 0px;
-    padding-right: 0px;
+        }
 
-}
+    }
 
-.sidebox ul li {
+    ol {
 
-    list-style: none;
+        margin-top: 0px;
+        margin-bottom: 16px;
+        margin-left: 16px;
+        margin-right: 0px;
 
-}
+        padding-top: 0px;
+        padding-bottom: 0px;
+        padding-left: 0px;
+        padding-right: 0px;
 
-.sidebox ol {
-
-    margin-top: 0px;
-    margin-bottom: 16px;
-    margin-left: 16px;
-    margin-right: 0px;
-
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-left: 0px;
-    padding-right: 0px;
+    }
 
 }
 
@@ -550,8 +538,6 @@ img.half-left {
     margin-left: 8px;
     margin-right: 8px;
 
-    /*background-color: grey;*/
-
     padding-top: 0px;
     padding-bottom: 0px;
     padding-left: 0px;
@@ -581,7 +567,7 @@ img.half-right {
 
 }
 
-img.text{
+img.text {
 
     /*border: solid 1px $light-grey;*/
 
@@ -594,7 +580,7 @@ img.text{
 
 }
 
-img.text-framed{
+img.text-framed {
 
     border: solid 1px $light-grey;
     border-radius: 4px;
@@ -668,8 +654,6 @@ ul {
     padding-left: 8px;
     padding-right: 8px;
 
-    /*background-color: silver;*/
-
     list-style: none;
 
 }
@@ -720,6 +704,7 @@ ol li:before {
     color: $grey;
     width: 8px;
     margin-left: -16px;
+
 }
 
 /*-----------------------------------------------------------------------------
@@ -767,14 +752,14 @@ th.one-col {
     width: 144px;
     padding-left: 8px;
 
-    }
+}
 
 th.two-col {
 
     width: 304px;
     padding-left: 8px;
 
-    }
+}
 
 th.col-last {
 
