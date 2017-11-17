@@ -3,52 +3,34 @@ layout: projects
 title: Projects
 ---
 
-<section>
+<h1>{{ page.title }}</h1>
 
-  <header>
-    <h1>{{ page.title }}</h1>
-  </header>
+<h4>Code</h4>
 
-</section>
+{% for post in site.tags.code %}
 
-<section>
+<h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
 
-  <h4>Code</h4>
+<p class="description">{{ post.description }}</p>
 
-    {% for post in site.tags.code %}
+{% endfor %}
 
-    <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
+<h4>Research</h4>
 
-    <p class="description">{{ post.description }}</p>
+{% for post in site.tags.physics %}
 
-    {% endfor %}
+<h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
 
-</section>
+<p class="description">{{ post.description }}</p>
 
-<section>
+{% endfor %}
 
-  <h4>Research</h4>
+<h4>Music</h4>
 
-    {% for post in site.tags.physics %}
+{% for post in site.tags.songwriting %}
 
-    <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
+<h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
 
-    <p class="description">{{ post.description }}</p>
+<p class="description">{{ post.description }}</p>
 
-    {% endfor %}
-
-</section>
-
-<section>
-
-  <h4>Music</h4>
-
-    {% for post in site.tags.songwriting %}
-
-    <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
-
-    <p class="description">{{ post.description }}</p>
-
-    {% endfor %}
-
-</section>
+{% endfor %}

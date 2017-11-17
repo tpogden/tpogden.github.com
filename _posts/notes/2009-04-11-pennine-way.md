@@ -55,7 +55,7 @@ later.</p>
 
 <aside class="sidebox">
 
-    <h1>Itinerary</h1>
+    <h4>Itinerary</h4>
 
     <ul>
         {% for post in site.tags.pennine-way reversed %}
@@ -72,7 +72,7 @@ The rest of the time, I was on my own.</p>
 {% for post in site.tags.pennine-way reversed %}
 
 <h2 id="{{ post.slug }}">{{ post.title }}</h2>
-<aside class="stamp">{{  post.date | {{ post.date | date:"%Y-%m-%d" }}</aside>
+<aside class="stamp">{{  post.date | date:"%Y-%m-%d" }}</aside>
 
 {{ post.content}}
 {% endfor %}

@@ -1,0 +1,52 @@
+---
+---
+
+#grid{
+
+    /* Dimensions - same width as your grid with gutters */
+    width: 992px;
+
+    /* Grid (centered) */
+    position: absolute;
+    top: 0;
+    left: 50%;
+    margin-left: -496px;
+
+}
+
+/**
+ * Vertical grid lines
+ *
+ * Set the column width taking the borders into consideration,
+ * and use margins to set column gutters.
+ */
+#grid div.vert{
+
+    width: 127px;
+    border: solid rgba(58, 137, 201, 1);;
+    border-width: 0 1px;
+    margin-right: 31px;
+
+}
+
+#grid div.vert.first-line{
+
+    margin-left: 31px;
+
+}
+
+/**
+ * Horizontal grid lines, defined by your base line height
+ *
+ * Remember, the CSS properties that define the box model:
+ * visible height = height + borders + margins + padding
+ */
+#grid div.horiz{
+
+    /* 20px line height */
+    height: 31px;
+    border-bottom: 1px dotted rgba(58, 137, 201, 1);;
+    margin: 0;
+    padding: 0;
+
+}
