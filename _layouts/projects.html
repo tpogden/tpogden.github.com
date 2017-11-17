@@ -4,20 +4,24 @@
 
 {% include head.html %}
 
-    <body>
-    
-        <div id="canvas">
-        
-            {% include header_projects.html %}
-          
-            {{ content }}
-            
-            {% include footer.html %}    
-            
-        </div> <!--/canvas-->
-    
-    	{% include scripts.html %}
-    
-    </body>
-    
+<body>
+
+<div id="canvas">
+
+{% include header_projects.html %}
+
+<article>
+
+{{ content }}
+
+</article>
+
+{% include footer.html %}
+
+</div> <!--/canvas-->
+
+{% include scripts.html %}
+
+</body>
+
 </html>
