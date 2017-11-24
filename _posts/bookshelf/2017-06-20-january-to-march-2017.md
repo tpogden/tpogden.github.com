@@ -1,7 +1,7 @@
 ---
 layout: note
 title: January to March 2017
-location: 
+location:
 category: bookshelf
 permalink: /bookshelf/january-to-march-2017
 ---
@@ -23,7 +23,7 @@ of the rest dug up so you can see them yourself. The tablets include the
 oldest surviving writing in Latin by a woman, an invitation to a birthday
 party. I recommend a visit.
 
-## The Hunt for Red October by Tom Clancy          
+## The Hunt for Red October by Tom Clancy
 
 I always picture Alec Baldwin as Jack Ryan.
 
@@ -58,20 +58,8 @@ the sawtooth mountains and glaciers of the interior to get to the whaling
 station, that itself a route nobody had survived attempting. Shackleton
 then went back to rescue every one of his crew.
 
-Frank Hurley shot early [colour photographs][hurley] and got the film home. They are
-beautiful.
-
-<figure>
-  <a href="https://www.flickr.com/photos/statelibraryofnsw/3534618959/in/album-72157618020442474/">
-  <img class="text" src="/assets/photos/2017/hurley-endurance.jpg" alt=""></a>
-  <figcaption>&larr; &lsquo;A mid-winter glow, Weddell Sea, 1915&rsquo; by Frank Hurley.</figcaption>
-</figure>
-
-<figure>
-  <a href="https://www.flickr.com/photos/statelibraryofnsw/3534591491/in/album-72157618020442474/">
-  <img class="text" src="/assets/photos/2017/hurley-shackleton.jpg" alt=""></a>
-  <figcaption>&larr; &lsquo;Sir Ernest Shackleton watching a lead forming&rsquo; by Frank Hurley.</figcaption>
-</figure>
+Frank Hurley shot early [colour photographs][hurley] and got the film home. They
+are beautiful.
 
 ## Ragtime by E.L. Doctorow
 
