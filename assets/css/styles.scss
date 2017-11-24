@@ -340,6 +340,31 @@ h4 {
 
 }
 
+blockquote {
+
+    // width: 496px;
+    width: 544px;
+
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: 32px;
+	margin-right: 0px;
+
+	padding-top: 16px;
+	padding-bottom: 16px;
+	padding-left: 0px;
+	padding-right: 0px;
+
+    color: $grey;
+
+}
+
+blockquote p {
+
+//   text-indent: 0px !important;
+  display: inline;
+}
+
 .stamp {
 
     font-family: $header-font-stack;
