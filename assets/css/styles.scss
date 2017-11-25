@@ -257,8 +257,6 @@ h1 {
     padding-left: 8px;
     padding-right: 8px;
 
-    float:left;
-
 }
 
 h2 {
@@ -279,8 +277,6 @@ h2 {
     padding-bottom: 16px;
     padding-left: 8px;
     padding-right: 8px;
-
-    float:left;
 
     a {
 
@@ -305,8 +301,6 @@ h3 {
     padding-bottom: 8px;
     padding-left: 8px;
     padding-right: 8px;
-
-    float:left;
 
     a {
 
@@ -336,8 +330,6 @@ h4 {
     padding-left: 8px;
     padding-right: 8px;
 
-    float:left;
-
 }
 
 blockquote {
@@ -348,9 +340,9 @@ blockquote {
 	margin-top: 0px;
 	margin-bottom: 0px;
 	margin-left: 32px;
-	margin-right: 0px;
+	margin-right: 32px;
 
-	padding-top: 16px;
+	padding-top: 0px;
 	padding-bottom: 16px;
 	padding-left: 0px;
 	padding-right: 0px;
@@ -680,19 +672,45 @@ ul {
     padding-right: 8px;
 
     list-style: none;
-
 }
 
 ul li {
-    padding-left: 8px;
-    text-indent: -32px;
+
+    padding-left: 0px;
+    // text-indent: -50px;
+
+    // background-color: silver;
 }
 
 ul li:before {
     content: "×";
     font-family: $header-font-stack;
-    padding-right: 16px;
-    color: $grey;
+    padding-right: 0px;
+    // color: $grey;
+    color: $red;
+
+
+    position: relative;
+	left: -24px;
+
+    float: left;
+
+    width: 0px;
+
+}
+
+ul li p {
+
+    width: 592px - 8px;
+
+    text-indent: 0px;
+
+    margin: 0px;
+
+    padding-left: 0px;
+    padding-top: 0px;
+    padding-bottom: 16px;
+
 }
 
 ol {
@@ -716,19 +734,44 @@ ol {
 
 ol li {
 
-    padding-left: 8px;
-    text-indent: -8px;
+    padding-left: 0px;
+
 }
 
 ol li:before {
 
-    display: inline-block;
-    content: counter(item) ".";
+    float: left;
+
+    // display: inline-block;
+    display: inline;
+
+    content: counter(item) "";
     counter-increment: item;
     padding-right: 8px;
-    color: $grey;
-    width: 8px;
-    margin-left: -16px;
+    color: $red;
+    width: 16px;
+    margin-left: -32px;
+
+    position:absolute;
+
+    text-align: right;
+
+    padding-top: 0px;
+    // padding-bottom: 16px;
+
+}
+
+
+
+ol li p {
+
+    width: 592px - 8px;
+
+    text-indent: 0px;
+
+    padding-left: 0px;
+    padding-top: 0px;
+    // padding-bottom: 16px;
 
 }
 
