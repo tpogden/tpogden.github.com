@@ -1,9 +1,15 @@
 ---
 ---
 
+/* Dimensions */
+$canvas-width: 992px;
+$text-width: 592px;
+
 /* Fonts */
 $body-font-stack: Times, 'Times New Roman', serif;
 $header-font-stack: 'Goudy Bookletter 1911', serif;
+$code-font-stack: Monaco, "Courier New", "DejaVu Sans Mono",
+  "Bitstream Vera Sans Mono", monospace;
 
 /* Colors */
 $white: rgba(245,243,242,1);
@@ -11,739 +17,710 @@ $black: rgba(53,48,47,1);
 $red: rgba(189,54,19,1);
 $grey: rgba(113,107,105,1);
 $light-grey: rgba(208,199,198,1);
+$lighter-grey: rgba(208,199,198,0.3);
 
 body {
 
-    font-family: $body-font-stack;
-    font-size: 18px;
-    line-height: 32px;
-    text-align: center;
+  font-family: $body-font-stack;
+  font-size: 18px;
+  line-height: 32px;
+  text-align: center;
 
-    color: $black;
-    background-color: rgba(245,243,242,1);
+  color: $black;
+  background-color: $white;
 
-    margin: 0px;
-    padding: 0px;
-
-}
-
-a {
-
-    color: $black;
-    text-decoration: none;
-    border-bottom: solid 1px rgba(208,199,198,1);
+  margin: 0px;
+  padding: 0px;
 
 }
 
-a:active,
-a:hover {
-
-    color: $red;
-    border-bottom: solid 1px $red;
-
-}
+/* Structure --------------------------------------------------------------- */
 
 #canvas {
 
-    display: block;
-    text-align: left;
+  display: block;
+  text-align: left;
 
-    width: 992px;
+  width: $canvas-width;
 
-    margin-top: 0px;
-    margin-bottom: 0px;
-    margin-left: auto;
-    margin-right: auto;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  margin-left: auto;
+  margin-right: auto;
 
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-left: 0px;
-    padding-right: 0px;
-
-    header {
-
-        width: 928px;
-        height: 96px;
-
-        margin-top: 0px;
-        margin-bottom: 0px;
-        margin-left: 32px;
-        margin-right: 32px;
-
-        padding-top: 0px;
-        padding-bottom: 0px;
-        padding-left: 0px;
-        padding-right: 0px;
-
-        float: left;
-
-        #home {
-
-            font-family: $header-font-stack;
-            font-size: 16px;
-            font-weight: 600;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-
-            margin-top: 16px;
-            margin-bottom: 0px;
-            margin-left: 0px;
-            margin-right: 0px;
-
-
-            width: 432px;
-
-            padding-top: 32px;
-            padding-bottom: 16px;
-            padding-left: 8px;
-            padding-right: 8px;
-
-            float:left;
-
-            a {
-
-                color: $red;
-                text-decoration: none;
-                border-bottom: 0px solid;
-
-            }
-
-        }
-
-    }
-
-}
-
-nav {
-
-    width: 448px; /* Was 608px, before Twitter link, 768 with 4 links */
-    float: left;
-
-    color: $light-grey;
-
-    font-family: $header-font-stack;
-    font-style: normal;
-    font-size: 16px;
-
-    letter-spacing: 1px;
-
-    margin-top: 16px;
-    margin-bottom: 0px;
-    margin-left: 32px;
-    margin-right: 0px;
-
-    padding-top: 32px;
-    padding-bottom: 16px;
-    padding-left: 0px;
-    padding-right: 0px;
-
-    ul {
-
-        list-style: none;
-
-        margin-top: 0px;
-        margin-bottom: 0px;
-        margin-left: 0px;
-        margin-right: 0px;
-
-        padding-top: 0px;
-        padding-bottom: 0px;
-        padding-left: 0px;
-        padding-right: 0px;
-
-        float: left;
-
-        li a {
-
-            color: $grey;
-            border-bottom: solid 0px;
-        }
-
-        li {
-
-            float: left;
-
-            width: 104px;
-
-            margin-top: 0px;
-            margin-bottom: 0px;
-            margin-left: 32px;
-            margin-right: 8px;
-
-            padding-top: 0px;
-            padding-bottom: 0px;
-            padding-left: 8px;
-            padding-right: 8px;
-
-            .last-li {
-
-                margin-right: 0px;
-
-            }
-
-            .active a {
-
-                border-bottom: solid 1px $red;
-
-            }
-
-        }
-
-        li:before {
-
-            content: "";
-            padding-right: initial;
-            color: initial;
-            text-indent: initial;
-
-        }
-
-    }
+  padding: 0px;
 
 }
 
 article, section {
 
-    width: 928px;
+  width: 928px;
+
+  margin-top: 0px;
+  margin-bottom: 0px;
+  margin-left: 32px;
+  margin-right: 32px;
+
+  padding-top: 32px;
+  padding-bottom: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
+
+  float: left;
+  clear: both;
+
+}
+
+/* Header and Nav ---------------------------------------------------------- */
+
+#canvas > header {
+
+  width: 928px;
+  height: 96px;
+
+  margin-top: 0px;
+  margin-bottom: 0px;
+  margin-left: 32px;
+  margin-right: 32px;
+
+  padding-top: 0px;
+  padding-bottom: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
+
+  float: left;
+
+  #home {
+
+    font-family: $header-font-stack;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+
+    margin-top: 16px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+
+
+    width: 432px;
+
+    padding-top: 32px;
+    padding-bottom: 16px;
+    padding-left: 8px;
+    padding-right: 8px;
+
+    float:left;
+
+    a {
+
+      color: $red;
+      text-decoration: none;
+      border-bottom: 0px solid;
+
+    }
+
+  }
+
+}
+
+nav {
+
+  width: 448px; /* Was 608px, before Twitter link, 768 with 4 links */
+  float: left;
+
+  color: $light-grey;
+
+  font-family: $header-font-stack;
+  font-style: normal;
+  font-size: 16px;
+
+  letter-spacing: 1px;
+
+  margin-top: 16px;
+  margin-bottom: 0px;
+  margin-left: 32px;
+  margin-right: 0px;
+
+  padding-top: 32px;
+  padding-bottom: 16px;
+  padding-left: 0px;
+  padding-right: 0px;
+
+  ul {
+
+    width: 448px + 32px;
+
+    list-style: none;
 
     margin-top: 0px;
     margin-bottom: 0px;
-    margin-left: 32px;
-    margin-right: 32px;
+    margin-left: 0px;
+    margin-right: 0px;
 
-    padding-top: 32px;
+    padding-top: 0px;
     padding-bottom: 0px;
     padding-left: 0px;
     padding-right: 0px;
 
     float: left;
-    clear: both;
+
+    li {
+
+      float: left;
+
+      width: 104px;
+
+      margin-top: 0px;
+      margin-bottom: 0px;
+      margin-left: 0px;
+      margin-right: 40px;
+
+      padding-top: 0px;
+      padding-bottom: 0px;
+      padding-left: 8px;
+      padding-right: 8px;
+
+      .last-li {
+
+        margin-right: 0px;
+
+      }
+
+      .active a {
+
+        border-bottom: solid 1px $red;
+
+      }
+
+      a {
+
+      color: $grey;
+      border-bottom: solid 0px;
+
+      }
+
+    }
+
+    li:before {
+
+      content: "";
+
+    }
+
+  }
 
 }
+
+/* Paragraphs and Blockquotes ---------------------------------------------- */
 
 p {
 
-    width: 592px;
+  width: $text-width;
 
-    margin-top: 0px;
-    margin-bottom: 0px;
-    margin-left: 0px;
-    margin-right: 0px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
 
-    padding-top: 16px;
-    padding-bottom: 16px;
-    padding-left: 8px;
-    padding-right: 8px;
-
-}
-
-h1 {
-
-    width: 592px;
-
-    font-family: $header-font-stack;
-    font-size: 32px;
-    font-weight: normal;
-
-    line-height: 32px;
-
-    margin-left: 0px;
-    margin-bottom: 0px;
-    margin-right: 0px;
-    margin-top: 0px;
-
-    padding-top: 16px;
-    padding-bottom: 48px;
-    padding-left: 8px;
-    padding-right: 8px;
-
-}
-
-h2 {
-
-    font-family: $header-font-stack;
-
-    margin-left: 0px;
-    margin-bottom: 0px;
-    margin-right: 0px;
-    margin-top: 0px;
-
-    font-size: 22px;
-    font-weight: normal;
-
-    width: 592px;
-
-    padding-top: 16px;
-    padding-bottom: 16px;
-    padding-left: 8px;
-    padding-right: 8px;
-
-    a {
-
-        border-bottom: 0px;
-
-    }
-}
-
-h3 {
-
-    margin-left: 0px;
-    margin-bottom: 0px;
-    margin-right: 0px;
-    margin-top: 0px;
-
-    font-size: 18px;
-    font-weight: normal;
-
-    width: 592px;
-
-    padding-top: 8px;
-    padding-bottom: 8px;
-    padding-left: 8px;
-    padding-right: 8px;
-
-    a {
-
-        border-bottom: 0px;
-
-    }
-
-}
-
-h4 {
-
-    color: $red;
-
-    font-family: $header-font-stack;
-    font-size: 20px;
-    font-weight: normal;
-
-    margin-left: 0px;
-    margin-bottom: 0px;
-    margin-right: 0px;
-    margin-top: 0px;
-
-    width: 592px;
-
-    padding-top: 16px;
-    padding-bottom: 16px;
-    padding-left: 8px;
-    padding-right: 8px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  padding-left: 8px;
+  padding-right: 8px;
 
 }
 
 blockquote {
 
-    // width: 496px;
-    width: 544px;
+  width: $text-width - 48px; //544px
 
-	margin-top: 0px;
-	margin-bottom: 0px;
-	margin-left: 32px;
-	margin-right: 32px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  margin-left: 32px;
+  margin-right: 32px;
 
-	padding-top: 0px;
-	padding-bottom: 16px;
-	padding-left: 0px;
-	padding-right: 0px;
+  padding-top: 0px;
+  padding-bottom: 16px;
+  padding-left: 0px;
+  padding-right: 0px;
 
-    color: $grey;
+  color: $grey;
+
+  p {
+
+    display: inline;
+
+  }
 
 }
 
-blockquote p {
+/* Headers ----------------------------------------------------------------- */
 
-//   text-indent: 0px !important;
-  display: inline;
+h1 {
+
+  width: $text-width;
+
+  font-family: $header-font-stack;
+  font-size: 32px;
+  font-weight: normal;
+
+  line-height: 32px;
+
+  margin: 0px;
+
+  padding-top: 16px;
+  padding-bottom: 32px;
+  padding-left: 8px;
+  padding-right: 8px;
+
+}
+
+h2 {
+
+  width: $text-width;
+
+  font-family: $header-font-stack;
+  font-size: 26px;
+  font-weight: normal;
+
+  margin: 0px;
+
+  padding-top: 16px;
+  padding-bottom: 16px;
+  padding-left: 8px;
+  padding-right: 8px;
+
+  a {
+
+    border-bottom: 0px;
+
+  }
+}
+
+h3 {
+
+  font-family: $header-font-stack;
+
+  margin: 0px;
+
+  font-size: 22px;
+  font-weight: normal;
+
+  width: $text-width;
+
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 8px;
+  padding-right: 8px;
+
+  a {
+
+    border-bottom: 0px;
+
+  }
+
+}
+
+h4 {
+
+  color: $red;
+
+  font-family: $header-font-stack;
+  font-size: 20px;
+  font-weight: normal;
+
+  margin: 0px;
+
+  width: $text-width;
+
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 8px;
+  padding-right: 8px;
+
+}
+
+/* Links and Text Decorations ---------------------------------------------- */
+
+a {
+
+  color: $black;
+  text-decoration: none;
+  border-bottom: solid 1px $light-grey;
+
+}
+
+a:active, a:hover {
+
+  color: $red;
+  border-bottom: solid 1px $red;
+
 }
 
 .stamp {
 
-    font-family: $header-font-stack;
-    font-size: 14px;
-    color: $light-grey;
+  font-family: $header-font-stack;
+  font-size: 14px;
+  color: $light-grey;
 
-    padding-left: 16px;
-    padding-top: 0px;
-    padding-bottom: 16px;
+  padding-left: 0px;
+  padding-right: 0px;
 
 }
 
 .align-right {
 
-    text-align: right;
+  text-align: right;
 
 }
 
 .description {
 
-    font-style: italic;
+  font-style: italic;
 
 }
 
 .rating {
 
-    color: $red;
-    font-size: 16px;
+  color: $red;
+  font-size: 16px;
 
 }
 
+/* Asides and Sideboxes ---------------------------------------------------- */
+
 aside {
 
-    width: 256px;
+  width: 256px;
 
-    font-size: 14px;
-    color:  $grey;
+  font-size: 14px;
+  color:  $grey;
 
-    margin-top: 16px;
-    margin-bottom: 16px;
-    margin-left: 0px;
-    margin-right: 0px;
+  margin-top: 16px;
+  margin-bottom: 16px;
+  margin-left: 0px;
+  margin-right: 0px;
 
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-left: 8px;
-    padding-right: 24px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  padding-left: 8px;
+  padding-right: 24px;
 
-    float: right;
-    display: inline;
-    clear: right;
+  float: right;
+  display: inline;
+  clear: right;
 
 }
 
 .sidebox {
 
-    width: 240px;
+  width: 240px;
 
-    background-color: rgba(208,199,198,0.3);
-    color:  rgba(38,32,31,1);
-    border-radius: 4px;
+  background-color: $lighter-grey;
+  color: $black;
+  border-radius: 4px;
+
+  margin-top: 0px;
+  margin-bottom: 32px;
+  margin-left: 8px;
+  margin-right: 8px;
+
+  padding-top: 0px;
+  padding-bottom: 0px;
+  padding-left: 16px;
+  padding-right: 16px;
+
+  ul {
+
+    list-style: none;
 
     margin-top: 0px;
-    margin-bottom: 32px;
-    margin-left: 8px;
-    margin-right: 8px;
+    margin-bottom: 16px;
+    margin-left: 0px;
+    margin-right: 0px;
 
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-left: 16px;
-    padding-right: 16px;
+    padding: 0px;
 
-    ul {
+    li {
 
-        list-style: none;
-
-        margin-top: 0px;
-        margin-bottom: 16px;
-        margin-left: 0px;
-        margin-right: 0px;
-
-        padding-top: 0px;
-        padding-bottom: 0px;
-        padding-left: 0px;
-        padding-right: 0px;
-
-        li {
-
-            list-style: none;
-
-        }
-
-        li:before {
-
-            content: initial;
-            padding-right: initial;
-            color: initial;
-            text-indent: 0px;
-
-        }
+      list-style: none;
 
     }
 
-    ol {
+    li:before {
 
-        margin-top: 0px;
-        margin-bottom: 16px;
-        margin-left: 16px;
-        margin-right: 0px;
-
-        padding-top: 0px;
-        padding-bottom: 0px;
-        padding-left: 0px;
-        padding-right: 0px;
+      content: initial;
+      padding-right: initial;
+      color: initial;
+      text-indent: 0px;
 
     }
+
+  }
+
+  ol {
+
+    margin-top: 0px;
+    margin-bottom: 16px;
+    margin-left: 16px;
+    margin-right: 0px;
+
+    padding: 0px;
+
+  }
 
 }
 
+/* Images ------------------------------------------------------------------ */
+
 figure {
 
-    margin: 0px;
-    padding: 0px;
+  margin: 0px;
+  padding: 0px;
 
-    border: 0px;
-    clear: both;
+  border: 0px;
+  clear: both;
 
 }
 
 figcaption {
 
-    color:  $grey;
+  color:  $grey;
 
-    width: 256px;
+  width: 256px;
 
-    font-size: 14px;
+  font-size: 14px;
 
-    margin-top: 8px;
-    margin-bottom: 32px;
-    margin-left: 0px;
-    margin-right: 0px;
+  margin-top: 8px;
+  margin-bottom: 32px;
+  margin-left: 0px;
+  margin-right: 0px;
 
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-left: 8px;
-    padding-right: 24px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  padding-left: 8px;
+  padding-right: 24px;
 
-    clear: right;
-    float: right;
+  clear: right;
+  float: right;
 
 }
 
 img {
 
-    margin-top: 0px;
-    margin-bottom: 32px;
-    margin-left: 8px;
-    margin-right: 8px;
+  margin-top: 0px;
+  margin-bottom: 32px;
+  margin-left: 8px;
+  margin-right: 8px;
 
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-left: 0px;
-    padding-right: 0px;
+  padding: 0px;
 
-    border: 0px;
-    border-radius: 4px;
+  border: 0px;
+  border-radius: 4px;
 
-    float: left;
+  float: left;
 
 }
 
 img.full {
 
-    width: 912px;
+  width: 912px;
 
-    margin-top: 16px;
-    margin-bottom: 40px;
-    margin-left: 8px;
-    margin-right: 8px;
+  margin-top: 16px;
+  margin-bottom: 40px;
+  margin-left: 8px;
+  margin-right: 8px;
 
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-left: 0px;
-    padding-right: 0px;
+  padding: 0px;
 
-    float: left;
+  float: left;
 
 }
 
 img.half-left {
 
-    width: 432px;
+  width: 432px;
 
-    margin-top: 16px;
-    margin-bottom: 40px;
-    margin-left: 8px;
-    margin-right: 8px;
+  margin-top: 16px;
+  margin-bottom: 40px;
+  margin-left: 8px;
+  margin-right: 8px;
 
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-left: 0px;
-    padding-right: 32px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  padding-left: 0px;
+  padding-right: 32px;
 
-    float: left;
+  float: left;
 
 }
 
 img.half-right {
 
-    width: 432px;
+  width: 432px;
 
-    margin-top: 16px;
-    margin-bottom: 40px;
-    margin-left: 8px;
-    margin-right: 8px;
+  margin-top: 16px;
+  margin-bottom: 40px;
+  margin-left: 8px;
+  margin-right: 8px;
 
-    background-color: grey;
+  background-color: grey;
 
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-left: 0px;
-    padding-right: 0px;
+  padding: 0px;
 
-    float: right;
+  float: right;
 
 }
 
 img.text {
 
-    /*border: solid 1px $light-grey;*/
+  width: $text-width;
 
-    width: 592px;
-
-    margin-top: 16px;
-    margin-bottom: 40px;
-    margin-left: 8px;
-    margin-right: 8px;
+  margin-top: 16px;
+  margin-bottom: 40px;
+  margin-left: 8px;
+  margin-right: 8px;
 
 }
 
 img.text-framed {
 
-    border: solid 1px $light-grey;
-    border-radius: 4px;
+  border: solid 1px $light-grey;
+  border-radius: 4px;
 
-    width: 608px;
+  width: 608px;
 
-    margin-top: 8px;
-    margin-bottom: 24px;
-    margin-left: 0px;
-    margin-right: 0px;
+  margin-top: 8px;
+  margin-bottom: 24px;
+  margin-left: 0px;
+  margin-right: 0px;
 
 }
 
 img.side {
 
-    width: 272px;
+  width: 272px;
 
-    margin-top: 0px;
-    margin-bottom: 32px;
-    margin-left: 8px;
-    margin-right: 8px;
+  margin-top: 0px;
+  margin-bottom: 32px;
+  margin-left: 8px;
+  margin-right: 8px;
 
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-left: 0px;
-    padding-right: 0px;
+  padding: 0px;
 
-    float: right;
-    clear: right;
+  float: right;
+  clear: right;
 
 }
-
 
 img.side-framed {
 
-    border: solid 1px rgba(208,199,198,0.5);
-    border-radius: 4px;
+  border: solid 1px rgba(208,199,198,0.5);
+  border-radius: 4px;
 
-    width: 272px;
+  width: 272px;
 
-    margin-top: 0px;
-    margin-bottom: 32px;
-    margin-left: 8px;
-    margin-right: 8px;
+  margin-top: 0px;
+  margin-bottom: 32px;
+  margin-left: 8px;
+  margin-right: 8px;
 
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-left: 0px;
-    padding-right: 0px;
+  padding: 0px;
 
-    float: right;
-    clear: right;
+  float: right;
+  clear: right;
 
 }
 
-/*-----------------------------------------------------------------------------
-    List Styles
------------------------------------------------------------------------------*/
+/* Lists ------------------------------------------------------------------- */
 
 ul {
 
-    width: 592px;
+  width: $text-width;
 
-    margin-top: 0px;
-    margin-bottom: 0px;
-    margin-left: 0px;
-    margin-right: 0px;
+  margin: 0px;
 
-    padding-top: 16px;
-    padding-bottom: 16px;
-    padding-left: 8px;
-    padding-right: 8px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  padding-left: 8px;
+  padding-right: 8px;
 
-    list-style: none;
-}
+  list-style: none;
 
-ul li {
+  li {
 
     padding-left: 0px;
-    // text-indent: -50px;
 
-    // background-color: silver;
-}
+    p {
 
-ul li:before {
+      width: $text-width - 8px;
+
+      text-indent: 0px;
+
+      margin: 0px;
+
+      padding-left: 0px;
+      padding-top: 0px;
+      padding-bottom: 16px;
+
+    }
+
+  }
+
+  li:before {
+
     content: "×";
     font-family: $header-font-stack;
-    padding-right: 0px;
-    // color: $grey;
     color: $red;
 
-
     position: relative;
-	left: -24px;
-
+    left: -24px;
     float: left;
-
     width: 0px;
 
-}
+    padding-right: 0px;
 
-ul li p {
-
-    width: 592px - 8px;
-
-    text-indent: 0px;
-
-    margin: 0px;
-
-    padding-left: 0px;
-    padding-top: 0px;
-    padding-bottom: 16px;
+  }
 
 }
 
 ol {
 
-    width: 592px;
+  width: $text-width;
 
-    margin-top: 0px;
-    margin-bottom: 0px;
-    margin-left: 0px;
-    margin-right: 0px;
+  margin: 0px;
 
-    padding-top: 16px;
-    padding-bottom: 16px;
-    padding-left: 8px;
-    padding-right: 8px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  padding-left: 8px;
+  padding-right: 8px;
 
-    list-style: none;
-    counter-reset: item;
+  list-style: none;
+  counter-reset: item;
 
-}
-
-ol li {
+  li {
 
     padding-left: 0px;
 
-}
+    p {
 
-ol li:before {
+      width: $text-width - 8px;
+
+      text-indent: 0px;
+
+      padding-left: 0px;
+      padding-top: 0px;
+
+    }
+
+  }
+
+  li:before {
 
     float: left;
 
-    // display: inline-block;
-    display: inline;
+    // display: inline;
 
     content: counter(item) "";
     counter-increment: item;
@@ -752,130 +729,157 @@ ol li:before {
     width: 16px;
     margin-left: -32px;
 
-    position:absolute;
+    position: absolute;
 
     text-align: right;
 
     padding-top: 0px;
-    // padding-bottom: 16px;
+
+  }
 
 }
 
+<<<<<<< HEAD
+=======
+/* Definition List, Used for Index ----------------------------------------- */
 
+dl {
 
-ol li p {
+  width: $text-width;
 
-    width: 592px - 8px;
+  margin: 0px;
 
-    text-indent: 0px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  padding-left: 8px;
+  padding-right: 8px;
 
-    padding-left: 0px;
-    padding-top: 0px;
-    // padding-bottom: 16px;
+  display: block;
 
 }
 
-/*-----------------------------------------------------------------------------
-    Table Styles
------------------------------------------------------------------------------*/
+dt {
+
+  float: left;
+  clear: left;
+
+  a {
+
+    border-bottom: 0px;
+
+  }
+
+  margin-right: 24px;
+  margin-bottom: 8px;
+
+}
+
+dd {
+
+  margin: 0px;
+
+  float: left;
+
+}
+
+>>>>>>> af1d22d... Fix stamp padding
+/* Tables ------------------------------------------------------------------ */
 
 table {
 
-        padding-bottom: 0px;
-        border-bottom-color: $light-grey;
-        border-bottom-style: solid;
-        border-bottom-width: 1px;
-        border-spacing: 0px 0px;
-        position: relative;
-        display: inline-block;
-        line-height: 32px;
+    padding-bottom: 0px;
+    border-bottom-color: $light-grey;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-spacing: 0px 0px;
+    position: relative;
+    display: inline-block;
+    line-height: 32px;
 
-        margin-top: 0px;
-        margin-bottom: 17px;
-        margin-left: 0px;
-        margin-right: 0px;
-        padding-top: 0px;
-        padding-bottom: 0px;
-        padding-left: 0px;
-        padding-right: 0px;
+    margin-top: 0px;
+    margin-bottom: 17px;
+    margin-left: 0px;
+    margin-right: 0px;
+
+    padding: 0px;
 
 }
 
 th {
 
-    background-color: $light-grey;
-    font-family: $header-font-stack;
-    font-size: 16px;
-    font-weight: normal;
+  background-color: $light-grey;
+  font-family: $header-font-stack;
+  font-size: 16px;
+  font-weight: normal;
 
-    padding-bottom: 0px;
-    padding-top: 0px;
-    padding-right: 8px;
-    padding-left: 8px;
+  padding-bottom: 0px;
+  padding-top: 0px;
+  padding-right: 8px;
+  padding-left: 8px;
 
 }
 
 th.one-col {
 
-    width: 144px;
-    padding-left: 8px;
+  width: 144px;
+  padding-left: 8px;
 
 }
 
 th.two-col {
 
-    width: 304px;
-    padding-left: 8px;
+  width: 304px;
+  padding-left: 8px;
 
 }
 
 th.col-last {
 
-    margin-right: 0px;
+  margin-right: 0px;
 
 }
 
 td {
 
-    font-size: 14px;
+  font-size: 14px;
 
-    padding-bottom: 0px;
-    padding-top: 0px;
-    margin-right: 0px;
-    padding-right: 8px;
-    padding-left: 8px;
+  margin-right: 0px;
+
+  padding-bottom: 0px;
+  padding-top: 0px;
+  padding-right: 8px;
+  padding-left: 8px;
 
 }
 
-/*-----------------------------------------------------------------------------
-     Pre/Code Styles
------------------------------------------------------------------------------*/
+/* Code -------------------------------------------------------------------- */
 
 div .highlight {
 
-    width: 608px;
+  width: 608px;
 
-    border-radius: 4px;
+  border-radius: 4px;
 
-    display: inline-block;
+  display: inline-block;
 
-    margin-top: 16px;
-    margin-bottom: 32px;
+  margin-top: 16px;
+  margin-bottom: 32px;
+
+}
+
+code {
+
+  font-family: $code-font-stack;
+  font-size: 12px;
 
 }
 
 pre > code {
 
-    /*border: 1px solid #ccc;*/
-
-    width: 592px;
-    font: 12px Monaco, "Courier New", "DejaVu Sans Mono",
-        "Bitstream Vera Sans Mono", monospace;
-
-    margin-top: 0px;
-    margin-bottom: 0px;
-    margin-left: 0px;
-    margin-right: 0px;
+    width: $text-width;
+    // font-size: 12px;
+    // font-family: $code-font-stack;
+    line-height: 24px;
 
     padding-top: 0px;
     padding-bottom: 0px;
@@ -886,40 +890,30 @@ pre > code {
 
 }
 
-code {
-    font: 12px Monaco, "Courier New", "DejaVu Sans Mono",
-        "Bitstream Vera Sans Mono", monospace;
-}
+/* Footer ------------------------------------------------------------------ */
 
 #canvas > footer {
 
-    font-size: 14px;
-    font-family: $header-font-stack;
+  font-size: 14px;
+  font-family: $header-font-stack;
 
-    width: 928px;
-    height: 64px;
+  width: 928px;
+  height: 64px;
 
-    margin-top: 64px;
-    margin-bottom: 0px;
-    margin-left: 32px;
-    margin-right: 32px;
+  margin-top: 64px;
+  margin-bottom: 0px;
+  margin-left: 32px;
+  margin-right: 32px;
 
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-left: 0px;
-    padding-right: 0px;
+  padding: 0px;
 
-    float: left;
-}
+  float: left;
 
-#canvas > footer #notice {
+  #notice {
 
-    width: 592px;
+    width: $text-width;
 
-    margin-top: 0px;
-    margin-bottom: 0px;
-    margin-left: 0px;
-    margin-right: 0px;
+    margin: 0px;
 
     padding-top: 0px;
     padding-bottom: 0px;
@@ -929,5 +923,7 @@ code {
     float: left;
 
     color: $light-grey;
+
+  }
 
 }
