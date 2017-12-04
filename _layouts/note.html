@@ -8,17 +8,12 @@
 
 <div id="canvas">
 
-{% include header_home.html %}
+{% include header.html %}
 
 <article>
 
-<!-- <header> -->
-
 <aside><span class="stamp">{{ page.date | date:"%Y-%m-%d" }}</span></aside>
-
 <h1>{{ page.title }}</h1>
-
-<!-- </header> -->
 
 {{ content }}
 
@@ -26,7 +21,7 @@
 
 {% include footer.html %}
 
-</div> <!--/canvas-->
+</div>
 
 {% include scripts.html %}
 
