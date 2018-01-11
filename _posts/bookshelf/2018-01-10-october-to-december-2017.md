@@ -37,9 +37,9 @@ description:
    should read some Tolstoy.
 
    Marr makes no apology for it being a history of 'powerful individuals', but
-   doesn't always convince me that someone else would've been along with the
-   same idea. Watt and his steam engine for one example, or Ghandi's Salt March.
-   In some cases it is clear that one person moved the world in a certain
+   doesn't always convince me that someone else would not have come along with
+   the same idea. Watt and his steam engine for one example, or Ghandi's Salt
+   March. In some cases it is clear that one person moved the world in a certain
    direction, like Zimmermann with his [Telegram][tele], and most significantly
    Genghis Khan.
 
