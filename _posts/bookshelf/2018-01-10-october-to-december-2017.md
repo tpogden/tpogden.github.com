@@ -12,7 +12,7 @@ description:
    Phillips and his [MONIAC][moniac] hydraulic computer.
 
    We learn about failures of supply like the 'prison-camp recession' and
-   failures of demand like the ['babysitter recession'][br], and that in
+   failures of demand like the ['babysitting co-op recession'][br], and that in
    practice it's hard to tell which is happening. So in response, short-run
    Keynes, long-run classical is a rule of thumb. It then covers inflation,
    printing money, GDP, and there's a chapter explaining how independent central
