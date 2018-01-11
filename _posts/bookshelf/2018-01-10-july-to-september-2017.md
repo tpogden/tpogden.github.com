@@ -27,7 +27,7 @@ description:
    running, Kenyans wear trainers.
 
 3. _Hidden City_ by Karl Whitney --- I got this book about Dublin before
-   returning to the city in August, but it's more a book for Dubliners seeking
+   returning to the city in August, but it's more a book for locals seeking
    out obscure bits of their city. Whitney explores underground rivers, ghost
    towns hit by the financial crash, sewage systems and bus networks. Luckily I
    can happily read about infrastructure all day, I don't know why.
