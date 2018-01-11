@@ -11,41 +11,33 @@ description:
    tour of microeconomics, this one covers macro, with a bit of the life of Bill
    Phillips and his [MONIAC][moniac] hydraulic computer.
 
-   We learn with a couple of examples about recessions that are a failure of
-   supply like the 'prison-camp recession', or a failure of demand like the
-   ['babysitter recession'][br], and that in practice it's hard to tell which is
-   happening. So in response, short-run Keynes, long-run classical is a rule of
-   thumb.
-
-   It then covers inflation, printing money, GDP, and there's a chapter
-   explaining how independent central banks committed to low inflation work as
-   _Dr Strangelove_-like doomsday devices. Having them should mean we don't have
-   to use them, but it was the ECB's device that went off in Greece.
+   We learn about failures of supply like the 'prison-camp recession' and
+   failures of demand like the ['babysitter recession'][br], and that in
+   practice it's hard to tell which is happening. So in response, short-run
+   Keynes, long-run classical is a rule of thumb. It then covers inflation,
+   printing money, GDP, and there's a chapter explaining how independent central
+   banks committed to low inflation work as _Dr Strangelove_-like doomsday
+   devices. Having them should mean we don't have to use them, but it was the
+   ECB's device that went off in Greece.
 
 2. _A History of the World_ by Andrew Marr --- I don't know why after _SPQR_
-   I've gone for another history book covering such a mad amount of time, but I
+   I've gone for another history book covering such a mad amount of time but I
    liked the style of Marr's _History of Modern Britain_ so thought I'd like
-   this one too. I mean, Marr starts off admitting that 'writing a history of
-   the world is a ridiculous thing to do', but that 'not having a sense of world
-   history is even more ridiculous', and that's sort of what I was hoping to
-   find out --- are there any major histories that I just have no idea
-   about?
+   this one too. The time spent on non-European histories was most useful for
+   me, particularly what was going on in China relative to what was happening
+   with Christianity and Islam in Europe and the Middle East. Also the Americas
+   and Russia. I should read some Tolstoy.
 
-   The time spent on non-European histories was most useful for me, particularly
-   what was going on in China relative to what was happening with Christianity
-   and Islam in Europe and the Middle East. Also the Americas and Russia. I
-   should read some Tolstoy.
-
-   Marr makes no apology for it being a history of 'powerful individuals', but
+   Marr makes no apology for it being a history of significant individuals but
    doesn't always convince me that someone else would not have come along with
    the same idea. Watt and his steam engine for one example, or Ghandi's Salt
    March. In some cases it is clear that one person moved the world in a certain
-   direction, like Zimmermann with his [Telegram][tele], and most significantly
+   direction, like Zimmermann with his [Telegram][tele] and most significantly
    Genghis Khan.
 
 3. _The Vital Question_ by Nick Lane {% include star.html %} --- Lane takes us
    through a radical, wide-ranging new theory on the origins of life and then
-   complex life. The theory puts energy right at the centre of the problem, with
+   complex life. The theory puts energy right at the centre of the problem with
    the sort of derivation from first principles you get in physics. So I enjoyed
    that.
 
@@ -56,7 +48,7 @@ description:
 
    It starts with a search for the sort of consistent energy gradients needed to
    kick things off. He rules out lightning (not enough) and UV radiation (too
-   destructive), but reveals one candidate on Earth with the right conditions:
+   destructive) but reveals one candidate on Earth with the right conditions:
    those hydrothermal vents in the deep ocean.
 
    > Exactly the kind of dissipative structures that we seek: continuous flow,
@@ -99,11 +91,10 @@ description:
 
 6. _Killers of the Flower Moon_ by David Grann {% include star.html %} --- This
    is a shocking, tragic crime history from 1920s Oklahoma. The sisters in a
-   family of the Osage tribe of Native Americans, mad rich from oil strikes on
-   the rocky land they'd been shoved onto, started dying off: poisoned, shot,
-   blown up. The surviving family have to pay for the new federal Bureau of
-   Investigation to pull together a band to find the murderers and the
-   conspiracy protecting them.
+   family of the Osage tribe of Native Americans, rich from oil strikes on
+   the rocky land they'd been shoved onto, started dying off. The surviving
+   family have to pay for the new federal Bureau of Investigation to pull
+   together a band to find the murderers and the conspiracy protecting them.
 
 [tele]: https://en.wikipedia.org/wiki/Zimmermann_Telegram
 [moniac]: https://en.wikipedia.org/wiki/MONIAC

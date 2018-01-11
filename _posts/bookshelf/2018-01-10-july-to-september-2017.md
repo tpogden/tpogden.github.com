@@ -12,7 +12,7 @@ description:
    Vegas, decided his son would be a tennis pro before he was born. Rigged up a
    machine to fire balls at a toddler thousands of times a day and sent him on
    to academies. In Andre's telling, by the time he got to decide what he wanted
-   to do, he only had one option. One he didn't want. Even when that job got him
+   to do he only had one option, one he didn't want. Even when that job got him
    rich, famous and married to Brooke Shields.
 
    Only when things fell apart, he got a ban for crystal meth and dropped to the
@@ -26,11 +26,11 @@ description:
    Attitude? And of course it's a bit of all of that. Except the barefoot
    running, Kenyans wear trainers.
 
-3. _Hidden City_ by Karl Whitney --- I got this book about Dublin before
-   returning to the city in August, but it's more a book for locals seeking
-   out obscure bits of their city. Whitney explores underground rivers, ghost
-   towns hit by the financial crash, sewage systems and bus networks. Luckily I
-   can happily read about infrastructure all day, I don't know why.
+3. _Hidden City_ by Karl Whitney --- I got this book about Dublin from Daunt
+   before visiting in August, but it's more a book for locals seeking out
+   obscure bits of their city. Whitney explores underground rivers, ghost towns
+   hit by the financial crash, sewage systems and bus networks. Luckily I can
+   happily read about infrastructure all day, I don't know why.
 
 4. _The Green Road_ by Anne Enright --- Picked up from the great Irish fiction
    section of Chapters in Dublin. We have a family on the west coast of Ireland,
@@ -43,7 +43,7 @@ description:
    breast was not frightful but beautiful, and the marbled black and white of
    its sonic depths was lovely too.
 
-   Constance stays and the others go off: to New York and Mali. We hear the
+   Constance stays and the others go off to New York and Mali. We hear the
    separate stories of them, and then they're brought back together.
 
    > She had not thought it would be dark, not yet, the way the Atlantic sky
