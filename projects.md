@@ -8,10 +8,14 @@ permalink: /projects/
 
 <h4>Research</h4>
 
+- [MaxwellBloch][mb] --- A Python package for solving the coupled Maxwell-Bloch
+  equations describing the nonlinear propagation of near-resonant light through
+  thermal atomic vapours.
+
 {% for post in site.tags.physics %}
 
-<h3><a href="{{ post.url }}">{{ post.title }}</a></h3>
-
-<p class="description">{{ post.description }}</p>
+- <a href="{{ post.url }}">{{ post.title }}</a> --- {{ post.description }}
 
 {% endfor %}
+
+[mb]: https://github.com/tommyogden/maxwellbloch
