@@ -2,8 +2,19 @@
 ---
 
 /* Dimensions */
-$canvas-width: 992px;
-$text-width: 592px;
+
+$column-width: 128px;
+$gutter-width: 32px;
+
+$canvas-width: 6*$column-width + 7*$gutter-width; //992px;
+
+$full-width: 6*$column-width + 5*$gutter-width;
+$main-width: 4*$column-width + 3*$gutter-width;
+$sidebar-width: 2*$column-width + $gutter-width;
+
+$h-margin: 8px;
+
+$text-width: $main-width - 2*$h-margin; // 592px;
 
 /* Fonts */
 $body-font-stack: Times, 'Times New Roman', serif;
@@ -54,12 +65,12 @@ body {
 
 article, section {
 
-  width: 928px;
+  width: $full-width;
 
   margin-top: 0px;
   margin-bottom: 0px;
-  margin-left: 32px;
-  margin-right: 32px;
+  margin-left: $gutter-width; //32px;
+  margin-right: $gutter-width; //32px;
 
   padding-top: 32px;
   padding-bottom: 0px;
@@ -75,13 +86,13 @@ article, section {
 
 #canvas > header {
 
-  width: 928px;
+  width: $full-width;
   height: 96px;
 
   margin-top: 0px;
   margin-bottom: 0px;
-  margin-left: 32px;
-  margin-right: 32px;
+  margin-left: $gutter-width; //32px;
+  margin-right: $gutter-width; //32px;
 
   padding-top: 0px;
   padding-bottom: 0px;
@@ -511,8 +522,8 @@ img {
 
   margin-top: 0px;
   margin-bottom: 32px;
-  margin-left: 8px;
-  margin-right: 8px;
+  margin-left: $h-margin;
+  margin-right: $h-margin;
 
   padding: 0px;
 
@@ -525,16 +536,65 @@ img {
 
 img.full {
 
-  width: 912px;
+  width: $full-width - $h-margin*2;
 
   margin-top: 16px;
   margin-bottom: 40px;
-  margin-left: 8px;
-  margin-right: 8px;
+  margin-left: $h-margin;
+  margin-right: $h-margin;
 
   padding: 0px;
 
   float: left;
+
+}
+
+img.full-framed {
+
+  width: $full-width - 2*$h-margin - 2px;
+  border: solid 1px $light-grey;
+  
+}
+
+img.text {
+
+  width: $text-width;
+
+  margin-top: 16px;
+  margin-bottom: 40px;
+
+}
+
+img.text-framed {
+
+  width: $text-width - 2;
+  border: solid 1px $light-grey;
+
+  margin-top: 8px;
+  margin-bottom: 24px;
+
+}
+
+img.side {
+
+  width: $sidebar-width - 2*$h-margin; // 272px;
+
+  padding: 0px;
+
+  float: right;
+  clear: right;
+
+}
+
+img.side-framed {
+
+  width: $sidebar-width - 2*$h-margin - 2px;
+  border: solid 1px $light-grey;
+
+  padding: 0px;
+
+  float: right;
+  clear: right;
 
 }
 
@@ -544,8 +604,6 @@ img.half-left {
 
   margin-top: 16px;
   margin-bottom: 40px;
-  margin-left: 8px;
-  margin-right: 8px;
 
   padding-top: 0px;
   padding-bottom: 0px;
@@ -562,74 +620,10 @@ img.half-right {
 
   margin-top: 16px;
   margin-bottom: 40px;
-  margin-left: 8px;
-  margin-right: 8px;
-
-  background-color: grey;
 
   padding: 0px;
 
   float: right;
-
-}
-
-img.text {
-
-  width: $text-width;
-
-  margin-top: 16px;
-  margin-bottom: 40px;
-  margin-left: 8px;
-  margin-right: 8px;
-
-}
-
-img.text-framed {
-
-  border: solid 1px $light-grey;
-  border-radius: 4px;
-
-  width: 608px;
-
-  margin-top: 8px;
-  margin-bottom: 24px;
-  margin-left: 0px;
-  margin-right: 0px;
-
-}
-
-img.side {
-
-  width: 272px;
-
-  margin-top: 0px;
-  margin-bottom: 32px;
-  margin-left: 8px;
-  margin-right: 8px;
-
-  padding: 0px;
-
-  float: right;
-  clear: right;
-
-}
-
-img.side-framed {
-
-  border: solid 1px rgba(208,199,198,0.5);
-  border-radius: 4px;
-
-  width: 272px;
-
-  margin-top: 0px;
-  margin-bottom: 32px;
-  margin-left: 8px;
-  margin-right: 8px;
-
-  padding: 0px;
-
-  float: right;
-  clear: right;
 
 }
 
@@ -894,7 +888,7 @@ pre > code {
   font-size: 14px;
   font-family: $header-font-stack;
 
-  width: 928px;
+  width: $full-width;
   height: 64px;
 
   margin-top: 64px;
