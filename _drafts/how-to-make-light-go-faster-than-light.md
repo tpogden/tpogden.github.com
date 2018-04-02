@@ -25,14 +25,14 @@ a single frequency travelling through space. We'll label the space axis $z$ and
 the time axis $t$. 
 
 <figure>
-<!-- <img class="text-framed" src="/assets/notes/fast-light/fast-light-fig-1.png" /> -->
-<img class="full" src="/assets/notes/fast-light/fast-light-fwhm1-N0-movie.json.mp4.gif" />
+<img class="full-framed" src="/assets/notes/fast-light/fast-light-fwhm1-N0-movie.json.mp4.gif" />
 <figcaption>
 <em>Fig 1 &mdash;</em> Propagation of a weak Gaussian pulse through space. 
 The distance unit is arbitrary.
 </figcaption>
 </figure>
-It travels on unimpeded according to the homogenous Maxwell wave equation
+It travels on unimpeded according to the homogenous [Maxwell wave
+equation][wiki-mwe]
 
 $$ \frac{\partial^2 E}{\partial z^2} - \frac{1}{c^2} \frac{\partial^2
 E}{\partial z^2} = 0 $$
@@ -45,7 +45,7 @@ this time it moves through a cloud of atoms indicated by the blue area between
 $z = 0$ and $z = 1$. Now the right hand side of the wave equation is nonzero.
 
 <figure>
-<img class="full" src="/assets/notes/fast-light/fast-light-fwhm1-N1-movie.json.mp4.gif" />
+<img class="full-framed" src="/assets/notes/fast-light/fast-light-fwhm1-N1-movie.json.mp4.gif" />
 <figcaption>
 <em>Fig 2 &mdash;</em> Gaussian pulse propagation through a cloud of two-level
 atoms. The time unit is the inverse spontaneous decay width of the transition.
@@ -90,22 +90,23 @@ about 10% of the initial pulse width.
 <a href="https://en.wikipedia.org/wiki/Full_width_at_half_maximum">full width at
 half maximum</a>.</aside>
 
-But doesn't special relativity tell us that nothing can travel faster than the
-speed of light? Can this simulation be physical?
+How do we square this with the causality requirement that nothing travels 
+faster than light? Can this simulation be physical?
 
 ## Phase Velocity and Group Velocity
 
 To understand how this faster-than-light or _superluminal_ propagation works,
-we'll start with the concept of phase velocity. Take a monochromatic beam of
-light incident on some atoms. The light will induce dipoles on these atoms
-causing them to radiate a secondary wave at the same frequency. That it's the
-same frequency is important here. The resultant superposition of the incoming
-and secondary waves then has the same frequency but a different phase. If this
-resultant wave lags the incoming wave an observer downstream has to wait longer
-to see the peaks of the resultant wave go by. The wave will appear to have
-slowed. This is what we mean by phase velocity, $v_p$. The outgoing phase
-velocity depends on the incoming frequency, which is how a raindrop is able to
-split the colours of sunlight in a rainbow. We call that dispersion.
+we'll start with the concept of [phase velocity][wiki-v-phase]. Take a
+monochromatic beam of light incident on some atoms. The light will induce
+dipoles on these atoms causing them to radiate a secondary wave at the same
+frequency. That it's the same frequency is important here. The resultant
+superposition of the incoming and secondary waves then has the same frequency
+but a different phase. If this resultant wave lags the incoming wave an observer
+downstream has to wait longer to see the peaks of the resultant wave go by. The
+wave will appear to have slowed. This is what we mean by phase velocity, $v_p$.
+The outgoing phase velocity depends on the incoming frequency, which is how a
+raindrop is able to split the colours of sunlight in a rainbow. We call that
+[dispersion][wiki-disp].
 
 We relate the phase velocity to the speed of light in a vacuum by $v_p =
 \frac{c}{n}$ where $n$ is the refractive index of the material (the atoms in our
@@ -129,25 +130,29 @@ the resultant wave leads the incoming wave. This is all classical physics as
 we're driving the atoms with a weak field so each atom can be modelled well as a
 driven, damped harmonic oscillator.
 
-<aside>If this paragraph is not clear to you I strongly recommend checking out <a href="http://www.gregegan.net/APPLETS/20/20.html">this demo by Greg Egan</a>. It brilliantly shows how a pulse envelope can be made up of 
-multiple monochromatic light waves, 
-and derives the group velocity so I don't have to do that here.</aside>
+<aside>
+If this paragraph is not clear to you I strongly recommend checking out <a
+href="http://www.gregegan.net/APPLETS/20/20.html">this demo by Greg Egan</a>. It
+brilliantly shows how a pulse envelope can be made up of multiple monochromatic
+light waves, and derives the group velocity so I don't have to do that here.
+</aside>
 
 Now the envelope of the narrow pulse of light on resonance is equivalent to a
 superposition of waves across a wide range of frequencies, each of which as
 we've seen will have a different $v_p$ according to where they are on the
 refractive index function in figure 4. The peak of the pulse is the position
 where the component frequencies are all in phase and this moves at a speed we
-call group velocity, $v_g$. Similarly we define a group index $n_g$ such that
-$v_g = \frac{c}{n_g}$. We can derive that this group index is given by  
+call [group velocity][wiki-group], $v_g$. Similarly we define a group index
+$n_g$ such that $v_g = \frac{c}{n_g}$. We can derive that this group index is
+given by  
 
 $$
 v_g = n + \omega \frac{\mathrm{d}n}{\mathrm{d}\omega}.
 $$  
 
 You can see that the second term is proportional to the gradient of the
-refractive index profile. If this is negative and large it is possible for $v_g > c$. 
-For our system we see in figure 4 that the gradient is negative in a
+refractive index profile. If this is negative and large it is possible for $v_g
+> c$. For our system we see in figure 4 that the gradient is negative in a
 narrow region around the resonance. We call this a region of anomalous
 dispersion.
 
@@ -168,7 +173,7 @@ $\frac{\mathrm{d}n}{\mathrm{d}\omega}$ is negative. In fact, when I've been
 talking about the refractive index so far I've actually meant the _real_ part of
 the refractive index, which is a complex quantity. The imaginary part is related
 to the absorption of light at a given frequency and is shown in purple. It's a
-Lorentzian lineshape just like we see in absorption spectra.
+Lorentzian lineshape just like we see in [absorption spectra][wiki-as].
 
 <figure>
 <img class="text-framed" src="/assets/notes/fast-light/fast-light-fig-5.png" />
@@ -181,15 +186,17 @@ $t_w = 10$ transformed into the frequency domain.
 </figcaption>
 </figure>
 
-<aside>The pulse we put in was a Gaussian and the Fourier transform of a 
-Gaussian is a Gaussian. Exercise for the reader.</aside>
-
 In the bottom part of figure 5 we see in blue the input pulse from figure 2,
-Fourier transformed into the [frequency domain][]. You can see what I mean when
-I said above that the pulse envelope is equivalent to a superposition across a
-wide range of frequencies. And in this plot we see why we are able to get
-superluminal propagation in this pulse -- it covers the region of anomalous
+Fourier transformed into the [frequency domain][wiki-fd]. You can see what I
+mean when I said above that the pulse envelope is equivalent to a superposition
+across a wide range of frequencies. And in this plot we see why we are able to
+get superluminal propagation in this pulse -- it covers the region of anomalous
 dispersion.
+
+<aside>
+The pulse we put in was a Gaussian and the Fourier transform of a Gaussian is a
+Gaussian.
+</aside>
 
 Not all of the pulse is in the anomalous dispersion region however. The low
 and high frequency wings of the pulse head out into the regions where
@@ -210,7 +217,12 @@ In figure 6 we see the photo finish like in figure 3 but for the wider pulse,
 with and without the atom cloud.
 <figure>
 <img class="text-framed" src="/assets/notes/fast-light/fast-light-fig-6.png" />
-<figcaption>Fig 6</figcaption>
+<figcaption>
+<em>Fig 6 &mdash;</em> Reversed time profiles of the results with no atoms and
+the atom cloud (shown blue and green respectively) at the $z = 1$ space point
+for longer pulses ($t_w = 10$). The profiles are both normalised to a peak of 1
+for comparison.
+</figcaption>
 </figure>
 
 This time we see that the pulse holds its shape and at the same time we're able
@@ -263,7 +275,10 @@ I particularly like this figure from a [2006 paper in Science by Gehring _et
 al_.][boyd-science-2006], because you can see it looks like my figure 3 above
 with pulse advancement and a dispersed negative tail (their time axis is the
 other way around so flip the image in your head).
+
+<figure>
 <img class="text-framed" src="/assets/notes/fast-light/boyd-science-fig.png" />
+</figure>
 
 And while I was working on my PhD in Durham, my fellow student James
 Keaveney and colleagues in an experiment using a nano-cell [achieved the
@@ -297,31 +312,40 @@ velocity and causality in fast light.
 
 The main reason I wrote this post was to show you one of the things you can
 easily simulate with [MaxwellBloch][mb], a Python package I've been developing
-from the work I did on nonlinear pulse propagation during my PhD.
+from my research on nonlinear pulse propagation. 
 
 I'll write some more posts here on interesting things you can simulate, but in
-the meantime if you're interested have a play with the package, adjust some
-parameters and see what you can produce.
-
-[LINK TO NEW NOTEBOOK: Two-Level: Weak Pulse through Few Atoms with Decay]
-
-The code behind each of the plots in this post are 
-reproducible in this notebook, and figure 7 is in this notebook.
+the meantime I have a bunch of example notebooks in [this Github
+repo][notebooks]. For example, [the system in figure 2 is in this
+notebook][example-notebook]. Have a play with the package, adjust some
+parameters and see what you can simulate. The code behind each of the plots in
+this post is reproducible in [this notebook][figs-notebook], apart from figure 7
+which is in [this notebook][fig-7-notebook].
 
 ## References
 
+1. Thomas P. Ogden (2016), _Resonant Pulse Propagation in Dense Atomic Vapours_.
+   [PhD Thesis](http://etheses.dur.ac.uk/11599/).
 
-Kuzmich, A., Dogariu, A., Wang, L. J., Milonni, P. W., & Chiao, R. Y. (2001).
-Signal velocity, causality, and quantum noise in superluminal light pulse
-propagation. Physical Review Letters, 86(18), 3925–3929.
-http://doi.org/10.1103/PhysRevLett.86.3925
-https://arxiv.org/abs/physics/0101068v1
+2. Kuzmich _et al._ (2001), _Signal velocity, causality, and quantum noise in
+   superluminal light pulse propagation_. [Physical Review Letters,
+   86(18)](http://doi.org/10.1103/PhysRevLett.86.3925)
+   [(arXiv)][kuzmich-prl-2001-arxiv].
 
-Stenner, M., Gauthier, D., & Neifeld, M. (2003). The speed of information in a
-“fast-light”optical medium. Nature, 695–698.
-http://doi.org/10.1038/nature02035.1.
-https://www.nature.com/nature/journal/v425/n6959/full/nature02016.html
+3. Stenner _et al._ (2003), _The speed of information in a "fast-light" 
+optical medium_. [Nature, 695–698](http://doi.org/10.1038/nature02035.1).
 
+4. Keaveney _et al._ (2012), _Maximal Refraction and Superluminal Propagation in
+   a Gaseous Nanolayer_. [Physical Review Letters
+   109(23)](https://doi.org/10.1103/PhysRevLett.109.233001)
+   [(arXiv)](https://arxiv.org/abs/1208.4309).
+
+5. Gehring _et al._ (2006) _Observation of Backward Pulse Propagation Through a
+   Medium with a Negative Group Velocity_. [Science 312(5775)](http://science.sciencemag.org/content/312/5775/895)
+
+6. Hecht (2015) _Optics_. Pearson Education.
+
+7. Greg Egan (2000) [_Subluminal_](http://www.gregegan.net/APPLETS/20/20.html).
 
 [chu-1982]: https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.48.738
 [kuzmich-nature-2000]: https://www.nature.com/articles/35018520
@@ -329,6 +353,20 @@ https://www.nature.com/nature/journal/v425/n6959/full/nature02016.html
 [keaveney-prl-2012]: https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.109.233001
 
 [kuzmich-prl-2001]: https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.86.3925
-[kuzmich-prl-2001-arxiv]: https://arxiv.org/pdf/physics/0101068.pdf
+[kuzmich-prl-2001-arxiv]: https://arxiv.org/abs/physics/0101068
 
 [mb]: https://github.com/tommyogden/maxwellbloch
+
+[figs-notebook]: https://github.com/tommyogden/tommyogden.github.com/blob/master/assets/notes/fast-light/fast-light-figs.ipynb
+[fig-7-notebook]: https://github.com/tommyogden/tommyogden.github.com/blob/master/assets/notes/fast-light/fast-light-fig-7.ipynb
+
+[example-notebook]: https://github.com/tommyogden/notebooks-maxwellbloch/blob/master/examples/mb-solve-two-weak-pulse-few-atoms-decay.ipynb
+[notebooks]: https:github.com/tommyogden/notebooks-maxwellbloch
+
+[wiki-mwe]: https://en.wikipedia.org/wiki/Electromagnetic_wave_equation
+[wiki-v-phase]: https://en.wikipedia.org/wiki/Phase_velocity
+[wiki-group]: https://en.wikipedia.org/wiki/Group_velocity
+[wiki-as]: https://en.wikipedia.org/wiki/Absorption_spectroscopy
+[wiki-disp]: https://en.wikipedia.org/wiki/Dispersion_(optics)
+[wiki-fd]: https://en.wikipedia.org/wiki/Frequency_domain
+[wiki-g]: https://en.wikipedia.org/wiki/Gaussian_function
