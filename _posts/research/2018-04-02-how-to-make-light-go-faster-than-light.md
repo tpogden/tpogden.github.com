@@ -151,8 +151,8 @@ v_g = n + \omega \frac{\mathrm{d}n}{\mathrm{d}\omega}.
 $$  
 
 You can see that the second term is proportional to the gradient of the
-refractive index profile. If this is negative and large it is possible for $v_g
-> c$. For our system we see in figure 4 that the gradient is negative in a
+refractive index profile. If this is negative and large it is possible for 
+$v_g > c$. For our system we see in figure 4 that the gradient is negative in a
 narrow region around the resonance. We call this a region of anomalous
 dispersion.
 
@@ -310,17 +310,19 @@ velocity and causality in fast light.
 
 ## MaxwellBloch
 
-The main reason I wrote this post was to show you one of the things you can
+The main reason I wrote this post was to demonstrate one of the things you can
 easily simulate with [MaxwellBloch][mb], a Python package I've been developing
 from my research on nonlinear pulse propagation. 
 
-I'll write some more posts here on interesting things you can simulate, but in
-the meantime I have a bunch of example notebooks in [this Github
+I have a bunch of example [MaxwellBloch notebooks in this Github
 repo][notebooks]. For example, [the system in figure 2 is in this
 notebook][example-notebook]. Have a play with the package, adjust some
 parameters and see what you can simulate. The code behind each of the plots in
 this post is reproducible in [this notebook][figs-notebook], apart from figure 7
 which is in [this notebook][fig-7-notebook].
+
+Corrections and suggestions welcome via {% include mail_ogden_eu.html %} or 
+[Twitter](http://twitter.com/tommyogden/).
 
 ## References
 
