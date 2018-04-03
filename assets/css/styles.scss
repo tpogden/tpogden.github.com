@@ -597,15 +597,14 @@ img.side-framed {
 
 img.half-left {
 
-  width: 432px;
+  width: 3*$column-width + 2*$gutter-width - 2*$h-margin;
 
   margin-top: 16px;
   margin-bottom: 40px;
 
-  padding-top: 0px;
-  padding-bottom: 0px;
-  padding-left: 0px;
-  padding-right: 32px;
+  margin-right: 32px;
+
+  padding: 0px;
 
   float: left;
 
@@ -943,6 +942,31 @@ footer {
   .nav-wide-only {
 
     display: none;
+
+  }
+
+  article, section {
+
+    width: $main-width;
+
+  }
+
+  img.full, img.full-framed {
+
+    width: $text-width;
+
+  }
+
+  img.half-left {
+    width: 2*$column-width + 1*$gutter-width - 1*$h-margin;
+    margin-right: 8px;
+
+  }
+
+  img.half-right {
+    width: 2*$column-width + 1*$gutter-width - 1*$h-margin;
+    // margin-left: 0px;
+    margin-right: 8px;
 
   }
 
