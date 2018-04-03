@@ -6,7 +6,8 @@
 $column-width: 128px;
 $gutter-width: 32px;
 
-$canvas-width: 6*$column-width + 7*$gutter-width; //992px;
+$canvas-width: 6*$column-width + 7*$gutter-width;
+$narrow-canvas-width: 4*$column-width + 5*$gutter-width;
 
 $full-width: 6*$column-width + 5*$gutter-width;
 $main-width: 4*$column-width + 3*$gutter-width;
@@ -879,7 +880,7 @@ pre > code {
 
 /* Footer ------------------------------------------------------------------ */
 
-#canvas > footer {
+footer {
 
   font-size: 14px;
   font-family: $header-font-stack;
@@ -917,6 +918,12 @@ pre > code {
 
 @media (max-width: $canvas-width) {
 
+  #canvas {
+
+    width: $narrow-canvas-width;
+
+  }
+
   #canvas > header {
 
     width: $main-width;
@@ -936,6 +943,12 @@ pre > code {
   .nav-wide-only {
 
     display: none;
+
+  }
+
+  footer {
+
+    width: $main-width;
 
   }
 
