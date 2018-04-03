@@ -1,16 +1,22 @@
 ---
 ---
 
+$column-width: 128px;
+$gutter-width: 32px;
+
+$canvas-width: 6*$column-width + 7*$gutter-width; //992px;
+$narrow-canvas-width: 4*$column-width + 5*$gutter-width;
+
 #grid{
 
     /* Dimensions - same width as your grid with gutters */
-    width: 992px;
+    width: $canvas-width;
 
     /* Grid (centered) */
     position: absolute;
     top: 0;
     left: 50%;
-    margin-left: -496px;
+    margin-left: -$canvas-width/2;
 
 }
 
@@ -22,16 +28,16 @@
  */
 #grid div.vert{
 
-    width: 127px;
+    width: $column-width - 1px;
     border: solid rgba(208,199,198,1);//rgba(58, 137, 201, 1);;
     border-width: 0 1px;
-    margin-right: 31px;
+    margin-right: $gutter-width - 1px;
 
 }
 
 #grid div.vert.first-line{
 
-    margin-left: 31px;
+    margin-left: $gutter-width - 1px;
 
 }
 
@@ -50,3 +56,22 @@
     padding: 0;
 
 }
+
+@media (max-width: $canvas-width) {
+
+  #grid{ 
+
+    width: $narrow-canvas-width;
+    position: absolute;
+    left: 0;
+
+    margin-left: auto;
+    margin-right: auto;
+
+  }
+
+
+
+}
+
+
