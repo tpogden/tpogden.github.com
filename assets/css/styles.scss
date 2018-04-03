@@ -15,7 +15,7 @@ $sidebar-width: 2*$column-width + $gutter-width;
 
 $h-margin: 8px;
 
-$text-width: $main-width - 2*$h-margin; // 592px;
+$text-width: $main-width - 2*$h-margin;
 
 /* Fonts */
 $body-font-stack: Times, 'Times New Roman', serif;
@@ -104,7 +104,7 @@ article, section {
 
   #home {
 
-    width: 2*$column-width + 1*$gutter-width - 2*$h-margin; //432px;  
+    width: 2*$column-width + 1*$gutter-width - 2*$h-margin;
 
     font-family: $header-font-stack;
     font-size: 16px;
@@ -151,7 +151,7 @@ nav {
 
   margin-top: 16px;
   margin-bottom: 0px;
-  margin-left: $column-width + 2*$gutter-width; // 32px;
+  margin-left: $column-width + 2*$gutter-width;
   margin-right: 0px;
 
   padding-top: 32px;
@@ -233,7 +233,7 @@ p {
 
 blockquote {
 
-  width: $text-width - 48px; //544px
+  width: $text-width - 48px;
 
   margin-top: 0px;
   margin-bottom: 0px;
@@ -399,7 +399,7 @@ aside {
 
   margin-top: 16px;
   margin-bottom: 16px;
-  margin-left: 0px;
+  margin-left: 32px;
   margin-right: 0px;
 
   padding-top: 0px;
@@ -423,7 +423,7 @@ aside {
 
   margin-top: 0px;
   margin-bottom: 32px;
-  margin-left: 0px;
+  margin-left: 32px;
   margin-right: 0px;
 
   padding-top: 0px;
@@ -440,6 +440,8 @@ aside {
   }
 
   ul {
+
+    width: inherit;
 
     list-style: none;
 
@@ -459,6 +461,8 @@ aside {
   }
 
   ol {
+
+    width: inherit;
 
     margin-top: 0px;
     margin-bottom: 16px;
@@ -496,19 +500,19 @@ figcaption {
 
   color:  $grey;
 
-  width: 256px;
+  width: $sidebar-width - 2*$h-margin;
 
   font-size: 14px;
 
-  margin-top: 8px;
+  margin-top: 0px;
   margin-bottom: 32px;
-  margin-left: 0px;
+  margin-left: 32px;
   margin-right: 0px;
 
   padding-top: 0px;
   padding-bottom: 0px;
   padding-left: 8px;
-  padding-right: 24px;
+  padding-right: 8px;
 
   clear: right;
   float: right;
@@ -574,7 +578,8 @@ img.text-framed {
 
 img.side {
 
-  width: $sidebar-width - 2*$h-margin; // 272px;
+  width: $sidebar-width - 2*$h-margin;
+  margin-left: 32px;
 
   padding: 0px;
 
@@ -709,8 +714,6 @@ ol {
   li:before {
 
     float: left;
-
-    // display: inline;
 
     content: counter(item) "";
     counter-increment: item;
@@ -951,6 +954,10 @@ footer {
 
   }
 
+  .date {
+    width: $column-width - 2*$h-margin;
+  }
+
   img.full, img.full-framed {
 
     width: $text-width;
@@ -965,7 +972,6 @@ footer {
 
   img.half-right {
     width: 2*$column-width + 1*$gutter-width - 1*$h-margin;
-    // margin-left: 0px;
     margin-right: 8px;
 
   }
