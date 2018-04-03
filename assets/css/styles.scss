@@ -6,7 +6,8 @@
 $column-width: 128px;
 $gutter-width: 32px;
 
-$canvas-width: 6*$column-width + 7*$gutter-width; //992px;
+$canvas-width: 6*$column-width + 7*$gutter-width;
+$narrow-canvas-width: 4*$column-width + 5*$gutter-width;
 
 $full-width: 6*$column-width + 5*$gutter-width;
 $main-width: 4*$column-width + 3*$gutter-width;
@@ -14,7 +15,7 @@ $sidebar-width: 2*$column-width + $gutter-width;
 
 $h-margin: 8px;
 
-$text-width: $main-width - 2*$h-margin; // 592px;
+$text-width: $main-width - 2*$h-margin;
 
 /* Fonts */
 $body-font-stack: Times, 'Times New Roman', serif;
@@ -69,8 +70,8 @@ article, section {
 
   margin-top: 0px;
   margin-bottom: 0px;
-  margin-left: $gutter-width; //32px;
-  margin-right: $gutter-width; //32px;
+  margin-left: $gutter-width;
+  margin-right: $gutter-width;
 
   padding-top: 32px;
   padding-bottom: 0px;
@@ -91,8 +92,8 @@ article, section {
 
   margin-top: 0px;
   margin-bottom: 0px;
-  margin-left: $gutter-width; //32px;
-  margin-right: $gutter-width; //32px;
+  margin-left: $gutter-width;
+  margin-right: $gutter-width;
 
   padding-top: 0px;
   padding-bottom: 0px;
@@ -102,6 +103,8 @@ article, section {
   float: left;
 
   #home {
+
+    width: 2*$column-width + 1*$gutter-width - 2*$h-margin;
 
     font-family: $header-font-stack;
     font-size: 16px;
@@ -113,9 +116,6 @@ article, section {
     margin-bottom: 0px;
     margin-left: 0px;
     margin-right: 0px;
-
-
-    width: 432px;
 
     padding-top: 32px;
     padding-bottom: 16px;
@@ -138,7 +138,7 @@ article, section {
 
 nav {
 
-  width: 448px; /* Was 608px, before Twitter link, 768 with 4 links */
+  width: 3*$column-width + 2*$gutter-width;
   float: left;
 
   color: $light-grey;
@@ -151,7 +151,7 @@ nav {
 
   margin-top: 16px;
   margin-bottom: 0px;
-  margin-left: 32px;
+  margin-left: $column-width + 2*$gutter-width;
   margin-right: 0px;
 
   padding-top: 32px;
@@ -161,8 +161,7 @@ nav {
 
   ul {
 
-    width: 448px + 32px;
-
+    width: 3*$column-width + 3*$gutter-width;
     list-style: none;
 
     margin-top: 0px;
@@ -181,37 +180,17 @@ nav {
 
       float: left;
 
-      width: 104px;
+      width: 112px;
 
       margin-top: 0px;
       margin-bottom: 0px;
       margin-left: 0px;
-      margin-right: 40px;
+      margin-right: 32px;
 
       padding-top: 0px;
       padding-bottom: 0px;
       padding-left: 8px;
       padding-right: 8px;
-
-      .last-li {
-
-        margin-right: 0px;
-
-      }
-
-      .active a {
-
-        border-bottom: solid 1px $red;
-
-      }
-
-      a {
-
-      color: $grey;
-      border-bottom: solid 0px;
-
-      }
-
     }
 
     li:before {
@@ -220,6 +199,16 @@ nav {
 
     }
 
+  }
+
+  a {
+
+    color: $grey;
+    border-bottom: solid 0px;
+    .active {
+      border-bottom: solid 1px $red;
+    }
+  
   }
 
 }
@@ -244,7 +233,7 @@ p {
 
 blockquote {
 
-  width: $text-width - 48px; //544px
+  width: $text-width - 48px;
 
   margin-top: 0px;
   margin-bottom: 0px;
@@ -410,7 +399,7 @@ aside {
 
   margin-top: 16px;
   margin-bottom: 16px;
-  margin-left: 0px;
+  margin-left: 32px;
   margin-right: 0px;
 
   padding-top: 0px;
@@ -434,7 +423,7 @@ aside {
 
   margin-top: 0px;
   margin-bottom: 32px;
-  margin-left: 0px;
+  margin-left: 32px;
   margin-right: 0px;
 
   padding-top: 0px;
@@ -451,6 +440,8 @@ aside {
   }
 
   ul {
+
+    width: inherit;
 
     list-style: none;
 
@@ -470,6 +461,8 @@ aside {
   }
 
   ol {
+
+    width: inherit;
 
     margin-top: 0px;
     margin-bottom: 16px;
@@ -507,19 +500,19 @@ figcaption {
 
   color:  $grey;
 
-  width: 256px;
+  width: $sidebar-width - 2*$h-margin;
 
   font-size: 14px;
 
-  margin-top: 8px;
+  margin-top: 0px;
   margin-bottom: 32px;
-  margin-left: 0px;
+  margin-left: 32px;
   margin-right: 0px;
 
   padding-top: 0px;
   padding-bottom: 0px;
   padding-left: 8px;
-  padding-right: 24px;
+  padding-right: 8px;
 
   clear: right;
   float: right;
@@ -585,7 +578,8 @@ img.text-framed {
 
 img.side {
 
-  width: $sidebar-width - 2*$h-margin; // 272px;
+  width: $sidebar-width - 2*$h-margin;
+  margin-left: 32px;
 
   padding: 0px;
 
@@ -608,15 +602,14 @@ img.side-framed {
 
 img.half-left {
 
-  width: 432px;
+  width: 3*$column-width + 2*$gutter-width - 2*$h-margin;
 
   margin-top: 16px;
   margin-bottom: 40px;
 
-  padding-top: 0px;
-  padding-bottom: 0px;
-  padding-left: 0px;
-  padding-right: 32px;
+  margin-right: 32px;
+
+  padding: 0px;
 
   float: left;
 
@@ -721,8 +714,6 @@ ol {
   li:before {
 
     float: left;
-
-    // display: inline;
 
     content: counter(item) "";
     counter-increment: item;
@@ -891,7 +882,7 @@ pre > code {
 
 /* Footer ------------------------------------------------------------------ */
 
-#canvas > footer {
+footer {
 
   font-size: 14px;
   font-family: $header-font-stack;
@@ -922,6 +913,72 @@ pre > code {
     float: left;
 
     color: $light-grey;
+
+  }
+
+}
+
+@media (max-width: $canvas-width) {
+
+  #canvas {
+
+    width: $narrow-canvas-width;
+
+  }
+
+  #canvas > header {
+
+    width: $main-width;
+
+  }
+
+  nav {
+
+    width: 2*$column-width + $gutter-width;
+    margin-left: $gutter-width;
+  
+    ul {
+      width: 2*$column-width + 2*$gutter-width;
+    } 
+  }
+
+  .nav-wide-only {
+
+    display: none;
+
+  }
+
+  article, section {
+
+    width: $main-width;
+
+  }
+
+  .date {
+    width: $column-width - 2*$h-margin;
+  }
+
+  img.full, img.full-framed {
+
+    width: $text-width;
+
+  }
+
+  img.half-left {
+    width: 2*$column-width + 1*$gutter-width - 1*$h-margin;
+    margin-right: 8px;
+
+  }
+
+  img.half-right {
+    width: 2*$column-width + 1*$gutter-width - 1*$h-margin;
+    margin-right: 8px;
+
+  }
+
+  footer {
+
+    width: $main-width;
 
   }
 
