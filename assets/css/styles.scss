@@ -69,8 +69,8 @@ article, section {
 
   margin-top: 0px;
   margin-bottom: 0px;
-  margin-left: $gutter-width; //32px;
-  margin-right: $gutter-width; //32px;
+  margin-left: $gutter-width;
+  margin-right: $gutter-width;
 
   padding-top: 32px;
   padding-bottom: 0px;
@@ -91,8 +91,8 @@ article, section {
 
   margin-top: 0px;
   margin-bottom: 0px;
-  margin-left: $gutter-width; //32px;
-  margin-right: $gutter-width; //32px;
+  margin-left: $gutter-width;
+  margin-right: $gutter-width;
 
   padding-top: 0px;
   padding-bottom: 0px;
@@ -102,6 +102,8 @@ article, section {
   float: left;
 
   #home {
+
+    width: 2*$column-width + 1*$gutter-width - 2*$h-margin; //432px;  
 
     font-family: $header-font-stack;
     font-size: 16px;
@@ -113,9 +115,6 @@ article, section {
     margin-bottom: 0px;
     margin-left: 0px;
     margin-right: 0px;
-
-
-    width: 432px;
 
     padding-top: 32px;
     padding-bottom: 16px;
@@ -138,7 +137,7 @@ article, section {
 
 nav {
 
-  width: 448px; /* Was 608px, before Twitter link, 768 with 4 links */
+  width: 3*$column-width + 2*$gutter-width;
   float: left;
 
   color: $light-grey;
@@ -151,7 +150,7 @@ nav {
 
   margin-top: 16px;
   margin-bottom: 0px;
-  margin-left: 32px;
+  margin-left: $column-width + 2*$gutter-width; // 32px;
   margin-right: 0px;
 
   padding-top: 32px;
@@ -161,8 +160,7 @@ nav {
 
   ul {
 
-    width: 448px + 32px;
-
+    width: 3*$column-width + 3*$gutter-width;
     list-style: none;
 
     margin-top: 0px;
@@ -181,37 +179,17 @@ nav {
 
       float: left;
 
-      width: 104px;
+      width: 112px;
 
       margin-top: 0px;
       margin-bottom: 0px;
       margin-left: 0px;
-      margin-right: 40px;
+      margin-right: 32px;
 
       padding-top: 0px;
       padding-bottom: 0px;
       padding-left: 8px;
       padding-right: 8px;
-
-      .last-li {
-
-        margin-right: 0px;
-
-      }
-
-      .active a {
-
-        border-bottom: solid 1px $red;
-
-      }
-
-      a {
-
-      color: $grey;
-      border-bottom: solid 0px;
-
-      }
-
     }
 
     li:before {
@@ -220,6 +198,16 @@ nav {
 
     }
 
+  }
+
+  a {
+
+    color: $grey;
+    border-bottom: solid 0px;
+    .active {
+      border-bottom: solid 1px $red;
+    }
+  
   }
 
 }
@@ -922,6 +910,32 @@ pre > code {
     float: left;
 
     color: $light-grey;
+
+  }
+
+}
+
+@media (max-width: $canvas-width) {
+
+  #canvas > header {
+
+    width: $main-width;
+
+  }
+
+  nav {
+
+    width: 2*$column-width + $gutter-width;
+    margin-left: $gutter-width;
+  
+    ul {
+      width: 2*$column-width + 2*$gutter-width;
+    } 
+  }
+
+  .nav-wide-only {
+
+    display: none;
 
   }
 
