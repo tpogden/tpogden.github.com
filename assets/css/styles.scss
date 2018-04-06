@@ -8,6 +8,7 @@ $gutter-width: 32px;
 
 $canvas-width: 6*$column-width + 7*$gutter-width;
 $narrow-canvas-width: 4*$column-width + 5*$gutter-width;
+$narrower-canvas-width: 2*$column-width + 3*$gutter-width;
 
 $full-width: 6*$column-width + 5*$gutter-width;
 $main-width: 4*$column-width + 3*$gutter-width;
@@ -85,7 +86,7 @@ article, section {
 
 /* Header and Nav ---------------------------------------------------------- */
 
-#canvas > header {
+header {
 
   width: $full-width;
   height: 96px;
@@ -846,7 +847,7 @@ td {
 
 div .highlight {
 
-  width: 608px;
+  width: $main-width;
 
   border-radius: 4px;
 
@@ -867,8 +868,6 @@ code {
 pre > code {
 
     width: $text-width;
-    // font-size: 12px;
-    // font-family: $code-font-stack;
     line-height: 24px;
 
     padding-top: 0px;
@@ -877,6 +876,7 @@ pre > code {
     padding-right: 16px;
 
     display: block;
+      overflow: auto;
 
 }
 
@@ -926,7 +926,7 @@ footer {
 
   }
 
-  #canvas > header {
+  header {
 
     width: $main-width;
 
@@ -980,6 +980,94 @@ footer {
 
     width: $main-width;
 
+  }
+
+}
+
+@media (max-width: $narrow-canvas-width) {
+
+  #canvas {
+
+    width: 95%; //$narrower-canvas-width;
+
+  }
+
+  header, footer {
+
+    width: $sidebar-width;
+
+  }
+
+  nav {
+
+    display: none;
+
+    // background-color: yellowgreen;
+
+    // width: 1*$column-width + $gutter-width;
+    // margin-left: $gutter-width;
+  
+    // ul {
+    //   width: 1*$column-width + 1*$gutter-width;
+    // } 
+  }
+
+  article, section {
+
+    width: $sidebar-width;
+
+  }
+
+  p, h1, h2, h3, h4, dl {
+
+    // background-color: orange;
+    width: $sidebar-width;
+
+  }
+
+  ul, ol {
+
+    width: $sidebar-width;
+
+    li p {
+
+      width: $sidebar-width - 8px;
+
+    }
+
+  }
+
+  blockquote {
+
+    width: $sidebar-width - 16px;
+
+    margin-left: 16px;
+    margin-right: 16px;
+
+  }
+
+  img.text, img.text-framed, img.full, img.full-framed, img.half-left, 
+  img.half-right {
+
+    width: $sidebar-width - 2*$h-margin;
+
+  }
+
+  div .highlight {
+
+    width: $sidebar-width;
+
+  }
+
+  pre > code {
+
+    width: $sidebar-width - 4*$h-margin;
+
+  }
+
+  .MathJax_Display {
+    // width: $sidebar-width !important;
+    // color: $red;
   }
 
 }

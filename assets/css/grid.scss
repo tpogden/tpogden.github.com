@@ -6,6 +6,7 @@ $gutter-width: 32px;
 
 $canvas-width: 6*$column-width + 7*$gutter-width; //992px;
 $narrow-canvas-width: 4*$column-width + 5*$gutter-width;
+$narrower-canvas-width: 2*$column-width + 3*$gutter-width;
 
 #grid{
 
@@ -59,17 +60,6 @@ $narrow-canvas-width: 4*$column-width + 5*$gutter-width;
 
 @media (max-width: $canvas-width) {
 
-//   #grid{ 
-
-//     width: $narrow-canvas-width;
-//     position: absolute;
-//     left: 0;
-
-//     margin-left: auto;
-//     margin-right: auto;
-
-//   }
-
   #grid {
 
     width: $narrow-canvas-width;
@@ -79,4 +69,14 @@ $narrow-canvas-width: 4*$column-width + 5*$gutter-width;
 
 }
 
+@media (max-width: $narrow-canvas-width) {
+
+  #grid {
+
+    width: $narrower-canvas-width;
+    margin-left: -$narrower-canvas-width/2;
+  
+  }
+
+}
 
