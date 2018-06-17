@@ -7,6 +7,7 @@ published: true
 description:
 assets_loc: assets/notes/sieving-for-primes/
 include_math: true
+include_d3: true
 ---
 
 <aside>This post is also available as a <a href="http://nbviewer.ipython.org/url/tommyogden.com/{{ page.assets_loc }}sieving-for-primes.ipynb">Jupyter notebook</a>.</aside>
@@ -22,8 +23,6 @@ and continue. We can stop when we get to $\sqrt n$ as we'll have discarded all
 the multiples by then.
 
 Here's what the algorithm looks like for $n = 400$.
-
-<script src="http://d3js.org/d3.v3.min.js"></script>
 
 <style>
 
