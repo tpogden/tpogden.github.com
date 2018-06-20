@@ -60,13 +60,15 @@ for f in args.file_list:
         notebooks.append(f[:-6]) # Want the filename without '.ipynb'
 
 # Execute notebooks and output
-for n in notebooks:
+num_notebooks = len(notebooks)
+print('*****')
+for i, n in enumerate(notebooks):
     n_out = n + '_out'
     with open(n + '.ipynb') as f:
         nb = nbformat.read(f, as_version=4)
-        ep = ExecutePreprocessor(timeout=args.timeout, kernel_name='python3')
+        ep = ExecutePreprocessor(timeout=int(args.timeout), kernel_name='python3')
         try:
-            print('Running', n)
+            print('Running', n, ':', i, '/', num_notebooks)
             out = ep.preprocess(nb, {'metadata': {'path': args.run_path}})
         except CellExecutionError:
             out = None
@@ -80,6 +82,7 @@ for n in notebooks:
             # Write output file
             with open(n_out + '.ipynb', mode='wt') as f:
                 nbformat.write(nb, f)
+                
 ```
 
 You can use it to run all cells in a single notebook from the command line with
