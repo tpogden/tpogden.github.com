@@ -1,6 +1,6 @@
 ---
 layout: home
-title: Tommy Ogden
+title: Thomas P. Ogden
 ---
 
 <section>
