@@ -901,17 +901,6 @@ footer {
 
   #notice {
 
-    width: $text-width;
-
-    margin: 0px;
-
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-left: 8px;
-    padding-right: 24px;
-
-    float: left;
-
     color: $light-grey;
 
   }
@@ -984,18 +973,23 @@ footer {
 
 }
 
+$narrower-canvas-width: 95%;
+$narrower-main-width: 95%;
+$narrower-gutter-width: 2.5%;
+
 @media (max-width: $narrow-canvas-width) {
 
   #canvas {
 
-    width: 95%; //$narrower-canvas-width;
+    width: $narrower-canvas-width;
 
   }
 
   header, footer {
 
-    width: $sidebar-width;
-
+    width: $narrower-main-width;
+    margin-left: $narrower-gutter-width;
+    margin-right: $narrower-gutter-width;
   }
 
   nav {
@@ -1014,24 +1008,26 @@ footer {
 
   article, section {
 
-    width: $sidebar-width;
+    width: $narrower-main-width;
+
+    margin-left: $narrower-gutter-width;
+    margin-right: $narrower-gutter-width;
 
   }
 
   p, h1, h2, h3, h4, dl {
 
-    // background-color: orange;
-    width: $sidebar-width;
+    width: $narrower-main-width;
 
   }
 
   ul, ol {
 
-    width: $sidebar-width;
+    width: $narrower-main-width;
 
     li p {
 
-      width: $sidebar-width - 8px;
+      width: $narrower-main-width;
 
     }
 
@@ -1039,7 +1035,7 @@ footer {
 
   blockquote {
 
-    width: $sidebar-width - 16px;
+    width: $narrower-main-width;
 
     margin-left: 16px;
     margin-right: 16px;
@@ -1049,25 +1045,25 @@ footer {
   img.text, img.text-framed, img.full, img.full-framed, img.half-left, 
   img.half-right {
 
-    width: $sidebar-width - 2*$h-margin;
+    width: $narrower-main-width;
 
   }
 
   div .highlight {
 
-    width: $sidebar-width;
+    width: $narrower-main-width;
 
   }
 
   pre > code {
 
-    width: $sidebar-width - 4*$h-margin;
+    width: $narrower-main-width;
 
   }
 
   .MathJax_Display {
-    // width: $sidebar-width !important;
-    // color: $red;
+    width: $narrower-main-width !important;
+    color: $red;
   }
 
 }
