@@ -14,7 +14,7 @@ include_math: true
     <h4>MaxwellBloch</h4>
 
     <ol>
-        <li><a href="/how-to-make-light-go-faster-than-light/">How to Make Light Go Faster Than Light</a></li>
+        <li><a href="/how-to-make-light-go-faster-than-light">How to Make Light Go Faster Than Light</a></li>
         <li>Optical Solitons</li>
     </ol>
 </aside>
