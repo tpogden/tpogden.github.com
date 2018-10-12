@@ -19,24 +19,36 @@ $h-margin: 8px;
 $text-width: $main-width - 2*$h-margin;
 
 /* Fonts */
-$body-font-stack: Times, 'Times New Roman', serif;
-$header-font-stack: 'Goudy Bookletter 1911', serif;
+// $body-font-stack: Helvetica;
+// $body-font-stack: "Avenir Next", Avenir, Helvetica;
+$body-font-stack: 'Open Sans', serif;
+// $body-font-stack: Times, 'Times New Roman', serif;
+// $header-font-stack: "Avenir Next", Avenir, Helvetica;
+$header-font-stack: 'Rubik', serif;
+// $header-font-stack: 'Goudy Bookletter 1911', serif;
 $code-font-stack: Monaco, "Courier New", "DejaVu Sans Mono",
   "Bitstream Vera Sans Mono", monospace;
 
 /* Colors */
-$white: rgba(245,243,242,1);
-$black: rgba(53,48,47,1);
-$red: rgba(189,54,19,1);
+$white: #F5F5F5;
+// $white: rgba(245,243,242,1);
+// $black: #14080E;
+$black: #121212;
+// $black: rgba(53,48,47,1);
+$red: orangered;
+// $red: rgba(189,54,19,1);
 $grey: rgba(113,107,105,1);
-$light-grey: rgba(208,199,198,1);
+$light-grey: #C0C0C0;
+// $light-grey: rgba(208,199,198,1);
 $lighter-grey: rgba(208,199,198,0.3);
 
 body {
 
   font-family: $body-font-stack;
-  font-size: 18px;
-  line-height: 32px;
+//   font-size: 18px;
+  font-size: 16px;
+//   line-height: 32px;  
+  line-height: 28px;
   text-align: center;
 
   color: $black;
@@ -263,10 +275,10 @@ h1 {
   width: $text-width;
 
   font-family: $header-font-stack;
-  font-size: 32px;
+  font-size: 28px;
   font-weight: normal;
 
-  line-height: 32px;
+  line-height: 28px;
 
   margin: 0px;
 
@@ -551,7 +563,7 @@ img.full {
 
 }
 
-img.full-framed {
+.full-framed{
 
   width: $full-width - 2*$h-margin - 2px;
   border: solid 1px $light-grey;
@@ -725,6 +737,7 @@ ol {
 
     position: absolute;
 
+    font-family: $header-font-stack;
     text-align: right;
 
     padding-top: 0px;
