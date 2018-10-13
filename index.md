@@ -14,7 +14,7 @@ title: Thomas P. Ogden
     <dl>
     {% endif %}
     <dt><a href="{{ post.url }}">{{ post.title }}</a></dt>
-    <dd class="stamp">{{ post.date | date: "%Y-%m-%d" }}</dd>
+    <!-- <dd class="stamp">{{ post.date | date: "%Y-%m-%d" }}</dd> -->
     {% if forloop.last %}
     </dl>
     {% else %}
