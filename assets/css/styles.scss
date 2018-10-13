@@ -746,7 +746,10 @@ dl {
   padding-left: 8px;
   padding-right: 8px;
 
-  display: block;
+//   display: block;
+
+  float: left;
+//   clear: left;
 
 }
 
