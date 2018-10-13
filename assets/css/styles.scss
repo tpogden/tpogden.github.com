@@ -14,41 +14,36 @@ $full-width: 6*$column-width + 5*$gutter-width;
 $main-width: 4*$column-width + 3*$gutter-width;
 $sidebar-width: 2*$column-width + $gutter-width;
 
+$narrower-canvas-width: 90%;
+$narrower-main-width: 95%;
+$narrower-gutter-width: 2.5%;
+
 $h-margin: 8px;
 
 $text-width: $main-width - 2*$h-margin;
 
+$line-height: 32px;
+$font-size: 16px;
+
 /* Fonts */
-// $body-font-stack: Helvetica;
-// $body-font-stack: "Avenir Next", Avenir, Helvetica;
 $body-font-stack: 'Open Sans', serif;
-// $body-font-stack: Times, 'Times New Roman', serif;
-// $header-font-stack: "Avenir Next", Avenir, Helvetica;
-$header-font-stack: 'Rubik', serif;
-// $header-font-stack: 'Goudy Bookletter 1911', serif;
+$header-font-stack: 'Rubik', serif;//'Rubik', serif;
 $code-font-stack: Monaco, "Courier New", "DejaVu Sans Mono",
   "Bitstream Vera Sans Mono", monospace;
 
 /* Colors */
-$white: #F5F5F5;
-// $white: rgba(245,243,242,1);
-// $black: #14080E;
-$black: #121212;
-// $black: rgba(53,48,47,1);
+$white: #FFFBFA;
+$black: #231C07;
 $red: orangered;
-// $red: rgba(189,54,19,1);
-$grey: rgba(113,107,105,1);
-$light-grey: #C0C0C0;
-// $light-grey: rgba(208,199,198,1);
-$lighter-grey: rgba(208,199,198,0.3);
+$grey: #8C8989;
+$light-grey: #BAB7B6;
+$lighter-grey: #E8E5E4;
 
 body {
 
   font-family: $body-font-stack;
-//   font-size: 18px;
-  font-size: 16px;
-//   line-height: 32px;  
-  line-height: 28px;
+  font-size: $font-size;
+  line-height: $line-height;  
   text-align: center;
 
   color: $black;
@@ -86,7 +81,7 @@ article, section {
   margin-left: $gutter-width;
   margin-right: $gutter-width;
 
-  padding-top: 32px;
+  padding-top: $line-height;
   padding-bottom: 0px;
   padding-left: 0px;
   padding-right: 0px;
@@ -101,7 +96,7 @@ article, section {
 header {
 
   width: $full-width;
-  height: 96px;
+  height: 3*$line-height;
 
   margin-top: 0px;
   margin-bottom: 0px;
@@ -121,17 +116,17 @@ header {
 
     font-family: $header-font-stack;
     font-size: 16px;
-    font-weight: 600;
+    // font-weight: 600;
     letter-spacing: 4px;
     text-transform: uppercase;
 
-    margin-top: 16px;
+    margin-top: $line-height/2;
     margin-bottom: 0px;
     margin-left: 0px;
     margin-right: 0px;
 
-    padding-top: 32px;
-    padding-bottom: 16px;
+    padding-top: $line-height;
+    padding-bottom: $line-height/2;
     padding-left: 8px;
     padding-right: 8px;
 
@@ -158,17 +153,17 @@ nav {
 
   font-family: $header-font-stack;
   font-style: normal;
-  font-size: 16px;
+  font-size: 7/8*$font-size;
 
   letter-spacing: 1px;
 
-  margin-top: 16px;
+  margin-top: $line-height/2;
   margin-bottom: 0px;
   margin-left: $column-width + 2*$gutter-width;
   margin-right: 0px;
 
-  padding-top: 32px;
-  padding-bottom: 16px;
+  padding-top: $line-height;
+  padding-bottom: $line-height/2;
   padding-left: 0px;
   padding-right: 0px;
 
@@ -237,8 +232,8 @@ p {
   margin-left: 0px;
   margin-right: 0px;
 
-  padding-top: 16px;
-  padding-bottom: 16px;
+  padding-top: $line-height/2;
+  padding-bottom: $line-height/2;
   padding-left: 8px;
   padding-right: 8px;
 
@@ -254,7 +249,7 @@ blockquote {
   margin-right: 32px;
 
   padding-top: 0px;
-  padding-bottom: 16px;
+  padding-bottom: $line-height/2;
   padding-left: 0px;
   padding-right: 0px;
 
@@ -275,15 +270,15 @@ h1 {
   width: $text-width;
 
   font-family: $header-font-stack;
-  font-size: 28px;
+  font-size: 3/2*$font-size; //28px;
   font-weight: normal;
 
   line-height: 28px;
 
   margin: 0px;
 
-  padding-top: 16px;
-  padding-bottom: 32px;
+  padding-top: $line-height/2;
+  padding-bottom: $line-height/2;
   padding-left: 8px;
   padding-right: 8px;
 
@@ -294,13 +289,13 @@ h2 {
   width: $text-width;
 
   font-family: $header-font-stack;
-  font-size: 26px;
+  font-size: 5/4*$font-size;
   font-weight: normal;
 
   margin: 0px;
 
-  padding-top: 16px;
-  padding-bottom: 16px;
+  padding-top: $line-height/2;
+  padding-bottom: 0;
   padding-left: 8px;
   padding-right: 8px;
 
@@ -317,13 +312,13 @@ h3 {
 
   margin: 0px;
 
-  font-size: 22px;
+  font-size: 9/8*$font-size;
   font-weight: normal;
 
   width: $text-width;
 
   padding-top: 8px;
-  padding-bottom: 8px;
+  padding-bottom: 0px;
   padding-left: 8px;
   padding-right: 8px;
 
@@ -340,15 +335,15 @@ h4 {
   color: $red;
 
   font-family: $header-font-stack;
-  font-size: 20px;
+  font-size: $font-size;
   font-weight: normal;
 
   margin: 0px;
 
   width: $text-width;
 
-  padding-top: 8px;
-  padding-bottom: 8px;
+  padding-top: 16px;
+  padding-bottom: 0px;
   padding-left: 8px;
   padding-right: 8px;
 
@@ -374,7 +369,7 @@ a:active, a:hover {
 .stamp {
 
   font-family: $header-font-stack;
-  font-size: 14px;
+  font-size: 2/3*$font-size;
   color: $light-grey;
 
   padding-left: 0px;
@@ -410,8 +405,8 @@ aside {
   font-size: 14px;
   color:  $grey;
 
-  margin-top: 16px;
-  margin-bottom: 16px;
+//   margin-top: 16px;
+//   margin-bottom: 16px;
   margin-left: 32px;
   margin-right: 0px;
 
@@ -435,7 +430,7 @@ aside {
   border-radius: 4px;
 
   margin-top: 0px;
-  margin-bottom: 32px;
+  margin-bottom: $line-height;
   margin-left: 32px;
   margin-right: 0px;
 
@@ -459,7 +454,7 @@ aside {
     list-style: none;
 
     margin-top: 0px;
-    margin-bottom: 16px;
+    margin-bottom: $line-height/2;
     margin-left: 16px;
     margin-right: 0px;
 
@@ -478,7 +473,7 @@ aside {
     width: inherit;
 
     margin-top: 0px;
-    margin-bottom: 16px;
+    margin-bottom: $line-height/2;
     margin-left: 16px;
     margin-right: 0px;
 
@@ -518,7 +513,7 @@ figcaption {
   font-size: 14px;
 
   margin-top: 0px;
-  margin-bottom: 32px;
+  margin-bottom: $line-height;
   margin-left: 32px;
   margin-right: 0px;
 
@@ -535,7 +530,7 @@ figcaption {
 img {
 
   margin-top: 0px;
-  margin-bottom: 32px;
+  margin-bottom: $line-height;
   margin-left: $h-margin;
   margin-right: $h-margin;
 
@@ -552,8 +547,8 @@ img.full {
 
   width: $full-width - $h-margin*2;
 
-  margin-top: 16px;
-  margin-bottom: 40px;
+  margin-top: $line-height;
+  margin-bottom: $line-height + 8px;
   margin-left: $h-margin;
   margin-right: $h-margin;
 
@@ -574,8 +569,8 @@ img.text {
 
   width: $text-width;
 
-  margin-top: 16px;
-  margin-bottom: 40px;
+  margin-top: $line-height/2;
+  margin-bottom: $line-height + 8px;
 
 }
 
@@ -585,7 +580,7 @@ img.text-framed {
   border: solid 1px $light-grey;
 
   margin-top: 8px;
-  margin-bottom: 24px;
+  margin-bottom: $line-height - 8px;
 
 }
 
@@ -617,8 +612,8 @@ img.half-left {
 
   width: 3*$column-width + 2*$gutter-width - 2*$h-margin;
 
-  margin-top: 16px;
-  margin-bottom: 40px;
+  margin-top: $line-height/2;
+  margin-bottom: $line-height + 8px;
 
   margin-right: 32px;
 
@@ -632,8 +627,8 @@ img.half-right {
 
   width: 432px;
 
-  margin-top: 16px;
-  margin-bottom: 40px;
+  margin-top: $line-height/2;
+  margin-bottom: $line-height + 8px;
 
   padding: 0px;
 
@@ -649,8 +644,8 @@ ul {
 
   margin: 0px;
 
-  padding-top: 16px;
-  padding-bottom: 16px;
+  padding-top: $line-height/2;
+  padding-bottom: $line-height/2;
   padding-left: 8px;
   padding-right: 8px;
 
@@ -670,7 +665,7 @@ ul {
 
       padding-left: 0px;
       padding-top: 0px;
-      padding-bottom: 16px;
+      padding-bottom: $line-height/2;
 
     }
 
@@ -699,8 +694,8 @@ ol {
 
   margin: 0px;
 
-  padding-top: 16px;
-  padding-bottom: 16px;
+  padding-top: $line-height/2;
+  padding-bottom: $line-height/2;
   padding-left: 8px;
   padding-right: 8px;
 
@@ -754,15 +749,12 @@ dl {
 
   margin: 0px;
 
-  padding-top: 16px;
-  padding-bottom: 16px;
+  padding-top: $line-height/2;
+  padding-bottom: $line-height;
   padding-left: 8px;
   padding-right: 8px;
 
-//   display: block;
-
   float: left;
-//   clear: left;
 
 }
 
@@ -772,7 +764,7 @@ dt {
   clear: left;
 
   margin-right: 24px;
-  margin-bottom: 8px;
+//   margin-bottom: 8px;
 
   a {
 
@@ -795,7 +787,7 @@ dd {
 table {
 
     padding-bottom: 0px;
-    border-bottom-color: $light-grey;
+    border-bottom-color: $lighter-grey;
     border-bottom-style: solid;
     border-bottom-width: 1px;
     border-spacing: 0px 0px;
@@ -803,8 +795,8 @@ table {
     display: inline-block;
     line-height: 32px;
 
-    margin-top: 0px;
-    margin-bottom: 17px;
+    margin-top: $line-height/2;
+    margin-bottom: 1px;
     margin-left: 0px;
     margin-right: 0px;
 
@@ -814,10 +806,11 @@ table {
 
 th {
 
-  background-color: $light-grey;
+  background-color: $lighter-grey;
   font-family: $header-font-stack;
-  font-size: 16px;
+  font-size: 3/4*$font-size;
   font-weight: normal;
+  text-transform: uppercase;
 
   padding-bottom: 0px;
   padding-top: 0px;
@@ -869,8 +862,8 @@ div .highlight {
 
   display: inline-block;
 
-  margin-top: 16px;
-  margin-bottom: 32px;
+  margin-top: $line-height/2;
+  margin-bottom: $line-height;
 
 }
 
@@ -904,9 +897,9 @@ footer {
   font-family: $header-font-stack;
 
   width: $full-width;
-  height: 64px;
+  height: 2*$line-height;
 
-  margin-top: 64px;
+  margin-top: 2*$line-height;
   margin-bottom: 0px;
   margin-left: 32px;
   margin-right: 32px;
@@ -988,10 +981,6 @@ footer {
   }
 
 }
-
-$narrower-canvas-width: 95%;
-$narrower-main-width: 95%;
-$narrower-gutter-width: 2.5%;
 
 @media (max-width: $narrow-canvas-width) {
 
