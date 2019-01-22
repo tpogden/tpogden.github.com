@@ -22,22 +22,41 @@ $h-margin: 8px;
 
 $text-width: $main-width - 2*$h-margin;
 
-$line-height: 32px;
+$line-height: 28px;
 $font-size: 16px;
 
 /* Fonts */
-$body-font-stack: 'Open Sans', serif;
-$header-font-stack: 'Rubik', serif;//'Rubik', serif;
-$code-font-stack: Monaco, "Courier New", "DejaVu Sans Mono",
-  "Bitstream Vera Sans Mono", monospace;
+$body-font-stack: 'PT Serif', serif;
+$header-font-stack: 'Rubik', sans-serif;//'Rubik', serif;
+$code-font-stack: Monaco, "Courier New", monospace;
 
 /* Colors */
-$white: #FFFBFA;
+$white: white;
 $black: #231C07;
-$red: orangered;
-$grey: #8C8989;
-$light-grey: #BAB7B6;
-$lighter-grey: #E8E5E4;
+
+/* Seaborn color palettes */
+$deep-blue: #4c72b0;
+$deep-orange: #dd8452;
+$deep-green: #55a868;
+$deep-red: #c44e52;
+$deep-purple: #8172b3;
+$deep-brown: #937860;
+$deep-pink:#da8bc3;
+$deep-grey: #8c8c8c;
+$deep-yellow: #ccb974;
+$deep-cyan: #64b5cd;
+$pastel-blue: #a1c9f4;
+$pastel-orange: #ffb482;
+$pastel-green: #8de5a1;
+$pastel-red: #ff9f9b;
+$pastel-purple: #d0bbff;
+$pastel-brown: #debb9b;
+$pastel-pink: #fab0e4;
+$pastel-grey: #cfcfcf;
+$pastel-yellow: #fffea3;
+$pastel-cyan: #b9f2f0;
+
+$lighter-grey: rgba(207,207,207, 0.25); // pastel-grey with alpha
 
 body {
 
@@ -134,10 +153,13 @@ header {
 
     a {
 
-      color: $red;
+      color: $deep-red;
       text-decoration: none;
       border-bottom: 0px solid;
-
+        .active {
+      border-bottom: solid 1px $deep-red;
+    }
+    
     }
 
   }
@@ -149,7 +171,7 @@ nav {
   width: 3*$column-width + 2*$gutter-width;
   float: left;
 
-  color: $light-grey;
+  color: $pastel-grey;
 
   font-family: $header-font-stack;
   font-style: normal;
@@ -211,10 +233,10 @@ nav {
 
   a {
 
-    color: $grey;
+    color: $deep-grey;
     border-bottom: solid 0px;
     .active {
-      border-bottom: solid 1px $red;
+      border-bottom: solid 1px $deep-red;
     }
   
   }
@@ -242,6 +264,7 @@ p {
 blockquote {
 
   width: $text-width - 48px;
+  text-indent: 0px;
 
   margin-top: 0px;
   margin-bottom: 0px;
@@ -253,12 +276,12 @@ blockquote {
   padding-left: 0px;
   padding-right: 0px;
 
-  color: $grey;
+  color: $deep-grey;
 
   p {
 
     display: inline;
-
+    text-indent: -8px;
   }
 
 }
@@ -332,8 +355,6 @@ h3 {
 
 h4 {
 
-  color: $red;
-
   font-family: $header-font-stack;
   font-size: $font-size;
   font-weight: normal;
@@ -353,16 +374,17 @@ h4 {
 
 a {
 
-  color: $black;
+  // color: $black;
+  color: $deep-blue;
   text-decoration: none;
-  border-bottom: solid 1px $light-grey;
+  border-bottom: solid 1px $pastel-grey;
 
 }
 
 a:active, a:hover {
 
-  color: $red;
-  border-bottom: solid 1px $red;
+  color: $deep-red;
+  border-bottom: solid 1px $deep-red;
 
 }
 
@@ -370,7 +392,7 @@ a:active, a:hover {
 
   font-family: $header-font-stack;
   font-size: 2/3*$font-size;
-  color: $light-grey;
+  color: $pastel-grey;
 
   padding-left: 0px;
   padding-right: 0px;
@@ -391,7 +413,7 @@ a:active, a:hover {
 
 .rating {
 
-  color: $red;
+  color: $deep-red;
   font-size: 16px;
 
 }
@@ -403,10 +425,8 @@ aside {
   width: $sidebar-width - 2*$h-margin;
 
   font-size: 14px;
-  color:  $grey;
+  color:  $deep-grey;
 
-//   margin-top: 16px;
-//   margin-bottom: 16px;
   margin-left: 32px;
   margin-right: 0px;
 
@@ -453,7 +473,7 @@ aside {
 
     list-style: none;
 
-    margin-top: 0px;
+    margin-top: $line-height/2;
     margin-bottom: $line-height/2;
     margin-left: 16px;
     margin-right: 0px;
@@ -472,7 +492,7 @@ aside {
 
     width: inherit;
 
-    margin-top: 0px;
+    margin-top: $line-height/2;
     margin-bottom: $line-height/2;
     margin-left: 16px;
     margin-right: 0px;
@@ -482,7 +502,7 @@ aside {
     li:before {
 
       padding-right: 8px;
-      color: $red;
+      color: $deep-red;
       width: 16px;
       margin-left: -24px;
 
@@ -506,7 +526,7 @@ figure {
 
 figcaption {
 
-  color:  $grey;
+  color:  $deep-grey;
 
   width: $sidebar-width - 2*$h-margin;
 
@@ -561,7 +581,7 @@ img.full {
 .full-framed{
 
   width: $full-width - 2*$h-margin - 2px;
-  border: solid 1px $light-grey;
+  border: solid 1px $pastel-grey;
   
 }
 
@@ -577,7 +597,7 @@ img.text {
 img.text-framed {
 
   width: $text-width - 2;
-  border: solid 1px $light-grey;
+  border: solid 1px $pastel-grey;
 
   margin-top: 8px;
   margin-bottom: $line-height - 8px;
@@ -599,7 +619,7 @@ img.side {
 img.side-framed {
 
   width: $sidebar-width - 2*$h-margin - 2px;
-  border: solid 1px $light-grey;
+  border: solid 1px $pastel-grey;
 
   padding: 0px;
 
@@ -675,7 +695,7 @@ ul {
 
     content: "×";
     font-family: $header-font-stack;
-    color: $red;
+    color: $deep-red;
 
     position: relative;
     left: -24px;
@@ -726,13 +746,14 @@ ol {
     content: counter(item) "";
     counter-increment: item;
     padding-right: 8px;
-    color: $red;
+    color: $deep-red;
     width: 16px;
     margin-left: -32px;
 
     position: absolute;
 
     font-family: $header-font-stack;
+    font-size: 13px;
     text-align: right;
 
     padding-top: 0px;
@@ -764,7 +785,6 @@ dt {
   clear: left;
 
   margin-right: 24px;
-//   margin-bottom: 8px;
 
   a {
 
@@ -787,13 +807,12 @@ dd {
 table {
 
     padding-bottom: 0px;
-    border-bottom-color: $lighter-grey;
+    border-bottom-color: $pastel-grey;
     border-bottom-style: solid;
     border-bottom-width: 1px;
     border-spacing: 0px 0px;
     position: relative;
     display: inline-block;
-    line-height: 32px;
 
     margin-top: $line-height/2;
     margin-bottom: 1px;
@@ -806,7 +825,7 @@ table {
 
 th {
 
-  background-color: $lighter-grey;
+  background-color: $pastel-grey;
   font-family: $header-font-stack;
   font-size: 3/4*$font-size;
   font-weight: normal;
@@ -893,7 +912,7 @@ pre > code {
 
 footer {
 
-  font-size: 14px;
+  font-size: 2/3*$font-size;
   font-family: $header-font-stack;
 
   width: $full-width;
@@ -910,11 +929,13 @@ footer {
 
   #notice {
 
-    color: $light-grey;
+    color: $pastel-grey;
 
   }
 
 }
+
+/* Viewports --------------------------------------------------------------- */
 
 @media (max-width: $canvas-width) {
 
@@ -1068,7 +1089,7 @@ footer {
 
   .MathJax_Display {
     width: $narrower-main-width !important;
-    color: $red;
+    color: $deep-red;
   }
 
 }

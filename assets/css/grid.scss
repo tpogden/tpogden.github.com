@@ -51,7 +51,7 @@ $narrower-canvas-width: 2*$column-width + 3*$gutter-width;
 #grid div.horiz{
 
     /* 20px line height */
-    height: 31px;
+    height: 28px - 1px; //31px;
     border-bottom: solid 1px rgba(208,199,198,0.5);//rgba(58, 137, 201, 1);;
     margin: 0;
     padding: 0;
