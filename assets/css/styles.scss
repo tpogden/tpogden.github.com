@@ -22,11 +22,10 @@ $h-margin: 8px;
 
 $text-width: $main-width - 2*$h-margin;
 
-$line-height: 32px;
+$line-height: 28px;
 $font-size: 16px;
 
 /* Fonts */
-// $body-font-stack: 'Open Sans', serif;
 $body-font-stack: 'PT Serif', serif;
 $header-font-stack: 'Rubik', sans-serif;//'Rubik', serif;
 $code-font-stack: Monaco, "Courier New", monospace;
@@ -34,10 +33,6 @@ $code-font-stack: Monaco, "Courier New", monospace;
 /* Colors */
 $white: white;
 $black: #231C07;
-//$red: orangered;
-//$grey: #8C8989;
-//$light-grey: #BAB7B6;
-//$lighter-grey: #E8E5E4;
 
 /* Seaborn color palettes */
 $deep-blue: #4c72b0;
@@ -50,7 +45,6 @@ $deep-pink:#da8bc3;
 $deep-grey: #8c8c8c;
 $deep-yellow: #ccb974;
 $deep-cyan: #64b5cd;
-
 $pastel-blue: #a1c9f4;
 $pastel-orange: #ffb482;
 $pastel-green: #8de5a1;
@@ -61,6 +55,8 @@ $pastel-pink: #fab0e4;
 $pastel-grey: #cfcfcf;
 $pastel-yellow: #fffea3;
 $pastel-cyan: #b9f2f0;
+
+$lighter-grey: rgba(207,207,207, 0.25); // pastel-grey with alpha
 
 body {
 
@@ -160,7 +156,10 @@ header {
       color: $deep-red;
       text-decoration: none;
       border-bottom: 0px solid;
-
+        .active {
+      border-bottom: solid 1px $deep-red;
+    }
+    
     }
 
   }
@@ -265,6 +264,7 @@ p {
 blockquote {
 
   width: $text-width - 48px;
+  text-indent: 0px;
 
   margin-top: 0px;
   margin-bottom: 0px;
@@ -281,7 +281,7 @@ blockquote {
   p {
 
     display: inline;
-
+    text-indent: -8px;
   }
 
 }
@@ -355,8 +355,6 @@ h3 {
 
 h4 {
 
-  color: $deep-red;
-
   font-family: $header-font-stack;
   font-size: $font-size;
   font-weight: normal;
@@ -376,7 +374,8 @@ h4 {
 
 a {
 
-  color: $black;
+  // color: $black;
+  color: $deep-blue;
   text-decoration: none;
   border-bottom: solid 1px $pastel-grey;
 
@@ -428,8 +427,6 @@ aside {
   font-size: 14px;
   color:  $deep-grey;
 
-//   margin-top: 16px;
-//   margin-bottom: 16px;
   margin-left: 32px;
   margin-right: 0px;
 
@@ -448,7 +445,7 @@ aside {
 
   width: $sidebar-width - 2*$h-margin;
 
-  background-color: $pastel-grey;
+  background-color: $lighter-grey;
   color: $black;
   border-radius: 4px;
 
@@ -476,7 +473,7 @@ aside {
 
     list-style: none;
 
-    margin-top: 0px;
+    margin-top: $line-height/2;
     margin-bottom: $line-height/2;
     margin-left: 16px;
     margin-right: 0px;
@@ -495,7 +492,7 @@ aside {
 
     width: inherit;
 
-    margin-top: 0px;
+    margin-top: $line-height/2;
     margin-bottom: $line-height/2;
     margin-left: 16px;
     margin-right: 0px;
@@ -788,7 +785,6 @@ dt {
   clear: left;
 
   margin-right: 24px;
-//   margin-bottom: 8px;
 
   a {
 
@@ -817,7 +813,6 @@ table {
     border-spacing: 0px 0px;
     position: relative;
     display: inline-block;
-    line-height: 32px;
 
     margin-top: $line-height/2;
     margin-bottom: 1px;
@@ -917,7 +912,7 @@ pre > code {
 
 footer {
 
-  font-size: 14px;
+  font-size: 2/3*$font-size;
   font-family: $header-font-stack;
 
   width: $full-width;
@@ -939,6 +934,8 @@ footer {
   }
 
 }
+
+/* Viewports --------------------------------------------------------------- */
 
 @media (max-width: $canvas-width) {
 
