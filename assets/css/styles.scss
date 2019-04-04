@@ -135,7 +135,6 @@ header {
 
     font-family: $header-font-stack;
     font-size: 16px;
-    // font-weight: 600;
     letter-spacing: 4px;
     text-transform: uppercase;
 
@@ -145,7 +144,6 @@ header {
     margin-right: 0px;
 
     padding-top: $line-height;
-    padding-bottom: $line-height/2;
     padding-left: 8px;
     padding-right: 8px;
 
@@ -246,19 +244,16 @@ nav {
 /* Paragraphs and Blockquotes ---------------------------------------------- */
 
 p {
-
   width: $text-width;
-
   margin-top: 0px;
   margin-bottom: 0px;
   margin-left: 0px;
   margin-right: 0px;
-
   padding-top: $line-height/2;
   padding-bottom: $line-height/2;
   padding-left: 8px;
   padding-right: 8px;
-
+  clear: left;
 }
 
 blockquote {
@@ -441,6 +436,11 @@ aside {
   display: inline;
   clear: right;
 
+}
+
+.date {
+  padding-top: 12px;
+  padding-bottom: 14px;
 }
 
 .sidebox {
@@ -841,98 +841,70 @@ th {
 }
 
 th.one-col {
-
   width: 144px;
   padding-left: 8px;
-
 }
 
 th.two-col {
-
   width: 304px;
   padding-left: 8px;
-
 }
 
 th.col-last {
-
   margin-right: 0px;
-
 }
 
 td {
-
   font-size: 14px;
-
   margin-right: 0px;
-
   padding-bottom: 0px;
   padding-top: 0px;
   padding-right: 8px;
   padding-left: 8px;
-
 }
 
 /* Code -------------------------------------------------------------------- */
 
 div .highlight {
-
   width: $main-width;
-
   border-radius: 4px;
-
   display: inline-block;
-
   margin-top: $line-height/2;
   margin-bottom: $line-height;
-
 }
 
 code {
-
   font-family: $code-font-stack;
   font-size: 12px;
-
 }
 
 pre > code {
-
     width: $text-width;
     line-height: 24px;
-
     padding-top: 0px;
     padding-bottom: 0px;
     padding-left: 16px;
     padding-right: 16px;
-
     display: block;
-      overflow: auto;
-
+    overflow: auto;
 }
 
 /* Footer ------------------------------------------------------------------ */
 
 footer {
-
   font-size: 2/3*$font-size;
   font-family: $header-font-stack;
-
   width: $full-width;
   height: 2*$line-height;
-
   margin-top: 2*$line-height;
   margin-bottom: 0px;
   margin-left: 32px;
   margin-right: 32px;
-
   padding: 0px;
-
   float: left;
 
   #notice {
-
     color: $pastel-grey;
-
   }
 
 }
@@ -942,19 +914,14 @@ footer {
 @media (max-width: $canvas-width) {
 
   #canvas {
-
     width: $narrow-canvas-width;
-
   }
 
   header {
-
     width: $main-width;
-
   }
 
   nav {
-
     width: 2*$column-width + $gutter-width;
     margin-left: $gutter-width;
   
@@ -964,15 +931,11 @@ footer {
   }
 
   .nav-wide-only {
-
     display: none;
-
   }
 
   article, section {
-
     width: $main-width;
-
   }
 
   .date {
@@ -980,27 +943,21 @@ footer {
   }
 
   img.full, img.full-framed {
-
     width: $text-width;
-
   }
 
   img.half-left {
     width: 2*$column-width + 1*$gutter-width - 1*$h-margin;
     margin-right: 8px;
-
   }
 
   img.half-right {
     width: 2*$column-width + 1*$gutter-width - 1*$h-margin;
     margin-right: 8px;
-
   }
 
   footer {
-
     width: $main-width;
-
   }
 
 }
@@ -1008,85 +965,77 @@ footer {
 @media (max-width: $narrow-canvas-width) {
 
   #canvas {
-
     width: $narrower-canvas-width;
-
   }
 
-  header, footer {
-
+  header {
+    height: 5*$line-height;
     width: $narrower-main-width;
     margin-left: $narrower-gutter-width;
     margin-right: $narrower-gutter-width;
   }
 
   nav {
+    margin-top: 0px; 
+    margin-left: 0px;
+  }
 
-    display: none;
-
-    // background-color: yellowgreen;
-
-    // width: 1*$column-width + $gutter-width;
-    // margin-left: $gutter-width;
-  
-    // ul {
-    //   width: 1*$column-width + 1*$gutter-width;
-    // } 
+  footer {
+    width: $narrower-main-width;
+    margin-left: $narrower-gutter-width;
+    margin-right: $narrower-gutter-width;
   }
 
   article, section {
-
     width: $narrower-main-width;
-
     margin-left: $narrower-gutter-width;
     margin-right: $narrower-gutter-width;
-
   }
 
   p, h1, h2, h3, h4, dl {
-
     width: $narrower-main-width;
-
   }
 
   ul, ol {
-
     width: $narrower-main-width;
 
     li p {
-
       width: $narrower-main-width;
-
     }
 
   }
 
   blockquote {
-
     width: $narrower-main-width;
-
     margin-left: 16px;
     margin-right: 16px;
 
   }
 
+  aside {
+    float: left;
+    margin-left: 0px;
+  }
+
+  .date {
+    width: $narrower-main-width;
+  }
+
+  .sidebox {
+    margin-left: 8px;
+  }
+
   img.text, img.text-framed, img.full, img.full-framed, img.half-left, 
   img.half-right {
-
     width: $narrower-main-width;
-
   }
 
   div .highlight {
-
     width: $narrower-main-width;
-
   }
 
   pre > code {
-
     width: $narrower-main-width;
-
   }
 
   .MathJax_Display {
