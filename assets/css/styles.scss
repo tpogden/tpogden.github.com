@@ -274,9 +274,8 @@ blockquote {
   color: $deep-grey;
 
   p {
-
     display: inline;
-    text-indent: -8px;
+    padding-left: 0px;
   }
 
 }
@@ -688,6 +687,8 @@ ul {
       padding-left: 0px;
       padding-top: 0px;
       padding-bottom: $line-height/2;
+
+      clear: none;
 
     }
 
