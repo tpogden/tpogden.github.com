@@ -3,6 +3,7 @@ layout: note
 title: Book Notes, July to September 2017
 location: Manchester
 category: bookshelf
+published: false
 permalink: /bookshelf/july-to-september-2017
 description:
 ---

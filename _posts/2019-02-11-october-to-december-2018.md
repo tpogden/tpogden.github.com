@@ -3,7 +3,7 @@ layout: note
 title: Book Notes, October to December 2018
 location:
 category: bookshelf
-published: true
+published: false
 permalink: /bookshelf/october-to-december-2018
 ---
 

@@ -3,6 +3,7 @@ layout: note
 title: "Book Notes, October to December 2017"
 location:
 category: bookshelf
+published: false
 permalink: /bookshelf/october-to-december-2017
 description:
 ---

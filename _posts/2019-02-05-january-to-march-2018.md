@@ -3,6 +3,7 @@ layout: note
 title: Book Notes, January to March 2018
 location:
 category: bookshelf
+published: false
 permalink: /bookshelf/january-to-march-2018
 ---
 

@@ -5,6 +5,7 @@ location: Manchester
 category: bookshelf
 permalink: /bookshelf/july-to-september-2016
 description:
+published: false
 redirect_from:
   - /the-crossing-cormac-mccarthy
 ---
