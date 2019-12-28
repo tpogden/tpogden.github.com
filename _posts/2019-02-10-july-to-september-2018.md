@@ -3,7 +3,7 @@ layout: note
 title: Book Notes, July to September 2018
 location:
 category: bookshelf
-published: true
+published: false
 permalink: /bookshelf/july-to-september-2018
 ---
 
