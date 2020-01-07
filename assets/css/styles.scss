@@ -27,7 +27,7 @@ $font-size: 16px;
 
 /* Fonts */
 $body-font-stack: 'PT Serif', serif;
-$header-font-stack: 'Rubik', sans-serif;//'Rubik', serif;
+$header-font-stack: 'Rubik', sans-serif;
 $code-font-stack: Monaco, "Courier New", monospace;
 
 /* Colors */
@@ -169,8 +169,6 @@ nav {
   width: 3*$column-width + 2*$gutter-width;
   float: left;
 
-  color: $pastel-grey;
-
   font-family: $header-font-stack;
   font-style: normal;
   font-size: 7/8*$font-size;
@@ -230,12 +228,7 @@ nav {
   }
 
   a {
-
-    color: $deep-grey;
     border-bottom: solid 0px;
-    .active {
-      border-bottom: solid 1px $deep-red;
-    }
   
   }
 
@@ -369,30 +362,23 @@ h4 {
 /* Links and Text Decorations ---------------------------------------------- */
 
 a {
-
-  // color: $black;
   color: $deep-blue;
   text-decoration: none;
   border-bottom: solid 1px $pastel-grey;
-
 }
 
 a:active, a:hover {
-
   color: $deep-red;
   border-bottom: solid 1px $deep-red;
-
 }
 
 .stamp {
-
   font-family: $header-font-stack;
   font-size: 2/3*$font-size;
   color: $pastel-grey;
 
   padding-left: 0px;
   padding-right: 0px;
-
 }
 
 .align-right {
@@ -402,22 +388,17 @@ a:active, a:hover {
 }
 
 .description {
-
   font-style: italic;
-
 }
 
 .rating {
-
   color: $deep-red;
   font-size: 16px;
-
 }
 
 /* Asides and Sideboxes ---------------------------------------------------- */
 
 aside {
-
   width: $sidebar-width - 2*$h-margin;
 
   font-size: 14px;
@@ -434,7 +415,6 @@ aside {
   float: right;
   display: inline;
   clear: right;
-
 }
 
 .date {
