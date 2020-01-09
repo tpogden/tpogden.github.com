@@ -3,7 +3,7 @@ layout: note
 title: Automate Scientific Plots and Tables with Python and Make
 location:
 category: research
-published: false
+published: true
 permalink:
 asset_path: /assets/notes/2020-01-07-automate-scientific-plots-with-python-make/
 ---
@@ -20,17 +20,17 @@ scripts, remembering the right commands to run and subtleties of the environment
 in which they will run successfully. Then you manually save the plots into a
 folder. Then you manually copy them into another folder to be referenced from
 the TeX file. Then you manually re-run the TeX renderer. All these manual steps
-multiply the possibilities for errors and for reproducibility to be broken if
+multiply the potential for errors and for reproducibility to be broken if
 you forget to document every step exactly. This is where someone comes to you
 six months later because they can't reproduce the output and you say 'Oh, I
 forgot to say this package has to be installed' or 'Oh, I forgot to say you need
-_x_ added to the _y_ environment variable for that to work.' And that someone in
+`x` added to the `y` environment variable for that to work.' And that someone in
 six months is most likely to be you.
 
 <aside>
-This is not a guide to <code>make</code>. The <a
-href="https://www.gnu.org/software/make/manual/make.html">internet will help you
-with that</a>.
+This is not a guide to <code>make</code>. You'll <a
+href="https://www.gnu.org/software/make/manual/make.html">find those
+elsewhere</a>.
 </aside>
 
 We solve this by writing the steps down exactly. The most well-used tool for
@@ -58,7 +58,7 @@ src/plots/
     +--plot_trips_vs_temp.py
 ```
 
-I _strongly_ recommend you have _one_ script for every _one_ plot you want to
+I strongly recommend you have _one_ script for every _one_ plot you want to
 show in the final outputs. Even if the script is exactly the same apart from a
 parameter or two. This will often mean a lot of repeat code, which you would
 usually want to avoid by abstraction. Resist the urge! In data visualisation you
@@ -158,28 +158,23 @@ $(PLOTS_DIR)%.png: $(PLOTS_DIR)%.py
 ```
 
 The variable `PLOTS_FLAGS` contains any extra flags we want to pass to every
-plotting script. We'll look at that later. Now we add make recipes to produce
-all the plots.
+plotting script. We'll look at that later. Now we add recipes to produce all the
+plots.
 ```makefile
 plots_pdf: $(PLOTS_PDF)
 plots_png: $(PLOTS_PNG)
 plots: plots_pdf plots_png
 ```
 So then `make plots_pdf` will output all of the plot PDFs and `make plots` will
-output all formats.  Note that `make` understands dependecies so if you update
-only one script only that one will be re-run.
-
-<figure>
-<img class="side-framed" src="{{ page.asset_path }}paper-1.png" />
-<img class="side-framed" src="{{ page.asset_path }}paper-2.png" />
-<figcaption>&uarr; Output from <code>paper.tex</code></figcaption>
-</figure>
+output all formats.  Note that `make` checks modified timestamps for
+dependencies and only updates what it needs to, so if you update only one script
+only that one will be re-run.
 
 ## Producing Reports
 
 You'll usually have a separate folder for the documents you want to output, here
 we're going to have two outputs, a paper and a slide deck, both to be produced
-using LaTeX. I put the source for these in `reports`. I want the plots to be
+using LaTeX. I put the source for these in `reports/`. I want the plots to be
 copied into a subfolder here to make the reports self-contained, so we write a
 rule to copy the PDF plots across.
 
@@ -197,11 +192,11 @@ report_figs_pdf: $(REPORT_FIGS_PDF) plots_pdf
 ```
 
 After running `report_figs_pdf` we have the following substructure.
-```py
+```bash
 reports/
     +--paper.tex
     +--slides.tex
-    figs/
+    +--figs/
         +--plot_daily_journeys.pdf
         +--plot_trips_vs_temp.pdf
 ```
@@ -223,15 +218,12 @@ reports_pdf: $(REPORTS_PDF)
 
 Now `make paper` will do everything needed to create the paper, including
 updating the plots if needed, and `make slides` will do the same for the slide
-deck. The `make` command alone builds everything.
+deck. The `make` command alone builds everything. You can view the output
+[paper.pdf][paper_pdf] and [slides.pdf][slides_pdf] in the [repo][demo].
 
-<figure>
-<img class="side-framed" src="{{ page.asset_path }}slides-1.png" />
-<img class="side-framed" src="{{ page.asset_path }}slides-2.png" />
-<img class="side-framed" src="{{ page.asset_path }}slides-3.png" />
-<img class="side-framed" src="{{ page.asset_path }}slides-4.png" />
-<figcaption>&uarr; Output from <code>slides.tex</code></figcaption>
-</figure>
+[paper_pdf]: https://github.com/tpogden/demo-plots-python-make/releases/download/v1.0/paper.pdf
+[slides_pdf]: https://github.com/tpogden/demo-plots-python-make/releases/download/v1.0/slides.pdf
+
 
 ## We're All Waving Flags Now
 
