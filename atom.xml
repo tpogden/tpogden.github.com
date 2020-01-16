@@ -4,22 +4,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
- <title>Tommy Ogden</title>
- <link href="http://tommyogden.com/atom.xml" rel="self"/>
- <link href="http://tommyogden.com/"/>
+ <title>Thomas P. Ogden</title>
+ <link href="http://ogden.eu/atom.xml" rel="self"/>
+ <link href="http://ogden.eu/"/>
  <updated>{{ site.time | date_to_xmlschema }}</updated>
- <id>http://tommyogden.com/</id>
+ <id>http://ogden.eu/</id>
  <author>
-   <name>Tommy Ogden</name>
-   <email>t@ogden.eu</email>
+   <name>Thomas P. Ogden</name>
  </author>
 
- {% for post in site.posts limit:10 %}
+ {% for post in site.posts limit:100 %}
  <entry>
    <title>{{ post.title }}</title>
-   <link href="http://tommyogden.com{{ post.url }}"/>
+   <link href="http://ogden.eu{{ post.url }}"/>
    <updated>{{ post.date | date_to_xmlschema }}</updated>
-   <id>http://tommyogden.com{{ post.id }}</id>
+   <id>http://ogden.eu{{ post.id }}</id>
    <content type="html">{{ post.content | xml_escape }}</content>
  </entry>
  {% endfor %}
