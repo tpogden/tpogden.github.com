@@ -763,18 +763,14 @@ dl {
 }
 
 dt {
-
   float: left;
   clear: left;
-
   margin-right: 24px;
-
+  padding-left: 1.5em;
+  text-indent: -1.5em;
   a {
-
     border-bottom: 0px;
-
   }
-
 }
 
 dd {
