@@ -191,7 +191,7 @@ $(FIGS_DIR)%.pdf: $(PLOTS_DIR)%.pdf
 report_figs_pdf: $(REPORT_FIGS_PDF) plots_pdf
 ```
 
-After running `report_figs_pdf` we have the following substructure.
+After running `make report_figs_pdf` we have the following substructure.
 ```bash
 reports/
     +--paper.tex
