@@ -154,11 +154,11 @@ header {
       color: $deep-red;
       text-decoration: none;
       border-bottom: 0px solid;
-        .active {
-      border-bottom: solid 1px $deep-red;
+    //
     }
-    
-    }
+      a:active, a:hover {
+        border-bottom: solid 1px $deep-red;
+      }
 
   }
 
@@ -394,6 +394,10 @@ a:active, a:hover {
 .rating {
   color: $deep-red;
   font-size: 16px;
+}
+
+.deep-grey {
+  color: $deep-grey;
 }
 
 /* Asides and Sideboxes ---------------------------------------------------- */
