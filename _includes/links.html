@@ -1,0 +1,12 @@
+<div class="related">
+    <h4>Next/Previous</h4>
+    <p>
+        {% if page.next.url %}
+        <span class="next"><a href="{{page.next.url}}">{{page.next.title}}</a></span><br />
+        {% endif %}
+        {% if page.previous.url %}
+        <span class="prev"><a href="{{page.previous.url}}">
+                {{page.previous.title}}</a></span>
+        {% endif %}
+    </p>
+</div>

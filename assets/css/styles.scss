@@ -870,6 +870,40 @@ pre > code {
     overflow: auto;
 }
 
+/* Nav ----------------------------------------------------------------------*/ 
+
+  .prev:before {
+
+    content: "▼"; //◄ ←
+    font-size: 8pt;
+    font-family: $header-font-stack;
+    color: $deep-red;
+
+    position: relative;
+    left: -28px;
+    float: left;
+    width: 0px;
+
+    padding-right: 0px;
+
+  }
+
+  .next:before {
+
+    content: "▲"; // ► →
+    font-size: 8pt;
+    font-family: $header-font-stack;
+    color: $deep-red;
+
+    position: relative;
+    left: -28px;
+    float: left;
+    width: 0px;
+
+    padding-right: 0px;
+
+  }
+
 /* Footer ------------------------------------------------------------------ */
 
 footer {
