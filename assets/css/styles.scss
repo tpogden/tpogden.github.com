@@ -874,8 +874,7 @@ pre > code {
 
   .prev:before {
 
-    content: "▼"; //◄ ←
-    font-size: 8pt;
+    content: "⇣"; //◄ ←▼
     font-family: $header-font-stack;
     color: $deep-red;
 
@@ -890,8 +889,7 @@ pre > code {
 
   .next:before {
 
-    content: "▲"; // ► →
-    font-size: 8pt;
+    content: "⇡"; // ► →
     font-family: $header-font-stack;
     color: $deep-red;
 
