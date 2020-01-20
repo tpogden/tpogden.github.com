@@ -11,7 +11,7 @@ permalink: /about/
 
     <ul>
         <li><a href="https://scholar.google.co.uk/citations?hl=en&user=vdfMd94AAAAJ&view_op=list_works&sortby=pubdate">Google Scholar</a></li>
-        <li><a href="https://github.com/tommyogden/">Github</a></li>
+        <li><a href="https://github.com/tpogden/">Github</a></li>
         <li><a href="https://www.linkedin.com/in/tpogden/">LinkedIn</a></li>
     </ul>
 </aside>
@@ -87,5 +87,5 @@ You can keep up with this site using [RSS](/atom.xml) or by following me on
 [arxiv-simultons]: https://arxiv.org/abs/1909.07161
 [jpc-nitrate]: https://pubs.acs.org/doi/full/10.1021/jp310090u
 
-[thesis-phd]: https://github.com/tommyogden/phd-thesis/releases/download/v1.1/thesis_thomasogden_v1.1.pdf
+[thesis-phd]: https://github.com/tpogden/phd-thesis/releases/download/v1.1/thesis_thomasogden_v1.1.pdf
 [thesis-nitrate]: /assets/nitrate/reorientation-dynamics-of-nitrate-in-water.pdf

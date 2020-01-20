@@ -18,6 +18,6 @@ permalink: /projects/
 
 {% endfor %}
 
-[mb]: https://github.com/tommyogden/maxwellbloch
-[euler]: http://tommyogden.com/euler/
+[mb]: https://github.com/tpogden/maxwellbloch
+[euler]: http://ogden.eu/euler/
 [pe]: https://projecteuler.net/

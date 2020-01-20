@@ -10,7 +10,7 @@ include_math: true
 
 <aside>
 All of the simulations in this post have been produced with the 
-<a href="https://github.com/tommyogden/maxwellbloch">MaxwellBloch</a> package.
+<a href="https://github.com/tpogden/maxwellbloch">MaxwellBloch</a> package.
 </aside>
 
 A result you might recall from special relativity is that causality requires
@@ -322,7 +322,7 @@ this post is reproducible in [this notebook][figs-notebook], apart from figure 7
 which is in [this notebook][fig-7-notebook].
 
 Corrections and suggestions welcome via {% include mail_ogden_eu.html %} or 
-[Twitter](http://twitter.com/tommyogden/).
+[Twitter](http://twitter.com/tpogden/).
 
 ## References
 
@@ -357,13 +357,13 @@ optical medium_. [Nature, 695–698](http://doi.org/10.1038/nature02035.1).
 [kuzmich-prl-2001]: https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.86.3925
 [kuzmich-prl-2001-arxiv]: https://arxiv.org/abs/physics/0101068
 
-[mb]: https://github.com/tommyogden/maxwellbloch
+[mb]: https://github.com/tpogden/maxwellbloch
 
-[figs-notebook]: https://github.com/tommyogden/tommyogden.github.com/blob/master/assets/notes/fast-light/fast-light-figs.ipynb
-[fig-7-notebook]: https://github.com/tommyogden/tommyogden.github.com/blob/master/assets/notes/fast-light/fast-light-fig-7.ipynb
+[figs-notebook]: https://github.com/tpogden/tpogden.github.com/blob/master/assets/notes/fast-light/fast-light-figs.ipynb
+[fig-7-notebook]: https://github.com/tpogden/tpogden.github.com/blob/master/assets/notes/fast-light/fast-light-fig-7.ipynb
 
-[example-notebook]: https://github.com/tommyogden/notebooks-maxwellbloch/blob/master/examples/mb-solve-two-weak-pulse-few-atoms-decay.ipynb
-[notebooks]: https:github.com/tommyogden/notebooks-maxwellbloch
+[example-notebook]: https://github.com/tpogden/notebooks-maxwellbloch/blob/master/examples/mb-solve-two-weak-pulse-few-atoms-decay.ipynb
+[notebooks]: https:github.com/tpogden/notebooks-maxwellbloch
 
 [wiki-mwe]: https://en.wikipedia.org/wiki/Electromagnetic_wave_equation
 [wiki-v-phase]: https://en.wikipedia.org/wiki/Phase_velocity

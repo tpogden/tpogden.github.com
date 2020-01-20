@@ -51,7 +51,7 @@ big enough pulse.
 <figcaption>
 <em>Fig 1 &mdash;</em> Propagation of a 0.8π pulse through a two-level medium.
 <a
-href="https://github.com/tommyogden/notebooks-maxwellbloch/blob/master/examples/mb-solve-two-gaussian-0.8pi.ipynb">Notebook.</a>
+href="https://github.com/tpogden/notebooks-maxwellbloch/blob/master/examples/mb-solve-two-gaussian-0.8pi.ipynb">Notebook.</a>
 </figcaption>
 </figure>
 
@@ -66,7 +66,7 @@ that has the right sort of shape moving through the same atom region.
 <figcaption>
 <em>Fig 2 &mdash;</em> Propagation of a 1.8π pulse through a two-level medium.
 <a
-href="https://github.com/tommyogden/notebooks-maxwellbloch/blob/master/examples/mb-solve-two-gaussian-1.8pi.ipynb">Notebook.</a>
+href="https://github.com/tpogden/notebooks-maxwellbloch/blob/master/examples/mb-solve-two-gaussian-1.8pi.ipynb">Notebook.</a>
 </figcaption>
 </figure>
 
@@ -115,7 +115,7 @@ shape all the way through. This is what happens, as shown in figure 3.
 <figcaption>
 <em>Fig 3 &mdash;</em> Propagation of a 2π sech pulse through a two-level medium.
 <a
-href="https://github.com/tommyogden/notebooks-maxwellbloch/blob/master/examples/mb-solve-two-sech-2pi.ipynb">Notebook.</a>
+href="https://github.com/tpogden/notebooks-maxwellbloch/blob/master/examples/mb-solve-two-sech-2pi.ipynb">Notebook.</a>
 </figcaption>
 </figure>
 
@@ -150,7 +150,7 @@ pulse breaks up into two. The first one is narrower and travels faster.
 <figcaption>
 <em>Fig 4 &mdash;</em> Propagation of a 4π sech pulse through a two-level medium.
 <a
-href="https://github.com/tommyogden/notebooks-maxwellbloch/blob/master/examples/mb-solve-two-sech-4pi.ipynb">Notebook.</a>
+href="https://github.com/tpogden/notebooks-maxwellbloch/blob/master/examples/mb-solve-two-sech-4pi.ipynb">Notebook.</a>
 </figcaption>
 </figure>
 
@@ -164,7 +164,7 @@ speed.
 <figcaption>
 <em>Fig 5 &mdash;</em> Propagation of a 6π sech pulse through a two-level medium.
 <a
-href="https://github.com/tommyogden/notebooks-maxwellbloch/blob/master/examples/mb-solve-two-sech-6pi.ipynb">Notebook.</a>
+href="https://github.com/tpogden/notebooks-maxwellbloch/blob/master/examples/mb-solve-two-sech-6pi.ipynb">Notebook.</a>
 </figcaption>
 </figure>
 
@@ -183,7 +183,7 @@ the same shape.
 <em>Fig 6 &mdash;</em> Collision of two 2π sech pulses travelling through a 
 two-level medium.
 <a
-href="https://github.com/tommyogden/notebooks-maxwellbloch/blob/master/examples/mb-solve-two-sech-2pi-collision.ipynb">Notebook.</a>
+href="https://github.com/tpogden/notebooks-maxwellbloch/blob/master/examples/mb-solve-two-sech-2pi-collision.ipynb">Notebook.</a>
 </figcaption>
 </figure>
 
@@ -214,7 +214,7 @@ used to send signals down optical fibres over large distances.
 
 <!-- Links -->
 [p1]: /how-to-make-light-go-faster-than-light
-[mb]: https://github.com/tommyogden/maxwellbloch
+[mb]: https://github.com/tpogden/maxwellbloch
 [kk]: https://en.wikipedia.org/wiki/Kramers–Kronig_relations
 [sol]: https://en.wikipedia.org/wiki/Soliton
 [jsr]: https://ima.org.uk/9238/westward-ho-musing-on-mathematics-and-mechanics/

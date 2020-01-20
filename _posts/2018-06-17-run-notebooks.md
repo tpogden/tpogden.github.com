@@ -18,7 +18,7 @@ You could go into each notebook, hit 'Restart Kernel and Run All Cells…' and
 scroll down to make sure there are no exceptions. It'd be nicer to batch
 run a set of notebooks from the command line. Here's a script to do that.
 
-<aside><a href="https://gist.github.com/tommyogden/ec79f2ebe2baf45655445b575dc7f540">Gist: run_notebooks.py</a></aside>
+<aside><a href="https://gist.github.com/tpogden/ec79f2ebe2baf45655445b575dc7f540">Gist: run_notebooks.py</a></aside>
 
 ```py
 # ! python
@@ -151,9 +151,9 @@ use it for any project that involves a set of notebooks.
 1. [Executing Notebooks](https://nbconvert.readthedocs.io/en/latest/execute_api.html#executing-notebooks-using-the-python-api-interface) from the nbconvert Docs
 2. [Testing Jupyter Notebooks](http://www.christianmoscardi.com/blog/2016/01/20/jupyter-testing.html) by Christian Moscardi
 
-[nbmb]: https://github.com/tommyogden/notebooks-maxwellbloch
-[mb]: https://github.com/tommyogden/maxwellbloch
+[nbmb]: https://github.com/tpogden/notebooks-maxwellbloch
+[mb]: https://github.com/tpogden/maxwellbloch
 
 
-[nbmb-020]: https://github.com/tommyogden/notebooks-maxwellbloch/releases/tag/v0.2.0
-[mb-020]: https://github.com/tommyogden/maxwellbloch/releases/tag/v0.2.0
+[nbmb-020]: https://github.com/tpogden/notebooks-maxwellbloch/releases/tag/v0.2.0
+[mb-020]: https://github.com/tpogden/maxwellbloch/releases/tag/v0.2.0

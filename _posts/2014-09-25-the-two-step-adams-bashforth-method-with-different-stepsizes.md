@@ -362,5 +362,5 @@ reduces the global error down to around $h_0 = 10^{-4}$. In general, if we
 error from this step in line with that of the first Adams-Bashforth steps.
 
 <p>Comments or corrections welcome, by
-{% include mail_ogden_eu.html %} or <a href="http://twitter.com/tommyogden/">
+{% include mail_ogden_eu.html %} or <a href="http://twitter.com/thomasogden/">
 tweet</a>.</p>
