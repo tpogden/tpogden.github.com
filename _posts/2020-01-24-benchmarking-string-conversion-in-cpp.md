@@ -27,7 +27,7 @@ int main()
   for (int i = 0; i < 10; ++i)
   {
     std::ostringstream oss;
-    oss << x << " " << i << std::endl;
+    oss << x << " " << i;
     y = oss.str();
   }
 }
