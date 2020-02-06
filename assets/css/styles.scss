@@ -27,7 +27,7 @@ $font-size: 16px;
 
 /* Fonts */
 $body-font-stack: 'PT Serif', Georgia, serif;
-$header-font-stack: 'Rubik', sans-serif;
+$header-font-stack: 'PT Sans', sans-serif;
 $code-font-stack: Monaco, monospace;
 
 /* Colors */
@@ -55,183 +55,111 @@ $pastel-pink: #fab0e4;
 $pastel-grey: #cfcfcf;
 $pastel-yellow: #fffea3;
 $pastel-cyan: #b9f2f0;
-
 $lighter-grey: rgba(207,207,207, 0.25); // pastel-grey with alpha
 
 body {
-
   font-family: $body-font-stack;
   font-size: $font-size;
   line-height: $line-height;  
   text-align: center;
-
   color: $black;
   background-color: $white;
-
   margin: 0px;
   padding: 0px;
-
 }
 
 /* Structure --------------------------------------------------------------- */
 
 #canvas {
-
   display: block;
   text-align: left;
-
   width: $canvas-width;
-
   margin-top: 0px;
   margin-bottom: 0px;
   margin-left: auto;
   margin-right: auto;
-
   padding: 0px;
-
 }
 
 article, section {
-
   width: $full-width;
-
   margin-top: 0px;
   margin-bottom: 0px;
   margin-left: $gutter-width;
   margin-right: $gutter-width;
-
   padding-top: $line-height;
   padding-bottom: 0px;
   padding-left: 0px;
   padding-right: 0px;
-
   float: left;
   clear: both;
-
 }
 
 /* Header and Nav ---------------------------------------------------------- */
 
 header {
-
   width: $full-width;
   height: 3*$line-height;
-
-//   margin-top: 0px;
-//   margin-bottom: 0px;
   margin-left: $gutter-width;
   margin-right: $gutter-width;
-
-//   padding-top: 0px;
-//   padding-bottom: 0px;
-//   padding-left: 0px;
-//   padding-right: 0px;
-
   float: left;
-
   #home {
-
     width: 2*$column-width + 1*$gutter-width - 2*$h-margin;
-
-    // font-family: $header-font-stack;
+    font-family: $header-font-stack;
     font-size: 16px;
     letter-spacing: 1px;
     // text-transform: uppercase;
-
     margin-top: $line-height/2;
-    // margin-bottom: 0px;
-    // margin-left: 0px;
-    // margin-right: 0px;
-
     padding-top: $line-height;
     padding-left: 8px;
     padding-right: 8px;
-
     float:left;
-
     a {
-
       color: $deep-red;
       text-decoration: none;
       border-bottom: 0px solid;
-    //
     }
-      a:active, a:hover {
-        border-bottom: solid 1px $deep-red;
-      }
-
+    a:active, a:hover {
+      border-bottom: solid 1px $deep-red;
+    }
   }
-
 }
 
 nav {
-
   width: 3*$column-width + 2*$gutter-width;
   float: left;
-
-//   font-family: $header-font-stack;
+  font-family: $header-font-stack;
   font-style: normal;
   font-size: 7/8*$font-size;
-
   letter-spacing: 1px;
-
   margin-top: $line-height/2;
-//   margin-bottom: 0px;
   margin-left: $column-width + 2*$gutter-width;
-//   margin-right: 0px;
-
   padding-top: $line-height;
   padding-bottom: $line-height/2;
-//   padding-left: 0px;
-//   padding-right: 0px;
-
   ul {
-
     width: 3*$column-width + 3*$gutter-width;
     list-style: none;
-
-    // margin-top: 0px;
-    // margin-bottom: 0px;
-    // margin-left: 0px;
-    // margin-right: 0px;
-
     padding-top: 0px;
     padding-bottom: 0px;
     padding-left: 0px;
     padding-right: 0px;
-
     float: left;
-
     li {
-
       float: left;
-
       width: 112px;
-
-    //   margin-top: 0px;
-    //   margin-bottom: 0px;
-    //   margin-left: 0px;
       margin-right: 32px;
-
       padding-top: 0px;
       padding-bottom: 0px;
       padding-left: 8px;
       padding-right: 8px;
     }
-
     li:before {
-
       content: "";
-
     }
-
   }
-
   a {
     border-bottom: solid 0px;
-  
   }
-
 }
 
 /* Paragraphs and Blockquotes ---------------------------------------------- */
@@ -250,113 +178,80 @@ p {
 }
 
 blockquote {
-
   width: $text-width - 48px;
   text-indent: 0px;
-
   margin-top: 0px;
   margin-bottom: 0px;
   margin-left: 32px;
   margin-right: 32px;
-
   padding-top: 0px;
   padding-bottom: $line-height/2;
   padding-left: 0px;
   padding-right: 0px;
-
   color: $deep-grey;
-
   p {
     display: inline;
     padding-left: 0px;
   }
-
 }
 
 /* Headers ----------------------------------------------------------------- */
 
 h1 {
-
   width: $text-width;
-
-//   font-family: $header-font-stack;
+  font-family: $header-font-stack;
   font-size: 11/8*$font-size;
   font-weight: normal;
-
   line-height: 28px;
-
   margin: 0px;
-
   padding-top: $line-height/2;
   padding-bottom: $line-height/2;
   padding-left: 8px;
   padding-right: 8px;
-
 }
 
 h2 {
-
   width: $text-width;
-
-//   font-family: $header-font-stack;
+  font-family: $header-font-stack;
   font-size: 5/4*$font-size;
   font-weight: normal;
-
   margin: 0px;
-
   padding-top: $line-height/2;
   padding-bottom: 0;
   padding-left: 8px;
   padding-right: 8px;
-
   a {
-
     border-bottom: 0px;
-
   }
 }
 
 h3 {
-
-//   font-family: $header-font-stack;
-
+  font-family: $header-font-stack;
   margin: 0px;
-
   font-size: 9/8*$font-size;
   font-weight: normal;
-
   width: $text-width;
-
   padding-top: 8px;
   padding-bottom: 0px;
   padding-left: 8px;
   padding-right: 8px;
-
   a {
-
     border-bottom: 0px;
-
   }
-
 }
 
 h4 {
-
-//   font-family: $header-font-stack;
+  font-family: $header-font-stack;
   font-size: $font-size;
   font-weight: normal;
   color: $deep-grey;
   font-size: 3/4*$font-size;
-
   margin: 0px;
-
   width: $text-width;
-
   padding-top: 16px;
   padding-bottom: 0px;
   padding-left: 8px;
   padding-right: 8px;
-
 }
 
 /* Links and Text Decorations ---------------------------------------------- */
@@ -373,18 +268,15 @@ a:active, a:hover {
 }
 
 .stamp {
-//   font-family: $header-font-stack;
+  font-family: $header-font-stack;
   font-size: 2/3*$font-size;
-  color: $pastel-grey;
-
+  color: $deep-grey;
   padding-left: 0px;
   padding-right: 0px;
 }
 
 .align-right {
-
   text-align: right;
-
 }
 
 .description {
@@ -404,10 +296,8 @@ a:active, a:hover {
 
 aside {
   width: $sidebar-width - 2*$h-margin;
-
   font-size: 14px;
   color:  $deep-grey;
-
   margin-left: 32px;
   margin-right: 0px;
 
@@ -417,7 +307,7 @@ aside {
   padding-right: 8px;
 
   float: right;
-  display: inline;
+//   display: inline;
   clear: right;
 }
 
@@ -427,343 +317,225 @@ aside {
 }
 
 .sidebox {
-
   width: $sidebar-width - 2*$h-margin;
-
   background-color: $lighter-grey;
   color: $black;
   border-radius: 4px;
-
   margin-top: 0px;
   margin-bottom: $line-height;
   margin-left: 32px;
   margin-right: 0px;
-
   padding-top: 0px;
   padding-bottom: 0px;
   padding-left: 8px;
   padding-right: 8px;
-
   h4 {
-
     width: $sidebar-width - 2*$h-margin;
-
     padding-left: 0px;
-
   }
-
   ul {
-
     width: inherit;
-
     list-style: none;
-
     margin-top: $line-height/2;
     margin-bottom: $line-height/2;
     margin-left: 16px;
     margin-right: 0px;
-
     padding: 0px;
-
     li:before {
-
       text-indent: 8px;
-
     }
-
   }
-
   ol {
-
     width: inherit;
-
     margin-top: $line-height/2;
     margin-bottom: $line-height/2;
     margin-left: 16px;
     margin-right: 0px;
-
     padding: 0px;
-
     li:before {
-
       padding-right: 8px;
       color: $deep-red;
       width: 16px;
       margin-left: -24px;
-
     }
-
   }
-
 }
 
 /* Images ------------------------------------------------------------------ */
 
 figure {
-
   margin: 0px;
   padding: 0px;
-
   border: 0px;
   clear: both;
-
 }
 
 figcaption {
-
   color:  $deep-grey;
-
   width: $sidebar-width - 2*$h-margin;
-
   font-size: 14px;
-
   margin-top: 0px;
   margin-bottom: $line-height;
   margin-left: 32px;
   margin-right: 0px;
-
   padding-top: 0px;
   padding-bottom: 0px;
   padding-left: 8px;
   padding-right: 8px;
-
   clear: right;
   float: right;
-
 }
 
 img {
-
   margin-top: 0px;
   margin-bottom: $line-height;
   margin-left: $h-margin;
   margin-right: $h-margin;
-
   padding: 0px;
-
   border: 0px;
-  border-radius: 4px;
-
+//   border-radius: 0px;
   float: left;
-
 }
 
 img.full {
-
   width: $full-width - $h-margin*2;
-
   margin-top: $line-height;
   margin-bottom: $line-height + 8px;
   margin-left: $h-margin;
   margin-right: $h-margin;
-
   padding: 0px;
-
   float: left;
-
 }
 
 .full-framed{
-
   width: $full-width - 2*$h-margin - 2px;
   border: solid 1px $pastel-grey;
-  
 }
 
 img.text {
-
   width: $text-width;
-
   margin-top: $line-height/2;
   margin-bottom: $line-height + 8px;
-
 }
 
 img.text-framed {
-
   width: $text-width - 2;
   border: solid 1px $pastel-grey;
-
   margin-top: 8px;
   margin-bottom: $line-height - 8px;
-
 }
 
 img.side {
-
   width: $sidebar-width - 2*$h-margin;
   margin-left: 32px;
-
   padding: 0px;
-
   float: right;
   clear: right;
-
 }
 
 img.side-framed {
-
   width: $sidebar-width - 2*$h-margin - 2px;
   border: solid 1px $pastel-grey;
-
   padding: 0px;
-
   float: right;
   clear: right;
-
 }
 
 img.half-left {
-
   width: 3*$column-width + 2*$gutter-width - 2*$h-margin;
-
   margin-top: $line-height/2;
   margin-bottom: $line-height + 8px;
-
   margin-right: 32px;
-
   padding: 0px;
-
   float: left;
-
 }
 
 img.half-right {
-
   width: 432px;
-
   margin-top: $line-height/2;
   margin-bottom: $line-height + 8px;
-
   padding: 0px;
-
   float: right;
-
 }
 
 /* Lists ------------------------------------------------------------------- */
 
 ul {
-
   width: $text-width;
-
   margin: 0px;
-
   padding-top: $line-height/2;
   padding-bottom: $line-height/2;
   padding-left: 8px;
   padding-right: 8px;
-
   list-style: none;
-
   li {
-
     padding-left: 0px;
-
     p {
-
       width: $text-width - 8px;
-
       text-indent: 0px;
-
       margin: 0px;
-
       padding-left: 0px;
       padding-top: 0px;
       padding-bottom: $line-height/2;
-
       clear: none;
-
     }
-
   }
-
   li:before {
-
     content: "×";
-    // font-family: $header-font-stack;
+    font-family: $header-font-stack;
     color: $deep-red;
-
     position: relative;
     left: -24px;
     float: left;
     width: 0px;
-
     padding-right: 0px;
-
   }
-
 }
 
 ol {
-
   width: $text-width;
-
   margin: 0px;
-
   padding-top: $line-height/2;
   padding-bottom: $line-height/2;
   padding-left: 8px;
   padding-right: 8px;
-
   list-style: none;
   counter-reset: item;
-
   li {
-
     padding-left: 0px;
-
     p {
-
       width: $text-width - 8px;
-
       text-indent: 0px;
-
       padding-left: 0px;
       padding-top: 0px;
-
     }
-
   }
-
   li:before {
-
     float: left;
-
     content: counter(item) "";
     counter-increment: item;
     padding-right: 8px;
     color: $deep-red;
     width: 16px;
     margin-left: -32px;
-
     position: absolute;
-
-    // font-family: $header-font-stack;
+    font-family: $header-font-stack;
     font-size: 13px;
     text-align: right;
-
     padding-top: 0px;
-
   }
-
 }
 
 /* Definition List, Used for Index ----------------------------------------- */
 
 dl {
-
   width: $text-width;
-
   margin: 0px;
-
   padding-top: $line-height/2;
   padding-bottom: $line-height;
   padding-left: 8px;
   padding-right: 8px;
-
   float: left;
-
 }
 
 dt {
@@ -778,17 +550,13 @@ dt {
 }
 
 dd {
-
   margin: 0px;
-
   float: left;
-
 }
 
 /* Tables ------------------------------------------------------------------ */
 
 table {
-
     padding-bottom: 0px;
     border-bottom-color: $pastel-grey;
     border-bottom-style: solid;
@@ -796,29 +564,23 @@ table {
     border-spacing: 0px 0px;
     position: relative;
     display: inline-block;
-
     margin-top: $line-height/2;
     margin-bottom: 1px;
     margin-left: 0px;
     margin-right: 0px;
-
     padding: 0px;
-
 }
 
 th {
-
   background-color: $pastel-grey;
-//   font-family: $header-font-stack;
+  font-family: $header-font-stack;
   font-size: 3/4*$font-size;
   font-weight: normal;
   text-transform: uppercase;
-
   padding-bottom: 0px;
   padding-top: 0px;
   padding-right: 8px;
   padding-left: 8px;
-
 }
 
 th.one-col {
@@ -873,40 +635,32 @@ pre > code {
 /* Nav ----------------------------------------------------------------------*/ 
 
   .prev:before {
-
-    content: "⇣"; //◄ ←▼
-    // font-family: $header-font-stack;
+    content: "⇣";
+    font-family: $header-font-stack;
     color: $deep-red;
-
     position: relative;
     left: -28px;
     float: left;
     width: 0px;
-
     padding-right: 0px;
-
   }
 
   .next:before {
-
-    content: "⇡"; // ► →
-    // font-family: $header-font-stack;
+    content: "⇡";
+    font-family: $header-font-stack;
     color: $deep-red;
-
     position: relative;
     left: -28px;
     float: left;
     width: 0px;
-
     padding-right: 0px;
-
   }
 
 /* Footer ------------------------------------------------------------------ */
 
 footer {
   font-size: 2/3*$font-size;
-//   font-family: $header-font-stack;
+  font-family: $header-font-stack;
   width: $full-width;
   height: 2*$line-height;
   margin-top: 2*$line-height;
@@ -915,7 +669,6 @@ footer {
   margin-right: 32px;
   padding: 0px;
   float: left;
-
   #notice {
     color: $pastel-grey;
   }
