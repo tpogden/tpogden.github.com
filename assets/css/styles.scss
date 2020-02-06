@@ -14,7 +14,7 @@ $full-width: 6*$column-width + 5*$gutter-width;
 $main-width: 4*$column-width + 3*$gutter-width;
 $sidebar-width: 2*$column-width + $gutter-width;
 
-$narrower-canvas-width: 90%;
+$narrower-canvas-width: 100%;
 $narrower-main-width: 95%;
 $narrower-gutter-width: 2.5%;
 
@@ -522,7 +522,7 @@ ol {
     font-family: $header-font-stack;
     font-size: 13px;
     text-align: right;
-    padding-top: 0px;
+    padding-top: 1px;
   }
 }
 
@@ -764,11 +764,22 @@ footer {
 
   ul, ol {
     width: $narrower-main-width;
-
     li p {
       width: $narrower-main-width;
     }
+  }
 
+  ul {
+    li:before {
+      left: -14px;
+    }
+  }
+
+  ol {
+    li:before {
+      margin-left: -20px;
+      font-size: 11px;
+    }
   }
 
   blockquote {
