@@ -100,7 +100,7 @@ average number of weekday bike trips by hour of the day, in wet and dry weather.
 Do more people cycle when it's dry? When in the day do they hire bikes?
 
 <figure>
-<img class="text-framed" src="{{ page.asset_path }}plot_daily_journeys.png" />
+<img class="text" src="{{ page.asset_path }}plot_daily_journeys.png" />
     <figcaption>Output from <a
     href="https://github.com/tpogden/demo-plots-python-make/blob/master/src/plots/plot_daily_journeys.py"><code>plot_daily_journeys.py</code></a>.</figcaption>
 </figure>
@@ -111,7 +111,7 @@ feels-like temperature at the time. Do more people hire bikes when it feels
 warmer?
 
 <figure>
-<img class="text-framed" src="{{ page.asset_path }}plot_trips_vs_temp.png" />
+<img class="text" src="{{ page.asset_path }}plot_trips_vs_temp.png" />
     <figcaption>Output from <a
     href="https://github.com/tpogden/demo-plots-python-make/blob/master/src/plots/plot_trips_vs_temp.py"><code>plot_trips_vs_temp.py</code></a>.</figcaption>
 </figure>
