@@ -10,10 +10,10 @@ asset_path: /assets/notes/welcome-to-earth/
 include_math: false
 ---
 
-Hello, son. You were born one week ago, Christmas Day, a few minutes 
-after midnight. For someone so small, you've kept us well occupied.
+Hello, son. You were born just a few days ago, a few minutes after midnight. For
+someone so small, you've kept us well occupied.
 
-There's a lot to tell you about, son, but we have some time for that. For now
+There's a lot to tell you about, but we have some time for that. For now
 I'll just pass on a welcome message from Kurt Vonnegut as it's good advice to
 get you going.
 

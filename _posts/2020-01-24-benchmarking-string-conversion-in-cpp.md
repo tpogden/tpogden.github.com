@@ -58,7 +58,7 @@ Benchmark][quickbench] by Fred Tingaud.
 
 <figure>
 <a href="http://quick-bench.com/QJoZTFsTxiP3I-1tOkVC4SzNsqU">
-<img class="text-framed" 
+<img class="text" 
     src="{{ page.asset_path }}QJoZTFsTxiP3I-1tOkVC4SzNsqU.png" />
 </a>
 <figcaption>The <code>std::to_string</code> conversion is 4.5&times; faster.
