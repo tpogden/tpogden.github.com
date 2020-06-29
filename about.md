@@ -16,18 +16,19 @@ permalink: /about/
     </ul>
 </aside>
 
-I'm a computational scientist --- my interest is solving problems on the leading
-edge of high-performance scientific computing and machine learning, mostly with
-C++ and Python.
+I'm a computational scientist --- my interest is solving problems in
+_high-performance scientific computing_ and _machine learning_, mostly with C++
+and Python.
 
 I'm a Senior Research Data Scientist at [Dunnhumby](https://www.dunnhumby.com),
-where I work on the machine learning, optimisation and forecasting algorithms
-used by many of the world’s largest retailers to model demand for their products
-and provide the intelligence behind their pricing and promotion strategies.
+where I work on the _machine learning_, _optimisation_ and _forecasting_
+algorithms used by many of the world’s largest retailers to model demand for
+their products and provide the intelligence behind their pricing and promotion
+strategies.
 
-Before that I was a researcher in theoretical physics. My PhD work on nonlinear
-propagation of light through thermal quantised systems led to the [first
-observation of simulton formation in an atomic vapour][aps-syn].
+Before that I was a researcher in _quantum optics_ and _quantum information_. My
+PhD work on nonlinear propagation of light through thermal quantised systems led
+to the [first observation of simulton formation in an atomic vapour][aps-syn].
 
 [aps-syn]: https://physics.aps.org/synopsis-for/10.1103/PhysRevLett.123.243604
 
@@ -40,7 +41,7 @@ observation of simulton formation in an atomic vapour][aps-syn].
     </ul>
 </aside>
 
-I am a distance runner and have completed seven marathons: Stockholm, Edinburgh,
+I'm a distance runner and have completed seven marathons: Stockholm, Edinburgh,
 Kielder, Manchester, Paris, Amsterdam and Berlin. I also enjoy mountaineering
 and kayaking when I get time.
 
