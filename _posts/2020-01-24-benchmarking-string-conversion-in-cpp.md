@@ -1,6 +1,6 @@
 ---
 layout: note
-title: Benchmarking String Conversion in C++
+title: Benchmark String Conversion in C++
 location: Manchester
 category: research
 published: true
