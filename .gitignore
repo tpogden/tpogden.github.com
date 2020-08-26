@@ -1,7 +1,8 @@
 _site/
 .DS_Store
-_drafts/
 .ipynb_checkpoints/
 
 # QuTiP/MaxwellBloch savefiles
 *.qu
+
+.vscode/

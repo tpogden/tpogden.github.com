@@ -397,7 +397,7 @@ img {
   float: left;
 }
 
-img.full {
+.full {
   width: $full-width - $h-margin*2;
   margin-top: $line-height;
   margin-bottom: $line-height + 8px;
@@ -412,20 +412,20 @@ img.full {
   border: solid 1px $pastel-grey;
 }
 
-img.text {
+.text {
   width: $text-width;
   margin-top: $line-height/2;
   margin-bottom: $line-height + 8px;
 }
 
-img.text-framed {
+.text-framed {
   width: $text-width - 2;
   border: solid 1px $pastel-grey;
   margin-top: 8px;
   margin-bottom: $line-height - 8px;
 }
 
-img.side {
+.side {
   width: $sidebar-width - 2*$h-margin;
   margin-left: 32px;
   padding: 0px;
@@ -433,7 +433,7 @@ img.side {
   clear: right;
 }
 
-img.side-framed {
+.side-framed {
   width: $sidebar-width - 2*$h-margin - 2px;
   border: solid 1px $pastel-grey;
   padding: 0px;
@@ -441,7 +441,7 @@ img.side-framed {
   clear: right;
 }
 
-img.half-left {
+.half-left {
   width: 3*$column-width + 2*$gutter-width - 2*$h-margin;
   margin-top: $line-height/2;
   margin-bottom: $line-height + 8px;
@@ -450,7 +450,7 @@ img.half-left {
   float: left;
 }
 
-img.half-right {
+.half-right {
   width: 432px;
   margin-top: $line-height/2;
   margin-bottom: $line-height + 8px;
@@ -634,6 +634,19 @@ pre > code {
 
 /* Nav ----------------------------------------------------------------------*/ 
 
+.footnotes {
+  padding-top: 16px;
+  font-size: 7/8*$font-size;
+}
+
+.footnotes:before {
+  content: "___";
+  color: $pastel-grey;
+  font-weight: normal;
+  width: $text-width;
+  padding-left: 8px;
+}
+
   .prev:before {
     content: "⇣";
     // font-family: $header-font-stack;
@@ -708,16 +721,16 @@ footer {
     width: $column-width - 2*$h-margin;
   }
 
-  img.full, img.full-framed {
+  .full, .full-framed {
     width: $text-width;
   }
 
-  img.half-left {
+  .half-left {
     width: 2*$column-width + 1*$gutter-width - 1*$h-margin;
     margin-right: 8px;
   }
 
-  img.half-right {
+  .half-right {
     width: 2*$column-width + 1*$gutter-width - 1*$h-margin;
     margin-right: 8px;
   }
@@ -802,8 +815,8 @@ footer {
     margin-left: 8px;
   }
 
-  img.text, img.text-framed, img.full, img.full-framed, img.half-left, 
-  img.half-right {
+  .text, .text-framed, .full, .full-framed, .half-left, 
+  .half-right {
     width: $narrower-main-width;
   }
 
