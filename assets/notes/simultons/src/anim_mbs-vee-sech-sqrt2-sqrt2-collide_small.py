@@ -35,7 +35,7 @@ print('opts:', opts)
 
 # Data ------------------------------------------------------------------------
 
-MBS_JSON = 'src/mbs-vee-sech-sqrt1-sqrt3.json' 
+MBS_JSON = 'src/mbs-vee-sech-sqrt2-sqrt2-collide.json' 
 
 mbs = mb_solve.MBSolve().from_json(MBS_JSON)
 mbs.mbsolve(recalc=False)
@@ -60,14 +60,14 @@ if zoom != 1:
 # Anim ------------------------------------------------------------------------
 
 Y_MIN = 0.0
-Y_MAX = 1.0
-Y_MAX_1 = 1.0
+Y_MAX = 1.5
+Y_MAX_1 = 1.5
 ATOMS_ALPHA = 0.2
 
 sns.set_style("darkgrid")
 pal = sns.color_palette("deep", 10)
 
-fig = plt.figure(1, figsize=(10, 4))
+fig = plt.figure(1, figsize=(6, 3))
 ax = fig.add_subplot(111)
 ax1 = ax.twinx()
 ax1.grid(False)
@@ -75,7 +75,7 @@ ax1.grid(False)
 line, = ax.plot([], [], lw=2, color=pal[2], clip_on=False)
 line_1, = ax1.plot([], [], lw=2, color=pal[3], clip_on=False)
 
-t_text = ax.text(0.90, 0.90, '', transform=ax.transAxes)
+t_text = ax.text(0.80, 0.80, '', transform=ax.transAxes)
 
 # Atom number density indicator area
 ax.axvspan(0.0, 1.0, color=pal[0], alpha=ATOMS_ALPHA)
@@ -83,13 +83,19 @@ ax.axvspan(0.0, 1.0, color=pal[0], alpha=ATOMS_ALPHA)
 ax.set_xlim((mbs.z_min, mbs.z_max))
 ax.set_ylim((Y_MIN, Y_MAX))
 ax1.set_ylim((Y_MIN, Y_MAX_1))
-ax.set_xlabel('Distance ($L$)')
-ax.set_ylabel(
-    '{0} Rabi Freq ($\Gamma / 2\pi $)'.format(mbs.atom.fields[0].label), 
-        color=pal[2])
-ax1.set_ylabel(
-    '{0} Rabi Freq ($\Gamma / 2\pi $)'.format(mbs.atom.fields[1].label),
-        color=pal[3])
+# ax.set_xlabel('Distance')
+# ax.set_ylabel(
+    # '{0} Rabi Freq ($\Gamma / 2\pi $)'.format(mbs.atom.fields[0].label), 
+        # color=pal[2])
+# ax1.set_ylabel(
+    # '{0} Rabi Freq ($\Gamma / 2\pi $)'.format(mbs.atom.fields[1].label),
+        # color=pal[3])
+
+ax.tick_params(axis='both', which='both', bottom=False, top=False, right=False, 
+    left=False, labelbottom=True, labelleft=False, labelright=False)
+
+ax1.tick_params(axis='both', which='both', bottom=False, top=False, right=False, 
+    left=False, labelbottom=False, labelleft=False, labelright=False)
 
 plt.tight_layout()
 

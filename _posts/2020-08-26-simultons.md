@@ -53,10 +53,11 @@ I'll try to answer three questions in this blogpost:
 
 ## From Solitons to Simultons
 
-In [an earlier post I introduced the concept of an optical soliton](): a pulse
-of light that can hold its shape without dispersion and travel at fixed speed
-over large distances through a medium that would otherwise absorb it. If you
-haven't read that post yet I would suggest to do that now and come back.
+In [an earlier post I introduced the concept of an optical soliton]({% post_url
+2018-10-12-optical-solitons %}): a pulse of light that can hold its shape without
+dispersion and travel at fixed speed over large distances through a medium that
+would otherwise absorb it. If you haven't read that post yet I would suggest to
+do that now and come back.
 
 The key idea I introduced in that post was the pulse area
 

@@ -67,7 +67,7 @@ ATOMS_ALPHA = 0.2
 sns.set_style("darkgrid")
 pal = sns.color_palette("deep", 10)
 
-fig = plt.figure(1, figsize=(12, 4))
+fig = plt.figure(1, figsize=(10, 4))
 ax = fig.add_subplot(111)
 ax1 = ax.twinx()
 ax1.grid(False)
@@ -127,7 +127,7 @@ def animate(i):
     # peak = np.argmax(y_0)
     # peak_line.set_data([x[peak], x[peak]], peak_y)
 
-    t_text.set_text('t = {:.1f} $/\Gamma$'.format(tlist_fixed[i]))
+    t_text.set_text('t = {:.0f} $/\Gamma$'.format(tlist_fixed[i]))
 
     return line, line_1, t_text#, c_line, peak_line
 
