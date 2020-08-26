@@ -127,7 +127,7 @@ absorbed on entry ($z = 0$) and, apart from some small oscillations, no pulse
 reaches the back of the medium at the right ($z = 1$).
 
 <figure id="fig-1">
-<video class="full" autoplay loop muted>
+<video class="full" autoplay loop muted playsinline>
   <source src="{{ page.asset_path }}src/anim_mbs-vee-sech-sqrt1-sqrt0.mp4" 
     type="video/mp4" />
 </video>
@@ -145,7 +145,7 @@ atoms without absorption and are received at the back of the cell on the right
 with the same profile.
 
 <figure id="fig-2">
-<video class="full" autoplay loop muted>
+<video class="full" autoplay loop muted playsinline>
   <source src="{{ page.asset_path }}src/anim_mbs-vee-sech-sqrt1-sqrt3.mp4" 
     type="video/mp4" />
 </video>
@@ -193,7 +193,7 @@ $4\pi$, so the combined pulse breaks up and forms two $2\pi$ simultons. Note
 that the sign of field $A$ has flipped in the later simulton.
 
 <figure id="fig-3">
-<video class="full" autoplay loop muted>
+<video class="full" autoplay loop muted playsinline>
   <source src="{{ page.asset_path }}src/anim_mbs-vee-sech-sqrt2-sqrt2-collide.mp4" 
     type="video/mp4" />
 </video>
@@ -218,7 +218,7 @@ wave. So we informally call these _simulton surfers_. An example is shown in
 [figure 4](#fig-4).
 
 <figure id="fig-4">
-<video class="full" autoplay loop muted>
+<video class="full" autoplay loop muted playsinline>
   <source src="{{ page.asset_path }}src/anim_mbs-vee-cw-weak-sech-2.mp4" 
     type="video/mp4" />
 </video>
