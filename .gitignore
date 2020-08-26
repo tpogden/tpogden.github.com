@@ -4,3 +4,5 @@ _site/
 
 # QuTiP/MaxwellBloch savefiles
 *.qu
+
+.vscode/
