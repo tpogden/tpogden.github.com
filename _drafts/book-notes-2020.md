@@ -43,7 +43,18 @@ published: true
  
 9. _A Line in the Sand_ by James Barr
 
-10. _Feet of Clay_ by Terry Pratchett
+10. _Feet of Clay_ by Terry Pratchett --- At 13, my English teacher Mrs Clarke
+    noticed I wasn’t reading any fiction. Given time to read in school I’d head
+    for my favourite book in the library: a world atlas. At home I read a lot
+    but mostly religious publications.[^jw] She clearly had a good eye for what
+    might catch my interest and wrote ‘Terry Pratchett’ in my homework diary
+    with instructions to find a book of his in the library and report back on
+    it.
+
+The one I found was _Moving Pictures_ and I’d never read anything like it. I went back to the library for the first Discworld book, then the second. My mum worked in a WH Smith and told me there was going to be a _new_ book in the series. This was exciting, I had not considered there would be new ones. She pre-ordered it for me and from there through _Hogfather_, _Jingo_, _The Last Continent_, _Carpe Jugulum_ and _The Fifth Elephant_ I bought each paperback when it came out.
+
+> And, while it was regarded as pretty good evidence of criminality to be living in a slum, for some reason owning a whole street of them merely got you invited to the very best social occasions.
+
 
 11. _The Warmth of Other Suns_ by Isabel Wilkerson {% include star.html %} --- A
     narrative history of the Great Migration of African Americans from the
@@ -100,13 +111,30 @@ published: true
     and wealth had been built on that slave labour. That process is difficult
     --- as the reaction to the sinking of the slaver statue in Bristol has shown
     --- but necessary.
-
-    
  
 14. _My Name is Why_ by Lemn Sissay
 
 15. _Open Borders_ by Bryan Caplan and Zach Weinersmith
 
+16. _The New Jim Crow_ by Michelle Alexander
+
+17. _The Sum of the People_ by Andrew Whitby
+
+18. _Jingo_ by Terry Pratchett --- After the years I spent mad into Discworld
+    books, I headed off to university to pick up other interests and bad
+    affectations like thinking I should read ‘serious’ literature and wear
+    cardigans. Thankfully I’ve now dropped this idiocy and returned to my
+    teenage enjoyment of fun books and sportswear.
+
+    > It was so much easier to blame it on Them. It was bleakly depressing to
+    > think that They were Us. If it was Them, then nothing was anyone's fault.
+    > If it was us, what did that make Me? After all, I'm one of Us. I must be.
+    > I've certainly never thought of myself as one of Them. _No one_ ever
+    > thinks of themselves as one of Them. We're always one of Us. It's Them
+    > that do the bad things.
+
 [^1]: I don’t have a consistent answer myself.
 
 [^2]: And has the Oxford graduate’s habit of reminding you frequently you they are an Oxford graduate.
+
+[^jw]: Jehovah’s Witnesses are in one sense a print publishing organisation. The _Watch Tower Bible and Tract Society of Pennsylvania_ writes and distributes books, magazines and tracts for evangelism but also to be studied by members for many hours each week.
