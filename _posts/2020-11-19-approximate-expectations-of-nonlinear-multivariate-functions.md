@@ -110,7 +110,7 @@ the expected value of the multivariate function,
 
 [^1]: See [this answer on stats.stackexchange.com][se-ans] for an explanation as to why that requirement is important and why this method does not work for heavy-tailed distributions.
 
-[^2]: For a random vector $\mathbf{X}$ and symmetric matrix $\Lambda$ the [expectation of the quadratic form](https://en.wikipedia.org/wiki/Quadratic_form_\(statistics\)), $\mathbb{E}(\mathbf{X}^T \Lambda \mathbf{X}) = \mathbb{E}(\mathbf{X})^T \Lambda \mathbb{E}(\mathbf{X}) + \mathrm{Tr} \left[ \Lambda \Sigma_\mathbf{X} \right]$.
+[^2]: For a random vector $\mathbf{X}$ and symmetric matrix $\Lambda$ the [expectation of the quadratic form](https://en.wikipedia.org/wiki/Quadratic_form_(statistics)), $\mathbb{E}(\mathbf{X}^T \Lambda \mathbf{X}) = \mathbb{E}(\mathbf{X})^T \Lambda \mathbb{E}(\mathbf{X}) + \mathrm{Tr} \left[ \Lambda \Sigma_\mathbf{X} \right]$.
 
 
 [se-ans]: https://stats.stackexchange.com/a/70822
