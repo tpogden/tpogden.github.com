@@ -148,8 +148,8 @@ use it for any project that involves a set of notebooks.
 
 ## References
 
-1. [Executing Notebooks](https://nbconvert.readthedocs.io/en/latest/execute_api.html#executing-notebooks-using-the-python-api-interface) from the nbconvert Docs
-2. [Testing Jupyter Notebooks](http://www.christianmoscardi.com/blog/2016/01/20/jupyter-testing.html) by Christian Moscardi
+- [Executing Notebooks](https://nbconvert.readthedocs.io/en/latest/execute_api.html#executing-notebooks-using-the-python-api-interface) from the nbconvert Docs
+- [Testing Jupyter Notebooks](http://www.christianmoscardi.com/blog/2016/01/20/jupyter-testing.html) by Christian Moscardi
 
 [nbmb]: https://github.com/tpogden/notebooks-maxwellbloch
 [mb]: https://github.com/tpogden/maxwellbloch

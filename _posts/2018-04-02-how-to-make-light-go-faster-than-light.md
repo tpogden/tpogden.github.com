@@ -326,28 +326,28 @@ Corrections and suggestions welcome via {% include mail_ogden_eu.html %} or
 
 ## References
 
-1. Thomas P. Ogden (2016), _Resonant Pulse Propagation in Dense Atomic Vapours_.
+- Thomas P. Ogden (2016), _Resonant Pulse Propagation in Dense Atomic Vapours_.
    [PhD Thesis](http://etheses.dur.ac.uk/11599/).
 
-2. Kuzmich _et al._ (2001), _Signal velocity, causality, and quantum noise in
+- Kuzmich _et al._ (2001), _Signal velocity, causality, and quantum noise in
    superluminal light pulse propagation_. [Physical Review Letters,
    86(18)](http://doi.org/10.1103/PhysRevLett.86.3925)
    [(arXiv)][kuzmich-prl-2001-arxiv].
 
-3. Stenner _et al._ (2003), _The speed of information in a "fast-light" 
+- Stenner _et al._ (2003), _The speed of information in a "fast-light" 
 optical medium_. [Nature, 695–698](http://doi.org/10.1038/nature02035.1).
 
-4. Keaveney _et al._ (2012), _Maximal Refraction and Superluminal Propagation in
+- Keaveney _et al._ (2012), _Maximal Refraction and Superluminal Propagation in
    a Gaseous Nanolayer_. [Physical Review Letters
    109(23)](https://doi.org/10.1103/PhysRevLett.109.233001)
    [(arXiv)](https://arxiv.org/abs/1208.4309).
 
-5. Gehring _et al._ (2006) _Observation of Backward Pulse Propagation Through a
+- Gehring _et al._ (2006) _Observation of Backward Pulse Propagation Through a
    Medium with a Negative Group Velocity_. [Science 312(5775)](http://science.sciencemag.org/content/312/5775/895)
 
-6. Hecht (2015) _Optics_. Pearson Education.
+- Hecht (2015) _Optics_. Pearson Education.
 
-7. Greg Egan (2000) [_Subluminal_](http://www.gregegan.net/APPLETS/20/20.html).
+- Greg Egan (2000) [_Subluminal_](http://www.gregegan.net/APPLETS/20/20.html).
 
 [chu-1982]: https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.48.738
 [kuzmich-nature-2000]: https://www.nature.com/articles/35018520

@@ -252,10 +252,10 @@ interact in a controllable way for use in quantum computation.
 
 ## References
 
-1. Ogden et al. (2019), _Quasisimultons in Thermal Atomic Vapours_. [Physical
+- Ogden et al. (2019), _Quasisimultons in Thermal Atomic Vapours_. [Physical
    Review Letters 123 (24)][prl-simultons] | [arXiv:1909.07161][arxiv-simultons]
 
-2. M. J. Konopnicki and J. H. Eberly (1981), _Simultaneous propagation of short 
+- M. J. Konopnicki and J. H. Eberly (1981), _Simultaneous propagation of short 
     different-wavelength optical pulses_. [Physical Review A 24 (5)][ke1981]
 
 [prl-simultons]: https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.123.243604

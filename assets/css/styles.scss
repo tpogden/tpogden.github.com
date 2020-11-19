@@ -481,8 +481,9 @@ ul {
     }
   }
   li:before {
-    content: "×";
+    content: "■";
     // font-family: $header-font-stack;
+    // color: $deep-grey;
     color: $deep-red;
     position: relative;
     left: -24px;

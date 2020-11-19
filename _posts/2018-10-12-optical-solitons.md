@@ -202,15 +202,15 @@ used to send signals down optical fibres over large distances.
 
 ## References
 
-1. Thomas P. Ogden (2016), _Resonant Pulse Propagation in Dense Atomic Vapours_.
+- Thomas P. Ogden (2016), _Resonant Pulse Propagation in Dense Atomic Vapours_.
    [PhD Thesis](http://etheses.dur.ac.uk/11599/).
 
-1. S.L. McCall and E.L Hahn (1969), _Self-Induced Transparency_. [Physical
+- S.L. McCall and E.L Hahn (1969), _Self-Induced Transparency_. [Physical
    Review, 183](https://journals.aps.org/pr/abstract/10.1103/PhysRev.183.457).
 
-1. R. E. Slusher and H. M. Gibbs (1972), _Self-induced transparency in atomic rubidium_. [Physical Review A, 5(4)](https://journals.aps.org/pra/abstract/10.1103/PhysRevA.5.1634).
+- R. E. Slusher and H. M. Gibbs (1972), _Self-induced transparency in atomic rubidium_. [Physical Review A, 5(4)](https://journals.aps.org/pra/abstract/10.1103/PhysRevA.5.1634).
 
-1. Alan Champneys (2018), _Westward Ho! Musing on Mathematics and Mechanics_. [Mathematics Today, Apr 2018][jsr]. 
+- Alan Champneys (2018), _Westward Ho! Musing on Mathematics and Mechanics_. [Mathematics Today, Apr 2018][jsr]. 
 
 <!-- Links -->
 [p1]: /how-to-make-light-go-faster-than-light
