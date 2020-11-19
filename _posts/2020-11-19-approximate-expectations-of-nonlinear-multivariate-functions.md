@@ -3,7 +3,7 @@ layout: note
 title: Approximate Expectations of Nonlinear Multivariate Functions
 location: Manchester
 category: research
-published: false
+published: true
 description: lorem ipsum
 permalink:
 asset_path: /assets/notes/approximate-expectations-of-nonlinear-multivariate-functions
