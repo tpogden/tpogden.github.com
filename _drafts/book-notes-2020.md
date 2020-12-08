@@ -16,12 +16,9 @@ published: true
    something to the effect of 'this system isn't perfect but it's the best we've
    found.' The anonymous author here describes the many ways the neglected and
    underfunded criminal justice system in England is far from perfect.
-<!-- 
-   Something unmentioned that stuck with me from my experience is how
-   clearly the random selection of a jury can effect the outcome and the process
-   of deliberation. -->
 
-4. _Green River, Running Red_ by Ann Rule ---
+4. _Green River, Running Red_ by Ann Rule --- True crime story of the Green
+   River Killer in Seattle in the 80s and 90s.
 
 5. _Life Undercover_ by Amaryllis Fox --- 
 
@@ -176,6 +173,30 @@ published: true
 17. _The New Jim Crow_ by Michelle Alexander ---
 
 18. _The Sum of the People_ by Andrew Whitby {% include star.html %} ---
+    Counting people might sound like an uncontroversial and mundane
+    statistical[^stats] task, but this history of the census since the idea's
+    origins in ancient China is absorbing. The Exodus of the Israelites in the
+    Old Testament got a whole _Book of Numbers_ for census results. The founding
+    fathers of the United States thought a regular census important enough to
+    write it into the Constitution, though infamously counted a black slave as
+    three-fifths of a free white man. Nazi Germany used census data as a tool
+    for genocide. In 1944 a risky daytime Allied air raid on the Kleykamp
+    building in The Hague was sent out to destroy the identity records of the
+    Dutch population with the aim of protecting some of those the Nazis would
+    persecute.
+
+    Who is counted and who isn’t? What questions should be asked? Such decisions
+    are contested each time around. The census is a balance of representation in
+    democracy for the individual and valuable information for the state.
+
+    > This version of the census --- still used in most countries today --- was
+    > a compromise. It acknowledged an unavoidable trade-off between privacy and
+    > the state’s need to see in order to function. The traditional census, at
+    > its best, has been able to find a delicate balance between these opposed
+    > aims. It has succeeded in this because enumeration, by its very nature,
+    > requires mass participation, and so the census is owned neither by the
+    > state nor by the people but exists as a continuous negotiation between the
+    > two.
 
 19. _Jingo_ by Terry Pratchett {% include reread.html %} --- After the years I
     spent buried in Discworld books, I went off to university to pick up other
@@ -190,24 +211,45 @@ published: true
     > that do the bad things.
 
 20. _The Left Hand of Darkness_ by Ursula K. Le Guin {% include star.html %} ---
+    I enjoyed this a lot once I'd gotten into the world-building terminology,
+    especially the final trek across the ice sheet back to Karhide.
 
 21. _Caste_ by by Isabel Wilkerson --- 
 
-22. _Hateship, Friendship, Courtship, Loveship, Marriage_ by Alice Munro {% include star.html %} --- 
+22. _Hateship, Friendship, Courtship, Loveship, Marriage_ by Alice Munro {%
+    include star.html %} --- I love how Munro will settle you into this familiar
+    place, probably in rural Canada, probably with some midlife characters, then
+    unsettle you in just a few pages.
 
-23. _Around the World in 80 Days_ by Michael Palin --- 
+    > A story is not like a road to follow... it's more like a house. You go
+    > inside and stay there for a while, wandering back and forth and settling
+    > where you like and discovering how the room and corridors relate to each
+    > other, how the world outside is altered by being viewed from these
+    > windows.
 
-24. _Now You’re Gonna Believe Us_ by Andrew Robertson --- 
+23. _Around the World in 80 Days_ by Michael Palin --- Some of Palin's TV
+    programmes have been back on the BBC and reminded me how much I enjoy his
+    work.
 
-25. _New Europe_ by Michael Palin --- 
+24. _Now You’re Gonna Believe Us_ by Andrew Robertson --- I expect there will be
+    a lot of books written about Jürgen Klopp's Liverpool FC and I expect I will
+    want to read a lot of them.
 
-26. _Tequila Oil_ by Hugh Thomson --- 
+25. _New Europe_ by Michael Palin --- A tour of Eastern Europe in the 00s, in
+    flux between Soviet influence or rule and EU expansion.
+
+26. _Tequila Oil_ by Hugh Thomson --- In 1979, aged 18, Thomson picks up a used
+    Oldsmobile 98 to drive across the US border down through Mexico in a woozy
+    trip, working odd jobs, drinking and visiting Mayan sites, hoping to sell
+    the car in Belize to pay his way home.
 
 [^1]: I don’t have a consistent answer myself.
 
 [^jw]: Jehovah’s Witnesses are in part a print publishing organisation, distributing books, magazines and tracts for evangelism but also to be studied by members.
 
 [^crick]: I had no idea that Francis Crick had been involved in the latter project.
+
+[^stats]: The word _statistics_ originally meaning study of data about the state.
 
 [hardys]: https://en.wikipedia.org/wiki/Hardy%27s_Well
 
