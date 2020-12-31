@@ -335,16 +335,3 @@ I thought it's a bit strange I don't record these.
 [bs-moth]: https://uk.bookshop.org/a/5340/9780241262313
 [bs-100-maps]: https://uk.bookshop.org/a/5340/9781529124194
 [bs-tsp]: https://uk.bookshop.org/a/5340/9780691163529
-
-<!-- 
-    > A story is not like a road to follow... it's more like a house. You go
-    > inside and stay there for a while, wandering back and forth and settling
-    > where you like and discovering how the room and corridors relate to each
-    > other, how the world outside is altered by being viewed from these
-    > windows. -->
-
-<!-- I don't think the memoir is as useful as far as being
-    representative. As Hirsch tells it she grew up in leafy west London, was
-    privately educated, went up to Oxford to read PPE, on to be a
-    barrister and then a broadsheet journalist. There’s not much more
-    institution than that.  -->
