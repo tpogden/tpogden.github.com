@@ -34,7 +34,7 @@ $font-size: 16px;
 
 $body-font-stack: Georgia, serif; //'PT Serif', Georgia, serif;
 $header-font-stack: Georgia, serif; // 'Goudy1911', 'PT Sans', sans-serif;
-$code-font-stack: Monaco, monospace;
+$code-font-stack: Consolas, Monaco, monospace;
 
 /* Colors */
 $white: white;
@@ -93,7 +93,7 @@ article, section {
   margin-bottom: 0px;
   margin-left: $gutter-width;
   margin-right: $gutter-width;
-  padding-top: $line-height;
+//   padding-top: $line-height;
   padding-bottom: 0px;
   padding-left: 0px;
   padding-right: 0px;
@@ -105,7 +105,7 @@ article, section {
 
 header {
   width: $full-width;
-  height: 3*$line-height;
+  height: 2*$line-height;
   margin-left: $gutter-width;
   margin-right: $gutter-width;
   float: left;
@@ -116,7 +116,7 @@ header {
     letter-spacing: 1px;
     // text-transform: uppercase;
     margin-top: $line-height/2;
-    padding-top: $line-height;
+    // padding-top: $line-height;
     padding-left: 8px;
     padding-right: 8px;
     float:left;
@@ -140,7 +140,7 @@ nav {
   letter-spacing: 1px;
   margin-top: $line-height/2;
   margin-left: $column-width + 2*$gutter-width;
-  padding-top: $line-height;
+//   padding-top: $line-height;
   padding-bottom: $line-height/2;
   ul {
     width: 3*$column-width + 3*$gutter-width;
@@ -214,6 +214,7 @@ h1 {
   padding-bottom: $line-height/2;
   padding-left: 8px;
   padding-right: 8px;
+  clear: left;
 }
 
 h2 {
@@ -405,6 +406,10 @@ img {
   border: 0px;
 //   border-radius: 0px;
   float: left;
+}
+
+iframe {
+  border: 0px;
 }
 
 .full {
@@ -627,11 +632,13 @@ div .highlight {
 }
 
 code {
-//   font-family: $code-font-stack;
-  font-size: 12px;
+  font-family: $code-font-stack;
+  font-size: 14px;
+  color: $deep-grey;
 }
 
 pre > code {
+    font-size: 12px;
     width: $text-width;
     line-height: 24px;
     padding-top: 0px;
@@ -698,7 +705,6 @@ footer {
   font-family: $header-font-stack;
   width: $full-width;
   height: 2*$line-height;
-  margin-top: 2*$line-height;
   margin-bottom: 0px;
   margin-left: 32px;
   margin-right: 32px;
@@ -770,15 +776,12 @@ footer {
   }
 
   header {
-    height: 5*$line-height;
     width: $narrower-main-width;
     margin-left: $narrower-gutter-width;
     margin-right: $narrower-gutter-width;
-  }
-
-  nav {
-    margin-top: 0px; 
-    margin-left: 0px;
+    #home {
+        width: 1*$column-width + 1*$gutter-width;// - 2*$h-margin;
+    }
   }
 
   footer {
