@@ -782,6 +782,13 @@ footer {
     #home {
         width: 1*$column-width + 1*$gutter-width;// - 2*$h-margin;
     }
+    nav {
+        ul {
+            li {
+                margin-right: 0;
+            }
+        }
+    }
   }
 
   footer {
