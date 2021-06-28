@@ -135,7 +135,7 @@ nav {
   width: 3*$column-width + 2*$gutter-width;
   float: left;
   font-family: $header-font-stack;
-  font-style: normal;
+  font-style: italic;
   font-size: 7/8*$font-size;
   letter-spacing: 1px;
   margin-top: $line-height/2;
@@ -567,6 +567,7 @@ dt {
 dd {
   margin: 0px;
   float: left;
+  display: none;
 }
 
 /* Tables ------------------------------------------------------------------ */
@@ -779,15 +780,15 @@ footer {
     width: $narrower-main-width;
     margin-left: $narrower-gutter-width;
     margin-right: $narrower-gutter-width;
-    #home {
-        width: 1*$column-width + 1*$gutter-width;// - 2*$h-margin;
-    }
+    height: 4*$line-height;
     nav {
-        ul {
-            li {
-                margin-right: 0;
-            }
+      margin-left: 0px;
+      clear: both;
+      ul {
+        li {
+          margin-right: 0;
         }
+      } 
     }
   }
 
