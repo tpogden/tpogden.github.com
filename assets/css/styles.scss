@@ -15,8 +15,8 @@ $main-width: 4*$column-width + 3*$gutter-width;
 $sidebar-width: 2*$column-width + $gutter-width;
 
 $narrower-canvas-width: 100%;
-$narrower-main-width: 95%;
-$narrower-gutter-width: 2.5%;
+$narrower-main-width: 92%;
+$narrower-gutter-width: 4%;
 
 $h-margin: 8px;
 
@@ -823,8 +823,7 @@ footer {
 
   ol {
     li:before {
-      margin-left: -20px;
-      font-size: 11px;
+      margin-left: -26px;
     }
   }
 
@@ -845,7 +844,14 @@ footer {
   }
 
   .sidebox {
+    margin-top: $line-height/2;
     margin-left: 8px;
+    width: $narrower-main-width;
+    ul {
+      li:before {
+        text-indent: 0px;
+      }
+    }
   }
 
   .text, .text-framed, .full, .full-framed, .half-left, 
