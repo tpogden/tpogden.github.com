@@ -864,7 +864,7 @@ footer {
     float: left;
   }
 
-    figcaption {
+  figcaption {
     width: $narrower-main-width;
     float: left;
     margin-top: 8px;
@@ -883,6 +883,10 @@ footer {
   .MathJax_Display {
     width: $narrower-main-width !important;
     color: $deep-red;
+  }
+
+  .prev:before, .next:before {
+    left: -16px;
   }
 
 }
