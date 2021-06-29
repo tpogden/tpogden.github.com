@@ -383,6 +383,8 @@ figure {
 
 figcaption {
   color:  $deep-grey;
+  font-style: italic;
+  line-height: $line-height - 4px;
   width: $sidebar-width - 2*$h-margin;
   font-size: 14px;
   margin-top: 0px;
@@ -399,7 +401,7 @@ figcaption {
 
 img {
   margin-top: 0px;
-  margin-bottom: $line-height;
+  margin-bottom: $font-size; //$line-height;
   margin-left: $h-margin;
   margin-right: $h-margin;
   padding: 0px;
@@ -415,7 +417,7 @@ iframe {
 .full {
   width: $full-width - $h-margin*2;
   margin-top: $line-height;
-  margin-bottom: $line-height + 8px;
+  // margin-bottom: $line-height + 8px;
   margin-left: $h-margin;
   margin-right: $h-margin;
   padding: 0px;
@@ -430,14 +432,14 @@ iframe {
 .text {
   width: $text-width;
   margin-top: $line-height/2;
-  margin-bottom: $line-height + 8px;
+  // margin-bottom: $line-height + 8px;
 }
 
 .text-framed {
   width: $text-width - 2;
   border: solid 1px $pastel-grey;
   margin-top: 8px;
-  margin-bottom: $line-height - 8px;
+  // margin-bottom: $line-height - 8px;
 }
 
 .side {
@@ -459,7 +461,7 @@ iframe {
 .half-left {
   width: 3*$column-width + 2*$gutter-width - 2*$h-margin;
   margin-top: $line-height/2;
-  margin-bottom: $line-height + 8px;
+  // margin-bottom: $line-height + 8px;
   margin-right: 32px;
   padding: 0px;
   float: left;
@@ -468,7 +470,7 @@ iframe {
 .half-right {
   width: 432px;
   margin-top: $line-height/2;
-  margin-bottom: $line-height + 8px;
+  // margin-bottom: $line-height + 8px;
   padding: 0px;
   float: right;
 }
@@ -823,7 +825,7 @@ footer {
 
   ol {
     li:before {
-      margin-left: -26px;
+      margin-left: -24px;
     }
   }
 
@@ -855,8 +857,19 @@ footer {
   }
 
   .text, .text-framed, .full, .full-framed, .half-left, 
-  .half-right {
+  .half-right, .side, .side-framed {
     width: $narrower-main-width;
+    margin-left: 8px;
+    margin-bottom: 0; // $line-height;
+    float: left;
+  }
+
+    figcaption {
+    width: $narrower-main-width;
+    float: left;
+    margin-top: 8px;
+    margin-left: 0px;
+
   }
 
   div .highlight {

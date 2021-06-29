@@ -65,7 +65,7 @@ cross-country ski in the winter.
 <figure>
 <img class="half-left" src="/assets/jpg/2013-08-fjallen-2/2013-08-fjallen-2-004.jpg" />
 <img class="half-right" src="/assets/jpg/2013-08-fjallen-3/2013-08-fjallen-3-005.jpg" />
-<figcaption>&larr; Alpine flowers.<br />&uarr; Tjäktiajåkka, turqouise river on 
+<figcaption>Alpine flowers.<br />Tjäktiajåkka, turqouise river on 
   a hot afternoon.</figcaption>
 </figure>
 

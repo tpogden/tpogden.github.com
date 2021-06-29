@@ -6,19 +6,18 @@ permalink: /about/
 
 <h1>About</h1>
 
+I'm a computational scientist --- my interest is solving problems in
+_high-performance scientific computing_ and _machine learning_, mostly with C++
+and Python.
+
 <aside class="sidebox">
     <h4>Research Profiles</h4>
-
     <ul>
         <li><a href="https://scholar.google.co.uk/citations?hl=en&user=vdfMd94AAAAJ&view_op=list_works&sortby=pubdate">Google Scholar</a></li>
         <li><a href="https://github.com/tpogden/">Github</a></li>
         <li><a href="https://www.linkedin.com/in/tpogden/">LinkedIn</a></li>
     </ul>
 </aside>
-
-I'm a computational scientist --- my interest is solving problems in
-_high-performance scientific computing_ and _machine learning_, mostly with C++
-and Python.
 
 I'm a Senior Research Data Scientist at [Dunnhumby](https://www.dunnhumby.com),
 where I work on the _machine learning_, _optimisation_ and _forecasting_
@@ -81,7 +80,7 @@ You can keep up with this site using [RSS](/atom.xml) or by following me on
 
 <figure>
 <img class="text" src="/assets/photos/2014/glen-coe/glen-coe-004.jpg" />
-<figcaption>&larr; Preferred habitat.</figcaption>
+<figcaption>Preferred habitat.</figcaption>
 </figure>
 
 [prl-simultons]: https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.123.243604
