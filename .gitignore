@@ -1,6 +1,7 @@
 _site/
 .DS_Store
 .ipynb_checkpoints/
+.jekyll-cache/
 
 # QuTiP/MaxwellBloch savefiles
 *.qu
