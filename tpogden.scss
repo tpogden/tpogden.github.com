@@ -1,0 +1,223 @@
+/*-- scss:defaults --*/
+
+$theme: "tpogden" !default;
+
+// Seaborn colors
+
+$coral: rgba(255, 127, 80, 1); // coral
+$coral-light: rgba(255, 171, 136, 1);
+$coral-lighter: rgba(255, 213, 194, 1);
+
+$red: rgba(255, 66, 82, 1);
+$orange: rgba(255, 183, 92, 1);
+$green: rgba(105, 255, 140, 1);
+$blue: rgba(54, 186, 255, 1);
+$yellow: #FFFA69;
+$purple: #8F42FF;
+
+$white: white;
+$grey-light: #dbd7d7;
+$grey: #aaa3a1;
+$grey-dark: #5e5655;
+$black: #1a1a1a;
+
+$main: $coral;
+$main-light: $coral-light;
+
+// Fonts
+$font-family-serif: 'PT Serif', Georgia, serif;
+$font-family-mono: 'PT Mono', SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+$line-height: 28px;
+$font-size: 16px;
+
+$grid-body-width: 720px;
+// $grid-body-width: 592px;
+$grid-margin-width: 272px;
+$grid-column-gutter-width: 24px;
+
+/*-- scss:rules --*/
+body {
+    font-size: $font-size;
+    line-height: $line-height;
+    font-family: $font-family-serif;
+}
+
+h1 {
+    font-size: 1.375em;
+    font-weight: 400;
+    font-style: italic;
+}
+
+h2 {
+    font-size: 1.25em;
+    color: $black !important;
+    border-bottom: none;
+    padding-bottom: none;
+    font-weight: 400;
+    font-style: italic;
+}
+
+h3 {
+    font-size: 1.125em;
+    color: $black;
+    font-weight: 400;
+    font-style: italic;
+  }
+
+h4 {
+    font-size: 1em;
+    color: $main;
+    font-style: italic;
+  }
+
+a {
+    color: $main;
+    text-decoration-thickness: 1px;
+    text-decoration-color: $grey-light;
+    text-underline-offset: 2px;
+}
+
+a:visited {
+    color: $main-light;
+  }
+  
+  a:active, a:hover {
+    color: $main;
+    // border-bottom: solid 1px red;
+  }
+
+  blockquote {
+    border-left: 1px solid $grey-light;
+  }
+
+/* Lists ------------------------------------------------------------------- */
+
+ul {
+    padding-left: 0px;
+    list-style: none;
+    // li {
+    //   p {
+    //     // text-indent: 0px;
+    //     // clear: none;
+    //   }
+    // }
+    li:before {
+      content: "■";
+      font-size: 3/4*$font-size;
+      color: $main-light;
+      position: relative;
+      left: -16px;
+      float: left;
+      width: 0px;
+      padding-right: 0px;
+    }
+  }
+  
+  ol {
+    padding-left: 0px;
+    list-style: none;
+    counter-reset: item;
+    li {
+      p {
+      }
+    }
+    li:before {
+      float: left;
+      content: counter(item) "";
+      counter-increment: item;
+      padding-right: 0px;
+      color: $main-light;
+      width: 16px;
+      margin-left: -24px;
+      font-size: 13px;
+      text-align: right;
+    }
+  }
+
+// Navbar
+
+.navbar {
+    background-color: $white;
+    color: $main;    
+    padding-top: 0rem;
+    padding-bottom: 0rem;
+}
+
+.navbar-title {
+    font-size: 16px;
+    letter-spacing: 1px;
+    color: $main;
+}
+
+.date {
+  font-size: 0.75em;
+  font-family: $font-family-mono;
+    // font-size: 0.75em;
+  color: $grey;
+    // font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+// Typography
+
+// Listings
+div.quarto-post {
+    font-size: 1rem;
+    gap: 0em;
+    line-height: $line-height;
+    margin-bottom: 0em;
+    border-bottom: none;
+}
+
+.listing-title {
+  font-size: $font-size;
+  font-style: normal;
+  color: $main;
+  text-decoration: underline;
+  text-decoration-thickness: 1px !important;
+  text-decoration-color: $grey-light !important;
+  text-underline-offset: 2px !important;
+}
+
+.listing-date {
+  font-size: 0.8em;
+  font-family: $font-family-mono;
+  // font-family: "PT Sans";
+  // font-family: $font-family-serif;
+  color: $grey;
+  // font-style: italic;
+}
+
+.sidebar nav[role=doc-toc] ul> li> a.active {
+  border-left: 1px solid $main-light;
+  color: $main !important;
+}
+
+// .quarto-appendix .default:before {
+//   content: "___";
+//   color: $grey;
+//   font-weight: normal;
+//   // width: $text-width;
+//   padding-left: 8px;
+// }
+
+div#quarto-appendix {
+  margin-top: none !important;
+  border-top: none !important;
+  padding-top: 0em !important;
+}
+
+div#quarto-appendix:before {
+  content: "_____";
+  color: $grey-light;
+  // color: $coral-lighter;
+}
+
+.quarto-appendix-heading {
+  display: none;
+}
+
+.nav-footer {
+    color: $grey;
+    font-size: 0.875em;
+}

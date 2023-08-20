@@ -1,0 +1,44 @@
+project:
+  type: website
+  # pre-render: make move
+  # post-render: make move
+
+website:
+  title: "Thomas Ogden"
+  search:
+    location: sidebar
+  navbar:
+    # collapse: false
+    search: false
+    # left:
+      # - about.qmd
+    # right:
+      # - about.qmd
+      # - icon: github
+        # href: https://github.com/
+      # - icon: twitter
+        # href: https://twitter.com
+  site-url: https://ogden.eu
+  page-footer: 
+    # left:
+      # Copyright 2009–2023 Thomas P. Ogden.
+    right:
+      _Think deeply of simple things._
+    border: false
+
+title-block-style: none
+
+
+reground: lightcoral
+
+format:
+  html:
+    # minimal: true 
+    theme: 
+      light: [none, tpogden.scss]
+      # dark: [none, tpogden.scss]
+    fontsize: 16px;
+    email-obfuscation: references
+    html-math-method: katex
+
+date-format: YYYY-MM-DD

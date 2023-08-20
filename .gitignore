@@ -1,9 +1,12 @@
-_site/
 .DS_Store
-.ipynb_checkpoints/
-.jekyll-cache/
+.vscode/
+
+# Quarto
+/.quarto/
+/_site/
+/_freeze/
+
 
 # QuTiP/MaxwellBloch savefiles
 *.qu
-
-.vscode/
+.ipynb_checkpoints/
