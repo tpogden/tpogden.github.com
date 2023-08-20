@@ -1,0 +1,34 @@
+---
+title: "Random Walks Fig 1"
+date: "2014-04-11"
+categories: [research]
+page-layout: article
+draft: true
+---
+
+<style>
+  .fill-coral {
+    fill: #ff7f50;
+  }
+</style>
+
+```{ojs}
+//| echo: false
+height = 50
+lims = ({xMin: 0, xMax: 1, yMin:0, yMax:1})
+margin = ({top: 40, right: 40, bottom: 40, left: 40})
+
+y = d3.scaleLinear()
+  .domain([lims.yMin, lims.yMax])
+  .range([height - margin.bottom, margin.top]);
+
+x = d3.scaleLinear()
+    .domain([lims.xMin, lims.xMax])
+    .range([margin.left, width - margin.right]); 
+```
+
+```{ojs}
+//| echo: false
+// Includes
+d3 = require("d3@7")
+```

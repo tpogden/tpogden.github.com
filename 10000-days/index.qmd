@@ -1,0 +1,29 @@
+---
+title: "10,000 Days"
+date: "2010-09-07"
+categories: [personal]
+---
+
+Today I reached a milestone. I'm ten thousand days old.[^1] This curiously comfortable planet has spun around 10⁴ times since I joined the party. For reference, less excitingly, that's been 27 years, 4 months and 16 days.
+
+I feel some significance in this, more than birthdays I've passed. I think it's because a day is such a useful little unit of life. You can make something wonderful --- something that changes everything --- out of a day. Its just long enough. At the same time, its short enough that if one gets messed up, by circumstance or idleness, the next one is coming right along with all that opportunity restored. Years get hazy but 10,000 days --- that's serious time!
+
+<a title="Outliers: Malcolm Gladwell's Success Story" href="http://www.time.com/time/magazine/article/0,9171,1858880,00.html">According to Malcolm Gladwell</a>, if I'd spent just one hour of each of those days practicing a thing, I'd be an expert at it by now.[^2] I'm no expert at anything. What have I been doing? To ward off useless nostalgia, I felt I should mark this big round decimal with a reflection, that I should find some dusty trinket of wisdom to share from the attic of my brain. It turns out there wasn't much up there.
+
+One thing swirling around my head now though is a lovely and impelling sentence I read some time ago in <em><a title="5 Things I Learnt Reading &lsquo;The Age of Wonder'" href="http://whoorderedthat.com/post/704410043/5-things-i-learnt-reading-the-age-of-wonder">The Age of Wonder</a> </em>by Richard Holmes. It's from a letter written by a young John Herschel to his friend and fellow maths student, Charles Babbage.
+
+<blockquote>&lsquo;God knows how ardently I wish I had ten lives, or that capacity, that enviable capacity, of husbanding every atom of time, which some possess, and which enables them to do ten times as much in one life.'</blockquote>
+
+It's obvious perhaps, but what a lyrical expression of that feeling --- that ardent wish to use time more wisely, and that envy of those who do. &lsquo;Every atom of time' is precise and tidy, and that verb fits snugly. My dictionary here tells me here that &lsquo;to husband' comes from the Old Norse,
+
+<blockquote>húsbóndi &lsquo;master of a house,' from hús &lsquo;house' + bóndi &lsquo;occupier and tiller of the soil.' The original sense of the verb was [till, cultivate.]</blockquote>
+
+Discarding the gender baggage of our more common use of the word, isn't that precisely what we would like to do with time? Not just to occupy it but to cultivate it, to till it like soil? So from the heart of Herschel's line, the phrase that stuck with me is the imperative: <em>husband every atom of time</em>.
+
+How well have I cultivated the 10,000 days to this juncture? Well, I've tilled some soil. I've spent days making and doing things I'm proud of and, most important of all, I've been lucky to share many of them with people I love dearly. But I've also wasted plenty of time --- entire days even --- through distraction, forgetting what it is I want to be and who I want to spend my time with. Something I have learnt by now is how dreadful, how horrific it is to waste time --- mine or anyone else's.
+
+So that's what I say to myself here as I feel myself being distracted by the noise of the world again: Husband every atom of time. Till the soil. If I can expand toward &lsquo;that enviable capacity', I've got a good chance of still being friends with myself when I hit 20,000. 23 January, 2038. I'll make a note of it.
+
+[^1]: If you're wondering how I knew today would be 10,000, I refer you to both my self-absorption and the time I've endured testing calendar functions on my APIs.
+
+[^2]: I played a lot of Subbuteo in '92.

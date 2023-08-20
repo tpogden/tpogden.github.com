@@ -1,6 +1,0 @@
-<svg id="logo" xmlns="http://www.w3.org/2000/svg" version="1.1" width="1024px" height="1024px" viewBox="0 0 1024 1024">
-   <circle cx="512" cy="512" r="512" fill="#c44e52"/> 
-   <circle cx="512" cy="512" r="384" style="stroke: white; stroke-width:48px" fill="none"/> 
-   <line x1="352" y1="352" x2="672" y2="672" style="stroke: white; stroke-width:48px; stroke-linecap: round;" />
-   <line x1="672" y1="352" x2="352" y2="672" style="stroke: white; stroke-width:48px; stroke-linecap: round;" />
-</svg>

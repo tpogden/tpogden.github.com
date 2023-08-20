@@ -1,0 +1,34 @@
+project:
+  type: website
+
+website:
+  title: "Thomas Ogden"
+  search:
+    location: sidebar
+  navbar:
+    search: false
+  site-url: https://ogden.eu
+  page-footer: 
+    # left:
+      # Copyright 2009–2023 Thomas P. Ogden.
+    right:
+      _Think deeply of simple things._
+    border: false
+
+title-block-style: none
+
+format:
+  html:
+    # minimal: true 
+    theme: 
+      light: [none, tpogden.scss]
+      # dark: [none, tpogden.scss]
+    fontsize: 16px;
+    email-obfuscation: references
+    html-math-method: katex
+    include-in-header:
+      text: |
+        <script data-goatcounter="https://ogden.goatcounter.com/count" async
+        src="//gc.zgo.at/count.js"></script>
+
+date-format: YYYY-MM-DD
