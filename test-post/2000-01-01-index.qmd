@@ -1,0 +1,305 @@
+---
+title: "Test Post"
+# categories: [research]
+date: 2000-01-01
+draft: true
+---
+
+Lorem ipsum dolor sit amet, [consectetur adipisicing
+elit](https://www.google.com), sed do eiusmod tempor incididunt ut labore et
+dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+deserunt mollit anim id est laborum.
+
+Here's a following paragraph. Lorem ipsum dolor sit amet, consectetur
+adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
+ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
+voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim
+id est laborum.
+
+Here's a blockquote:
+
+> Here's a following paragraph. Lorem ipsum dolor sit amet, consectetur
+adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
+ut aliquip ex ea commodo consequat.
+
+Duis aute irure dolor in reprehenderit in
+voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim
+id est laborum.
+
+## Header 2
+
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+consequat.
+
+### Header 3
+
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+consequat.
+
+#### Header 4
+
+Header 4 is used just for grouping sections. Lorem ipsum dolor sit amet,
+consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
+dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+deserunt mollit anim id est laborum.
+
+## Lists
+
+Here's a basic list.
+
+- One
+- Two
+- Three
+
+Here's a list with paragraphs.
+
+- _Christianity_ by Linda Woodhead --- It's strange when I read histories of
+  Christianity having spent my childhood in one branch of it. Things I think I
+  know well seen from a different angle. In fact though she covers most
+  churches, Woodhead doesn't mention JWs. Most interesting in this brief review
+  was to read about the early divide in church versus biblical Christianity.
+  Also the role of mystical Christianity and the Catholic church's successful
+  absorption of the monastic movement to bring it under its own control.
+
+  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+  tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+  quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+  consequat.
+
+- _Deep Work_ by Cal Newport --- This book felt important, and I just counted
+  the number of passages I've added to my notes from it:  94, which is maybe a
+  record. I'll pick out a couple.
+
+  > The ability to perform deep work is becoming increasingly rare at exactly
+  the same time it is becoming increasingly valuable in our economy. As a
+  consequence, the few who cultivate this skill, and then make it the core of
+  their working life, will thrive.
+
+### Numbered Lists (This is a H3)
+
+1. One
+1. Two
+1. Three
+1. One
+1. Two
+1. Three
+1. One
+1. Two
+1. Three
+1. One
+1. Two
+1. Three
+
+Here's a numbered list with paragraphs
+
+1. _Christianity_ by Linda Woodhead --- It's strange when I read histories of
+    Christianity having spent my childhood in one branch of it. Things I think I
+    know well seen from a different angle. In fact though she covers most
+    churches, Woodhead doesn't mention JWs. Most interesting in this brief review
+    was to read about the early divide in church versus biblical Christianity.
+    Also the role of mystical Christianity and the Catholic church's successful
+    absorption of the monastic movement to bring it under its own control.
+
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+    consequat.
+
+2. _Deep Work_ by Cal Newport --- This book felt important, and I just counted
+    the number of passages I've added to my notes from it:  94, which is maybe a
+    record. I'll pick out a couple.
+
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+fugiat nulla pariatur.
+
+## Math and Code
+
+Here's some inline math $a = b + \sqrt{c}$. Here's a math block.
+
+$$
+\begin{align}
+\int_{t_n}^{t_{n+1}} \! f(t,y(t)) \, \mathrm{d}t &\approx \int_{t_n}^{t_{n+1}}
+\! P(t) \, \mathrm{d}t \\
+&= \int_{t_n}^{t_{n+1}} \! \left[ f(t_n, y_n)\frac{t - t_{n-1}}{t_n - t_{n-1}} +
+f(t_{n-1}, y_{n-1})\frac{t - t_{n}}{t_{n-1} - t_n} \right] \mathrm{d}t \\
+&= \frac{(t_n - t_{n+1})}{2(t_{n-1}-t_n)} \left[ f(t_n,y_n)(t_n + t_{n+1} -
+2t_{n-1}) - f(t_{n-1},y_{n-1})(t_n - t_{n+1}) \right]
+\end{align}
+$$
+
+Here's a bit of inline code text `a += b`. Here's a codeblock.
+
+```py
+def primes_next(primes):
+    """Take an ordered list of prime numbers and append the next
+        prime.
+
+    Args:
+        primes: list of ordered primes, with the last prime odd,
+         e.g. [2,3].
+
+    Returns:
+        The list primes with the next prime appended,
+         e.g. [2,3,5].
+    """
+
+    i = primes[-1]
+    while True:
+        i += 2
+        for p in primes:
+            if p**2 > i: # No factors found, i prime
+                primes.append(i)
+                return primes
+            if i%p == 0: # Factor found, try next i
+                break
+```
+
+## Asides & Sideboxes
+
+::: {.column-margin}
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+consequat.
+:::
+
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+fugiat nulla pariatur.
+
+::: {.column-margin}
+<h4>Sidebox Heading</h4>
+
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+fugiat nulla pariatur.
+
+<ul>
+  <li>Unordered list</li>
+  <li>In a sidebox</li>
+</ul>
+
+<ol>
+  <li>Ordered list</li>
+  <li>In a sidebox</li>
+</ol>
+:::
+
+Here's a sidebox. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed
+do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+## Tables
+
+<table>
+<thead>
+<tr>
+<th class="one-col">Day</th>
+<th class="one-col">Distance</th>
+<th class="one-col">Ascent</th>
+<th class="one-col">Duration</th>
+<th class="two-col-last">Campsite Directives</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>5</strong></td>
+<td>10.0 km</td>
+<td>241 m</td>
+<td>3 h</td>
+<td>73</td>
+</tr>
+</tbody>
+</table>
+
+## Images & Figures
+
+Here's a text-width figure with caption.
+
+![Istanbul](2012-04-istanbul-007.jpg){width=100%}
+
+Here's a full width figure
+
+:::{.column-page}
+![Istanbul](2012-04-istanbul-007.jpg){width=100%}
+:::
+
+Here's a full bleed figure.
+
+::: {.column-screen}
+![](2012-04-istanbul-007.jpg){width=100%}
+:::
+
+Here are two half-and-half images.
+
+::: {layout-ncol=2}
+![Left](2012-04-istanbul-007.jpg)
+
+![Right](2012-04-istanbul-007.jpg)
+:::
+
+Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit
+esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
+non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+## Colours
+
+```{ojs}
+swatches(
+  [d3.color("#ff7f50"), d3.color("rgb(255, 66, 82)"), d3.color("rgb(255, 183, 92)"),
+  d3.color("rgb(105, 255, 140)"), d3.color("rgb(54, 186, 255)"), d3.color("#8F42FF"), d3.color("#FFFA69"), 
+  d3.color("#dbd7d7"), d3.color("#aaa3a1"),  d3.color("#5e5655"), d3.color("#1a1a1a")]
+  )
+```
+
+```{ojs}
+d3.quantize(d3.interpolateLab("#ffffff", "#ff7f50"), 4)
+
+swatches(d3.quantize(d3.interpolateLab("#ffffff", "#ff7f50"), 4))
+```
+
+```{ojs}
+function swatches(colors) {
+  return html`${colors.map(c => `<div title="${c}" style="
+  display: inline-block;
+  margin-right: 3px;
+  width: 100px;
+  height: 100px;
+  background: ${c};
+"></div>`)}`;
+}
+```
