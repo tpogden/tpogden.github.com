@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.361">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Thomas Ogden - N = 0.1</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Thomas Ogden</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools ms-auto">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header">
+<h1 class="title display-7">N = 0.1</h1>
+
+</header>
+
+<div class="cell" data-editable="true" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> maxwellbloch <span class="im">import</span> mb_solve</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>matplotlib inline</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>mb_solve_fwhm1_N01 <span class="op">=</span> mb_solve.MBSolve().from_json(<span class="st">'fast-light-fwhm1-N01.json'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-editable="true" data-scrolled="true" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>time _ <span class="op">=</span> mb_solve_fwhm1_N01.mbsolve(recalc<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Loaded tuple object.
+CPU times: user 10 ms, sys: 23.3 ms, total: 33.3 ms
+Wall time: 48.1 ms</code></pre>
+</div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>profile_in_fwhm1_N01 <span class="op">=</span> np.<span class="bu">abs</span>(mb_solve_fwhm1_N01.Omegas_zt[<span class="dv">0</span>, <span class="dv">0</span>])</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>peak_in_fwhm1_N01 <span class="op">=</span> mb_solve_fwhm1_N01.tlist[np.argmax(profile_in_fwhm1_N01)]</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(peak_in_fwhm1_N01)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>profile_out_fwhm1_N01 <span class="op">=</span> np.<span class="bu">abs</span>(mb_solve_fwhm1_N01.Omegas_zt[<span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>peak_out_fwhm1_N01 <span class="op">=</span> mb_solve_fwhm1_N01.tlist[np.argmax(profile_out_fwhm1_N01)]</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(peak_out_fwhm1_N01)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0.0
+-0.016</code></pre>
+</div>
+</div>
+<div class="cell" data-editable="true" data-scrolled="true" data-execution_count="79">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">3</span>))</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">111</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>cmap_range <span class="op">=</span> np.linspace(<span class="fl">0.0</span>, <span class="fl">1.0e-3</span>, <span class="dv">11</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>cf <span class="op">=</span> ax.contourf(mb_solve_fwhm1_N01.tlist, mb_solve_fwhm1_N01.zlist, </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>                 np.<span class="bu">abs</span>(mb_solve_fwhm1_N01.Omegas_zt[<span class="dv">0</span>]<span class="op">/</span>(<span class="dv">2</span><span class="op">*</span>np.pi)), </span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>                 cmap_range, cmap<span class="op">=</span>plt.cm.Blues)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Rabi Frequency ($\Gamma / 2\pi $)'</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Time ($1/\Gamma$)'</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Distance ($L$)'</span>)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> y <span class="kw">in</span> [<span class="fl">0.0</span>, <span class="fl">1.0</span>]:</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    ax.axhline(y, c<span class="op">=</span><span class="st">'grey'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, ls<span class="op">=</span><span class="st">'dotted'</span>)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>ax.axvline(peak_in_fwhm1_N01, c<span class="op">=</span><span class="st">'red'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, ls<span class="op">=</span><span class="st">'dotted'</span>)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>ax.axvline(peak_out_fwhm1_N01, c<span class="op">=</span><span class="st">'green'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, ls<span class="op">=</span><span class="st">'dotted'</span>)</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>ax.set_xlim(<span class="op">-</span><span class="dv">2</span>, <span class="dv">2</span>)</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>plt.colorbar(cf)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="fast-light-fig-7_files/figure-html/cell-7-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<section id="n-0.5" class="level3">
+<h3 class="anchored" data-anchor-id="n-0.5">N = 0.5</h3>
+<div class="cell" data-editable="true" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>mb_solve_fwhm1_N05 <span class="op">=</span> mb_solve.MBSolve().from_json(<span class="st">'fast-light-fwhm1-N05.json'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-editable="true" data-scrolled="true" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>time _ <span class="op">=</span> mb_solve_fwhm1_N05.mbsolve(recalc<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Loaded tuple object.
+CPU times: user 6.7 ms, sys: 18.7 ms, total: 25.4 ms
+Wall time: 27.2 ms</code></pre>
+</div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>profile_in_fwhm1_N05 <span class="op">=</span> np.<span class="bu">abs</span>(mb_solve_fwhm1_N05.Omegas_zt[<span class="dv">0</span>, <span class="dv">0</span>])</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>peak_in_fwhm1_N05 <span class="op">=</span> mb_solve_fwhm1_N05.tlist[np.argmax(profile_in_fwhm1_N05)]</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(peak_in_fwhm1_N05)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>profile_out_fwhm1_N05 <span class="op">=</span> np.<span class="bu">abs</span>(mb_solve_fwhm1_N05.Omegas_zt[<span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>peak_out_fwhm1_N05 <span class="op">=</span> mb_solve_fwhm1_N05.tlist[np.argmax(profile_out_fwhm1_N05)]</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(peak_out_fwhm1_N05)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0.0
+-0.072</code></pre>
+</div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="80">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">3</span>))</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">111</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>cmap_range <span class="op">=</span> np.linspace(<span class="fl">0.0</span>, <span class="fl">1.0e-3</span>, <span class="dv">11</span>)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>cf <span class="op">=</span> ax.contourf(mb_solve_fwhm1_N05.tlist, mb_solve_fwhm1_N05.zlist, </span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>                 np.<span class="bu">abs</span>(mb_solve_fwhm1_N05.Omegas_zt[<span class="dv">0</span>]<span class="op">/</span>(<span class="dv">2</span><span class="op">*</span>np.pi)), </span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>                 cmap_range, cmap<span class="op">=</span>plt.cm.Blues)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Rabi Frequency ($\Gamma / 2\pi $)'</span>)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Time ($1/\Gamma$)'</span>)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Distance ($L$)'</span>)</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> y <span class="kw">in</span> [<span class="fl">0.0</span>, <span class="fl">1.0</span>]:</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    ax.axhline(y, c<span class="op">=</span><span class="st">'grey'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, ls<span class="op">=</span><span class="st">'dotted'</span>)</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>ax.axvline(peak_in_fwhm1_N05, c<span class="op">=</span><span class="st">'red'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, ls<span class="op">=</span><span class="st">'dotted'</span>)</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>ax.axvline(peak_out_fwhm1_N05, c<span class="op">=</span><span class="st">'green'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, ls<span class="op">=</span><span class="st">'dotted'</span>)</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>ax.set_xlim(<span class="op">-</span><span class="dv">2</span>, <span class="dv">2</span>)</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>plt.colorbar(cf)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="fast-light-fig-7_files/figure-html/cell-11-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="n-1" class="level3">
+<h3 class="anchored" data-anchor-id="n-1">N = 1</h3>
+<div class="cell" data-editable="true" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>mb_solve_fwhm1_N1 <span class="op">=</span> mb_solve.MBSolve().from_json(<span class="st">'fast-light-fwhm1-N1.json'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-editable="true" data-scrolled="true" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>time Omegas_zt, states_zt <span class="op">=</span> mb_solve_fwhm1_N1.mbsolve(recalc<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Loaded tuple object.
+CPU times: user 6.89 ms, sys: 17.8 ms, total: 24.7 ms
+Wall time: 26.6 ms</code></pre>
+</div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>profile_in_fwhm1_N1 <span class="op">=</span> np.real(mb_solve_fwhm1_N1.Omegas_zt[<span class="dv">0</span>, <span class="dv">0</span>])</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>peak_in_fwhm1_N1 <span class="op">=</span> mb_solve_fwhm1_N1.tlist[np.argmax(profile_in_fwhm1_N1)]</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(peak_in_fwhm1_N1)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>profile_out_fwhm1_N1 <span class="op">=</span> np.real(mb_solve_fwhm1_N1.Omegas_zt[<span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>peak_out_fwhm1_N1 <span class="op">=</span> mb_solve_fwhm1_N1.tlist[np.argmax(profile_out_fwhm1_N1)]</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(peak_out_fwhm1_N1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0.0
+-0.136</code></pre>
+</div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="81">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">3</span>))</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">111</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>cmap_range <span class="op">=</span> np.linspace(<span class="fl">0.0</span>, <span class="fl">1.0e-3</span>, <span class="dv">11</span>)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>cf <span class="op">=</span> ax.contourf(mb_solve_fwhm1_N1.tlist, mb_solve_fwhm1_N1.zlist, </span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>                 np.<span class="bu">abs</span>(mb_solve_fwhm1_N1.Omegas_zt[<span class="dv">0</span>]<span class="op">/</span>(<span class="dv">2</span><span class="op">*</span>np.pi)), </span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>                 cmap_range, cmap<span class="op">=</span>plt.cm.Blues)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Rabi Frequency ($\Gamma / 2\pi $)'</span>)</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Time ($1/\Gamma$)'</span>)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Distance ($L$)'</span>)</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> y <span class="kw">in</span> [<span class="fl">0.0</span>, <span class="fl">1.0</span>]:</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>    ax.axhline(y, c<span class="op">=</span><span class="st">'grey'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, ls<span class="op">=</span><span class="st">'dotted'</span>)</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>ax.axvline(peak_in_fwhm1_N1, c<span class="op">=</span><span class="st">'red'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, ls<span class="op">=</span><span class="st">'dotted'</span>)</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>ax.axvline(peak_out_fwhm1_N1, c<span class="op">=</span><span class="st">'green'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, ls<span class="op">=</span><span class="st">'dotted'</span>)</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>ax.set_xlim(<span class="op">-</span><span class="dv">2</span>, <span class="dv">2</span>)</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>plt.colorbar(cf)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="fast-light-fig-7_files/figure-html/cell-15-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="82">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">3</span>))</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">111</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>ax.plot(mb_solve_fwhm1_N1.tlist, profile_in_fwhm1_N1<span class="op">/</span>np.<span class="bu">max</span>(profile_in_fwhm1_N1))</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>ax.plot(mb_solve_fwhm1_N1.tlist, profile_out_fwhm1_N1<span class="op">/</span>np.<span class="bu">max</span>(profile_out_fwhm1_N1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="fast-light-fig-7_files/figure-html/cell-16-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="n-2" class="level3">
+<h3 class="anchored" data-anchor-id="n-2">N = 2</h3>
+<div class="cell" data-editable="true" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>mb_solve_fwhm1_N2 <span class="op">=</span> mb_solve.MBSolve().from_json(<span class="st">'fast-light-fwhm1-N2.json'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-editable="true" data-scrolled="true" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>time Omegas_zt, states_zt <span class="op">=</span> mb_solve_fwhm1_N2.mbsolve(recalc<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Loaded tuple object.
+CPU times: user 6.1 ms, sys: 18.3 ms, total: 24.4 ms
+Wall time: 25.5 ms</code></pre>
+</div>
+</div>
+<div class="cell" data-editable="true" data-scrolled="true" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>profile_in_fwhm1_N2 <span class="op">=</span> np.real(mb_solve_fwhm1_N2.Omegas_zt[<span class="dv">0</span>, <span class="dv">0</span>])</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>peak_in_fwhm1_N2 <span class="op">=</span> mb_solve_fwhm1_N2.tlist[np.argmax(profile_in_fwhm1_N2)]</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(peak_in_fwhm1_N2)</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>profile_out_fwhm1_N2 <span class="op">=</span> np.real(mb_solve_fwhm1_N2.Omegas_zt[<span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>peak_out_fwhm1_N2 <span class="op">=</span> mb_solve_fwhm1_N2.tlist[np.argmax(profile_out_fwhm1_N2)]</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(peak_out_fwhm1_N2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0.0
+-0.252</code></pre>
+</div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="83">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">3</span>))</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">111</span>)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>cmap_range <span class="op">=</span> np.linspace(<span class="op">-</span><span class="fl">1.0e-3</span>, <span class="fl">1.0e-3</span>, <span class="dv">20</span>)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>cf <span class="op">=</span> ax.contourf(mb_solve_fwhm1_N2.tlist, mb_solve_fwhm1_N2.zlist, </span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>                 np.real(mb_solve_fwhm1_N2.Omegas_zt[<span class="dv">0</span>]<span class="op">/</span>(<span class="dv">2</span><span class="op">*</span>np.pi)), </span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>                 cmap_range, cmap<span class="op">=</span>plt.cm.RdBu)</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Rabi Frequency ($\Gamma / 2\pi $)'</span>)</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Time ($1/\Gamma$)'</span>)</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Distance ($L$)'</span>)</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> y <span class="kw">in</span> [<span class="fl">0.0</span>, <span class="fl">1.0</span>]:</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>    ax.axhline(y, c<span class="op">=</span><span class="st">'grey'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, ls<span class="op">=</span><span class="st">'dotted'</span>)</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>ax.axvline(peak_in_fwhm1_N2, c<span class="op">=</span><span class="st">'red'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, ls<span class="op">=</span><span class="st">'dotted'</span>)</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>ax.axvline(peak_out_fwhm1_N2, c<span class="op">=</span><span class="st">'green'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, ls<span class="op">=</span><span class="st">'dotted'</span>)</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a><span class="co"># ax.set_xlim(-2, 2)</span></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>plt.colorbar(cf)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="fast-light-fig-7_files/figure-html/cell-20-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> maxwellbloch <span class="im">import</span> fixed</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>speed_of_light <span class="op">=</span> <span class="fl">0.5</span> <span class="co"># [L Γ]</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>tlist_fixed_frame <span class="op">=</span> fixed.t_list(mb_solve_fwhm1_N2, speed_of_light)</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>field_fixed_frame <span class="op">=</span> fixed.rabi_freq(mb_solve_fwhm1_N2, <span class="dv">0</span>, speed_of_light, part<span class="op">=</span><span class="st">'real'</span>, interp_kind<span class="op">=</span><span class="st">'cubic'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="85">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(<span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">3</span>))</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">111</span>)</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>cmap_range <span class="op">=</span> np.linspace(<span class="op">-</span><span class="fl">1.0e-3</span>, <span class="fl">1.0e-3</span>, <span class="dv">20</span>)</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>cf <span class="op">=</span> ax.contourf(tlist_fixed_frame, mb_solve_fwhm1_N2.zlist, </span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>                 field_fixed_frame<span class="op">/</span>(<span class="dv">2</span><span class="op">*</span>np.pi), </span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>                 cmap_range, cmap<span class="op">=</span>plt.cm.RdBu)</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Rabi Frequency ($\Gamma / 2\pi $)'</span>)</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Fixed Time $1/\Gamma$)'</span>)</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Distance ($L$)'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="85">
+<pre><code>&lt;matplotlib.text.Text at 0x113a69978&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="fast-light-fig-7_files/figure-html/cell-22-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<p>###&nbsp;N = 4</p>
+<div class="cell" data-editable="true" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>mb_solve_fwhm1_N4 <span class="op">=</span> mb_solve.MBSolve().from_json(<span class="st">'fast-light-fwhm1-N4.json'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-editable="true" data-scrolled="true" data-execution_count="25">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>time _ <span class="op">=</span> mb_solve_fwhm1_N4.mbsolve(recalc<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Loaded tuple object.
+CPU times: user 5.93 ms, sys: 18.4 ms, total: 24.3 ms
+Wall time: 24.6 ms</code></pre>
+</div>
+</div>
+<div class="cell" data-editable="true" data-scrolled="true" data-execution_count="26">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>profile_in_fwhm1_N4 <span class="op">=</span> np.real(mb_solve_fwhm1_N4.Omegas_zt[<span class="dv">0</span>, <span class="dv">0</span>])</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>peak_in_fwhm1_N4 <span class="op">=</span> mb_solve_fwhm1_N4.tlist[np.argmax(profile_in_fwhm1_N4)]</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(peak_in_fwhm1_N4)</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>profile_out_fwhm1_N4 <span class="op">=</span> np.real(mb_solve_fwhm1_N4.Omegas_zt[<span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>peak_out_fwhm1_N4 <span class="op">=</span> mb_solve_fwhm1_N4.tlist[np.argmax(profile_out_fwhm1_N4)]</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(peak_out_fwhm1_N4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0.0
+-0.448</code></pre>
+</div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="86">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">3</span>))</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">111</span>)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>cmap_range <span class="op">=</span> np.linspace(<span class="fl">0.0</span>, <span class="fl">1.0e-3</span>, <span class="dv">11</span>)</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>cf <span class="op">=</span> ax.contourf(mb_solve_fwhm1_N4.tlist, mb_solve_fwhm1_N4.zlist, </span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>                 np.<span class="bu">abs</span>(mb_solve_fwhm1_N4.Omegas_zt[<span class="dv">0</span>]<span class="op">/</span>(<span class="dv">2</span><span class="op">*</span>np.pi)), </span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>                 cmap_range, cmap<span class="op">=</span>plt.cm.Blues)</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Rabi Frequency ($\Gamma / 2\pi $)'</span>)</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Time ($1/\Gamma$)'</span>)</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Distance ($L$)'</span>)</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> y <span class="kw">in</span> [<span class="fl">0.0</span>, <span class="fl">1.0</span>]:</span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>    ax.axhline(y, c<span class="op">=</span><span class="st">'grey'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, ls<span class="op">=</span><span class="st">'dotted'</span>)</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>ax.axvline(peak_in_fwhm1_N4, c<span class="op">=</span><span class="st">'red'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, ls<span class="op">=</span><span class="st">'dotted'</span>)</span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>ax.axvline(peak_out_fwhm1_N4, c<span class="op">=</span><span class="st">'green'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, ls<span class="op">=</span><span class="st">'dotted'</span>)</span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a><span class="co"># ax.set_xlim(-2, 2)</span></span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>plt.colorbar(cf)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="fast-light-fig-7_files/figure-html/cell-26-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="87">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">3</span>))</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">111</span>)</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>ax.plot(mb_solve_fwhm1_N4.tlist, profile_in_fwhm1_N4<span class="op">/</span>np.<span class="bu">max</span>(profile_in_fwhm1_N4))</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>ax.plot(mb_solve_fwhm1_N4.tlist, profile_out_fwhm1_N4<span class="op">/</span>np.<span class="bu">max</span>(profile_out_fwhm1_N4))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="fast-light-fig-7_files/figure-html/cell-27-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="plot" class="level3">
+<h3 class="anchored" data-anchor-id="plot">PLOT</h3>
+<div class="cell" data-editable="true" data-execution_count="29">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> np.array([<span class="fl">0.1</span>, <span class="fl">0.5</span>, <span class="fl">1.0</span>, <span class="fl">2.0</span>, <span class="fl">4.0</span>])</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>peaks_out <span class="op">=</span> <span class="op">-</span>np.array([peak_out_fwhm1_N01, peak_out_fwhm1_N05, peak_out_fwhm1_N1, peak_out_fwhm1_N2, peak_out_fwhm1_N4])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="88">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">3</span>))</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>plt.plot(N, peaks_out, marker<span class="op">=</span><span class="st">'o'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="fast-light-fig-7_files/figure-html/cell-29-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="n-4.5" class="level3">
+<h3 class="anchored" data-anchor-id="n-4.5">N = 4.5</h3>
+<div class="cell" data-editable="true" data-execution_count="31">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>mb_solve_fwhm1_N4_5 <span class="op">=</span> mb_solve.MBSolve().from_json(<span class="st">'fast-light-fwhm1-N4.5.json'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-editable="true" data-scrolled="true" data-execution_count="32">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>time _ <span class="op">=</span> mb_solve_fwhm1_N4_5.mbsolve(recalc<span class="op">=</span><span class="va">False</span>, pbar_chunk_size<span class="op">=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Loaded tuple object.
+CPU times: user 60 ms, sys: 236 ms, total: 296 ms
+Wall time: 322 ms</code></pre>
+</div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="33">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>profile_in_fwhm1_N4_5 <span class="op">=</span> np.<span class="bu">abs</span>(mb_solve_fwhm1_N4_5.Omegas_zt[<span class="dv">0</span>, <span class="dv">0</span>])</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>peak_in_fwhm1_N4_5 <span class="op">=</span> mb_solve_fwhm1_N4_5.tlist[np.argmax(profile_in_fwhm1_N4_5)]</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(peak_in_fwhm1_N4_5)</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>profile_out_fwhm1_N4_5 <span class="op">=</span> np.<span class="bu">abs</span>(mb_solve_fwhm1_N4_5.Omegas_zt[<span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>peak_out_fwhm1_N4_5 <span class="op">=</span> mb_solve_fwhm1_N4_5.tlist[np.argmax(profile_out_fwhm1_N4_5)]</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(peak_out_fwhm1_N4_5)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0.0
+0.2504</code></pre>
+</div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="89">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">3</span>))</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">111</span>)</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>cmap_range <span class="op">=</span> np.linspace(<span class="fl">0.0</span>, <span class="fl">1.0e-3</span>, <span class="dv">101</span>)</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>cf <span class="op">=</span> ax.contourf(mb_solve_fwhm1_N4_5.tlist, mb_solve_fwhm1_N4_5.zlist, </span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>                 np.<span class="bu">abs</span>(mb_solve_fwhm1_N4_5.Omegas_zt[<span class="dv">0</span>]<span class="op">/</span>(<span class="dv">2</span><span class="op">*</span>np.pi)), </span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>                 cmap_range, cmap<span class="op">=</span>plt.cm.Blues)</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Rabi Frequency ($\Gamma / 2\pi $)'</span>)</span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Time ($1/\Gamma$)'</span>)</span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Distance ($L$)'</span>)</span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> y <span class="kw">in</span> [<span class="fl">0.0</span>, <span class="fl">1.0</span>]:</span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>    ax.axhline(y, c<span class="op">=</span><span class="st">'grey'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, ls<span class="op">=</span><span class="st">'dotted'</span>)</span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>ax.axvline(peak_in_fwhm1_N4_5, c<span class="op">=</span><span class="st">'red'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, ls<span class="op">=</span><span class="st">'dotted'</span>)</span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>ax.axvline(peak_out_fwhm1_N4_5, c<span class="op">=</span><span class="st">'green'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, ls<span class="op">=</span><span class="st">'dotted'</span>)</span>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>ax.set_xlim(<span class="op">-</span><span class="dv">2</span>, <span class="dv">2</span>)</span>
+<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a>plt.colorbar(cf)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="fast-light-fig-7_files/figure-html/cell-33-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="wide-pulses" class="level2">
+<h2 class="anchored" data-anchor-id="wide-pulses">Wide Pulses</h2>
+<div class="cell" data-editable="true" data-execution_count="35">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>mb_solve_fwhm10_N10 <span class="op">=</span> mb_solve.MBSolve().from_json(<span class="st">'fast-light-fwhm10-N10.json'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="36">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>time _ <span class="op">=</span> mb_solve_fwhm10_N10.mbsolve(recalc<span class="op">=</span><span class="va">False</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Loaded tuple object.
+CPU times: user 6.22 ms, sys: 19.2 ms, total: 25.4 ms
+Wall time: 25.8 ms</code></pre>
+</div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="37">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>profile_in_fwhm10_N10 <span class="op">=</span> np.<span class="bu">abs</span>(mb_solve_fwhm10_N10.Omegas_zt[<span class="dv">0</span>, <span class="dv">0</span>])</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>peak_in_fwhm10_N10 <span class="op">=</span> mb_solve_fwhm10_N10.tlist[np.argmax(profile_in_fwhm10_N10)]</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(peak_in_fwhm10_N10)</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>profile_out_fwhm10_N10 <span class="op">=</span> np.<span class="bu">abs</span>(mb_solve_fwhm10_N10.Omegas_zt[<span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>peak_out_fwhm10_N10 <span class="op">=</span> mb_solve_fwhm10_N10.tlist[np.argmax(profile_out_fwhm10_N10)]</span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(peak_out_fwhm10_N10)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0.0
+-3.08</code></pre>
+</div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="90">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">3</span>))</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">111</span>)</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>cmap_range <span class="op">=</span> np.linspace(<span class="fl">0.0</span>, <span class="fl">1.0e-6</span>, <span class="dv">101</span>)</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>cf <span class="op">=</span> ax.contourf(mb_solve_fwhm10_N10.tlist, mb_solve_fwhm10_N10.zlist, </span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>                 np.<span class="bu">abs</span>(mb_solve_fwhm10_N10.Omegas_zt[<span class="dv">0</span>]<span class="op">/</span>(<span class="dv">2</span><span class="op">*</span>np.pi)), </span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>                 cmap_range, cmap<span class="op">=</span>plt.cm.Blues)</span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Rabi Frequency ($\Gamma / 2\pi $)'</span>)</span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Time ($1/\Gamma$)'</span>)</span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Distance ($L$)'</span>)</span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> y <span class="kw">in</span> [<span class="fl">0.0</span>, <span class="fl">1.0</span>]:</span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>    ax.axhline(y, c<span class="op">=</span><span class="st">'grey'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, ls<span class="op">=</span><span class="st">'dotted'</span>)</span>
+<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a>ax.axvline(peak_in_fwhm10_N10, c<span class="op">=</span><span class="st">'red'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, ls<span class="op">=</span><span class="st">'dotted'</span>)</span>
+<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a>ax.axvline(peak_out_fwhm10_N10, c<span class="op">=</span><span class="st">'green'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, ls<span class="op">=</span><span class="st">'dotted'</span>)</span>
+<span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a>ax.set_xlim(<span class="op">-</span><span class="dv">20</span>, <span class="dv">20</span>)</span>
+<span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a>plt.colorbar(cf)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="fast-light-fig-7_files/figure-html/cell-37-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="39">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>mb_solve_fwhm10_N20 <span class="op">=</span> mb_solve.MBSolve().from_json(<span class="st">'fast-light-fwhm10-N20.json'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="40">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>time _ <span class="op">=</span> mb_solve_fwhm10_N20.mbsolve(recalc<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Loaded tuple object.
+CPU times: user 49.1 ms, sys: 235 ms, total: 284 ms
+Wall time: 314 ms</code></pre>
+</div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="41">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>profile_in_fwhm10_N20 <span class="op">=</span> np.<span class="bu">abs</span>(mb_solve_fwhm10_N20.Omegas_zt[<span class="dv">0</span>, <span class="dv">0</span>])</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>peak_in_fwhm10_N20 <span class="op">=</span> mb_solve_fwhm10_N20.tlist[np.argmax(profile_in_fwhm10_N20)]</span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(peak_in_fwhm10_N20)</span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>profile_out_fwhm10_N20 <span class="op">=</span> np.<span class="bu">abs</span>(mb_solve_fwhm10_N20.Omegas_zt[<span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>peak_out_fwhm10_N20 <span class="op">=</span> mb_solve_fwhm10_N20.tlist[np.argmax(profile_out_fwhm10_N20)]</span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(peak_out_fwhm10_N20)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0.0
+-5.68</code></pre>
+</div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="91">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">3</span>))</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">111</span>)</span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>cmap_range <span class="op">=</span> np.linspace(<span class="fl">0.0</span>, <span class="fl">1.0e-3</span>, <span class="dv">11</span>)</span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>cf <span class="op">=</span> ax.contourf(mb_solve_fwhm10_N20.tlist, mb_solve_fwhm10_N20.zlist, </span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>                 np.<span class="bu">abs</span>(mb_solve_fwhm10_N20.Omegas_zt[<span class="dv">0</span>]<span class="op">/</span>(<span class="dv">2</span><span class="op">*</span>np.pi)), </span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a>                 cmap_range, cmap<span class="op">=</span>plt.cm.Blues)</span>
+<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Rabi Frequency ($\Gamma / 2\pi $)'</span>)</span>
+<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Time ($1/\Gamma$)'</span>)</span>
+<span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Distance ($L$)'</span>)</span>
+<span id="cb57-10"><a href="#cb57-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> y <span class="kw">in</span> [<span class="fl">0.0</span>, <span class="fl">1.0</span>]:</span>
+<span id="cb57-11"><a href="#cb57-11" aria-hidden="true" tabindex="-1"></a>    ax.axhline(y, c<span class="op">=</span><span class="st">'grey'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, ls<span class="op">=</span><span class="st">'dotted'</span>)</span>
+<span id="cb57-12"><a href="#cb57-12" aria-hidden="true" tabindex="-1"></a>ax.axvline(peak_in_fwhm10_N20, c<span class="op">=</span><span class="st">'red'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, ls<span class="op">=</span><span class="st">'dotted'</span>)</span>
+<span id="cb57-13"><a href="#cb57-13" aria-hidden="true" tabindex="-1"></a>ax.axvline(peak_out_fwhm10_N20, c<span class="op">=</span><span class="st">'green'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, ls<span class="op">=</span><span class="st">'dotted'</span>)</span>
+<span id="cb57-14"><a href="#cb57-14" aria-hidden="true" tabindex="-1"></a>ax.set_xlim(<span class="op">-</span><span class="dv">20</span>, <span class="dv">20</span>)</span>
+<span id="cb57-15"><a href="#cb57-15" aria-hidden="true" tabindex="-1"></a>plt.colorbar(cf)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="fast-light-fig-7_files/figure-html/cell-41-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>^ Try more t steps, this might work.</p>
+<div class="cell" data-editable="true" data-execution_count="43">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>mb_solve_fwhm10_N01 <span class="op">=</span> mb_solve.MBSolve().from_json(<span class="st">'fast-light-fwhm10-N01.json'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="44">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>time _ <span class="op">=</span> mb_solve_fwhm10_N01.mbsolve(recalc<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Loaded tuple object.
+CPU times: user 9.18 ms, sys: 25.2 ms, total: 34.4 ms
+Wall time: 37.3 ms</code></pre>
+</div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="45">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>profile_out_fwhm10_N01 <span class="op">=</span> np.<span class="bu">abs</span>(mb_solve_fwhm10_N01.Omegas_zt[<span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>peak_out_fwhm10_N01 <span class="op">=</span> mb_solve_fwhm10_N01.tlist[np.argmax(profile_out_fwhm10_N01)]</span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(peak_out_fwhm10_N01)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>-0.04</code></pre>
+</div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="92">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">3</span>))</span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">111</span>)</span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>cmap_range <span class="op">=</span> np.linspace(<span class="fl">0.0</span>, <span class="fl">1.0e-3</span>, <span class="dv">11</span>)</span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>cf <span class="op">=</span> ax.contourf(mb_solve_fwhm10_N01.tlist, mb_solve_fwhm10_N01.zlist, </span>
+<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a>                 np.<span class="bu">abs</span>(mb_solve_fwhm10_N01.Omegas_zt[<span class="dv">0</span>]<span class="op">/</span>(<span class="dv">2</span><span class="op">*</span>np.pi)), </span>
+<span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a>                 cmap_range, cmap<span class="op">=</span>plt.cm.Blues)</span>
+<span id="cb63-7"><a href="#cb63-7" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Rabi Frequency ($\Gamma / 2\pi $)'</span>)</span>
+<span id="cb63-8"><a href="#cb63-8" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Time ($1/\Gamma$)'</span>)</span>
+<span id="cb63-9"><a href="#cb63-9" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Distance ($L$)'</span>)</span>
+<span id="cb63-10"><a href="#cb63-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> y <span class="kw">in</span> [<span class="fl">0.0</span>, <span class="fl">1.0</span>]:</span>
+<span id="cb63-11"><a href="#cb63-11" aria-hidden="true" tabindex="-1"></a>    ax.axhline(y, c<span class="op">=</span><span class="st">'grey'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, ls<span class="op">=</span><span class="st">'dotted'</span>)</span>
+<span id="cb63-12"><a href="#cb63-12" aria-hidden="true" tabindex="-1"></a><span class="co"># ax.axvline(peak_in_fwhm10_N20, c='red', lw=1.0, ls='dotted')</span></span>
+<span id="cb63-13"><a href="#cb63-13" aria-hidden="true" tabindex="-1"></a>ax.axvline(peak_out_fwhm10_N01, c<span class="op">=</span><span class="st">'green'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, ls<span class="op">=</span><span class="st">'dotted'</span>)</span>
+<span id="cb63-14"><a href="#cb63-14" aria-hidden="true" tabindex="-1"></a>ax.set_xlim(<span class="op">-</span><span class="dv">20</span>, <span class="dv">20</span>)</span>
+<span id="cb63-15"><a href="#cb63-15" aria-hidden="true" tabindex="-1"></a>plt.colorbar(cf)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="fast-light-fig-7_files/figure-html/cell-45-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="47">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>mb_solve_fwhm10_N05 <span class="op">=</span> mb_solve.MBSolve().from_json(<span class="st">'fast-light-fwhm10-N05.json'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-editable="true" data-scrolled="true" data-execution_count="48">
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>time _ <span class="op">=</span> mb_solve_fwhm10_N05.mbsolve(recalc<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Loaded tuple object.
+CPU times: user 5.89 ms, sys: 20.3 ms, total: 26.2 ms
+Wall time: 27.2 ms</code></pre>
+</div>
+</div>
+<div class="cell" data-editable="true" data-scrolled="true" data-execution_count="49">
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>profile_out_fwhm10_N05 <span class="op">=</span> np.<span class="bu">abs</span>(mb_solve_fwhm10_N05.Omegas_zt[<span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>peak_out_fwhm10_N05 <span class="op">=</span> mb_solve_fwhm10_N01.tlist[np.argmax(profile_out_fwhm10_N05)]</span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(peak_out_fwhm10_N05)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>-0.16</code></pre>
+</div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="93">
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">3</span>))</span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">111</span>)</span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a>cmap_range <span class="op">=</span> np.linspace(<span class="fl">0.0</span>, <span class="fl">1.0e-3</span>, <span class="dv">11</span>)</span>
+<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a>cf <span class="op">=</span> ax.contourf(mb_solve_fwhm10_N05.tlist, mb_solve_fwhm10_N05.zlist, </span>
+<span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a>                 np.<span class="bu">abs</span>(mb_solve_fwhm10_N05.Omegas_zt[<span class="dv">0</span>]<span class="op">/</span>(<span class="dv">2</span><span class="op">*</span>np.pi)), </span>
+<span id="cb69-6"><a href="#cb69-6" aria-hidden="true" tabindex="-1"></a>                 cmap_range, cmap<span class="op">=</span>plt.cm.Blues)</span>
+<span id="cb69-7"><a href="#cb69-7" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Rabi Frequency ($\Gamma / 2\pi $)'</span>)</span>
+<span id="cb69-8"><a href="#cb69-8" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Time ($1/\Gamma$)'</span>)</span>
+<span id="cb69-9"><a href="#cb69-9" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Distance ($L$)'</span>)</span>
+<span id="cb69-10"><a href="#cb69-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> y <span class="kw">in</span> [<span class="fl">0.0</span>, <span class="fl">1.0</span>]:</span>
+<span id="cb69-11"><a href="#cb69-11" aria-hidden="true" tabindex="-1"></a>    ax.axhline(y, c<span class="op">=</span><span class="st">'grey'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, ls<span class="op">=</span><span class="st">'dotted'</span>)</span>
+<span id="cb69-12"><a href="#cb69-12" aria-hidden="true" tabindex="-1"></a><span class="co"># ax.axvline(peak_in_fwhm10_N20, c='red', lw=1.0, ls='dotted')</span></span>
+<span id="cb69-13"><a href="#cb69-13" aria-hidden="true" tabindex="-1"></a>ax.axvline(peak_out_fwhm10_N05, c<span class="op">=</span><span class="st">'green'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, ls<span class="op">=</span><span class="st">'dotted'</span>)</span>
+<span id="cb69-14"><a href="#cb69-14" aria-hidden="true" tabindex="-1"></a>ax.set_xlim(<span class="op">-</span><span class="dv">20</span>, <span class="dv">20</span>)</span>
+<span id="cb69-15"><a href="#cb69-15" aria-hidden="true" tabindex="-1"></a>plt.colorbar(cf)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="fast-light-fig-7_files/figure-html/cell-49-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<section id="n-1-1" class="level3">
+<h3 class="anchored" data-anchor-id="n-1-1">N = 1</h3>
+<div class="cell" data-editable="true" data-execution_count="51">
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>mb_solve_fwhm10_N1 <span class="op">=</span> mb_solve.MBSolve().from_json(<span class="st">'fast-light-fwhm10-N1.json'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="52">
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>time _ <span class="op">=</span> mb_solve_fwhm10_N1.mbsolve(recalc<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Loaded tuple object.
+CPU times: user 5.59 ms, sys: 18 ms, total: 23.6 ms
+Wall time: 24.3 ms</code></pre>
+</div>
+</div>
+<div class="cell" data-editable="true" data-scrolled="true" data-execution_count="53">
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>profile_out_fwhm10_N1 <span class="op">=</span> np.<span class="bu">abs</span>(mb_solve_fwhm10_N1.Omegas_zt[<span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>peak_out_fwhm10_N1 <span class="op">=</span> mb_solve_fwhm10_N1.tlist[np.argmax(profile_out_fwhm10_N1)]</span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(peak_out_fwhm10_N1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>-0.32</code></pre>
+</div>
+</div>
+<div class="cell" data-editable="true" data-scrolled="true" data-execution_count="94">
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">3</span>))</span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">111</span>)</span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>cmap_range <span class="op">=</span> np.linspace(<span class="fl">0.0</span>, <span class="fl">1.0e-3</span>, <span class="dv">11</span>)</span>
+<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a>cf <span class="op">=</span> ax.contourf(mb_solve_fwhm10_N1.tlist, mb_solve_fwhm10_N1.zlist, </span>
+<span id="cb75-5"><a href="#cb75-5" aria-hidden="true" tabindex="-1"></a>                 np.<span class="bu">abs</span>(mb_solve_fwhm10_N1.Omegas_zt[<span class="dv">0</span>]<span class="op">/</span>(<span class="dv">2</span><span class="op">*</span>np.pi)), </span>
+<span id="cb75-6"><a href="#cb75-6" aria-hidden="true" tabindex="-1"></a>                 cmap_range, cmap<span class="op">=</span>plt.cm.Blues)</span>
+<span id="cb75-7"><a href="#cb75-7" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Rabi Frequency ($\Gamma / 2\pi $)'</span>)</span>
+<span id="cb75-8"><a href="#cb75-8" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Time ($1/\Gamma$)'</span>)</span>
+<span id="cb75-9"><a href="#cb75-9" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Distance ($L$)'</span>)</span>
+<span id="cb75-10"><a href="#cb75-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> y <span class="kw">in</span> [<span class="fl">0.0</span>, <span class="fl">1.0</span>]:</span>
+<span id="cb75-11"><a href="#cb75-11" aria-hidden="true" tabindex="-1"></a>    ax.axhline(y, c<span class="op">=</span><span class="st">'grey'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, ls<span class="op">=</span><span class="st">'dotted'</span>)</span>
+<span id="cb75-12"><a href="#cb75-12" aria-hidden="true" tabindex="-1"></a><span class="co"># ax.axvline(peak_in_fwhm10_N1, c='red', lw=1.0, ls='dotted')</span></span>
+<span id="cb75-13"><a href="#cb75-13" aria-hidden="true" tabindex="-1"></a>ax.axvline(peak_out_fwhm10_N1, c<span class="op">=</span><span class="st">'green'</span>, lw<span class="op">=</span><span class="fl">1.0</span>, ls<span class="op">=</span><span class="st">'dotted'</span>)</span>
+<span id="cb75-14"><a href="#cb75-14" aria-hidden="true" tabindex="-1"></a>ax.set_xlim(<span class="op">-</span><span class="dv">20</span>, <span class="dv">20</span>)</span>
+<span id="cb75-15"><a href="#cb75-15" aria-hidden="true" tabindex="-1"></a>plt.colorbar(cf)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="fast-light-fig-7_files/figure-html/cell-53-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="n-5" class="level3">
+<h3 class="anchored" data-anchor-id="n-5">N = 5</h3>
+<div class="cell" data-editable="true" data-execution_count="55">
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>mb_solve_fwhm10_N5 <span class="op">=</span> mb_solve.MBSolve().from_json(<span class="st">'fast-light-fwhm10-N5.json'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-editable="true" data-scrolled="true" data-execution_count="56">
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>time _ <span class="op">=</span> mb_solve_fwhm10_N5.mbsolve(recalc<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Loaded tuple object.
+CPU times: user 6.04 ms, sys: 18.2 ms, total: 24.3 ms
+Wall time: 25.3 ms</code></pre>
+</div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="57">
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a>profile_in_fwhm10_N5 <span class="op">=</span> np.real(mb_solve_fwhm10_N5.Omegas_zt[<span class="dv">0</span>, <span class="dv">0</span>])</span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a>peak_in_fwhm10_N5 <span class="op">=</span> mb_solve_fwhm10_N5.tlist[np.argmax(profile_in_fwhm10_N5)]</span>
+<span id="cb79-3"><a href="#cb79-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(peak_in_fwhm10_N5)</span>
+<span id="cb79-4"><a href="#cb79-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb79-5"><a href="#cb79-5" aria-hidden="true" tabindex="-1"></a>profile_out_fwhm10_N5 <span class="op">=</span> np.real(mb_solve_fwhm10_N5.Omegas_zt[<span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb79-6"><a href="#cb79-6" aria-hidden="true" tabindex="-1"></a>peak_out_fwhm10_N5 <span class="op">=</span> mb_solve_fwhm10_N5.tlist[np.argmax(profile_out_fwhm10_N5)]</span>
+<span id="cb79-7"><a href="#cb79-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(np.<span class="bu">max</span>(profile_out_fwhm10_N5))</span>
+<span id="cb79-8"><a href="#cb79-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(peak_out_fwhm10_N5)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0.0
+4.37241125569e-05
+-1.56</code></pre>
+</div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="95">
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">3</span>))</span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">111</span>)</span>
+<span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a>ax.plot(mb_solve_fwhm10_N5.tlist, profile_in_fwhm10_N5<span class="op">/</span>np.<span class="bu">max</span>(profile_in_fwhm10_N5))</span>
+<span id="cb81-4"><a href="#cb81-4" aria-hidden="true" tabindex="-1"></a>ax.plot(mb_solve_fwhm10_N5.tlist, profile_out_fwhm10_N5<span class="op">/</span>np.<span class="bu">max</span>(profile_out_fwhm10_N5))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="fast-light-fig-7_files/figure-html/cell-57-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="n-12" class="level3">
+<h3 class="anchored" data-anchor-id="n-12">N = 12</h3>
+<div class="cell" data-editable="true" data-execution_count="59">
+<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a>mb_solve_fwhm10_N12 <span class="op">=</span> mb_solve.MBSolve().from_json(<span class="st">'fast-light-fwhm10-N12.json'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-editable="true" data-scrolled="true" data-execution_count="60">
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>time _ <span class="op">=</span> mb_solve_fwhm10_N12.mbsolve(recalc<span class="op">=</span><span class="va">False</span>, pbar_chunk_size<span class="op">=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Loaded tuple object.
+CPU times: user 51.9 ms, sys: 225 ms, total: 277 ms
+Wall time: 300 ms</code></pre>
+</div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="61">
+<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a>profile_out_fwhm10_N12 <span class="op">=</span> np.<span class="bu">abs</span>(mb_solve_fwhm10_N12.Omegas_zt[<span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a>peak_out_fwhm10_N12 <span class="op">=</span> mb_solve_fwhm10_N12.tlist[np.argmax(profile_out_fwhm10_N12)]</span>
+<span id="cb85-3"><a href="#cb85-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(peak_out_fwhm10_N12)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>-3.75</code></pre>
+</div>
+</div>
+</section>
+<section id="n-15" class="level3">
+<h3 class="anchored" data-anchor-id="n-15">N = 15</h3>
+<div class="cell" data-editable="true" data-execution_count="62">
+<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a>mb_solve_fwhm10_N15 <span class="op">=</span> mb_solve.MBSolve().from_json(<span class="st">'fast-light-fwhm10-N15.json'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-editable="true" data-scrolled="true" data-execution_count="63">
+<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>time _ <span class="op">=</span> mb_solve_fwhm10_N15.mbsolve(recalc<span class="op">=</span><span class="va">False</span>, pbar_chunk_size<span class="op">=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Loaded tuple object.
+CPU times: user 77.1 ms, sys: 222 ms, total: 299 ms
+Wall time: 376 ms</code></pre>
+</div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="64">
+<div class="sourceCode cell-code" id="cb90"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a>profile_in_fwhm10_N15 <span class="op">=</span> np.real(mb_solve_fwhm10_N15.Omegas_zt[<span class="dv">0</span>, <span class="dv">0</span>])</span>
+<span id="cb90-2"><a href="#cb90-2" aria-hidden="true" tabindex="-1"></a>peak_in_fwhm10_N15 <span class="op">=</span> mb_solve_fwhm10_N15.tlist[np.argmax(profile_in_fwhm10_N15)]</span>
+<span id="cb90-3"><a href="#cb90-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(peak_in_fwhm10_N15)</span>
+<span id="cb90-4"><a href="#cb90-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-5"><a href="#cb90-5" aria-hidden="true" tabindex="-1"></a>profile_out_fwhm10_N15 <span class="op">=</span> np.real(mb_solve_fwhm10_N15.Omegas_zt[<span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb90-6"><a href="#cb90-6" aria-hidden="true" tabindex="-1"></a>peak_out_fwhm10_N15 <span class="op">=</span> mb_solve_fwhm10_N15.tlist[np.argmax(profile_out_fwhm10_N15)]</span>
+<span id="cb90-7"><a href="#cb90-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(peak_out_fwhm10_N15)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0.0
+-4.68</code></pre>
+</div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="96">
+<div class="sourceCode cell-code" id="cb92"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">3</span>))</span>
+<span id="cb92-2"><a href="#cb92-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">111</span>)</span>
+<span id="cb92-3"><a href="#cb92-3" aria-hidden="true" tabindex="-1"></a>ax.plot(mb_solve_fwhm10_N15.tlist, profile_in_fwhm10_N15<span class="op">/</span>np.<span class="bu">max</span>(profile_in_fwhm10_N15))</span>
+<span id="cb92-4"><a href="#cb92-4" aria-hidden="true" tabindex="-1"></a>ax.plot(mb_solve_fwhm10_N15.tlist, profile_out_fwhm10_N15<span class="op">/</span>np.<span class="bu">max</span>(profile_out_fwhm10_N15))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="fast-light-fig-7_files/figure-html/cell-64-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="n-20" class="level3">
+<h3 class="anchored" data-anchor-id="n-20">N = 20</h3>
+<div class="cell" data-editable="true" data-execution_count="66">
+<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a>mb_solve_fwhm10_N20 <span class="op">=</span> mb_solve.MBSolve().from_json(<span class="st">'fast-light-fwhm10-N20.json'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="67">
+<div class="sourceCode cell-code" id="cb94"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>time _ <span class="op">=</span> mb_solve_fwhm10_N20.mbsolve(recalc<span class="op">=</span><span class="va">False</span>, pbar_chunk_size<span class="op">=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Loaded tuple object.
+CPU times: user 69.9 ms, sys: 196 ms, total: 266 ms
+Wall time: 286 ms</code></pre>
+</div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="68">
+<div class="sourceCode cell-code" id="cb96"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a>profile_in_fwhm10_N20 <span class="op">=</span> np.real(mb_solve_fwhm10_N20.Omegas_zt[<span class="dv">0</span>, <span class="dv">0</span>])</span>
+<span id="cb96-2"><a href="#cb96-2" aria-hidden="true" tabindex="-1"></a>peak_in_fwhm10_N20 <span class="op">=</span> mb_solve_fwhm10_N20.tlist[np.argmax(profile_in_fwhm10_N20)]</span>
+<span id="cb96-3"><a href="#cb96-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(peak_in_fwhm10_N20)</span>
+<span id="cb96-4"><a href="#cb96-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb96-5"><a href="#cb96-5" aria-hidden="true" tabindex="-1"></a>profile_out_fwhm10_N20 <span class="op">=</span> np.real(mb_solve_fwhm10_N20.Omegas_zt[<span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb96-6"><a href="#cb96-6" aria-hidden="true" tabindex="-1"></a>peak_out_fwhm10_N20 <span class="op">=</span> mb_solve_fwhm10_N20.tlist[np.argmax(profile_out_fwhm10_N20)]</span>
+<span id="cb96-7"><a href="#cb96-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(np.<span class="bu">max</span>(profile_out_fwhm10_N20))</span>
+<span id="cb96-8"><a href="#cb96-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(peak_out_fwhm10_N20)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0.0
+1.56090895713e-11
+-5.68</code></pre>
+</div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="97">
+<div class="sourceCode cell-code" id="cb98"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">3</span>))</span>
+<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">111</span>)</span>
+<span id="cb98-3"><a href="#cb98-3" aria-hidden="true" tabindex="-1"></a>ax.plot(mb_solve_fwhm10_N20.tlist, profile_in_fwhm10_N20<span class="op">/</span>np.<span class="bu">max</span>(profile_in_fwhm10_N20))</span>
+<span id="cb98-4"><a href="#cb98-4" aria-hidden="true" tabindex="-1"></a>ax.plot(mb_solve_fwhm10_N20.tlist, profile_out_fwhm10_N20<span class="op">/</span>np.<span class="bu">max</span>(profile_out_fwhm10_N20))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="fast-light-fig-7_files/figure-html/cell-68-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="plot-1" class="level3">
+<h3 class="anchored" data-anchor-id="plot-1">PLOT</h3>
+<div class="cell" data-editable="true" data-execution_count="74">
+<div class="sourceCode cell-code" id="cb99"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a>N10 <span class="op">=</span> np.array([<span class="fl">0.1</span>, <span class="fl">0.5</span>, <span class="fl">1.0</span>, <span class="fl">5.0</span>, <span class="fl">10.0</span>, <span class="fl">12.0</span>, <span class="fl">15.0</span>])</span>
+<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a>peaks_out_10 <span class="op">=</span> <span class="op">-</span>np.array([peak_out_fwhm10_N01, peak_out_fwhm10_N05, peak_out_fwhm10_N1, peak_out_fwhm10_N5, </span>
+<span id="cb99-3"><a href="#cb99-3" aria-hidden="true" tabindex="-1"></a>                          peak_out_fwhm10_N10, </span>
+<span id="cb99-4"><a href="#cb99-4" aria-hidden="true" tabindex="-1"></a>                          peak_out_fwhm10_N12, peak_out_fwhm10_N15])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-editable="true" data-execution_count="75">
+<div class="sourceCode cell-code" id="cb100"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a>plt.plot(N10, peaks_out_10, marker<span class="op">=</span><span class="st">'o'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="fast-light-fig-7_files/figure-html/cell-70-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="plots-together" class="level2">
+<h2 class="anchored" data-anchor-id="plots-together">Plots together</h2>
+<div class="cell" data-editable="true" data-execution_count="100">
+<div class="sourceCode cell-code" id="cb101"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb101-1"><a href="#cb101-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">4</span>))</span>
+<span id="cb101-2"><a href="#cb101-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">111</span>)</span>
+<span id="cb101-3"><a href="#cb101-3" aria-hidden="true" tabindex="-1"></a>ax.plot(N, peaks_out, ls<span class="op">=</span><span class="st">'-'</span>, marker<span class="op">=</span><span class="st">'o'</span>, label<span class="op">=</span><span class="st">'Pulse'</span>, clip_on<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb101-4"><a href="#cb101-4" aria-hidden="true" tabindex="-1"></a>ax.plot(N10, peaks_out_10<span class="op">/</span><span class="dv">10</span>, ls<span class="op">=</span><span class="st">'-'</span>, marker<span class="op">=</span><span class="st">'o'</span>, label<span class="op">=</span><span class="st">'Longer pulse'</span>, clip_on<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb101-5"><a href="#cb101-5" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Number density'</span>)</span>
+<span id="cb101-6"><a href="#cb101-6" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Pulse advancement in pulse widths'</span>)</span>
+<span id="cb101-7"><a href="#cb101-7" aria-hidden="true" tabindex="-1"></a>ax.legend(loc<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb101-8"><a href="#cb101-8" aria-hidden="true" tabindex="-1"></a>fig.tight_layout()</span>
+<span id="cb101-9"><a href="#cb101-9" aria-hidden="true" tabindex="-1"></a>fig.savefig(<span class="st">'fast-light-fig-7.png'</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="fast-light-fig-7_files/figure-html/cell-71-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="narrow-pulses" class="level2">
+<h2 class="anchored" data-anchor-id="narrow-pulses">Narrow pulses</h2>
+<p>Narrower pulses suffer too much pulse distortion. Tried. Not useful.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right"><em>Think deeply of simple things.</em></div>
+  </div>
+</footer>
+
+
+
+</body></html>

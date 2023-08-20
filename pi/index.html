@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.361">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2011-03-14">
+
+<title>Thomas Ogden - Pickup Sticks and Pi</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css">
+
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Thomas Ogden</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools ms-auto">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        
+    </div>
+<!-- main -->
+<main class="content page-columns page-full" id="quarto-document-content">
+
+<header id="title-block-header">
+<h1 class="title display-7">Pickup Sticks and Pi</h1>
+
+<p class="date">2011-03-14</p>
+</header>
+
+<p>At school we learn that 3.1415927… is the ratio of a circle’s circumference to its diameter but <span class="math inline">\pi</span> turns up all over the place in mathematics. For example, did you know you can measure <span class="math inline">\pi</span> just by dropping sticks on a table and counting them? This is because <span class="math inline">\pi</span> has a role in statistics too. Try it for yourself, and below we’ll visit the story of how this remarkable trick was discovered.</p>
+<p><em>Click on the board to drop sticks.</em> Each time you click, <span id="num-sticks">100</span> will be dropped and the number that cross a line will be counted. I dropped 10 to start you off.</p>
+<canvas id="pickup-canvas" width="480" height="640">
+</canvas>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<form id="sticks-form">
+<label>Number of sticks to drop:</label> <select id="num-sticks-select" size="1"> <option value="10">10</option> <option value="100" selected="selected">100</option> <option value="1000">1,000</option> <option value="10000">10,000</option> </select>
+</form>
+<p><br></p>
+<p><em>Click on the board!</em> Each time you click, <span id="num-sticks">100</span> sticks will be dropped and the number that cross a line will be counted. I dropped 10 to start you off.</p>
+</div></div><script src="assets/pickup.js"></script>
+<p><br></p>
+<table class="table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 22%">
+<col style="width: 27%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Sticks Dropped</th>
+<th style="text-align: right;">Crossed a Line</th>
+<th style="text-align: right;">Estimate of <span class="math inline">\pi</span></th>
+<th style="text-align: right;">Error</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;"><span id="stick-count">0</span></td>
+<td style="text-align: right;"><span id="cross-count">0</span></td>
+<td style="text-align: right;"><span id="estimate">0</span></td>
+<td style="text-align: right;"><span id="error-percent">0</span>%</td>
+</tr>
+</tbody>
+</table>
+<script>
+    initGame(
+        document.getElementById('pickup-canvas'),
+        document.getElementById('stick-count'),
+        document.getElementById('cross-count'),
+        document.getElementById('estimate'),
+        document.getElementById('error-percent'),
+        document.getElementById('num-sticks-select'),
+        document.getElementById('num-sticks')
+    );
+</script>
+<p>Does the estimate get better as you drop more sticks (i.e.&nbsp;does the error get smaller)? How close to <span class="math inline">\pi</span> can you get after 100,000 sticks or 1,000,000?</p>
+<section id="buffons-needle" class="level2">
+<h2 class="anchored" data-anchor-id="buffons-needle">Buffon’s Needle</h2>
+<p>In 1777, a French philosopher called Georges-Louis Leclerc, Comte de Buffon, wrote out an elegant theorem that turned out to be the earliest problem in geometric probability.</p>
+<p>Buffon discovered that if you draw a set of equally-spaced parallel lines (say, <span class="math inline">d</span> centimetres apart) and drop sticks on them that are shorter than the spacing (say <span class="math inline">l</span> centimetres long, where <span class="math inline">l</span> is less than <span class="math inline">d</span>) then the probability of a stick crossing a line is</p>
+<p><span class="math display">\frac{2 l}{\pi d}.</span></p>
+<p>This means that if you drop lots of sticks randomly and count how many cross the parallel lines, you can calculate what <span class="math inline">\pi</span> is by rearranging the formula to get</p>
+<p><span class="math display"> \pi = \frac{2ls}{c d} </span></p>
+<p>where <span class="math inline">s</span> is the number of sticks you drop and <span class="math inline">c</span> is the number that crossed a line.</p>
+<p>Isn’t that remarkable? Buffon had worked out that you can calculate <span class="math inline">\pi</span> just by dropping a bunch of sticks on a table — no circles required! The problem is known as Buffon’s Needle.</p>
+<p>As usual in statistics, we want to take a big sample to get an estimate close to the true probability. If I ask 5 people ‘are you left handed?’ and you ask 500 people the same, we know that your bigger sample is likely to give us the better idea of what proportion of people are left handed in the whole country. The same applies here — to get a good sample we need to drop a lot of sticks.</p>
+<p>Perhaps that’s why it took a long time after Buffon’s discovery for somebody to actually try it themselves, but in 1901 the Italian mathematician Mario Lazzarini gave it a go. He span around and dropped over 3,400 sticks onto the floor, counted up the number that crossed over lines and estimated <span class="math inline">\pi</span> to be 3.1415929. We know <span class="math inline">\pi</span> to be 3.1415927…, so he was correct in the first 6 digits, an error of 0.000006%. That’s good! Suspiciously good in fact, and so improbable that it’s more likely he cheated. Hoist by his own probabilistic petard?</p>
+</section>
+<section id="monte-carlo" class="level2">
+<h2 class="anchored" data-anchor-id="monte-carlo">Monte Carlo</h2>
+<p>What Lazzarini did we would today call a simulation. Simulations have become vastly easier and more important now that we can use computers to do the legwork for us. I’m sure a dizzy Lazzarini would’ve appreciated one. Simulations like this, where we use randomness to give us a sample of results, are called Monte Carlo methods, after the European city famous for its casino.</p>
+<p>Monte Carlo methods are useful in physics as we can model a large system with a huge number of possible states with a much smaller, but representative subset. It has important uses in thermal physics, molecular modelling, astrophysics and weather forecasting. And, as Buffon showed 200 years ago, can even be used to calculate <span class="math inline">\pi</span>.</p>
+<p>Buffon may have been the earliest human to discover this result but the natural world might have got there first. A paper in <em>Behavioral Ecology</em> suggests that <a href="https://academic.oup.com/beheco/article/12/6/655/462588">ants use Buffon’s Needle</a> to determine, before initiating an emigration, if a nest has sufficient area to house their colony.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<ul>
+<li><p>Jos Thijssen, <em>Computational Physics</em>. Cambridge University Press, second edition, March 2007.</p></li>
+<li><p>Daniel V. Schroeder, <em>An Introduction to Thermal Physics</em>. Addison Wesley, first edition, August 1999.</p></li>
+<li><p>J. J. O’Connor and E. F. Robertson. <a href="http://www-history.mcs.st-andrews.ac.uk/Biographies/Buffon.html"><em>Georges Louis Leclerc, Comte de Buffon</em></a>.</p></li>
+<li><p>Eric W. Weisstein, <a href="http://mathworld.wolfram.com/BuffonsNeedleProblem.html"><em>Buffon’s Needle Problem</em></a>, MathWorld.</p></li>
+<li><p>S. T. Mugford, E. B. Mallon, and N. R. Franks, <a href="https://academic.oup.com/beheco/article/12/6/655/462588"><em>The accuracy of Buffon’s needle: a rule of thumb used by ants to estimate area.</em></a> Behavioral Ecology, Vol. 12 No.&nbsp;6.</p></li>
+</ul>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>Thanks to <a href="https://research.manchester.ac.uk/en/persons/cobb">Matthew Cobb</a> for the pointer.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right"><em>Think deeply of simple things.</em></div>
+  </div>
+</footer>
+
+
+
+</body></html>

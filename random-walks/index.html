@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.361">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2014-04-11">
+
+<title>Thomas Ogden - Random Walks</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script type="module" src="../site_libs/quarto-ojs/quarto-ojs-runtime.js"></script>
+<link href="../site_libs/quarto-ojs/quarto-ojs.css" rel="stylesheet">
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css">
+
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Thomas Ogden</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools ms-auto">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        
+    </div>
+<!-- main -->
+<main class="content page-columns page-full" id="quarto-document-content">
+
+<header id="title-block-header">
+<h1 class="title display-7">Random Walks</h1>
+
+<p class="date">2014-04-11</p>
+</header>
+
+<!-- 
+<style>
+
+  .red-fill {
+
+    fill: rgba(189,54,19,1);
+
+  }
+
+  .svg-canvas {
+    background-color: white;
+    border: solid 1px rgba(208,199,198,1);
+  }
+
+  .axis {
+    /*font-family: "Helvetica", sans-serif;*/
+    font-size: 10px;
+  }
+
+  .axis path,
+  .axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+  }
+
+/*  .x.axis path {
+    display: none;
+  }
+*/
+
+  #x-axis-1 path {
+    display: none;
+  }
+
+  .bar {
+    fill: rgba(189,54,19,1);
+    shape-rendering: crispEdges;
+    opacity:0.9;
+  }
+
+  .play path {
+    stroke: rgba(255,255,255,1);
+    stroke-width: 16px;
+    /*fill: black;*/
+  }
+
+  .play:hover path {
+    fill: rgba(189,54,19,1);
+  }
+
+  .play rect {
+    fill: none;
+    pointer-events: all;
+    cursor: pointer;
+  }
+
+  .svg-small-text {
+    font-size: 12px;
+  }
+
+/*  .walk-path-1 {
+    stroke: rgb(189,54,19);
+    stroke-width: 2px;
+    fill: none;
+    opacity: 1.;
+  }
+
+  .walk-path-2 {
+    stroke: rgb(189,54,19);
+    stroke-width: 1px;
+    fill: none;
+    opacity: 1.;
+  }*/
+
+  .walk-path-done {
+    stroke: rgb(208,199,198);
+    stroke-width: 1px;
+    opacity: 0.25;
+    fill: none;
+  }
+
+  .msd-path {
+    fill: none;
+    stroke: rgba(189,54,19,1);
+    stroke-width: 1px;
+  }
+
+  .trendline {
+      stroke: rgba(208,199,198,1);
+      stroke-width: 2px;
+  }
+
+</style> -->
+<style>
+  /* TODO: Move to scss. */
+  .fill-coral {
+    fill: #ff7f50;
+  }
+</style>
+<div class="cell">
+<div class="sourceCode cell-code hidden" id="cb1" data-startfrom="111" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 110;"><span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a>  <span class="co">// const height = 50;</span></span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> svg <span class="op">=</span> d3<span class="op">.</span><span class="fu">select</span>(DOM<span class="op">.</span><span class="fu">svg</span>(width<span class="op">,</span> height))<span class="op">;</span></span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> pos <span class="op">=</span> <span class="fl">0.5</span><span class="op">;</span></span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> step <span class="op">=</span> <span class="fl">0.05</span><span class="op">;</span></span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> walker <span class="op">=</span> svg<span class="op">.</span><span class="fu">append</span>(<span class="st">"circle"</span>)<span class="op">;</span></span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a>      walker</span>
+<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a>          <span class="op">.</span><span class="fu">attr</span>(<span class="st">"cx"</span><span class="op">,</span> <span class="fu">x</span>(pos))</span>
+<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a>          <span class="op">.</span><span class="fu">attr</span>(<span class="st">"cy"</span><span class="op">,</span> <span class="fu">y</span>(<span class="fl">0.5</span>))</span>
+<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a>          <span class="op">.</span><span class="fu">attr</span>(<span class="st">"r"</span><span class="op">,</span> <span class="dv">10</span>)</span>
+<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a>          <span class="op">.</span><span class="fu">classed</span>(<span class="st">"fill-coral"</span><span class="op">,</span> <span class="kw">true</span>)<span class="op">;</span></span>
+<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a>  <span class="cf">while</span> (<span class="kw">true</span>) {</span>
+<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a>    <span class="kw">yield</span> svg<span class="op">.</span><span class="fu">node</span>()<span class="op">;</span></span>
+<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> Promises<span class="op">.</span><span class="fu">delay</span>(<span class="dv">1000</span>)<span class="op">;</span></span>
+<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="bu">Math</span><span class="op">.</span><span class="fu">random</span>() <span class="op">&lt;</span> <span class="fl">0.5</span>) {</span>
+<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a>      pos <span class="op">+=</span> step<span class="op">;</span></span>
+<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> </span>
+<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a>      pos <span class="op">-=</span> step<span class="op">;</span></span>
+<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a>    walker<span class="op">.</span><span class="fu">transition</span>()<span class="op">.</span><span class="fu">duration</span>(<span class="dv">100</span>)<span class="op">.</span><span class="fu">attr</span>(<span class="st">"cx"</span><span class="op">,</span> <span class="fu">x</span>(pos))<span class="op">.</span><span class="fu">end</span>()<span class="op">;</span></span>
+<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-1" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code hidden" id="cb2" data-startfrom="143" data-source-offset="-0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 142;"><span id="cb2-143"><a href="#cb2-143" aria-hidden="true" tabindex="-1"></a>width <span class="op">=</span> <span class="dv">720</span><span class="op">;</span></span>
+<span id="cb2-144"><a href="#cb2-144" aria-hidden="true" tabindex="-1"></a>height <span class="op">=</span> <span class="dv">50</span></span>
+<span id="cb2-145"><a href="#cb2-145" aria-hidden="true" tabindex="-1"></a>lims <span class="op">=</span> ({<span class="dt">xMin</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span> <span class="dt">xMax</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">yMin</span><span class="op">:</span><span class="dv">0</span><span class="op">,</span> <span class="dt">yMax</span><span class="op">:</span><span class="dv">1</span>})</span>
+<span id="cb2-146"><a href="#cb2-146" aria-hidden="true" tabindex="-1"></a>margin <span class="op">=</span> ({<span class="dt">top</span><span class="op">:</span> <span class="dv">40</span><span class="op">,</span> <span class="dt">right</span><span class="op">:</span> <span class="dv">40</span><span class="op">,</span> <span class="dt">bottom</span><span class="op">:</span> <span class="dv">40</span><span class="op">,</span> <span class="dt">left</span><span class="op">:</span> <span class="dv">40</span>})</span>
+<span id="cb2-147"><a href="#cb2-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-148"><a href="#cb2-148" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> d3<span class="op">.</span><span class="fu">scaleLinear</span>()</span>
+<span id="cb2-149"><a href="#cb2-149" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">domain</span>([lims<span class="op">.</span><span class="at">yMin</span><span class="op">,</span> lims<span class="op">.</span><span class="at">yMax</span>])</span>
+<span id="cb2-150"><a href="#cb2-150" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">range</span>([height <span class="op">-</span> margin<span class="op">.</span><span class="at">bottom</span><span class="op">,</span> margin<span class="op">.</span><span class="at">top</span>])<span class="op">;</span></span>
+<span id="cb2-151"><a href="#cb2-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-152"><a href="#cb2-152" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> d3<span class="op">.</span><span class="fu">scaleLinear</span>()</span>
+<span id="cb2-153"><a href="#cb2-153" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">domain</span>([lims<span class="op">.</span><span class="at">xMin</span><span class="op">,</span> lims<span class="op">.</span><span class="at">xMax</span>])</span>
+<span id="cb2-154"><a href="#cb2-154" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">range</span>([margin<span class="op">.</span><span class="at">left</span><span class="op">,</span> width <span class="op">-</span> margin<span class="op">.</span><span class="at">right</span>])<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-2-1" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-2-2" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-2-3" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-2-4" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-2-5" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<div id="ojs-cell-2-6" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code hidden" id="cb3" data-startfrom="158" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 157;"><span id="cb3-158"><a href="#cb3-158" aria-hidden="true" tabindex="-1"></a><span class="co">// Includes</span></span>
+<span id="cb3-159"><a href="#cb3-159" aria-hidden="true" tabindex="-1"></a>d3 <span class="op">=</span> <span class="pp">require</span>(<span class="st">"d3@7"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-3" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<p>Imagine you stand on the pavement on your street, flip a coin and take a step left for heads or a step right for tails. Then repeat. Your movement might look something like the circle above, which is moving according to electronic coin flips made by your computer.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>We call this kind of path a <em>random walk</em> in mathematics, and though it might not seem like much, random walks prove to be of great use in modelling complex systems in diverse fields, from financial markets to animal behaviour. It is also used everywhere in computational physics from the cosmological to the quantal, but perhaps the most familiar random walk in physics came in the form of a classical problem so we’ll start there.</p>
+<section id="brownian-motion" class="level2">
+<h2 class="anchored" data-anchor-id="brownian-motion">Brownian Motion</h2>
+<p>In 1827, the Scottish botanist Robert Brown looked through his microscope at pollen grains suspended in water and noted that they jittered around in a way he couldn’t explain.</p>
+<p>It took until 1905 until a satisfactory answer was provided by Albert Einstein<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> who brought some statistical methods to the problem, predicting that the random motion of the pollen grains was due to water being made up of molecules, which were continually bumping into the pollen grains. First he derived a diffusion equation for the grains, then he showed how to link this to physically measurable quantities starting with the <em>mean squared dispacement</em> (MSD), which we’ll come back to.</p>
+<p>The reality of atoms and molecules was not fully accepted at that time, and Einstein viewed this model of Brownian motion as a way to give evidence for, or to falsify, the atomic theory. He wrote <a href="http://users.physik.fu-berlin.de/~kleinert/files/eins_brownian.pdf"> in the paper</a>:</p>
+<blockquote class="blockquote">
+If the movement discussed here can actually be observed (together with the laws relating to it that one would expect to find), then classical thermodynamics can no longer be looked upon as applicable with precision to bodies even of dimensions distinguishable in a microscope: an exact determination of actual atomic dimensions is even possible. On the other hand, had the prediction of this movement proved to be incorrect, a weighty argument would be provided against the molecular-kinetic conception of heat.
+</blockquote>
+<p>Experimental verification of the theory was made a few years later by <a href="http://www.nobelprize.org/nobel_prizes/physics/laureates/1926/perrin-bio.html">Jean Perrin</a> — atoms and molecules were here to stay.</p>
+</section>
+<section id="walking-on-a-lattice" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="walking-on-a-lattice">Walking on a Lattice</h2>
+<p>To introduce modelling with random walks, we’ll go back to the coin toss example we started with. This is an example of a lattice walk, in this case a 1D lattice.</p>
+<p>We define the walk as a sequence of <span class="math inline">n</span> independent integers <span class="math inline">a_n</span>, each with equal probability of being either -1 or 1. Then we define the series <span class="math inline">\{ S_n \}</span>, where</p>
+<p><span class="math display"> S_n = \sum_{i=0}^{n}{a_n}, </span></p>
+<p>as the random walk. In the simulation below, 100 walks are made with <span class="math inline">n = 20</span> steps. The final positions of the walkers are recorded in the histogram, which gives us a starting point for investigating the statistical properties of the lattice walk.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>Click to start. The walkers move along the horizontal axis, with their paths being tracked in time on the vertical axis and their final positions recorded in the histogram.</p>
+</div><div class="">
+<p>Note that no walkers land on odd numbers. Why is that?</p>
+</div></div>
+<p>[FIGURE UNDER REPAIR]</p>
+<!-- <script src="assets/random-walks-1.js"></script> -->
+<p>A number of runs should show that despite each walker taking its own route, the result of many walkers tends toward the same result: a normal distribution. I won’t derive that distribution here, but fundamentally its normality is due to the <a href="http://mathworld.wolfram.com/CentralLimitTheorem.html">central limit theorem</a>.</p>
+<p>All good, but for any physical system we’re trying to model (e.g.&nbsp;Brown’s jittery pollen grains) we need to find something to relate the individual walkers to something we can physically observe. The obvious place to start is the question: how far do the walkers get after a certain time, or <span class="math inline">n</span> steps?</p>
+<p>The mean value <span class="math inline">\langle a_n \rangle</span> of any single step is zero, and by addition we find the the mean, or expectation, value of the walk,</p>
+<p><span class="math display"> \langle S_n \rangle = \sum_{i=0}^{n}{\langle a_i \rangle} = 0. </span></p>
+<p>This we might expect, as with each step having equal probability of going either way the most probable distance travelled after a number of steps will be zero — back where the walker started. So in this case the mean displacement is not useful to us.</p>
+<p>Next we might look at the squared distance travelled. This proves more useful as <span class="math inline">(-1)^2 = 1^2 = 1</span>, so <span class="math inline">\langle a_n^2 \rangle = 1.</span> Then</p>
+<p><span class="math display"> \langle S_n^2 \rangle = \sum_{i=0}^{n}{\langle a_i^2 \rangle} +
+\sum_{i=0}^{n} \sum_{j \ne i} 2 \langle a_i a_j \rangle = n + 0 = n.</span></p>
+<p>So this non-zero <a href="http://www.compsoc.man.ac.uk/~lucky/Democritus/Theory/msd.html"> mean squared displacement</a> gives us a more useful statistical quantity to work with.</p>
+</section>
+<section id="measurable-quantities" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="measurable-quantities">Measurable Quantities</h2>
+<p>In his paper Einstein derived, from basic principles of kinetic theory, a mean squared displacement that might be expected for a particle subject to Brownian motion. Describing the motion in terms of a <a href="http://en.wikipedia.org/wiki/Diffusion_equation">diffusion equation</a>, he showed that the mean squared displacement <span class="math inline">\langle S(t)^2 \rangle</span> of a particle at a time <span class="math inline">t</span> is related linearly to the <em>diffusion coefficient</em> <span class="math inline">D</span> by</p>
+<p><span class="math display"> \langle S(t)^2 \rangle = 2 d D t</span></p>
+<p>where <span class="math inline">d</span> is the number of dimensions in the problem. The diffusion of particles is something we can observe and measure, so now we have a way to check the random walks of a model with reality.</p>
+<p>In the next simulation, we’ll move up to a 2D lattice, where each walker can move on a plane: up, down, left or right with equal probability. We’ll set off 50 walkers, and keep track of the MSD as we go in a graph.</p>
+<p>The equation for the diffusion coefficient above tells us we should expect the MSD graph to tend to a straight line as we increase the number of walkers. Then, once the last walker has walked we’ll take a line of best fit through the function from which (by the relation for the diffusion equation above, with <span class="math inline">d = 2</span>) the slope of the line gives us the diffusion coefficient.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>Click to start. The walkers move around the plane randomly.</p>
+</div><div class="">
+<p>The graph below shows the mean squared distance the walkers have travelled, against the number of steps taken.</p>
+</div><div class="">
+<p>Does the MSD function tend toward a straight line? When the walkers are finished and the trendline is drawn, does it fit the data well?</p>
+</div><div class="">
+<p>What does the diffusion coefficient tell us about particle motion?</p>
+</div></div>
+
+
+<p>[FIGURE UNDER REPAIR]</p>
+<!-- <script src="assets/random-walks-2.js"></script> -->
+</section>
+<section id="conclusions" class="level2">
+<h2 class="anchored" data-anchor-id="conclusions">Conclusions</h2>
+<p>I hope I’ve given an inkling of how detailed physical models can be based on something as simple as taking random steps. By making a good choice of random walks, we can sample huge domains in a systematic way that gives us useful results, without having to check every possible outcome (for example, every way a particle might go). We can then link the theory of microscopic behaviour to macroscopic observables — things we can measure in the lab.</p>
+<p>One example, Einstein’s model of Brownian motion and Perrin’s measurement, provided crucial evidence for the existence of atoms at the beginning of the last century, something we take for granted now. But as I mentioned, random walks are everywhere in physics, playing an important role in what are known as Monte Carlo simulations.</p>
+</section>
+<section id="references-further-reading" class="level2">
+<h2 class="anchored" data-anchor-id="references-further-reading">References &amp; Further Reading</h2>
+<ul>
+<li><p>Werner Krauth. <em>Statistical Mechanics: Algorithms and Computations</em>, Oxford University Press, November 2006.</p></li>
+<li><p>Jos Thijssen. <em>Computational Physics</em>. Cambridge University Press, second edition, March 2007.</p></li>
+<li><p>When writing this note, I found <a href="http://mixedbit.org/blog/2013/02/10/random_walk_illustrated_with_d3.html">this blogpost</a> by Jan Wrobel, who has done something similar to the first simulation. I used his code to improve my walk loops.</p></li>
+</ul>
+<!-- ---
+layout: note
+title: Random Walks
+location: Durham
+category: research
+redirect_from:
+  - /notes/random-walks/
+description: An introduction to random walks in physical models, including Einstein’s explanation of Brownian motion. Using D3 demos we see how such models allow us to link microscopic behaviour to things we can measure in the lab.
+published: true
+include_math: true
+include_d3: true
+--- -->
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>Your computer is actually generating pseudorandom numbers. A good introduction to random and pesudorandom numbers can be found in <a href="http://www.bbc.co.uk/programmes/b00x9xjb">this epsisode</a> of In Our Time.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>Einstein had a spectacular 1905, coming up with an explanation for the photoelectric effect (starting the quantum revolution), special relativity and the mass-energy equivalence as well as giving this explanation of Brownian motion. Each of these four would be deserving of a Nobel prize. It is known as the <a href="http://en.wikipedia.org/wiki/Annus_Mirabilis_papers"><em>annus mirabilis</em></a>. No physicist has felt truly productive ever since.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script type="ojs-module-contents">
+{"contents":[{"methodName":"interpret","cellName":"ojs-cell-1","inline":false,"source":"{\n  // const height = 50;\n  const svg = d3.select(DOM.svg(width, height));\n  \n  let pos = 0.5;\n  const step = 0.05;\n  \n  var walker = svg.append(\"circle\");\n      walker\n          .attr(\"cx\", x(pos))\n          .attr(\"cy\", y(0.5))\n          .attr(\"r\", 10)\n          .classed(\"fill-coral\", true);\n  \n  while (true) {\n    yield svg.node();\n    await Promises.delay(1000);\n    if (Math.random() < 0.5) {\n      pos += step;\n    }\n    else \n    {\n      pos -= step;\n    }\n    walker.transition().duration(100).attr(\"cx\", x(pos)).end();\n  }\n}\n"},{"methodName":"interpret","cellName":"ojs-cell-2","inline":false,"source":"width = 720;\nheight = 50\nlims = ({xMin: 0, xMax: 1, yMin:0, yMax:1})\nmargin = ({top: 40, right: 40, bottom: 40, left: 40})\n\ny = d3.scaleLinear()\n  .domain([lims.yMin, lims.yMax])\n  .range([height - margin.bottom, margin.top]);\n\nx = d3.scaleLinear()\n    .domain([lims.xMin, lims.xMax])\n    .range([margin.left, width - margin.right]); \n"},{"methodName":"interpret","cellName":"ojs-cell-3","inline":false,"source":"// Includes\nd3 = require(\"d3@7\")\n"}]}
+</script>
+<script type="module">
+if (window.location.protocol === "file:") { alert("The OJS runtime does not work with file:// URLs. Please use a web server to view this document."); }
+window._ojs.paths.runtimeToDoc = "../../random-walks";
+window._ojs.paths.runtimeToRoot = "../..";
+window._ojs.paths.docToRoot = "..";
+window._ojs.selfContained = false;
+window._ojs.runtime.interpretFromScriptTags();
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right"><em>Think deeply of simple things.</em></div>
+  </div>
+</footer>
+
+
+
+</body></html>

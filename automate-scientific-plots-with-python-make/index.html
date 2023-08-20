@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.361">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2020-01-24">
+
+<title>Thomas Ogden - Automate Scientific Plots and Tables with Python and Make</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Thomas Ogden</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools ms-auto">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        
+    </div>
+<!-- main -->
+<main class="content page-columns page-full" id="quarto-document-content">
+
+<header id="title-block-header">
+<h1 class="title display-7">Automate Scientific Plots and Tables with Python and Make</h1>
+
+<p class="date">2020-01-24</p>
+</header>
+
+<p>A common task of scientific projects is creating plots and tables to visualise data and adding these plots and tables to some output document, for example a paper, thesis or slide deck. In a typical workflow, we might have some input data which is processed by Python scripts and output in image files. These images are then referenced in a TeX file to be rendered as a PDF.</p>
+<p>When you start working on projects like this, all of these steps will likely be manual. What happens if the data is updated? You have to re-run the plot scripts, remembering the right commands to run and subtleties of the environment in which they will run successfully. Then you manually save the plots into a folder. Then you manually copy them into another folder to be referenced from the TeX file. Then you manually re-run the TeX renderer. All these manual steps multiply the potential for errors and for reproducibility to be broken if you forget to document every step exactly. This is where someone comes to you six months later because they can’t reproduce the output and you say ‘Oh, I forgot to say this package has to be installed’ or ‘Oh, I forgot to say you need <code>x</code> added to the <code>y</code> environment variable for that to work.’ And that someone in six months is most likely to be you.</p>
+<p>We solve this by writing the steps down exactly. The most well-used tool for this kind of thing is <code>make</code>. You might think of <code>make</code> as a tool for building code, but really it is a tool for expressing dependencies of files — it is perfect for automating tasks like this.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> I’m going to illustrate how I typically do this kind of thing in a demo project with a <code>Makefile</code> and I’ll go through the steps here. The <a href="https://github.com/tpogden/demo-plots-python-make">demo project is on GitHub</a>, including the rendered outputs. The particular dataset and analysis here is not important, it’s just to have something to demo. We’re looking at Transport for London’s cycle hire usage data aggregated in <a href="https://www.kaggle.com/hmavrodiev/london-bike-sharing-dataset/data">this Kaggle dataset</a>.</p>
+<section id="another-plot-another-planet" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="another-plot-another-planet">Another Plot, Another Planet</h2>
+<p>The plots we’re going to produce in this project are written as Python scripts using <code>matplotlib</code>. We’ll put all plot scripts in a <code>src/plots</code> folder. In there, every plot script is prefixed with <code>plot_</code>. In our demo project we have</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>src<span class="op">/</span>plots<span class="op">/</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">+--</span>plot_daily_journeys.py</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">+--</span>plot_trips_vs_temp.py</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>I strongly recommend you have <em>one</em> script for every <em>one</em> plot you want to show in the final outputs. Even if the script is exactly the same apart from a parameter or two. This will often mean a lot of repeat code, which you would usually want to avoid by abstraction. Resist the urge! In data visualisation you want to tailor each plot precisely, even if it’s just something like the location of a legend or some axis ticks. One script, one plot.</p>
+<p>The plot scripts all get boilerplate code at the top to parse arguments we’re going to pass in at the command line.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>parser <span class="op">=</span> argparse.ArgumentParser(description<span class="op">=</span><span class="st">"Plotting script."</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>parser.add_argument(<span class="st">'--pdf'</span>, default<span class="op">=</span><span class="va">False</span>, action<span class="op">=</span><span class="st">"store_true"</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">help</span><span class="op">=</span><span class="st">"Output PDF file."</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>parser.add_argument(<span class="st">'--png'</span>, default<span class="op">=</span><span class="va">False</span>, action<span class="op">=</span><span class="st">"store_true"</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">help</span><span class="op">=</span><span class="st">"Output PNG file."</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>parser.add_argument(<span class="st">"--show"</span>, default<span class="op">=</span><span class="va">False</span>, action<span class="op">=</span><span class="st">"store_true"</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">help</span><span class="op">=</span><span class="st">"Show plot in GUI."</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>opts, unknown <span class="op">=</span> parser.parse_known_args()</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'opts:'</span>, opts)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>They get matching boilerplate at the bottom to output based on those arguments.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the filename of this script without extension.</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>path_no_ext <span class="op">=</span> os.path.splitext(sys.argv[<span class="dv">0</span>])[<span class="dv">0</span>]</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> opts.pdf:</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    plt.savefig(path_no_ext <span class="op">+</span> <span class="st">'.pdf'</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> opts.png:</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    plt.savefig(path_no_ext <span class="op">+</span> <span class="st">'.png'</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> opts.show:</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>So for example the command <code>python src/plots/plot_daily_journeys.py --pdf --show</code> will both write the output plot to <code>src/plots/plot_daily_journeys.pdf</code> and show the plot in a GUI window for you to check.</p>
+<p>In this demo, we have two plots. First, <code>plot_daily_journeys.py</code> plots the average number of weekday bike trips by hour of the day, in wet and dry weather. Do more people cycle when it’s dry? When in the day do they hire bikes?</p>
+<div class="column-article">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/plot_daily_journeys.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Output from <a href="https://github.com/tpogden/demo-plots-python-make/blob/master/src/plots/plot_daily_journeys.py"><code>plot_daily_journeys.py</code></a>.</figcaption>
+</figure>
+</div>
+</div>
+<p>And second, <code>plot_trips_vs_temp.py</code> plots the number of cycle trips between 08:00 and 09:00 for each weekday in the period the data was collected, vs the feels-like temperature at the time. Do more people hire bikes when it feels warmer?</p>
+<div class="column-article">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/plot_trips_vs_temp.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Output from <a href="https://github.com/tpogden/demo-plots-python-make/blob/master/src/plots/plot_trips_vs_temp.py"><code>plot_trips_vs_temp.py</code></a>.</figcaption>
+</figure>
+</div>
+</div>
+<p>Now we’ll look at how we automate this in the <code>Makefile</code>. First we set the plots directory as a variable.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">PLOTS_DIR </span><span class="ch">=</span><span class="st"> src/plots/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Next we specify that all of the plot scripts are of the form <code>plot_*.py</code>, and that the matching outputs are <code>plot_*.png</code> for PNG files and <code>plot_*.pdf</code> for PDFs.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="dt">PLOTS_PY </span><span class="ch">=</span><span class="st"> </span><span class="ch">$(</span><span class="kw">wildcard</span><span class="st"> </span><span class="ch">$(</span><span class="dt">PLOTS_DIR</span><span class="ch">)</span><span class="st">plot_*.py</span><span class="ch">)</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="dt">PLOTS_PDF </span><span class="ch">=</span><span class="st"> </span><span class="ch">$(</span><span class="dt">PLOTS_PY</span><span class="kw">:</span><span class="ss">.py</span><span class="kw">=</span><span class="ss">.pdf</span><span class="ch">)</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="dt">PLOTS_PNG </span><span class="ch">=</span><span class="st"> </span><span class="ch">$(</span><span class="dt">PLOTS_PY</span><span class="kw">:</span><span class="ss">.py</span><span class="kw">=</span><span class="ss">.png</span><span class="ch">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Now we need to tell <code>make</code> the recipe that turns <code>.py</code> files in to <code>.png</code> and <code>.pdf</code> files.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="dv">$(PLOTS_DIR)%.pdf:</span><span class="dt"> </span><span class="ch">$(</span><span class="dt">PLOTS_DIR</span><span class="ch">)</span><span class="dt">%.py </span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    python <span class="ch">$&lt;</span> --pdf <span class="ch">$(</span><span class="dt">PLOTS_FLAGS</span><span class="ch">)</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="dv">$(PLOTS_DIR)%.png:</span><span class="dt"> </span><span class="ch">$(</span><span class="dt">PLOTS_DIR</span><span class="ch">)</span><span class="dt">%.py </span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    python <span class="ch">$&lt;</span> --png <span class="ch">$(</span><span class="dt">PLOTS_FLAGS</span><span class="ch">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>Here <code>$&lt;</code> is an <a href="https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html">automatic variable</a> that takes the name of the first prerequisite, in this case the python script.</p>
+</div></div><p>The variable <code>PLOTS_FLAGS</code> contains any extra flags we want to pass to every plotting script. We’ll look at that later. Now we add recipes to produce all the plots.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="dv">plots_pdf:</span><span class="dt"> </span><span class="ch">$(</span><span class="dt">PLOTS_PDF</span><span class="ch">)</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="dv">plots_png:</span><span class="dt"> </span><span class="ch">$(</span><span class="dt">PLOTS_PNG</span><span class="ch">)</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="dv">plots:</span><span class="dt"> plots_pdf plots_png</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>So then <code>make plots_pdf</code> will output all of the plot PDFs and <code>make plots</code> will output all formats. Note that <code>make</code> checks modified timestamps for dependencies and only updates what it needs to, so if you update only one script only that one will be re-run.</p>
+</section>
+<section id="producing-reports" class="level2">
+<h2 class="anchored" data-anchor-id="producing-reports">Producing Reports</h2>
+<p>You’ll usually have a separate folder for the documents you want to output, here we’re going to have two outputs, a paper and a slide deck, both to be produced using LaTeX. I put the source for these in <code>reports/</code>. I want the plots to be copied into a subfolder here to make the reports self-contained, so we write a rule to copy the PDF plots across.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="dt">FIGS_DIR </span><span class="ch">=</span><span class="st"> reports/figs/</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Take the pdfs in PLOTS_PDF and change the path from PLOTS_DIR to FIGS_DIR</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="dt">REPORT_FIGS_PDF </span><span class="ch">=</span><span class="st"> </span><span class="ch">$(</span><span class="kw">patsubst</span><span class="st"> </span><span class="ch">$(</span><span class="dt">PLOTS_DIR</span><span class="ch">)</span><span class="st">%</span><span class="kw">,</span><span class="st"> </span><span class="ch">$(</span><span class="dt">FIGS_DIR</span><span class="ch">)</span><span class="st">%</span><span class="kw">,</span><span class="st"> </span><span class="ch">$(</span><span class="dt">PLOTS_PDF</span><span class="ch">))</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Copy figures  </span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="dv">$(FIGS_DIR)%.pdf:</span><span class="dt"> </span><span class="ch">$(</span><span class="dt">PLOTS_DIR</span><span class="ch">)</span><span class="dt">%.pdf</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    cp -f <span class="ch">$&lt;</span> <span class="ch">$(</span><span class="dt">FIGS_DIR</span><span class="ch">)</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="dv">report_figs_pdf:</span><span class="dt"> </span><span class="ch">$(</span><span class="dt">REPORT_FIGS_PDF</span><span class="ch">)</span><span class="dt"> plots_pdf</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>After running <code>make report_figs_pdf</code> we have the following substructure.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">reports/</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="ex">+--paper.tex</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="ex">+--slides.tex</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="ex">+--figs/</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        <span class="ex">+--plot_daily_journeys.pdf</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        <span class="ex">+--plot_trips_vs_temp.pdf</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Now we make the reports, where .tex files are turned into .pdf files.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="dt">REPORTS_TEX </span><span class="ch">=</span><span class="st"> </span><span class="ch">$(</span><span class="kw">wildcard</span><span class="st"> </span><span class="ch">$(</span><span class="dt">REPORTS_DIR</span><span class="ch">)</span><span class="st">*.tex</span><span class="ch">)</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="dt">REPORTS_PDF </span><span class="ch">=</span><span class="st"> </span><span class="ch">$(</span><span class="dt">REPORTS_TEX</span><span class="kw">:</span><span class="ss">.tex</span><span class="kw">=</span><span class="ss">.pdf</span><span class="ch">)</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="dv">$(REPORTS_DIR)%.pdf:</span><span class="dt"> </span><span class="ch">$(</span><span class="dt">REPORTS_DIR</span><span class="ch">)</span><span class="dt">%.tex</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    pushd <span class="ch">$(</span><span class="dt">REPORTS_DIR</span><span class="ch">)</span>; pdflatex <span class="ch">$(</span><span class="dt">&lt;F</span><span class="ch">)</span>; popd </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="dv">paper:</span><span class="dt"> </span><span class="ch">$(</span><span class="dt">REPORTS_DIR</span><span class="ch">)</span><span class="dt">paper.pdf</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="dv">slides:</span><span class="dt"> </span><span class="ch">$(</span><span class="dt">REPORTS_DIR</span><span class="ch">)</span><span class="dt">slides.pdf</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="dv">reports_pdf:</span><span class="dt"> </span><span class="ch">$(</span><span class="dt">REPORTS_PDF</span><span class="ch">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Now <code>make paper</code> will do everything needed to create the paper, including updating the plots if needed, and <code>make slides</code> will do the same for the slide deck. The <code>make</code> command alone builds everything. You can view the output <a href="https://github.com/tpogden/demo-plots-python-make/releases/download/v1.0/paper.pdf">paper.pdf</a> and <a href="https://github.com/tpogden/demo-plots-python-make/releases/download/v1.0/slides.pdf">slides.pdf</a> in the <a href="https://github.com/tpogden/demo-plots-python-make">repo</a>.</p>
+</section>
+<section id="were-all-waving-flags-now" class="level2">
+<h2 class="anchored" data-anchor-id="were-all-waving-flags-now">We’re All Waving Flags Now</h2>
+<p>Another useful thing in using <code>make</code> for plots in this way is that you can pass in parameters you want to be consistent across all plots as additional flags. In this project I might wish to filter for bike journeys between a given start and end date. But if I do that I want the filtering to be consistent across my plots. So I added these flags to the parser in each script.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>parser.add_argument(<span class="st">"--start"</span>, default<span class="op">=</span><span class="st">'2015-01-04'</span>, <span class="bu">help</span><span class="op">=</span><span class="st">"Start date."</span>,</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>parser.add_argument(<span class="st">"--end"</span>, default<span class="op">=</span><span class="st">'2017-01-03'</span>, <span class="bu">help</span><span class="op">=</span><span class="st">"End date."</span>,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Now if I want to filter for a date range on all plots I set the flags.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="dt">PLOTS_FLAGS </span><span class="ch">=</span><span class="st"> --start 2015-01-04 --end 2017-01-03 --tex</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Notice how I also have a <code>--tex</code> flag? I want to render the plot text in TeX for production but it is slow when I’m working on the plots. By adding a switch on each script I can easily turn TeX rendering on and off all of them in one go.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> opts.tex:</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    matplotlib.rcParams[<span class="st">'text.usetex'</span>] <span class="op">=</span> <span class="va">True</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="tables" class="level2">
+<h2 class="anchored" data-anchor-id="tables">Tables</h2>
+<p>I recommend automating table output in the same way. Did you know Pandas can output dataframes to LaTeX tabular format with <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_latex.html"><code>DataFrame.to_latex</code></a>? This has some big advantages over manually produced tables: - We avoid digit transcription errors. Copy-pasting numbers is dangerous! - We improve scientific reproducibility. Where is that number from? Follow the code. - We can quickly do things like adjust the number of decimal places we want to output or consistently adjust parameters of the analysis like the start and end dates here.</p>
+<p>The table rules for the <code>Makefile</code> are so similar to the plot ones I’m not going to write them out, you can see for yourself <a href="https://github.com/tpogden/demo-plots-python-make">in the demo project</a>. Again I strongly recommend <em>one</em> table, <em>one</em> script.</p>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<p>You should automate your scientific data visualisation with plots and tables to reduce errors and improve reproducibility. A great tool for this is <code>make</code>. The <a href="https://github.com/tpogden/demo-plots-python-make">demo project for this blogpost</a> has a <code>Makefile</code> and scripts to produce the plots and tables rendered in the output documents. Take a look at the code, download and run it, and feel free to use any of it in your own projects.</p>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>This is not a guide to <code>make</code>. You’ll <a href="https://www.gnu.org/software/make/manual/make.html">find those elsewhere</a>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>When I’m working on a plot I’ll prefix it <code class="highlighter-rouge">WIP_plot_[…].py</code> so it doesn’t get picked up by the <code class="highlighter-rouge">make</code> jobs and also sits at the bottom of the folder.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right"><em>Think deeply of simple things.</em></div>
+  </div>
+</footer>
+
+
+
+</body></html>

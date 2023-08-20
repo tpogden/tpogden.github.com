@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.361">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2018-04-02">
+
+<title>Thomas Ogden - How to Make Light Go Faster Than Light</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css">
+
+</head>
+
+<body class="nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Thomas Ogden</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools ms-auto">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content page-columns page-full" id="quarto-document-content">
+
+<header id="title-block-header">
+<h1 class="title display-7">How to Make Light Go Faster Than Light</h1>
+
+<p class="date">2018-04-02</p>
+</header>
+
+<p>A result you might recall from special relativity is that causality requires that no object may travel faster than the speed of light. In this post I’m going to show you how at least one thing <em>can</em> travel faster than the speed of light and that thing is… light.</p>
+<section id="travelling-light" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="travelling-light">Travelling Light</h2>
+<p>In figure 1 you see an example simulation<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> of a short pulse of light of a single frequency travelling through space. We’ll label the space axis <span class="math inline">z</span> and the time axis <span class="math inline">t</span>.</p>
+<div class="column-article">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/fast-light-fwhm1-N0-movie.json.mp4.gif" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption"><em>Fig 1 —</em> Propagation of a weak Gaussian pulse through space. The distance unit is arbitrary.</figcaption>
+</figure>
+</div>
+</div>
+<p>It travels on unimpeded according to the homogenous <a href="https://en.wikipedia.org/wiki/Electromagnetic_wave_equation">Maxwell wave equation</a></p>
+<p><span class="math display"> \frac{\partial^2 E}{\partial z^2} - \frac{1}{c^2} \frac{\partial^2
+E}{\partial z^2} = 0 </span></p>
+<p>at the speed of light in vacuo, <span class="math inline">c</span>. Light is an electromagnetic wave and here <span class="math inline">E</span> is the magnitude of the electric field.</p>
+<p>In figure 2, we have the same pulse of light travelling over the same space, but this time it moves through a cloud of atoms indicated by the blue area between <span class="math inline">z = 0</span> and <span class="math inline">z = 1</span>. Now the right hand side of the wave equation is nonzero.</p>
+<div class="column-article">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/fast-light-fwhm1-N1-movie.json.mp4.gif" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption"><em>Fig 2 —</em> Gaussian pulse propagation through a cloud of two-level atoms. The time unit is the inverse spontaneous decay width of the transition. The green indicator line marks <span class="math inline">c</span>, the speed of light in vacuo.</figcaption>
+</figure>
+</div>
+</div>
+<p>The light is monochromatic and resonant with a level transition in the atoms. As the light pulse enters the atom cloud, the photons it’s made up of hit atoms and excite their electrons into the higher energy levels so that the energy of the light pulse is gradually absorbed and scattered. As it leaves the back of the atom cloud, the peak carries on with a constant but weaker peak intensity, about 50% of what it started with.</p>
+<p>There’s something more interesting that happens in the simulation though. The speed of light <span class="math inline">c</span> in this system is marked by the green line moving along with the pulse. That’s the speed that the peak of the pulse moved in figure 1. If you look closely at the pulse as it reaches the end of the atom cloud, you’ll see something odd. The peak of the pulse travelling through the atoms is ahead of the pulse that went through vacuum. It’s light that has arrived <em>faster than light</em>.</p>
+<p>The difference is hard to pick out I admit, so to make it clearer in figure 3 we have the photo finish at the end of the atom cloud.</p>
+<div class="column-article">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/fast-light-fig-3.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption"><em>Fig 3 —</em> Reversed time profiles of the results in figures 1 and 2 (shown blue and green respectively) at the <span class="math inline">z = 1</span> space point. The profiles are both normalised to a peak of 1 for comparison.</figcaption>
+</figure>
+</div>
+</div>
+<p>The blue pulse is the one from figure 1 and the green pulse is the one from figure 2. I’ve coloured them different to distinguish them here, but don’t take that to mean anything different about the light – it’s the same monochromatic pulse going in. You can see that here at the end of the medium, the centre of the pulse travelling through the atoms has advanced ahead of the vacuum pulse by about 10% of the initial pulse width.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
+<p>How do we square this with the causality requirement that nothing travels faster than light? Can this simulation be physical?</p>
+</section>
+<section id="phase-velocity-and-group-velocity" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="phase-velocity-and-group-velocity">Phase Velocity and Group Velocity</h2>
+<p>To understand how this faster-than-light or <em>superluminal</em> propagation works, we’ll start with the concept of <a href="https://en.wikipedia.org/wiki/Phase_velocity">phase velocity</a>. Take a monochromatic beam of light incident on some atoms. The light will induce dipoles on these atoms causing them to radiate a secondary wave at the same frequency. That it’s the same frequency is important here. The resultant superposition of the incoming and secondary waves then has the same frequency but a different phase. If this resultant wave lags the incoming wave an observer downstream has to wait longer to see the peaks of the resultant wave go by. The wave will appear to have slowed. This is what we mean by phase velocity, <span class="math inline">v_p</span>. The outgoing phase velocity depends on the incoming frequency, which is how a raindrop is able to split the colours of sunlight in a rainbow. We call that <a href="https://en.wikipedia.org/wiki/Dispersion_(optics)">dispersion</a>.</p>
+<p>We relate the phase velocity to the speed of light in a vacuum by <span class="math inline">v_p = \frac{c}{n}</span> where <span class="math inline">n</span> is the refractive index of the material (the atoms in our case) and is a function of the frequency <span class="math inline">\omega</span>. In figure 4 we see the refractive index for the atoms in the simulation above around the resonance transition.</p>
+<div class="column-article">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/fast-light-fig-4.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption"><em>Fig 4 —</em> Real refractive index <em>vs.</em> frequency around resonance on the atomic transition.</figcaption>
+</figure>
+</div>
+</div>
+<p>The effect on the light as it moves through these atoms depends on its frequency relative to the resonance. To the left we’re driving the atoms below their resonance frequency, <span class="math inline">n &gt; 1</span> and the resultant wave lags the incoming wave. To the right we’re driving the atoms above their resonance frequency, <span class="math inline">n &lt; 1</span> and the resultant wave leads the incoming wave. This is all classical physics as we’re driving the atoms with a weak field so each atom can be modelled well as a driven, damped harmonic oscillator.</p>
+<p>Now the envelope of the narrow pulse of light on resonance is equivalent to a superposition of waves across a wide range of frequencies,<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> each of which as we’ve seen will have a different <span class="math inline">v_p</span> according to where they are on the refractive index function in figure 4. The peak of the pulse is the position where the component frequencies are all in phase and this moves at a speed we call <a href="https://en.wikipedia.org/wiki/Group_velocity">group velocity</a>, <span class="math inline">v_g</span>. Similarly we define a group index <span class="math inline">n_g</span> such that <span class="math inline">v_g = \frac{c}{n_g}</span>. We can derive that this group index is given by</p>
+<p><span class="math display">
+v_g = n + \omega \frac{\mathrm{d}n}{\mathrm{d}\omega}.
+</span></p>
+<p>You can see that the second term is proportional to the gradient of the refractive index profile. If this is negative and large it is possible for <span class="math inline">v_g &gt; c</span>. For our system we see in figure 4 that the gradient is negative in a narrow region around the resonance. We call this a region of anomalous dispersion.</p>
+<p>How fast can we make the group velocity? The first thing we might think of to make it faster is to increase the atom number density to allow more induced dipoles to disperse the phase velocities. This does work, but there are a couple of drawbacks. First, the region of anomalous dispersion around resonance is also the region in which the atoms absorb the most energy from the field so the peak is significantly reduced. That’s OK to a point though, if we care just about the arrival time of the pulse and not its height. Second, and more significant, is the effect dispersion has on the shape of the pulse. See in figure 3 how the pulse developed a negative tail? Eventually the pulse breaks up and it no longer makes sense to talk about a single pulse. There’s a way to fix this though.</p>
+<p>In the top part of figure 5 we see again the refractive index from figure 4. The red area indicates the region of anomalous dispersion, where the gradient <span class="math inline">\frac{\mathrm{d}n}{\mathrm{d}\omega}</span> is negative. In fact, when I’ve been talking about the refractive index so far I’ve actually meant the <em>real</em> part of the refractive index, which is a complex quantity. The imaginary part is related to the absorption of light at a given frequency and is shown in purple. It’s a Lorentzian lineshape just like we see in <a href="https://en.wikipedia.org/wiki/Absorption_spectroscopy">absorption spectra</a>.</p>
+<div class="column-article">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/fast-light-fig-5.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption"><em>Fig 5 (Top) —</em> Real and imaginary parts of the complex refractive index <em>vs.</em> frequency around resonance on the atomic transition. The region of anomalous dispersion is indicated by the red area. <em>(Bottom) —</em> Input Gaussian pulses of widths <span class="math inline">t_w = 1</span> and <span class="math inline">t_w = 10</span> transformed into the frequency domain.</figcaption>
+</figure>
+</div>
+</div>
+<p>In the bottom part of figure 5 we see in blue the input pulse from figure 2, Fourier transformed into the <a href="https://en.wikipedia.org/wiki/Frequency_domain">frequency domain</a>. You can see what I mean when I said above that the pulse envelope is equivalent to a superposition across a wide range of frequencies. And in this plot we see why we are able to get superluminal propagation in this pulse – it covers the region of anomalous dispersion.</p>
+<p>Not all of the pulse is in the anomalous dispersion region however.<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> The low and high frequency wings of the pulse head out into the regions where <span class="math inline">\frac{\mathrm{d}n}{\mathrm{d}\omega}</span> is positive. That means that these components of the field are going to move slower and the pulse shape is going to be distorted. This is the cause of the negative tail of the pulse in figure 2. If we could get all of the pulse into the anomalous dispersion region, we could reduce this dispersion of the pulse. And we can!</p>
+<p>To get a narrower pulse in the frequency domain, we need a wider pulse in the time domain. The green pulse in the bottom part of figure 5 is one we’ve made 10× longer in the time domain and we see in the frequency domain it is all tucked in a narrow region around resonance. Moreover, the gradient of the refractive index is nearly constant for all components, so we should see less dispersion.</p>
+<p>In figure 6 we see the photo finish like in figure 3 but for the wider pulse, with and without the atom cloud.</p>
+<div class="column-article">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/fast-light-fig-6.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption"><em>Fig 6 —</em> Reversed time profiles of the results with no atoms and the atom cloud (shown blue and green respectively) at the <span class="math inline">z = 1</span> space point for longer pulses (<span class="math inline">t_w = 10</span>). The profiles are both normalised to a peak of 1 for comparison.</figcaption>
+</figure>
+</div>
+</div>
+<p>This time we see that the pulse holds its shape and at the same time we’re able to get pulse advancement of about 30% of the pulse width. This is light travelling significantly faster than <span class="math inline">c</span>. Figure 7 shows the pulse advancement of a series of simulations with varying pulse width and number density.</p>
+<div class="column-article">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/fast-light-fig-7.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption"><em>Fig 7</em> — Pulse advancement <em>vs.</em> number density for the narrow pulses (<span class="math inline">t_w = 1</span>) and wider pulses (<span class="math inline">t_w = 10</span>).</figcaption>
+</figure>
+</div>
+</div>
+<p>The blue dots indicate simulations done with the narrower pulses and the green dots indicate simulations done with the wider pulses. The relationship between number density and pulse advancement is close to linear. The highest pulse advancement I reached in these simulations is nearly 50% of the pulse width. The limiting factor is the increasing absorption such that I end up with a pulse so small I start hitting numerical limits in the simulation.</p>
+</section>
+<section id="experimental-observation" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="experimental-observation">Experimental Observation</h2>
+<p>All I’ve shown you so far is mathematics and the results of numerical simulations. The possibility of faster-than-light travel is a big claim. You might well be asking if it has ever been achieved in experiment. It has! As far back as <a href="https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.48.738">this Physical Review Letters paper by S. Chu <em>et al</em>.</a><a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a> in 1982. In that case they achieved pulse advancement but found large absorption, for reasons explained above. Later, the ability to avoid that absorption was realised in <a href="https://www.nature.com/articles/35018520">this Nature paper by L. J. Wang, A. Kuzmich &amp; A. Dogariu in 2000</a>. It’s worth quoting a bit of the abstract:</p>
+<blockquote class="blockquote">
+<p>Einstein’s theory of special relativity and the principle of causality imply that the speed of any moving object cannot exceed that of light in a vacuum (<span class="math inline">c</span>). Nevertheless, there exist various proposals for observing faster-than-<span class="math inline">c</span> propagation of light pulses, using anomalous dispersion near an absorption line, nonlinear and linear gain lines, or tunnelling barriers. However, in all previous experimental demonstrations, the light pulses experienced either very large absorption or severe reshaping, resulting in controversies over the interpretation. Here we use gain-assisted linear anomalous dispersion to demonstrate superluminal light propagation in atomic caesium gas. The group velocity of a laser pulse in this region exceeds <span class="math inline">c</span> and can even become negative, while the shape of the pulse is preserved.</p>
+</blockquote>
+<p>I particularly like this figure from a <a href="http://science.sciencemag.org/content/312/5775/895">2006 paper in Science by Gehring <em>et al</em>.</a>, because you can see it looks like my figure 3 above with pulse advancement and a dispersed negative tail (their time axis is the other way around so flip the image in your head).</p>
+<div class="column-article">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/boyd-science-fig.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption"><em>Fig 8</em> — Pulse advancement <em>vs.</em> number density for the narrow pulses (<span class="math inline">t_w = 1</span>) and wider pulses (<span class="math inline">t_w = 10</span>).</figcaption>
+</figure>
+</div>
+</div>
+<p>And while I was working on my PhD in Durham, my fellow student James Keaveney and colleagues in an experiment using a nano-cell <a href="https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.109.233001">achieved the largest negative group index ever measured</a>.</p>
+</section>
+<section id="information-velocity" class="level2">
+<h2 class="anchored" data-anchor-id="information-velocity">Information Velocity</h2>
+<p>At this point, you might be wondering why the authors above published papers on superluminal propagation rather than using it to make themselves incredibly rich. Maybe you’ve read <em>Flash Boys</em>, the best-selling book on high-frequency trading by Michael Lewis, and recall the story of the person who dug a straight-line tunnel for optical fibre through mountains between the exchanges of New York to Chicago to reduce the transmission time from 17 to 13 milliseconds. Traders handed over millions to access this small increase in speed. If I’m giving you instructions on how to make light travel <em>faster than the speed of light</em>, can’t I use that to beat the traders? You probably already guessed the answer is no.</p>
+<p>In the case of fast light, the group velocity <span class="math inline">v_g</span> is not the same as the velocity of information carried by the pulse. The reason is subtle, but remember that our wave envelope is made up of individual components travelling at a speed <span class="math inline">c</span>, even if their phase is shifted. The peak of the pulse is just where we see the phases of those components line up, and there is no causal link between the peak of the output pulse and the peak of the input pulse. We can’t send information faster than <span class="math inline">c</span>, even in superluminal propagation. Which is probably reassuring. I recommend <a href="https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.86.3925">this PRL paper by Kuzmich <em>et al.</em></a> (<a href="https://arxiv.org/abs/physics/0101068">arXiv</a>) if you want to read more about information velocity and causality in fast light.</p>
+</section>
+<section id="maxwellbloch" class="level2">
+<h2 class="anchored" data-anchor-id="maxwellbloch">MaxwellBloch</h2>
+<p>The main reason I wrote this post was to demonstrate one of the things you can easily simulate with <a href="https://github.com/tpogden/maxwellbloch">MaxwellBloch</a>, a Python package I’ve been developing from my research on nonlinear pulse propagation.</p>
+<p>I have a bunch of example <a href="https:github.com/tpogden/notebooks-maxwellbloch">MaxwellBloch notebooks in this Github repo</a>. For example, <a href="https://github.com/tpogden/notebooks-maxwellbloch/blob/master/examples/mb-solve-two-weak-pulse-few-atoms-decay.ipynb">the system in figure 2 is in this notebook</a>. Have a play with the package, adjust some parameters and see what you can simulate. The code behind each of the plots in this post is reproducible in <a href="https://github.com/tpogden/tpogden.github.com/blob/master/assets/notes/fast-light/fast-light-figs.ipynb">this notebook</a>, apart from figure 7 which is in <a href="https://github.com/tpogden/tpogden.github.com/blob/master/assets/notes/fast-light/fast-light-fig-7.ipynb">this notebook</a>.</p>
+<p>Corrections and suggestions welcome via {% include mail_ogden_eu.html %} or <a href="http://twitter.com/tpogden/">Twitter</a>.</p>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<ul>
+<li><p>Thomas P. Ogden (2016), <em>Resonant Pulse Propagation in Dense Atomic Vapours</em>. <a href="http://etheses.dur.ac.uk/11599/">PhD Thesis</a>.</p></li>
+<li><p>Kuzmich <em>et al.</em> (2001), <em>Signal velocity, causality, and quantum noise in superluminal light pulse propagation</em>. <a href="http://doi.org/10.1103/PhysRevLett.86.3925">Physical Review Letters, 86(18)</a> <a href="https://arxiv.org/abs/physics/0101068">(arXiv)</a>.</p></li>
+<li><p>Stenner <em>et al.</em> (2003), <em>The speed of information in a “fast-light” optical medium</em>. <a href="http://doi.org/10.1038/nature02035.1">Nature, 695–698</a>.</p></li>
+<li><p>Keaveney <em>et al.</em> (2012), <em>Maximal Refraction and Superluminal Propagation in a Gaseous Nanolayer</em>. <a href="https://doi.org/10.1103/PhysRevLett.109.233001">Physical Review Letters 109(23)</a> <a href="https://arxiv.org/abs/1208.4309">(arXiv)</a>.</p></li>
+<li><p>Gehring <em>et al.</em> (2006) <em>Observation of Backward Pulse Propagation Through a Medium with a Negative Group Velocity</em>. <a href="http://science.sciencemag.org/content/312/5775/895">Science 312(5775)</a></p></li>
+<li><p>Hecht (2015) <em>Optics</em>. Pearson Education.</p></li>
+<li><p>Greg Egan (2000) <a href="http://www.gregegan.net/APPLETS/20/20.html"><em>Subluminal</em></a>.</p></li>
+</ul>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>All of the simulations in this post have been produced with the <a href="https://github.com/tpogden/maxwellbloch">MaxwellBloch</a> package.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>To be precise, when I talk about pulse widths in this post I mean the <a href="https://en.wikipedia.org/wiki/Full_width_at_half_maximum">full width at half maximum</a>.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>If this paragraph is not clear to you I strongly recommend checking out <a href="http://www.gregegan.net/APPLETS/20/20.html">this demo by Greg Egan</a>. It brilliantly shows how a pulse envelope can be made up of multiple monochromatic light waves, and derives the group velocity so I don’t have to do that here.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>The pulse we put in was a Gaussian and the Fourier transform of a Gaussian is a Gaussian.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p>American readers might recognise the name Steven Chu as he later went on to be Secretary of Energy under Obama and the first member of the U.S. Cabinet to have won a Nobel Prize.<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right"><em>Think deeply of simple things.</em></div>
+  </div>
+</footer>
+
+
+
+</body></html>

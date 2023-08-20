@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.361">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2011-01-27">
+
+<title>Thomas Ogden - Useful Mac Apps for Scientists</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Thomas Ogden</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools ms-auto">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        
+    </div>
+<!-- main -->
+<main class="content page-columns page-full" id="quarto-document-content">
+
+<header id="title-block-header">
+<h1 class="title display-7">Useful Mac Apps for Scientists</h1>
+
+<p class="date">2011-01-27</p>
+</header>
+
+<p><em>Note: This post is from 2011 and out of date. Some of the apps below no longer exist. It’s kept for historical interest.</em></p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><img src="assets/mac-app-store.png" class="img-fluid"></p>
+</div></div><p>Even if you, quite reasonably, don’t know what computational physics is, I’m sure you can imagine that what I do most days involves spending a lot of time sat with a computer. I choose to use one with a glowing white fruit on it, as do many, for all sorts of reasons. One of the reasons I like Apple computers is the quality of the software available for OS X, and as the introduction of the <a href="http://www.apple.com/mac/app-store/">Mac App Store</a> has put the spotlight on Mac apps I thought I’d write about some of my favourite for doing science.</p>
+<p>The apps I’m writing about are all of a sort, and its perhaps easiest to describe them by what they are <em>not</em>. First, they’re not the behemoths of scientific computing, the big Ms: Mathematica, Matlab, Maple and Multiphysics. These — as you will know if you’ve used them — are powerful pieces of kit, and come with price tags to match. Their user interfaces are ported across all platforms. In my opinion, these interfaces can be clumsy<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> and slow compared to those tailored to the system they will be used on.</p>
+<p>Second, they’re not applications specific to one narrow area. There’s little value in me recommending the quantum chemistry or molecular dynamics software we use — if you need to use them you will likely know about them anyway.</p>
+<p>So what sort are these apps? Well, I’d say they all follow the <a href="http://www.faqs.org/docs/artu/ch01s06.html">Unix philosophy</a>, ‘Write programs that do one thing and do it well.’<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> They’re written in Cocoa and each show care has been taken in getting the look and feel of great Mac software. They’re written by small, indie companies, or in one case a mathematician with open source help. They’re inexpensive and good value.</p>
+<h2 class="anchored">
+Soulver
+</h2>
+<p>Acquilia’s <a href="http://www.acqualia.com/soulver/">Soulver</a> is like TextEdit with a built-in calculator. Start putting in numbers and it will tally up on the right. You can add all the constants you might wish to drop in, and reference values from previous lines. I think the <a href="http://www.youtube.com/watch?v=tR5tyhPmawE">demo video</a> demonstrates its usefulness better than any further rambling from me.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><img src="assets/mac-app-soulver.png" class="img-fluid"></p>
+</div></div><p>Where before I might have resorted to launching a spreadsheet to say, convert some results to atomic units — with all the slowness and faffery that brings — now I can fire up what is essentially a text file that can do sums. It’s simple and super. I also like the ‘Big Answer’ button, which makes final results more exciting, even if I am still out by an order of magnitude.</p>
+<p>One thing I would like is support for greek alphabet constants, those 26 romans get used up very quickly.</p>
+<section id="papers" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="papers">Papers</h2>
+<p><a href="http://mekentosj.com/papers/">Papers</a> is iTunes for scientific papers. It solves the problem of having hundreds of PDFs in odd folder structures, with opaque names, in the same way that you don’t have to worry about where your MP3s are once iTunes is taking care of them. Drag in a paper you’ve downloaded from some journal and it will automatically search the online databases to look up the author, journal, keywords, DOI and any other bit of metadata you might use. Magic.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><img src="assets/mac-app-papers.png" class="img-fluid"></p>
+</div></div><p>If you’re Cupertino all the way, there are syncing iPhone and iPad apps so you can keep all your literature handy and searchable when you’re out and about.</p>
+<p>The developers have avoided the icon style of ‘a piece of paper tilted to the left’, instead making a nice little isometric library, which brings back fond memories of SimCity 2000. You can even see an iMac G5 through the window if you look close enough.</p>
+<p>Mekentosj offer an educational discount — you just have to email them.</p>
+</section>
+<section id="omnigraphsketcher" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="omnigraphsketcher">OmniGraphSketcher</h2>
+<p><a href="http://www.omnigroup.com/products/omnigraphsketcher/">OmniGraphSketcher</a> makes beautiful graphs, very quickly. Copy two columns of text from anywhere — output from Terminal or a Console log, a spreadsheet, a website, wherever — separated with spaces, commas or semicolons. Paste them into OmniGraphSketcher and you’ve got a graph.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><img src="assets/mac-app-ogs.png" class="img-fluid"></p>
+</div></div><p>Everything is made as simple as possible. The size of the window is the size of the graph — shown in the status bar in pixels for bitmaps and cm for vectors. To adjust the range of the axes, just click and drag them. And the ability to fill in areas of the plot, with boundaries that lock to the curves, makes highlighting the important bits easy.</p>
+<p>It will make prettier and clearer graphs than Matlab or Gnuplot and&nbsp;it will take you a quarter of the time. You won’t have to remember what the keyword for ‘red’ is or how to adjust the axes.</p>
+<p>The developers claim it to be halfway between a scientific plotter and a drawing package, but really I find it almost perfect for making scientific diagrams. It lacks logarithmic scaling and 3D plots, but the built-in OS X utility Grapher serves me well enough in the few cases I need those.</p>
+<p>The OmniGroup has an <a href="https://store.omnigroup.com/edu">Education Store</a> with good discount.</p>
+</section>
+<section id="texshop" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="texshop">TexShop</h2>
+<p>Richard Koch’s <a href="http://pages.uoregon.edu/koch/texshop/">TeXShop</a> edits, typesets and previews TeX files. I downloaded it as part of the free MacTex bundle. The bundle is great for starting off writing with TeX — there’s enough tags and layout features to learn without having to worry about what applications to download. MacTeX thus gives you everything so you can try them all and see what you like. Obviously, this means it’s a huge (~1 GB) download.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><img src="assets/mac-app-texshop.png" class="img-fluid"></p>
+</div></div><p>TeXShop is simple to use, with a text editor for input and a preview of the PDF once the document has been successfully typeset. The Macros menu offers prefabbed layouts, tables, references and so on. Personally, all I’m using TeXShop for now is for writing, then using the keyboard shortcuts for ‘Attach Bibliography’, ‘Typeset’ and ‘Preview PDF’. I’m certain I’ll switch to my usual text editor and a couple of commands soon, but I’ve been very happy using TeXShop as my training wheels for TeX.</p>
+<p>I use <a href="http://iirojappinen.deviantart.com/art/TeXShop-icon-quot-LaTeX-quot-144216801">this replacement icon</a> as <a href="http://commons.wikimedia.org/wiki/File:TeXShop_icon.png">the original</a> hurts my brain a bit.</p>
+</section>
+<section id="transmit" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="transmit">Transmit</h2>
+<p>Panic <a href="http://panic.com/transmit/">Transmit</a> is the best FTP client on OS X. I hadn’t intended to include Transmit at first, as FTP is of course useful to a far broader group of people — &nbsp;web developers, particularly. However, I upgraded to Transmit 4 a few weeks ago and was wowed by a new feature which is already helping me to work quicker.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><img src="assets/mac-app-transmit.png" class="img-fluid"></p>
+</div></div><p>In computational science we often log into more powerful machines loaded with simulation software to run the codes we’ve written — it might be a multicore desktop in the institute or a supercomputer facility in a different city. This usually involves working with files locally and then sending them over to one of the big machines to compile and run — &nbsp;which would previously involve a long series of terminal commands. Transmit 4 has this wonderful Disks feature which allows me to mount a folder on a university computer as a drive on my Mac, via SFTP, so I can drag and drop files to it. Utterly brilliant.</p>
+<p>Finally, I should give a mention to the window in which I spend most of my time: typing Vim commands into the trusty old Terminal.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><img src="assets/mac-app-terminal.png" class="img-fluid"></p>
+</div></div><p>Another multi-platform tool I find indispensible is the remarkable, free, world-conquering <a href="http://db.tt/liMRsPe">Dropbox</a>. As well as syncing all my working projects between computers and my phone, the version tracking has saved me many times after a misplaced Save, and even given me an up-to-the-minute backup of my work when a hard drive failed.<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></p>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>Write once, run everywhere, enjoy nowhere.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>This is perhaps the feeling of ‘app’ <a href="http://www.bogost.com/blog/what_is_an_app.shtml" title="Ian Bogost - What
+is an App?">we’ve come to know</a> from using iPhones and the like.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>I also backup daily to Time Machine.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right"><em>Think deeply of simple things.</em></div>
+  </div>
+</footer>
+
+
+
+</body></html>

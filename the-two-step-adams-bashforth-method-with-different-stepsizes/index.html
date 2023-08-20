@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.361">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2014-09-25">
+
+<title>Thomas Ogden - The Two-Step Adams-Bashforth Method with Different Stepsizes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css">
+
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Thomas Ogden</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools ms-auto">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        
+    </div>
+<!-- main -->
+<main class="content page-columns page-full" id="quarto-document-content">
+
+<header id="title-block-header">
+<h1 class="title display-7">The Two-Step Adams-Bashforth Method with Different Stepsizes</h1>
+
+<p class="date">2014-09-25</p>
+</header>
+
+<p>The Adams-Bashforth family of numerical methods has a well-known derivation but I couldn’t find a source which gave the two-step method in the case that the two stepsizes are different. Why do I want that? The two-step method requires two initial points. The second point is often calculated using a Euler step, but as the Euler method is <span class="math inline">\mathcal{O(h^1)}</span> I want to make this first step small to avoid introducing a large global error. The third point is then calculated with the Adams-Bashforth method with different step sizes. From then on the Adams-Bashforth method can be used as usual. Another use might be in an <a href="http://en.wikipedia.org/wiki/Adaptive_stepsize">adaptive stepsize</a> method, where we want to adjust the stepsizes as we go.</p>
+<section id="an-initial-condition-ode-problem" class="level2">
+<h2 class="anchored" data-anchor-id="an-initial-condition-ode-problem">An Initial Condition ODE Problem</h2>
+<p>Say we have an ordinary differential equation <span class="math inline">y' = f(t,y(t))</span> with an initial condition <span class="math inline">y(t_0) = y_0</span> and we want to solve it numerically. If we know <span class="math inline">y(t)</span> at a time <span class="math inline">t_n</span> and want to know what <span class="math inline">y</span> is at a later time <span class="math inline">t_{n+1}</span>, the fundamental theorem of calculus tells us that we find it by integrating <span class="math inline">y'</span> over the time interval,</p>
+<p><span class="math display"> y(t_{n+1}) = y(t_n) + \int_{t_n}^{t_{n+1}} \! y'(t) \, \mathrm{d}t = y(t_n) +
+\int_{t_n}^{t_{n+1}} \! f(t,y(t)) \, \mathrm{d}t.</span></p>
+<p>The idea behind any ODE solver is to compute the right-hand-side integral for some numerical approximation of <span class="math inline">f</span>. The problem is then computed over a series of steps <span class="math inline">n = 1, 2, \dots N</span> to give a sequence of points <span class="math inline">y_n</span> which approximate <span class="math inline">y(t)</span> to some order of accuracy as a function of the stepsize. The method is <em>consistent</em> if the local error (i.e.&nbsp;the error from step <span class="math inline">n</span> to step <span class="math inline">n+1</span>) goes to zero faster than the stepsize <span class="math inline">(t_{n+1} - t_n)</span> goes to zero.</p>
+</section>
+<section id="polynomial-interpolation" class="level2">
+<h2 class="anchored" data-anchor-id="polynomial-interpolation">Polynomial Interpolation</h2>
+<p>Where the Euler method takes the slope <span class="math inline">f</span> to be a constant on the interval <span class="math inline">[t_n, t_{n+1}]</span>, the idea behind <em>Adams-Bashforth</em> methods is to approxmiate <span class="math inline">f</span> by a <a href="lagrange">Lagrange interpolating polynomial</a>:</p>
+<p><span class="math display"> P(t) = \sum_{j=1}^{m}{P_j(t)}   </span></p>
+<p>where</p>
+<p><span class="math display"> P_j(t) = y_j \prod_{\substack{k=1 \\ k \ne j}}^{m}{ \frac{t - t_k}{t_j - t_k}
+}. </span></p>
+<p>Here <span class="math inline">P(t)</span> is the polynomial of degree <span class="math inline">\le (m-1)</span> that passes through the <span class="math inline">m</span> points <span class="math inline">(t_1, y_1 = f(t_1))</span>, <span class="math inline">(t_2, y_2 = f(t_2))</span> <span class="math inline">\dots</span> <span class="math inline">(t_m, y_m = f(t_m))</span>. We’ll take the linear <span class="math inline">(m = 2)</span> interpolant on the point <span class="math inline">t\_{n}</span> and an earlier point <span class="math inline">t\_{n-1}</span>, so we have</p>
+<p><span class="math display"> P(t) = f(t_n, y_n)\frac{t - t_{n-1}}{t_n - t_{n-1}} + f(t_{n-1},
+y_{n-1})\frac{t - t_{n}}{t_{n-1} - t_n}. </span></p>
+<p>Now if we put this approximating polynomial into the integral above, we find</p>
+<p><span class="math display">
+\begin{align}
+\int_{t_n}^{t_{n+1}} \! f(t,y(t)) \, \mathrm{d}t &amp;\approx \int_{t_n}^{t_{n+1}}
+\! P(t) \, \mathrm{d}t \\
+&amp;= \int_{t_n}^{t_{n+1}} \! \left[ f(t_n, y_n)\frac{t - t_{n-1}}{t_n - t_{n-1}} +
+f(t_{n-1}, y_{n-1})\frac{t - t_{n}}{t_{n-1} - t_n} \right] \mathrm{d}t \\
+&amp;= \frac{(t_n - t_{n+1})}{2(t_{n-1}-t_n)} \left[ f(t_n,y_n)(t_n + t_{n+1} -
+2t_{n-1}) - f(t_{n-1},y_{n-1})(t_n - t_{n+1}) \right]
+\end{align}
+</span></p>
+</section>
+<section id="step-sizes" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="step-sizes">Step Sizes</h2>
+<p>If we let <span class="math inline">h_1 := t\_n - t\_{n-1}</span> and <span class="math inline">h\_2 := t\_{n+1} - t\_n</span> then</p>
+<p><span class="math display"> \int_{t_n}^{t_{n+1}} \! P(t) \, \mathrm{d}t = \frac{h_2}{2 h_1} \left[ (2 h_1
++ h_2) f(t_n,y_n)  - h_2 f(t_{n-1},y_{n-1}) \right]. </span></p>
+<p>Putting this back into the approximation, we get</p>
+<p><span class="math display"> y(t_{n+1}) \approx y(t_{n}) + \frac{h_2}{2 h_1} \left[ (2 h_1 + h_2)
+f(t_n,y_n)  - h_2 f(t_{n-1},y_{n-1}) \right] </span></p>
+<p>and our sequence of approximation points <span class="math inline">y_n</span> is calculated as</p>
+<p><span class="math display"> \color{coral}\boxed{\color{black}y_{n+1} = y_n + \frac{h_2}{2 h_1} \left[ (2 h_1 + h_2) f(t_n,y_n)  - h_2
+f(t_{n-1},y_{n-1}) \right]}</span></p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>This is the key result of this post: the approximation when the two steps <span class="math inline">h_1</span> and <span class="math inline">h_2</span> are not equal.</p>
+</div></div><p>for <span class="math inline">n = 1, 2, \dots N</span>. If the steps are of <em>equal size</em>, i.e.&nbsp;<span class="math inline">h := h_1 = h_2</span> we find</p>
+<p><span class="math display"> y_{n+1} = y_n + \frac{3}{2} h f(t_n,y_n) - \frac{1}{2} h f(t_{n-1},
+t_{n-1}),</span></p>
+<p>which is the <a href="http://en.wikipedia.org/wiki/Linear_multistep_method#Families_of_multistep_methods">standard two-step Adams-Bashforth method</a>.</p>
+</section>
+<section id="accuracy" class="level2">
+<h2 class="anchored" data-anchor-id="accuracy">Accuracy</h2>
+<p>Replacing <span class="math inline">f(t,y(t))</span> with the interpolant <span class="math inline">P(t)</span> <a href="http://en.wikipedia.org/wiki/Linear_multistep_method#CITEREFIserles1996">incurs a global error</a> of order <span class="math inline">\mathcal{O}(h^m)</span>, so in the case of the two- step method we have <span class="math inline">\mathcal{O}(h^2)</span>.</p>
+<p>Note that if you follow the same derivation with <span class="math inline">m = 1</span> you get the Euler method — so the Euler method is also in fact the one-step Adams-Bashforth method.</p>
+</section>
+<section id="python-implementation-of-the-method" class="level2">
+<h2 class="anchored" data-anchor-id="python-implementation-of-the-method">Python Implementation of the Method</h2>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>matplotlib inline</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We’ll now define a function to implement the two-step Adams-Bashforth method for a system of first-order ODEs. Below we’ll try it out on a test equation.</p>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> ode_int_ab(func, y_0, t, args<span class="op">=</span>{}):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">""" </span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Two-Step Adams-Bashforth approximation to a first-order ODE system with initial </span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">    conditions.</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">        func: (callable) The first-order ODE system to be approximated.</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">        y_0: (array) The initial condition.</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">        t: (array) A sequence of time points for which to solve for y.</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">        args: (dict) Extra arguments to pass to function.</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co">        y: (array) the approximated solution of the system at each time in t,</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co">            with the initial value y_0 in the first row.</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Initialise the approximation array</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> np.zeros([<span class="bu">len</span>(t), <span class="bu">len</span>(y_0)])</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    y[<span class="dv">0</span>] <span class="op">=</span> y_0</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co">### Step 0: Euler</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    h <span class="op">=</span> t[<span class="dv">1</span>] <span class="op">-</span> t[<span class="dv">0</span>]</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    y[<span class="dv">1</span>] <span class="op">=</span> y[<span class="dv">0</span>] <span class="op">+</span> h<span class="op">*</span>func(t[<span class="dv">0</span>], y[<span class="dv">0</span>], args) <span class="co"># Euler step</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co">###&nbsp;Step 1: Adams-Bashforth, Different Stepsizes</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    h_1 <span class="op">=</span> t[<span class="dv">1</span>] <span class="op">-</span> t[<span class="dv">0</span>]</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    h_2 <span class="op">=</span> t[<span class="dv">2</span>] <span class="op">-</span> t[<span class="dv">1</span>]</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    y[<span class="dv">2</span>] <span class="op">=</span> y[<span class="dv">1</span>] <span class="op">+</span> <span class="fl">0.5</span><span class="op">*</span>h_2<span class="op">/</span>h_1<span class="op">*</span>((<span class="fl">2.</span><span class="op">*</span>h_1 <span class="op">+</span> h_2)<span class="op">*</span>func(t[<span class="dv">1</span>], y[<span class="dv">1</span>], args) <span class="op">-</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>                               h_2<span class="op">*</span>func(t[<span class="dv">0</span>], y[<span class="dv">0</span>], args))</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="co">### Steps 2 to N-1: Adams-Bashforth</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Loop through the time steps</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, t_i <span class="kw">in</span> <span class="bu">enumerate</span>(t[<span class="dv">2</span>:<span class="op">-</span><span class="dv">1</span>], start<span class="op">=</span><span class="dv">2</span>):</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>        h <span class="op">=</span> t[i<span class="op">+</span><span class="dv">1</span>] <span class="op">-</span> t_i <span class="co"># size of the step</span></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>        y[i<span class="op">+</span><span class="dv">1</span>] <span class="op">=</span> y[i] <span class="op">+</span> (<span class="fl">1.5</span><span class="op">*</span>h<span class="op">*</span>func(t_i, y[i], args) <span class="op">-</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>                         <span class="fl">0.5</span><span class="op">*</span>h<span class="op">*</span>func(t[i<span class="op">-</span><span class="dv">1</span>], y[i<span class="op">-</span><span class="dv">1</span>], args)) <span class="co"># Adams-Bashforth</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> y</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="a-test-problem-the-exponential" class="level2">
+<h2 class="anchored" data-anchor-id="a-test-problem-the-exponential">A Test Problem: The Exponential</h2>
+<p>To test our solver, let’s take a simple ODE: <span class="math inline">y' = ay</span> with intial value <span class="math inline">y(0) = 1</span> and <span class="math inline">a \in \mathbb{C}</span>. We know the analytic solution of this equation is <span class="math inline">y = \mathrm{e}^{at}</span> so we can check the accuracy of the method against this.</p>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> exp(t, y, args):</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">""" An exponential function described as a first-order ODE. """</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    dydt <span class="op">=</span> args[<span class="st">'a'</span>]<span class="op">*</span>y</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> dydt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we’ve defined our solver and a test method, we can check that the method works for some example parameters. Here we’ll set <span class="math inline">a = 1</span> and solve over <span class="math inline">t \in [0, 5]</span>.</p>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>y_0 <span class="op">=</span> np.array([<span class="fl">1.</span>]) <span class="co"># Initial condition</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>solve_args <span class="op">=</span> {<span class="st">'a'</span>: <span class="fl">1.</span>}</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>t_max <span class="op">=</span> <span class="fl">5.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Next we’ll solve the system for different numbers of steps: <span class="math inline">N = 5, 10, 20</span> (corresponding to <span class="math inline">h = 1, \frac{1}{2}, \tfrac{1}{4}</span>). Then we’ll plot the results alongside the known analytic result <span class="math inline">y = \mathrm{e}^{t}</span>.</p>
+<p>For now, note that we’re leaving the first Euler step the same size as all the subsequent steps.</p>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> num_steps <span class="kw">in</span> [<span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">20</span>]:</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    t <span class="op">=</span> np.linspace(<span class="fl">0.</span>, t_max, num_steps<span class="op">+</span><span class="dv">1</span>) <span class="co"># Time steps</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> ode_int_ab(exp, y_0, t, solve_args)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    plt.plot(t, y, <span class="st">'-o'</span>, label<span class="op">=</span><span class="bu">str</span>(num_steps) <span class="op">+</span> <span class="st">' steps'</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>y_known <span class="op">=</span> np.exp(solve_args[<span class="st">'a'</span>]<span class="op">*</span>t) <span class="co"># Analytic result for comparison</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>plt.plot(t, y_known, <span class="st">'k--'</span>, label<span class="op">=</span><span class="st">'known'</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'$t$'</span>), plt.ylabel(<span class="st">'$y$'</span>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>plt.legend(loc<span class="op">=</span><span class="dv">2</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-6-output-1.png" width="593" height="429"></p>
+</div>
+</div>
+<p>From the plot above the method implementation looks good: the numerical solution behaviour follows the known analytic (black dashed line) solution, and is converging on it as we increase the number of steps. We can check that the order of the approximation is indeed <span class="math inline">\mathcal{O}(h^2)</span> by plotting a function of the global error at <span class="math inline">t=5</span>, given by <span class="math inline">| \, y_N - e^5 \, |</span>, over a large range of stepsizes.</p>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>max_N <span class="op">=</span> <span class="dv">16</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="dv">2</span><span class="op">**</span>np.arange(<span class="dv">1</span>, max_N) <span class="co">#&nbsp;N = 2, 4, 8, ..., 2^max_N</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>order_check <span class="op">=</span> <span class="dv">2</span> <span class="co"># for visual check of the order of accuracy</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>y_end <span class="op">=</span> np.zeros(<span class="bu">len</span>(N)) <span class="co"># array to fill with the final values</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>stepsize <span class="op">=</span> np.zeros(<span class="bu">len</span>(N)) <span class="co"># array to fill with the stepsizes</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, N_i <span class="kw">in</span> <span class="bu">enumerate</span>(N): <span class="co"># Loop over different numbers of steps</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    t <span class="op">=</span> np.linspace(<span class="fl">0.</span>, t_max, N_i<span class="op">+</span><span class="dv">1</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    y_end[i] <span class="op">=</span> ode_int_ab(exp, y_0, t, solve_args)[<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    stepsize[i] <span class="op">=</span> t_max<span class="op">/</span>N_i</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>plt.loglog(stepsize, <span class="bu">abs</span>(y_end <span class="op">-</span> y_known[<span class="op">-</span><span class="dv">1</span>]), <span class="st">'-o'</span>, label<span class="op">=</span><span class="st">'Global error'</span>)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>plt.loglog(stepsize, stepsize<span class="op">**</span>order_check,<span class="st">'k--'</span>, label<span class="op">=</span><span class="st">'$h^2$'</span>)</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'$h$'</span>)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>plt.legend(loc<span class="op">=</span><span class="dv">2</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-7-output-1.png" width="580" height="431"></p>
+</div>
+</div>
+<p>Plotting the global error (blue line) against stepsize on a logarithmic scale, we see that the slope is constant below <span class="math inline">h = 0.1</span>, which tells us that the order is constant. We could find that order formally by fitting this logarithm, but it’s good enough for now to compare the global error with the function <span class="math inline">h^2</span> (black dashed line). That the slopes are the same indicates visually that the method is <span class="math inline">\mathcal{O}(h^2)</span>. (Try comparing with <span class="math inline">h^1</span> or <span class="math inline">h^3</span> by changing <code>order_check</code> in the code above to <span class="math inline">1</span> or <span class="math inline">3</span>.)</p>
+</section>
+<section id="changing-the-first-step-size" class="level2">
+<h2 class="anchored" data-anchor-id="changing-the-first-step-size">Changing the First Step Size</h2>
+<p>Finally, remember that the reason we derived the two-step Adams-Bashforth method with different stepsizes was so we could make the first Euler <span class="math inline">\mathcal{O}(h^1)</span> step smaller. This step will otherwise introduce a large error which will carry through the subsequent Adams-Bashforth steps. How small should we make it?</p>
+<p>We’ll use the test ODE system <code>exp</code> as above but this time keep the main stepsize fixed at <span class="math inline">h = 10^{-2}</span>. Then we’ll compare taking the first Euler stepsize <span class="math inline">h_0</span> from <span class="math inline">10^{-2}</span> down to <span class="math inline">10^{-6}</span>.</p>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>num_stepsizes <span class="op">=</span> <span class="dv">40</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># logarithmically-spaced points from 10^-6 to 10^-2</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>first_stepsizes <span class="op">=</span> np.logspace(<span class="op">-</span><span class="dv">6</span>, <span class="op">-</span><span class="dv">2</span>, num_stepsizes<span class="op">+</span><span class="dv">1</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>y_end <span class="op">=</span> np.zeros(<span class="bu">len</span>(first_stepsizes))</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>num_steps <span class="op">=</span> <span class="dv">500</span> <span class="co"># i.e. h = 0.01</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, first_step <span class="kw">in</span> <span class="bu">enumerate</span>(first_stepsizes):</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    t <span class="op">=</span> np.linspace(first_step, t_max, num_steps<span class="op">+</span><span class="dv">1</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    t <span class="op">=</span> np.insert(t, <span class="dv">0</span>, <span class="fl">0.</span>) <span class="co">#&nbsp;Put a first 'small' step first</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    y_end[i] <span class="op">=</span> ode_int_ab(exp, y_0, t, solve_args)[<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>y_known <span class="op">=</span> np.exp(solve_args[<span class="st">'a'</span>]<span class="op">*</span>t)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We’ll plot the global error on a semilogarithmic axis.</p>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>plt.semilogx(first_stepsizes, <span class="bu">abs</span>(y_end <span class="op">-</span> y_known[<span class="op">-</span><span class="dv">1</span>]), <span class="st">'-o'</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="vs">r'$h_0$'</span>), plt.ylabel(<span class="st">'Global error'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<pre><code>(Text(0.5, 0, '$h_0$'), Text(0, 0.5, 'Global error'))</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-9-output-2.png" width="606" height="432"></p>
+</div>
+</div>
+<p>As we’d expect, the global error decreases as the contribution from the first error is brought down by reducing the first stepsize. But if we zoom in on the y-axis, we see that we can only bring it down so far before the error from the remaining steps begins to dominate.</p>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>plt.semilogx(first_stepsizes, <span class="bu">abs</span>(y_end <span class="op">-</span> y_known[<span class="op">-</span><span class="dv">1</span>]), <span class="st">'-o'</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="vs">r'$h_0$'</span>), plt.ylabel(<span class="st">'Global error'</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>plt.ylim([<span class="fl">0.030690</span>, <span class="fl">0.030695</span>])<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-10-output-1.png" width="631" height="437"></p>
+</div>
+</div>
+<p>So we see that reducing the size of the first step down from <span class="math inline">h_0 = h = 10^{-2}</span> reduces the global error down to around <span class="math inline">h_0 = 10^{-4}</span>. In general, if we <em>make the Euler step an order of magnitude smaller</em> we should bring the local error from this step in line with that of the first Adams-Bashforth steps.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right"><em>Think deeply of simple things.</em></div>
+  </div>
+</footer>
+
+
+
+</body></html>
