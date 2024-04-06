@@ -157,19 +157,20 @@ redirect_from:
    about it in the old days—‘In Another Country,’ ‘A Way You’ll Never Be,’ and
    ‘Now I Lay Me.’
 
-1. _The Goldfinch_ by Donna Tartt ★  --- This and _The Secret History_ are two of the most enjoyable novels I can
-   remember reading in a long time. Recommended by everyone, and now by me.
+1. _The Goldfinch_ by Donna Tartt ★  --- This and _The Secret History_ are two of the 
+   most enjoyable novels I can remember reading in a long time. Recommended by everyone, 
+   and now by me.
 
    > Caring too much for objects can destroy you. Only–if you care for a thing
    enough, it takes on a life of its own, doesn’t it? And isn’t the whole point
    of things—beautiful things—that they connect you to some larger beauty?
 
-1.  _Wind, Sand and Stars_ by Antoine de Saint-Exupéry --- _Saint-Ex_ wrote this memoir of his daring adventures as an early aviator
-    for the French Aéropostale, expanding into his thoughts on friendship, death
-    and living a meaningful life. He was a pioneer of the mail routes over the
-    Sahara and the Andes. In undependable aircraft, over mountain terrain with
-    navigation by landmarks on the ground or the stars at night, this was a
-    perilous occupation.
+1.  _Wind, Sand and Stars_ by Antoine de Saint-Exupéry --- _Saint-Ex_ wrote this memoir 
+    of his daring adventures as an early aviator for the French Aéropostale, expanding 
+    into his thoughts on friendship, death and living a meaningful life. He was a 
+    pioneer of the mail routes over the Sahara and the Andes. In undependable aircraft, 
+    over mountain terrain with navigation by landmarks on the ground or the stars at 
+    night, this was a perilous occupation.
 
     > Nothing, in truth, can ever replace a lost companion. Old comrades cannot
     be manufactured. There is nothing that can equal the treasure of so many
@@ -231,7 +232,8 @@ redirect_from:
 
 6. _The Grand Banks Café_ by Georges Simenon
 
-1. _The Undercover Economist Strikes Back_ by Tim Harford --- The sequel to his tour of microeconomics, this one covers macro, with a
+1. _The Undercover Economist Strikes Back_ by Tim Harford --- The sequel to his tour of 
+   microeconomics, this one covers macro, with a
    bit of the life of Bill Phillips and his [MONIAC][moniac] hydraulic computer.
 
    We learn about failures of supply like the 'prison-camp recession' and
@@ -311,10 +313,9 @@ redirect_from:
    years, and where this could take us.
 
 
-6. _Killers of the Flower Moon_ by David Grann ★ {%
-   include dash.html %} This is a shocking, tragic crime history from 1920s
-   Oklahoma. The sisters in a family of the Osage tribe of Native Americans,
-   rich from oil strikes on the rocky land they'd been shoved onto, started
+6. _Killers of the Flower Moon_ by David Grann ★ --- This is a shocking, tragic crime 
+   history from 1920s Oklahoma. The sisters in a family of the Osage tribe of Native 
+   Americans, rich from oil strikes on the rocky land they'd been shoved onto, started
    dying off. The surviving family have to pay for the new federal Bureau of
    Investigation to pull together a band to find the murderers and the
    conspiracy protecting them.

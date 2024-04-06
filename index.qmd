@@ -40,8 +40,8 @@ title-block-banner: false
 
 _Mostly applied maths._
 
-I'm currently Senior Data Scientist for Forecasting at [Spotify][spotify-ds]. I'm 
-interested in probabilistic approaches to machine learning on sequences and graphs.
+I'm a Senior Data Scientist at [Spotify][spotify-ds]. I build tools with probabilistic 
+machine learning on sequences and graphs.
 
 ## Notes
 
