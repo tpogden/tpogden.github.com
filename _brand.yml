@@ -1,0 +1,13 @@
+color:
+  foreground:
+    light: "#1a1a1a"
+    dark: "#e8e2e0"
+  background:
+    light: "#ffffff"
+    dark: "#1a1a1a"
+  primary: "#FF4834"
+  link: "#FF4834"
+
+typography:
+  base:
+    family: "PT Serif"

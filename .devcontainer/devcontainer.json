@@ -1,0 +1,30 @@
+{
+    "name": "Quarto Website",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": ".."
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "quarto.quarto",
+                "ms-python.python",
+                "ms-toolsai.jupyter",
+                "redhat.vscode-yaml"
+            ],
+            "settings": {
+                "python.defaultInterpreterPath": ".venv/bin/python",
+                "quarto.render.previewType": "internal"
+            }
+        }
+    },
+    "forwardPorts": [4200],
+    "portsAttributes": {
+        "4200": {
+            "label": "Quarto Preview",
+            "onAutoForward": "openBrowser"
+        }
+    },
+    "postCreateCommand": "bash .devcontainer/post_create.sh",
+    "postAttachCommand": "bash .devcontainer/post_attach.sh"
+}
