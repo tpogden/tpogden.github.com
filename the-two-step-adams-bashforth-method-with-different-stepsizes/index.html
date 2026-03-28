@@ -78,9 +78,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-e70e6c8862b938d37deae4dc14cd74d0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-bf78e73326c41ba1a8096df0536b137c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../site_libs/bootstrap/bootstrap-e70e6c8862b938d37deae4dc14cd74d0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-862df4a1dbe87aeef1848908997fc844.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-6524f3805d6578db4594f457cb2c80ad.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-862df4a1dbe87aeef1848908997fc844.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -418,13 +418,13 @@ t_{n-1}),</span></p>
 </section>
 <section id="python-implementation-of-the-method" class="level2">
 <h2 class="anchored" data-anchor-id="python-implementation-of-the-method">Python Implementation of the Method</h2>
-<div id="4c145a04" class="cell" data-execution_count="1">
+<div id="58824379" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>matplotlib inline</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>We’ll now define a function to implement the two-step Adams-Bashforth method for a system of first-order ODEs. Below we’ll try it out on a test equation.</p>
-<div id="64fadcb7" class="cell" data-execution_count="2">
+<div id="8c42e206" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> ode_int_ab(func, y_0, t, args<span class="op">=</span>{}):</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">""" </span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Two-Step Adams-Bashforth approximation to a first-order ODE system with initial </span></span>
@@ -469,7 +469,7 @@ t_{n-1}),</span></p>
 <p>To test our solver, let’s take a simple ODE: <span class="math inline">y' = ay</span> with intial value <span class="math inline">y(0) =
 1</span> and <span class="math inline">a \in \mathbb{C}</span>. We know the analytic solution of this equation is <span class="math inline">y
 = \mathrm{e}^{at}</span> so we can check the accuracy of the method against this.</p>
-<div id="48cc8006" class="cell" data-execution_count="3">
+<div id="9e480635" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> exp(t, y, args):</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">""" An exponential function described as a first-order ODE. """</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    dydt <span class="op">=</span> args[<span class="st">'a'</span>]<span class="op">*</span>y</span>
@@ -477,14 +477,14 @@ t_{n-1}),</span></p>
 </div>
 <p>Now we’ve defined our solver and a test method, we can check that the method works for some example parameters. Here we’ll set <span class="math inline">a = 1</span> and solve over <span class="math inline">t \in
 [0, 5]</span>.</p>
-<div id="163593e1" class="cell" data-execution_count="4">
+<div id="50bb6c31" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>y_0 <span class="op">=</span> np.array([<span class="fl">1.</span>]) <span class="co"># Initial condition</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>solve_args <span class="op">=</span> {<span class="st">'a'</span>: <span class="fl">1.</span>}</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>t_max <span class="op">=</span> <span class="fl">5.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Next we’ll solve the system for different numbers of steps: <span class="math inline">N = 5, 10, 20</span> (corresponding to <span class="math inline">h = 1, \frac{1}{2}, \tfrac{1}{4}</span>). Then we’ll plot the results alongside the known analytic result <span class="math inline">y = \mathrm{e}^{t}</span>.</p>
 <p>For now, note that we’re leaving the first Euler step the same size as all the subsequent steps.</p>
-<div id="445bd97c" class="cell" data-execution_count="5">
+<div id="5537318b" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> num_steps <span class="kw">in</span> [<span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">20</span>]:</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    t <span class="op">=</span> np.linspace(<span class="fl">0.</span>, t_max, num_steps<span class="op">+</span><span class="dv">1</span>) <span class="co"># Time steps</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> ode_int_ab(exp, y_0, t, solve_args)</span>
@@ -504,7 +504,7 @@ t_{n-1}),</span></p>
 </div>
 </div>
 <p>From the plot above the method implementation looks good: the numerical solution behaviour follows the known analytic (black dashed line) solution, and is converging on it as we increase the number of steps. We can check that the order of the approximation is indeed <span class="math inline">\mathcal{O}(h^2)</span> by plotting a function of the global error at <span class="math inline">t=5</span>, given by <span class="math inline">| \, y_N - e^5 \, |</span>, over a large range of stepsizes.</p>
-<div id="e898a981" class="cell" data-execution_count="6">
+<div id="3d958ba2" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>max_N <span class="op">=</span> <span class="dv">16</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="dv">2</span><span class="op">**</span>np.arange(<span class="dv">1</span>, max_N) <span class="co">#&nbsp;N = 2, 4, 8, ..., 2^max_N</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>order_check <span class="op">=</span> <span class="dv">2</span> <span class="co"># for visual check of the order of accuracy</span></span>
@@ -534,7 +534,7 @@ t_{n-1}),</span></p>
 <h2 class="anchored" data-anchor-id="changing-the-first-step-size">Changing the First Step Size</h2>
 <p>Finally, remember that the reason we derived the two-step Adams-Bashforth method with different stepsizes was so we could make the first Euler <span class="math inline">\mathcal{O}(h^1)</span> step smaller. This step will otherwise introduce a large error which will carry through the subsequent Adams-Bashforth steps. How small should we make it?</p>
 <p>We’ll use the test ODE system <code>exp</code> as above but this time keep the main stepsize fixed at <span class="math inline">h = 10^{-2}</span>. Then we’ll compare taking the first Euler stepsize <span class="math inline">h_0</span> from <span class="math inline">10^{-2}</span> down to <span class="math inline">10^{-6}</span>.</p>
-<div id="e04a5e1b" class="cell" data-execution_count="7">
+<div id="039e72a2" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>num_stepsizes <span class="op">=</span> <span class="dv">40</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># logarithmically-spaced points from 10^-6 to 10^-2</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>first_stepsizes <span class="op">=</span> np.logspace(<span class="op">-</span><span class="dv">6</span>, <span class="op">-</span><span class="dv">2</span>, num_stepsizes<span class="op">+</span><span class="dv">1</span>)</span>
@@ -547,7 +547,7 @@ t_{n-1}),</span></p>
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>y_known <span class="op">=</span> np.exp(solve_args[<span class="st">'a'</span>]<span class="op">*</span>t)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>We’ll plot the global error on a semilogarithmic axis.</p>
-<div id="0be41ae0" class="cell" data-execution_count="8">
+<div id="75f414bb" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>plt.semilogx(first_stepsizes, <span class="bu">abs</span>(y_end <span class="op">-</span> y_known[<span class="op">-</span><span class="dv">1</span>]), <span class="st">'-o'</span>)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="vs">r'</span><span class="dv">$</span><span class="vs">h_0</span><span class="dv">$</span><span class="vs">'</span>), plt.ylabel(<span class="st">'Global error'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
@@ -559,7 +559,7 @@ t_{n-1}),</span></p>
 </div>
 </div>
 <p>As we’d expect, the global error decreases as the contribution from the first error is brought down by reducing the first stepsize. But if we zoom in on the y-axis, we see that we can only bring it down so far before the error from the remaining steps begins to dominate.</p>
-<div id="99511f26" class="cell" data-execution_count="9">
+<div id="7c9bdaff" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>plt.semilogx(first_stepsizes, <span class="bu">abs</span>(y_end <span class="op">-</span> y_known[<span class="op">-</span><span class="dv">1</span>]), <span class="st">'-o'</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="vs">r'</span><span class="dv">$</span><span class="vs">h_0</span><span class="dv">$</span><span class="vs">'</span>), plt.ylabel(<span class="st">'Global error'</span>)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>plt.ylim([<span class="fl">0.030690</span>, <span class="fl">0.030695</span>])<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
