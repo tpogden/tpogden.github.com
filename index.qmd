@@ -39,12 +39,13 @@ title-block-banner: false
 
 _Mostly applied maths._
 
-## Bio
 
-![](4wtc.jpeg){.column-margin .profile-photo}
+## Bio
 
 I'm a Senior Data Scientist at [Spotify][spotify-ds]. I build tools with probabilistic
 machine learning on sequences and graphs.
+
+![](4wtc.jpeg){.column-margin .profile-photo}
 
 I did a PhD in Theoretical Physics at Durham. My  research in Quantum Optics
 and Quantum Information led to the [first observation of the _simulton_][aps-syn], a

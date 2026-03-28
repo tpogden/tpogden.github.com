@@ -164,6 +164,12 @@ img.profile-photo {
     max-width: 100%;
 }
 
+// Column-margin figures leave an empty <p> and wrapper div in the flow; collapse both
+div.page-columns:has(.no-row-height) {
+    margin: 0;
+    > p { display: none; }
+}
+
 // Listings
 .quarto-listing-container-default {
     margin-top: 1em;

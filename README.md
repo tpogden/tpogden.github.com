@@ -1,22 +1,72 @@
 # ogden.eu
 
-This repo holds the source of my homepage at https://ogden.eu.
+Source for my homepage at https://ogden.eu, rendered and published with [Quarto][quarto].
 
-The source is rendered and published using [Quarto][quarto]. Read the docs there for details. The basic process is that QMarkdown (*.qmd) files are converted to Jupyter Notebooks (*.ipynb) and then into HTML (*.html) files for publication.
+## Setup
 
-## Render and Publish
+1. Install [Quarto CLI][quarto-install].
+2. Install [uv][uv] and sync dependencies:
+   ```
+   uv sync
+   ```
 
-1. Download and install [Quarto CLI][quarto-install].
-2. Install [miniconda][miniconda].
-3. Create and activate the Conda environment with the neede dependencies:
+## Development
+
+Preview with hot reload:
 ```
-conda env create -f environment.yml
-conda activate ogden-eu
+quarto preview --render html
 ```
-4. Render the source with `quarto render`.
-5. Preview the rendered site with `quarto preview  --port 8000`
-6. Publish to Github Pages via the `gh-pages` branch of this repo, via `quarto publish gh-pages`.
+
+Build the site:
+```
+quarto render
+```
+
+Clean up shadow directories after a build:
+```
+bash scripts/clean.sh
+```
+
+## Publishing
+
+Publish to GitHub Pages via the `gh-pages` branch:
+```
+quarto publish gh-pages
+```
+
+## Python formatting
+
+Format and lint Python files with [ruff][ruff]:
+```
+uv run ruff format .
+uv run ruff check --fix .
+```
+
+## Directory structure
+
+Posts live under `_posts/category/slug/` (Quarto ignores `_`-prefixed directories). A pre-render script creates root-level shadow directories so posts render to flat URLs (`/slug/` rather than `/category/slug/`). Shadow directories are gitignored and cleaned up by `scripts/clean.sh`.
+
+```
+_posts/
+  research/
+    optical-solitons/
+    simultons/
+    …
+  reading/
+    book-notes-2022/
+    …
+  travel/
+    pennine-way/
+    …
+  personal/
+    …
+scripts/
+  pre-render.sh   # creates shadow dirs before render
+  post-render.sh  # no-op (shadow dirs kept for quarto preview)
+  clean.sh        # removes shadow dirs manually
+```
 
 [quarto]: https://quarto.org/
 [quarto-install]: https://quarto.org/docs/get-started/
-[miniconda]: https://docs.conda.io/en/latest/miniconda.html
+[uv]: https://docs.astral.sh/uv/
+[ruff]: https://docs.astral.sh/ruff/
