@@ -1,0 +1,40 @@
+---
+title: "Winter in Glencoe"
+date: "2014-02-16"
+categories: [travel]
+page-layout: full
+---
+
+A Durham Mountaineering winter trip to the Highlands.
+
+:::{.column-page}
+![Blowing snow on Sgorr Dhearg](assets/glen-coe-001.jpg){width=100%}
+:::
+
+:::{.column-page}
+![Loch Leven and the Pap of Glencoe.](assets/glen-coe-002.jpg){width=100%}
+:::
+
+:::{.column-page}
+![](assets/glen-coe-003.jpg){width=100%}
+:::
+
+:::{.column-page}
+![](assets/glen-coe-004.jpg){width=100%}
+:::
+
+:::{.column-page}
+![Sgorr Dhearg.](assets/glen-coe-005.jpg){width=100%}
+:::
+
+:::{.column-page}
+![Heading up Stob na Doire.](assets/glen-coe-006.jpg){width=100%}
+:::
+
+:::{.column-page}
+![Cornice to follow up to Sgorr Bhan.](assets/glen-coe-007.jpg){width=100%}
+:::
+
+:::{.column-page}
+![The Pass of Glencoe.](assets/glen-coe-008.jpg){width=100%}
+:::

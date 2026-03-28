@@ -1,5 +1,9 @@
 project:
   type: website
+  pre-render:
+    - "bash scripts/pre-render.sh"
+  post-render:
+    - "bash scripts/post-render.sh"
 
 website:
   title: "Thomas Ogden"
@@ -7,25 +11,24 @@ website:
     location: sidebar
   navbar:
     search: false
+    background: light
   site-url: https://ogden.eu
-  page-footer: 
-    # left:
-      # Copyright 2009–2023 Thomas P. Ogden.
+  page-footer:
     right:
-      _Think deeply of simple things._
+      _'Think deeply of simple things.'_
     border: false
 
 title-block-style: none
 
 format:
   html:
-    # minimal: true 
-    theme: 
+    theme:
       light: [none, tpogden.scss]
-      # dark: [none, tpogden.scss]
+      dark: [none, tpogden.scss]
     fontsize: 16px;
     email-obfuscation: references
     html-math-method: katex
+    respect-user-color-scheme: true
     include-in-header:
       text: |
         <script data-goatcounter="https://ogden.goatcounter.com/count" async

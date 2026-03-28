@@ -10,3 +10,43 @@
 # QuTiP/MaxwellBloch savefiles
 *.qu
 .ipynb_checkpoints/
+
+**/*.quarto_ipynb
+# post shadow dirs
+/10000-days/
+/sing-of-old-djurgarden/
+/the-oldest-referee/
+/book-notes-2011/
+/book-notes-2012/
+/book-notes-2013/
+/book-notes-2014/
+/book-notes-2015/
+/book-notes-2016/
+/book-notes-2017/
+/book-notes-2018/
+/book-notes-2019/
+/book-notes-2020/
+/book-notes-2021/
+/book-notes-2022/
+/approximate-expectations-of-nonlinear-multivariate-functions/
+/automate-scientific-plots-with-python-make/
+/benchmark-string-construction-in-cpp/
+/how-to-make-light-go-faster-than-light/
+/optical-solitons/
+/pi/
+/random-walks/
+/run-notebooks/
+/sieving-for-primes/
+/simultons/
+/the-two-step-adams-bashforth-method-with-different-stepsizes/
+/useful-mac-apps-for-scientists/
+/abisko-to-kvikkjokk/
+/arizona/
+/dubrovnic/
+/first-we-take-manhattan/
+/istanbul-and-the-bosphorus/
+/its-not-the-way-they-put-folks-on-the-moon/
+/motels-buttes-and-hoodoos/
+/pennine-way/
+/winter-in-glencoe/
+# end post shadow dirs

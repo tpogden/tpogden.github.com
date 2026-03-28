@@ -1,0 +1,78 @@
+---
+title: "Motels, Buttes and Hoodoos"
+date: "2014-01-17"
+categories: [travel]
+page-layout: full
+---
+
+<aside>Photos from the Arizona part of this trip, <a href="/photos/2014/arizona">here</a>.</aside>
+
+<p>Me, Hannes and Henning drove on from Arizona into Utah, to see a few of the national parks.</p>
+
+
+<h2>Monument Valley</h2>
+
+:::{.column-page}
+![](assets/utah-001.jpg){width=100%}
+:::
+
+<p>John Ford country &mdash; The <a href="http://en.wikipedia.org/wiki/West_and_East_Mitten_Buttes">Mittens</a> and <a href="http://en.wikipedia.org/wiki/Merrick%27s_Butte">Merrick&rsquo;s Butte</a> (on the right).</p>
+
+:::{.column-page}
+![](assets/utah-002.jpg){width=100%}
+:::
+
+:::{.column-page}
+![](assets/utah-003.jpg){width=100%}
+:::
+
+<p>Hannes and Henning supping Kanab coffee.</p>
+
+:::{.column-page}
+![](assets/utah-004.jpg){width=100%}
+:::
+
+<p>Driving up to Bryce Canyon, we found the state road closed for the morning while roadworkers dynamited rock. They were friendly and told us that with no quick way round, we may as well stop for coffee in Kanab. Turned out to be a good diversion, a picture of small-town America.</p>
+
+<h2>Bryce Canyon</h2>
+
+:::{.column-page}
+![](assets/utah-005.jpg){width=100%}
+:::
+
+<p>The great forests and Hoodoos of <a href="http://www.nps.gov/brca/index.htm">Bryce Canyon</a>. January is off-season so we had the valley to ourselves. With white snow to go with the blue skies, green pines and orange rock, It&rsquo;s hard to imagine a better time to go.</p>
+
+:::{.column-page}
+![](assets/utah-006.jpg){width=100%}
+:::
+
+:::{.column-page}
+![](assets/utah-007.jpg){width=100%}
+:::
+
+:::{.column-page}
+![](assets/utah-008.jpg){width=100%}
+:::
+
+<p>Pine and deer in the canyon.</p>
+
+:::{.column-page}
+![](assets/utah-009.jpg){width=100%}
+:::
+
+<p>Moonrise at Sunrise Point. With the pillars of rock still lit by the
+just-set sun directly behind us, a heavy full moon climbed over the Sinking Ship
+(the inclined ridge, centre). And a point of light above it, Jupiter. The solar
+system in line.</p>
+
+:::{.column-page}
+![](assets/utah-010.jpg){width=100%}
+:::
+
+<p>Last day, we drove to <a href="http://www.nps.gov/zion/index.htm">Zion National Park</a> at dawn. Looking down on Zion Canyon from the hike up to Angels Landing.</p>
+
+:::{.column-page}
+![](assets/utah-011.jpg){width=100%}
+:::
+
+<p>Zion Canyon, from the peak of <a href="http://en.wikipedia.org/wiki/Angels_Landing">Angels Landing</a>.</p>

@@ -1,0 +1,87 @@
+---
+title: "First We Take Manhattan"
+date: "2015-10-29"
+categories: [travel]
+page-layout: full
+---
+
+<!-- 'He was as tough and romantic as the city he loved.' -->
+
+<p>In October we took a trip to the mid-Atlantic cities of the United States:
+New York City, Washington, D.C. and Philadelphia. First we spent a week staying
+in an apartment on the Lower East Side. These photos are from Manhattan.</p>
+
+:::{.column-page}
+![ La Liberté éclairant le monde.](assets/26052314690_7f273a846d_k.jpeg){width=100%}
+:::
+
+A walk along the High Line from Chelsea Market to the Hudson Yards.
+
+:::{.column-page}
+![Hudsons Yards construction site.](assets/26232791572_32308d0462_k.jpeg){width=100%}
+:::
+
+<p>The construction site here is the largest development ever in the United States.</p>
+
+::: {layout-ncol=2 .column-page}
+![](assets/25720395164_4d0ce4c2d9_k.jpeg)
+
+![](assets/25720302644_ce90d32ffd_k.jpeg)
+:::
+
+<p>We went to a few of the museums of course: the Guggenheim, MoMA and The Metropolitan. I
+took early runs along the East River under the bridges.</p>
+
+:::{.column-page}
+![Fall turns in Central Park.](assets/25722479453_8bc4d94ab3_k.jpeg){width=100%}
+:::
+
+<p>Another day we rode bikes around the big loop of Central Park.</p>
+
+:::{.column-page}
+![Fall turns in Central Park.](assets/26232725062_6afe765865_k.jpeg){width=100%}
+:::
+
+:::{.column-page}
+![McNally Jackson books.](assets/25722363883_14ab7bb226_k.jpeg){width=100%}
+:::
+
+<p>We got to the Housing Works Bookstore and to McNally Jackson. Didn't make
+it to Strand but hopefully next time.</p>
+
+:::{.column-page}
+![Looking downtown from the Rockefeller Centre.](assets/25720289784_e8890a34fb_k.jpeg){width=100%}
+:::
+
+Your standard tourist skyscraper view of Gotham, of course. I think the viewing point 
+from the balcony bar at the Met is better, perched above Central Park.
+
+::: {layout-ncol=2 .column-page}
+![Orchard Street on the Lower East Side.](assets/26052452400_37047fd457_k.jpeg)
+
+![Brownstones in Harlem.](assets/26299125176_f88ca606b5_k.jpeg)
+:::
+
+<p>I would recommend a tour of the building maintained at the Tenement Museum on
+Orchard Street on the Lower East Side. Each floor is preserved at a different
+decade in its history, and tells the story of the migrant families living there
+at each point. It's a time capsule, boarded up in the 1930s and
+untouched until the museum bought the building in 1988.</p>
+
+:::{.column-page}
+![The Library of Columbia University.](assets/26325331755_783f42e829_k.jpeg){width=100%}
+:::
+
+<p>Morningside Heights and the campus at Columbia.</p>
+
+:::{.column-page}
+![Looking out to the Upper Bay and Verrazano-Narrows Bridge 
+  from the crown of the Statue of Liberty.](assets/26052399340_5592f0a930_k.jpeg){width=100%}
+:::
+
+<p>Livy was smart enough to book us tickets to go up to the crown in advance,
+so we got to go up there.</p>
+
+:::{.column-page}
+![](assets/26299265826_e96de94463_k.jpeg){width=100%}
+:::

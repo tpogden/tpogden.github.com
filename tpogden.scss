@@ -2,41 +2,37 @@
 
 $theme: "tpogden" !default;
 
-// Seaborn colors
+// Red Orange palette
+$red-orange-25: #560F00;
+$red-orange-55: #911600;
+$red-orange-75: #B71800;
+$red-orange-100: #E81B00;
+$red-orange-120: #FF4834;
+$red-orange-135: #FF7163;
+$red-orange-155: #FF9E95;
+$red-orange-180: #FFD3CF;
 
-$coral: rgba(255, 127, 80, 1); // coral
-$coral-light: rgba(255, 171, 136, 1);
-$coral-lighter: rgba(255, 213, 194, 1);
-
-$red: rgba(255, 66, 82, 1);
-$orange: rgba(255, 183, 92, 1);
-$green: rgba(105, 255, 140, 1);
-$blue: rgba(54, 186, 255, 1);
-$yellow: #FFFA69;
-$purple: #8F42FF;
-
-$white: white;
-$grey-light: #dbd7d7;
-$grey: #aaa3a1;
-$grey-dark: #5e5655;
-$black: #1a1a1a;
-
-$main: $coral;
-$main-light: $coral-light;
+// Accent aliases
+$main: $red-orange-120;
+$main-light: $red-orange-135;
 
 // Fonts
 $font-family-serif: 'PT Serif', Georgia, serif;
-$font-family-mono: 'PT Mono', SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
 $line-height: 28px;
 $font-size: 16px;
 
 $grid-body-width: 720px;
-// $grid-body-width: 592px;
 $grid-margin-width: 272px;
 $grid-column-gutter-width: 24px;
 
 /*-- scss:rules --*/
+
+// Theme-aware greys derived from body colors (adapt to light/dark)
+$grey-subtle: mix($body-color, $body-bg, 15%);
+$grey-mid: mix($body-color, $body-bg, 45%);
+$code-bg: mix($body-color, $body-bg, 8%);
+
 body {
     font-size: $font-size;
     line-height: $line-height;
@@ -46,12 +42,11 @@ body {
 h1 {
     font-size: 1.375em;
     font-weight: 400;
-    font-style: italic;
 }
 
 h2 {
     font-size: 1.25em;
-    color: $black !important;
+    color: $body-color !important;
     border-bottom: none;
     padding-bottom: none;
     font-weight: 400;
@@ -60,48 +55,51 @@ h2 {
 
 h3 {
     font-size: 1.125em;
-    color: $black;
+    color: $body-color;
     font-weight: 400;
     font-style: italic;
-  }
+}
 
 h4 {
     font-size: 1em;
     color: $main;
     font-style: italic;
-  }
+}
 
 a {
     color: $main;
     text-decoration-thickness: 1px;
-    text-decoration-color: $grey-light;
+    text-decoration-color: $grey-subtle;
     text-underline-offset: 2px;
 }
 
 a:visited {
     color: $main-light;
-  }
-  
-  a:active, a:hover {
-    color: $main;
-    // border-bottom: solid 1px red;
-  }
+}
 
-  blockquote {
-    border-left: 1px solid $grey-light;
-  }
+a:active, a:hover {
+    color: $main;
+}
+
+blockquote {
+    border-left: 1px solid $grey-subtle;
+}
+
+// Code blocks
+pre, code {
+    background-color: $code-bg;
+}
+
+div.sourceCode {
+    background-color: $code-bg;
+    border-color: $code-bg;
+}
 
 /* Lists ------------------------------------------------------------------- */
 
 ul {
     padding-left: 0px;
     list-style: none;
-    // li {
-    //   p {
-    //     // text-indent: 0px;
-    //     // clear: none;
-    //   }
-    // }
     li:before {
       content: "■";
       font-size: 3/4*$font-size;
@@ -113,15 +111,11 @@ ul {
       padding-right: 0px;
     }
   }
-  
+
   ol {
     padding-left: 0px;
     list-style: none;
     counter-reset: item;
-    li {
-      p {
-      }
-    }
     li:before {
       float: left;
       content: counter(item) "";
@@ -138,10 +132,16 @@ ul {
 // Navbar
 
 .navbar {
-    background-color: $white;
-    color: $main;    
+    background-color: $body-bg;
+    --bs-navbar-color: #{$main};
+    --bs-navbar-hover-color: #{$main-light};
+    --bs-navbar-active-color: #{$main};
     padding-top: 0rem;
     padding-bottom: 0rem;
+}
+
+.navbar .quarto-navigation-tool {
+    color: $main;
 }
 
 .navbar-title {
@@ -151,41 +151,49 @@ ul {
 }
 
 .date {
-  font-size: 0.75em;
-  font-family: $font-family-mono;
-    // font-size: 0.75em;
-  color: $grey;
-    // font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.75em;
+    color: $grey-mid;
 }
 
-// Typography
+// Profile photo
+img.profile-photo {
+    border-radius: 50%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    width: 100%;
+    max-width: 100%;
+}
 
 // Listings
+.quarto-listing-container-default {
+    margin-top: 1em;
+}
+
 div.quarto-post {
     font-size: 1rem;
     gap: 0em;
     line-height: $line-height;
-    margin-bottom: 0em;
+    margin-bottom: 0.5em;
+    padding-bottom: 0.5em;
     border-bottom: none;
+
+    .body {
+        flex-grow: 1;
+    }
+
+    .metadata {
+        display: none;
+    }
 }
 
 .listing-title {
   font-size: $font-size;
   font-style: normal;
-  color: $main;
-  text-decoration: underline;
-  text-decoration-thickness: 1px !important;
-  text-decoration-color: $grey-light !important;
-  text-underline-offset: 2px !important;
 }
 
 .listing-date {
-  font-size: 0.8em;
-  font-family: $font-family-mono;
-  // font-family: "PT Sans";
-  // font-family: $font-family-serif;
-  color: $grey;
-  // font-style: italic;
+  font-family: $font-family-serif;
+  color: $grey-mid;
 }
 
 .sidebar nav[role=doc-toc] ul> li> a.active {
@@ -193,31 +201,7 @@ div.quarto-post {
   color: $main !important;
 }
 
-// .quarto-appendix .default:before {
-//   content: "___";
-//   color: $grey;
-//   font-weight: normal;
-//   // width: $text-width;
-//   padding-left: 8px;
-// }
-
-div#quarto-appendix {
-  margin-top: none !important;
-  border-top: none !important;
-  padding-top: 0em !important;
-}
-
-div#quarto-appendix:before {
-  content: "_____";
-  color: $grey-light;
-  // color: $coral-lighter;
-}
-
-.quarto-appendix-heading {
-  display: none;
-}
-
 .nav-footer {
-    color: $grey;
+    color: $grey-mid;
     font-size: 0.875em;
 }

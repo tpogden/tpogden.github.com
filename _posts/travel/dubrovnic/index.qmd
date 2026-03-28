@@ -1,0 +1,79 @@
+---
+title: "Dubrovnik"
+date: "2018-08-21"
+categories: [travel]
+page-layout: full
+---
+
+:::{.column-page}
+![Terracotta rooftops of the walled city, with the island of Lokrum behind.
+    ](assets/DSCF2202.jpg){width=100%}
+:::
+
+<p>Me and Olivia spent a few days in Croatia, mostly eating seafood, drinking
+Pošip and swimming in the Adriatic.</p>
+
+:::{.column-page}
+![On Lokrum, looking down at the Monastery and Maximilian&rsquo;s summer residence.
+    ](assets/DSCF2066.jpg){width=100%}
+:::
+
+<p>A regular ferry will drop you on the forested island of Lokrum. The Austrian
+archduke <a
+href="https://en.wikipedia.org/wiki/Maximilian_I_of_Mexico">Maximillian</a> had
+a holiday home here but got bored so declared himself Emperor of Mexico. Shortly
+after he was captured and executed by the Mexican government. Think I
+would&rsquo;ve stuck with Lokrum.</p>
+
+
+::: {layout-ncol=2 .column-page}
+![Nature on Lokrum.](assets/DSCF2030.jpg)
+
+![A cricket shell and an ant highway.](assets/DSCF2037.jpg)
+:::
+
+<p>There&rsquo;s a botanical garden on the island and a lot of crickets that
+will sometimes land on you.</p>
+
+:::{.column-page}
+![An old town sidestreet.](assets/DSCF1994.jpg){width=100%}
+:::
+
+<p>Wandering the old town is a joy but in August it's best in the early
+morning before the temperature gets up and before the cruise ships arrive.</p>
+
+::: {layout-ncol=2 .column-page}
+![](assets/DSCF1997_2.jpg)
+
+![](assets/DSCF1999_2.jpg)
+:::
+
+:::{.column-page}
+![Fort Imperijal on Mount Srđ.](assets/DSCF1962.jpg){width=100%}
+:::
+
+<p>A few minutes on a cable car takes you to the top of Mount Srđ, where
+Napoleon Bonaparte built a fort during the short French rule over the city.
+There is an exhibition on the small group who defended the old fort during the
+<a href="https://en.wikipedia.org/wiki/Siege_of_Dubrovnik">siege of Dubrovnik</a> 
+in 1991.</p>
+
+:::{.column-page}
+![Fort Imperijal on Mount Srđ.](assets/DSCF2145.jpg){width=100%}
+:::
+
+<p>If you&rsquo;re visiting Dubrovnik the thing I&rsquo;d recommend the most is
+the
+<a href="ttp://www.warphotoltd.com/">War Photo Limited</a> gallery set up by New
+Zealand photojournalist Wade Goddard.</p>
+
+<blockquote>
+It is the intent of War Photo Limited to educate the public in the field of war
+photography, to expose the myth of war and the intoxication of war, to let
+people see war as it is, raw, venal, frightening, by focusing on how war
+inflicts injustices on innocents and combatants alike.
+</blockquote>
+
+:::{.column-page}
+![Walking on Lokrum.](assets/DSCF2082.jpg){width=100%}
+:::
