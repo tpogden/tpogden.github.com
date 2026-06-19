@@ -29,14 +29,14 @@ redirect_from:
 1. _The Hunt for Red October_ by Tom Clancy --- I always
    picture Jack Ryan as Alec Baldwin.
 
-1. _The Lowland_ by Jhumpa Lahiri ★ --- A sweeping but intimate novel that starts in 
+1. _The Lowland_ by Jhumpa Lahiri [★]{.star} --- A sweeping but intimate novel that starts in 
    1960s Calcutta with two young brothers, Subhash and Udayan. Their lives fork, an 
    impulsive Udayan caught up in the Naxalite movement at home and a studious Subhash 
    setting out for university and a life in New England. It's about staying and leaving,
    about parenthood, loss, guilt and responsibility, through four generations of
    a family.
 
-1. _Endurance_ by Alfred Lansing ★ --- Lansing wrote this authoritative account of the Endurance expedition,
+1. _Endurance_ by Alfred Lansing [★]{.star} --- Lansing wrote this authoritative account of the Endurance expedition,
    having got hold of most of the diaries kept on the voyage and then
    interviewed the surviving crew. The mission of the great explorer to make the
    first land crossing of the Antarctic went awry when the tallship got stuck in
@@ -79,7 +79,7 @@ redirect_from:
    and the Catholic church's successful absorption of the monastic movement to
    bring it under its own control.
 
-1. _Deep Work_ by Cal Newport ★ --- This book felt important, and I just counted the 
+1. _Deep Work_ by Cal Newport [★]{.star} --- This book felt important, and I just counted the 
    number of passages I've
    added to my notes from it:  94, which is maybe a record. This is close enough
    to the central thesis:
@@ -157,7 +157,7 @@ redirect_from:
    about it in the old days—‘In Another Country,’ ‘A Way You’ll Never Be,’ and
    ‘Now I Lay Me.’
 
-1. _The Goldfinch_ by Donna Tartt ★  --- This and _The Secret History_ are two of the 
+1. _The Goldfinch_ by Donna Tartt [★]{.star}  --- This and _The Secret History_ are two of the 
    most enjoyable novels I can remember reading in a long time. Recommended by everyone, 
    and now by me.
 
@@ -260,7 +260,7 @@ redirect_from:
    direction, like Zimmermann with his [Telegram][tele] and most significantly
    Genghis Khan.
 
-3. _The Vital Question_ by Nick Lane ★ --- Lane takes us through a radical, wide-ranging new theory on the
+3. _The Vital Question_ by Nick Lane [★]{.star} --- Lane takes us through a radical, wide-ranging new theory on the
    origins of life and then complex life. The theory puts energy right at the
    centre of the problem with the sort of derivation from first principles you
    get in physics. So I enjoyed that.
@@ -313,7 +313,7 @@ redirect_from:
    years, and where this could take us.
 
 
-6. _Killers of the Flower Moon_ by David Grann ★ --- This is a shocking, tragic crime 
+6. _Killers of the Flower Moon_ by David Grann [★]{.star} --- This is a shocking, tragic crime 
    history from 1920s Oklahoma. The sisters in a family of the Osage tribe of Native 
    Americans, rich from oil strikes on the rocky land they'd been shoved onto, started
    dying off. The surviving family have to pay for the new federal Bureau of

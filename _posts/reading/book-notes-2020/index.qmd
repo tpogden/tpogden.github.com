@@ -4,7 +4,7 @@ date: "2020-12-31"
 categories: [reading]
 ---
 
-1. [_The Big Sleep_][bs-big-sleep] by Raymond Chandler ★ --- The first Philip
+1. [_The Big Sleep_][bs-big-sleep] by Raymond Chandler [★]{.star} --- The first Philip
    Marlowe book. I have to write 'hardboiled' here.
   
 2. [_I, Robot_][bs-i-robot] by Peter Crouch --- Bought for the title.
@@ -48,7 +48,7 @@ categories: [reading]
    France. Barr sources declassified archives to tell the inglorious colonialist
    history through the decades that followed.
 
-10. [_The Idea of the Brain_][bs-brain] by Matthew Cobb ★
+10. [_The Idea of the Brain_][bs-brain] by Matthew Cobb [★]{.star}
     --- An enlightening history of our understanding of probably the most
     complex and inscrutible object we know of. The book combines a chronicle of
     ideas since Aristotle and a tour of the current state of neuroscience.
@@ -88,7 +88,7 @@ categories: [reading]
     > living in a slum, for some reason owning a whole street of them merely got
     > you invited to the very best social occasions.
 
-12. [_The Warmth of Other Suns_][bs-warmth] by Isabel Wilkerson ★ --- A narrative history of the Great Migration of African
+12. [_The Warmth of Other Suns_][bs-warmth] by Isabel Wilkerson [★]{.star} --- A narrative history of the Great Migration of African
     Americans from the Southern US to Northern and West Coast cities in the
     twentieth century, pushed by Jim Crow oppression and terror in the South and
     pulled by demand for factory labour in the North.
@@ -162,7 +162,7 @@ categories: [reading]
     United States can be thought of as a third era of segregation after slavery
     and Jim Crow laws.
 
-18. [_The Sum of the People_][bs-sum] by Andrew Whitby ★
+18. [_The Sum of the People_][bs-sum] by Andrew Whitby [★]{.star}
     --- Counting people might sound like an uncontroversial and mundane
     statistical[^stats] task, but this history of the census since the idea's
     origins in ancient China is absorbing. The Exodus of the Israelites in the
@@ -201,7 +201,7 @@ categories: [reading]
     > thinks of themselves as one of Them. We're always one of Us. It's Them
     > that do the bad things.
 
-20. [_The Left Hand of Darkness_][bs-left-hand] by Ursula K. Le Guin ★ --- I enjoyed this a lot once I'd gotten into the
+20. [_The Left Hand of Darkness_][bs-left-hand] by Ursula K. Le Guin [★]{.star} --- I enjoyed this a lot once I'd gotten into the
     world-building terminology, especially the final trek across the ice sheet
     back to Karhide.
 
@@ -211,7 +211,7 @@ categories: [reading]
     United States in terms of a caste system.
 
 22. [_Hateship, Friendship, Courtship, Loveship, Marriage_][bs-hateship] by
-    Alice Munro ★ --- I love how Munro will settle you
+    Alice Munro [★]{.star} --- I love how Munro will settle you
     into this familiar place, probably in rural Canada, probably with some
     midlife characters, then unsettle you in just a few pages.
 
@@ -237,7 +237,7 @@ categories: [reading]
     process leading to the Navy SEAL kill-or-capture operation for Osama bin
     Laden. I look forward to the next volume.
 
-28. [_The Moth and the Mountain_][bs-moth] by Ed Caesar ★
+28. [_The Moth and the Mountain_][bs-moth] by Ed Caesar [★]{.star}
     --- An adventure. After the early attempts to conquer Everest by George
     Mallory[^silence] and others, in 1934 Bradfordian WWI veteran Maurice Wilson
     made an eccentric solo attempt to stand first on Earth's highest point by

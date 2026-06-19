@@ -41,7 +41,7 @@ categories: [reading]
    about orbital mechanics. The third part, the real sci-fi bit, took a while
    for me to see the point of.
  
-6. _Janesville_ by Amy Goldstein ★ --- The modern history of one industrial city in Wisconsin. Janesville was
+6. _Janesville_ by Amy Goldstein [★]{.star} --- The modern history of one industrial city in Wisconsin. Janesville was
     the home of the Parker pen company and had the oldest General Motors factory
     in the US until it closed in 2008. The book follows a few of the residents
     affected by the plant closure over the following five years. These
@@ -106,7 +106,7 @@ categories: [reading]
     this one. Something between a spy novel and a mystery set in Bonn in the
     60s.
 
-12. _So Good They Can't Ignore You_ by Cal Newport ★ --- 'Follow your passion' is terrible advice.
+12. _So Good They Can't Ignore You_ by Cal Newport [★]{.star} --- 'Follow your passion' is terrible advice.
 
 13. _Empire_ by Stephen Howe --- Howe splits empires into
     those on land and those of sea. Land empires being those that grew by
@@ -233,7 +233,7 @@ categories: [reading]
     rebuttal to [the title essay][pg-hp], see that other programmer, painter and
     solid writer [Maciej Cegłowski][dabblers]. 
     
-24. _Triumph of the City_ by Edward L. Glaeser ★ --- I've lived most of my adult life 
+24. _Triumph of the City_ by Edward L. Glaeser [★]{.star} --- I've lived most of my adult life 
     in the centre of
     cities, not by accident. Harvard urban economist Edward Glaeser here makes
     the case for urban life. First, on the agglomeration effects that have made
@@ -330,7 +330,7 @@ categories: [reading]
     [Seychelles][flag-sey], [Brazil][flag-br], [Vietnam][flag-v]. And
     [Nepal][flag-n] because yeah, enough rectangles.
 
-28. _Madness Visible_ by Janine di Giovanni ★ --- I made trips to Slovenia and Croatia 
+28. _Madness Visible_ by Janine di Giovanni [★]{.star} --- I made trips to Slovenia and Croatia 
     this year, both beautiful, modern EU states. I picked this up in a bookshop in 
     Dubrovnik: Di Giovanni's memoir of the Balkan Wars, which she covered on the ground 
     for _The Times_. It's a harrowing firsthand account of the devestating reality of 

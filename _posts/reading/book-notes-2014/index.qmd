@@ -4,7 +4,7 @@ date: "2014-12-31"
 categories: [reading]
 ---
 
-1. _Old School_ by Tobias Wolff ★ --- In [an interview][pr] soon after finishing _Old School_, Wolff suggests
+1. _Old School_ by Tobias Wolff [★]{.star} --- In [an interview][pr] soon after finishing _Old School_, Wolff suggests
    Robert Frost — who appears in the novel — 'didn’t fully understand his own
    poem', or pretended not to. The theme of a writer's intention comes up both
    in Frost's reading of George's story as a dig at him and Susan's reading of
@@ -31,9 +31,9 @@ categories: [reading]
 
 8. _Adventures of Hergé_ by Jose-Louis Bocquet et al.
 
-9. _Sustainable Energy Without the Hot Air_ by David J. C. MacKay ★
+9. _Sustainable Energy Without the Hot Air_ by David J. C. MacKay [★]{.star}
 
-10. _Breakfast of Champions_ by Kurt Vonnegut ★
+10. _Breakfast of Champions_ by Kurt Vonnegut [★]{.star}
 
 11. _The Sun Also Rises_ by Ernest Hemingway
 

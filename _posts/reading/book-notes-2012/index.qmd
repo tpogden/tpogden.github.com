@@ -16,7 +16,7 @@ categories: [reading]
 
 6. _How to Write a Sentence_ by Stanley Fish
 
-7. _Into The Silence_ by Wade Davies ★
+7. _Into The Silence_ by Wade Davies [★]{.star}
 
 8. _Life on Air_ by David Attenborough
 

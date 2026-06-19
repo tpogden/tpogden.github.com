@@ -11,11 +11,11 @@ categories: [reading]
 
 3. _The Clockwork Universe_ by Edward Dolnick
 
-4. _Logicomix_ by Apostolos Doxiadis and Christos Papadimitriou ★
+4. _Logicomix_ by Apostolos Doxiadis and Christos Papadimitriou [★]{.star}
 
 5. _Getting Things Done_ by David Allen ↻
 
-6. _Middlesex_ by Jeffrey Eugenides ★
+6. _Middlesex_ by Jeffrey Eugenides [★]{.star}
 
 7. _Stamboul Train_ by Graham Greene 
 

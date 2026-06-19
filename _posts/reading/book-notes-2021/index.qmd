@@ -83,7 +83,7 @@ categories: [reading]
     and the boys are pushed to the edge of society (and town) but still have a
     plan to make something happen.
 
-18. [_The Best We Could Do_][bs-bwcd] by Thi Bui ★ ---
+18. [_The Best We Could Do_][bs-bwcd] by Thi Bui [★]{.star} ---
     This graphic memoir starts at the end with Bui's new motherhood and
     navigates from there her relationships with her own parents and siblings,
     telling their story of life in South Vietnam, colonialism and war, dangerous
@@ -107,7 +107,7 @@ categories: [reading]
     mass pirated MP3s and before the rise of Spotify and the vinyl revival so
     there's a negative outlook written in.
 
-22. [_The Story of China_][bs-china] by Michael Wood ★ ---
+22. [_The Story of China_][bs-china] by Michael Wood [★]{.star} ---
     The innovation in the Song dynasty up to the 1200s, compared with Europe at
     the time, is unparalleled. Public opinion in Britain was largely against the
     Opium wars.
@@ -127,7 +127,7 @@ categories: [reading]
     approval from village to village, hopefully from from the right warlord. He
     might have had a better go at a pandemic anyway.
 
-26. [_The Man from the Future_][bs-future] by Ananyo Bhattacharya ★ --- The [Manchester Baby][baby][^mbaby] is generally recognised
+26. [_The Man from the Future_][bs-future] by Ananyo Bhattacharya [★]{.star} --- The [Manchester Baby][baby][^mbaby] is generally recognised
     as the first electronic stored program computer but Bhattacharya makes the
     case that Klára von Neumann's earlier program for the ENIAC could be
     considered stored. It strikes me how much of my own career so far has been
