@@ -54,7 +54,7 @@ categories: [reading]
    union-controlled labour market policy did not protect jobs but assisted
    workers to become mobile and retrain.
 
-1. _The Crossing_ by Cormac McCarthy ★ --- The second book in the Border Trilogy is a story of three
+1. _The Crossing_ by Cormac McCarthy [★]{.star} --- The second book in the Border Trilogy is a story of three
    crossings of the Texas border by the teenaged Billy Parham. The first is a
    dreamlike journey to return a wild, pregnant wolf to its Mexican mountain
    home, the second and third follow in fate and circumstance.
@@ -68,11 +68,11 @@ categories: [reading]
    footsore dog', 'the needlethin sweepsecond hand sectoring the dial'. The best
    are often saved for his keen-eyed attention to the animals.
 
-1. _The Secret History_ by Donna Tartt ★ --- Pretty sure if I'd read this novel before 2012 I would not have
+1. _The Secret History_ by Donna Tartt [★]{.star} --- Pretty sure if I'd read this novel before 2012 I would not have
    spent the next three years living with classicists.
 
 
-1. _Prisoners of Geography_ by Tim Marshall ★ --- With our century's aircraft, internet and supranational
+1. _Prisoners of Geography_ by Tim Marshall [★]{.star} --- With our century's aircraft, internet and supranational
    institutions, we may be tempted to think we've overcome the bounds of
    physical geography in global affairs. Our history is told in ideologies and
    leaders, good or bad.
@@ -144,7 +144,7 @@ categories: [reading]
    part his account of the open road and the the characters he finds on it is
    warm.
 
-1. _My Ántonia_ by Willa Carther ★ --- A tough, romantic tale of the immigrant life of early settlers on the
+1. _My Ántonia_ by Willa Carther [★]{.star} --- A tough, romantic tale of the immigrant life of early settlers on the
    Nebraska plain in the age of the Homestead Act.
 
    > There seemed to be nothing to see; no fences, no creeks or trees, no hills

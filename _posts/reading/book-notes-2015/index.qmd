@@ -14,7 +14,7 @@ categories: [reading]
 
 1. _Body of Work_ by Pamela Slim
 
-1. _Behind the Beautiful Forevers_ by Katherine Boo ★
+1. _Behind the Beautiful Forevers_ by Katherine Boo [★]{.star}
 
 1. _1Q84, Book II_ by Haruki Murakami
 
@@ -34,7 +34,7 @@ categories: [reading]
 
 1. _South of the Border, West of the Sun_ by Haruki Murakami
 
-1. _To Kill a Mockingbird_ by Harper Lee ★
+1. _To Kill a Mockingbird_ by Harper Lee [★]{.star}
 
 1. _New York City: A Short History_ by George J. Lankevich
 

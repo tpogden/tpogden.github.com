@@ -8,7 +8,7 @@ categories: [reading]
 
 2. _Green Hills of Africa_ by Ernest Hemingway
 
-3. _Adapt_ by Tim Harford ★
+3. _Adapt_ by Tim Harford [★]{.star}
 
 4. _Them_ by Jon Ronson
 
@@ -22,13 +22,13 @@ categories: [reading]
 
 9. _Steve Jobs_ by Walter Isaacson
 
-10. _Blood Meridian_ by Cormac McCarthy ★
+10. _Blood Meridian_ by Cormac McCarthy [★]{.star}
 
-11. _Slaughterhouse-Five_ by Kurt Vonnegut ★
+11. _Slaughterhouse-Five_ by Kurt Vonnegut [★]{.star}
 
 12. _NW_ by Zadie Smith
 
-13. _The Old Man and the Sea_ by Ernest Hemingway ★
+13. _The Old Man and the Sea_ by Ernest Hemingway [★]{.star}
 
 14. _Huckleberry Finn_ by Mark Twain
 

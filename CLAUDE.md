@@ -1,5 +1,15 @@
 # CLAUDE.md
 
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Setup
+
+1. Install [Quarto CLI](https://quarto.org/docs/get-started/).
+2. Install [uv](https://docs.astral.sh/uv/) and sync Python dependencies:
+   ```bash
+   uv sync
+   ```
+
 ## Commands
 
 ```bash
@@ -32,6 +42,24 @@ Shadow dirs persist after render so `quarto preview`'s file-hash tracking (`Serv
 | personal | `_posts/personal/` |
 
 `index.qmd` uses four Quarto listings with `contents: "*/index.qmd"` and `include: categories:` filters to separate sections.
+
+## Creating posts
+
+Each post is a directory under `_posts/category/slug/` containing at minimum an `index.qmd`. Minimal frontmatter:
+
+```yaml
+---
+title: "Post Title"
+date: "YYYY-MM-DD"
+categories: [research]   # one of: research, reading, travel, personal
+---
+```
+
+An optional `assets/` subdirectory holds images and data files. After adding a post, run `quarto preview` or `quarto render` — the pre-render script will create the shadow dir and wire it into the listings automatically.
+
+## Styling
+
+`tpogden.scss` defines the custom theme; `_brand.yml` sets brand colours. Both light and dark modes use the same `tpogden.scss` theme (set in `_quarto.yml`). Math renders via KaTeX.
 
 ## Python
 
