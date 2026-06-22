@@ -1,0 +1,273 @@
+---
+title: "Soccerball 2026"
+date: today
+format:
+  html:
+    page-layout: full
+---
+
+[killham.co.uk/soccerball2026](https://killham.co.uk/soccerball2026/)
+
+::: {.column-screen-inset}
+
+```{ojs}
+//| echo: false
+players = await fetch("https://killham.co.uk/soccerball/api/players").then(r => r.json())
+
+fixtures = await fetch("https://killham.co.uk/soccerball/api/fixtures").then(r => r.json())
+
+playerDetails = Promise.all(
+  players.map(p =>
+    fetch(`https://killham.co.uk/soccerball/api/players/${p.id}`)
+      .then(r => r.json())
+      .then(rows => ({id: p.id, name: p.name, rows}))
+  )
+)
+
+matchOrder = {
+  const all = [...fixtures].sort((a, b) => new Date(a.kickOff) - new Date(b.kickOff));
+  return new Map(all.map((f, i) => [f.id, i + 1]));
+}
+
+totalMatchdays = fixtures.length
+
+maxOrder = Math.max(
+  ...fixtures.filter(f => f.homeScore !== null).map(f => matchOrder.get(f.id))
+)
+
+cumPointsByPlayer = {
+  // For each player, cumPoints/cumCorrectScores recorded at every played
+  // matchday. correctScores (exact scoreline) is the ranking tiebreaker.
+  const map = new Map();
+  for (const {name, rows: history} of playerDetails) {
+    const played = history
+      .filter(r => r.points !== null && matchOrder.has(r.fixtureId))
+      .map(r => ({...r, order: matchOrder.get(r.fixtureId)}))
+      .sort((a, b) => a.order - b.order);
+    const changes = [{order: 0, cumPoints: 0, cumCorrectScores: 0}];
+    let cum = 0;
+    let cumCorrectScores = 0;
+    for (const r of played) {
+      cum += r.points;
+      if (r.homeGuess === r.homeScore && r.awayGuess === r.awayScore) cumCorrectScores++;
+      changes.push({order: r.order, cumPoints: cum, cumCorrectScores});
+    }
+    map.set(name, changes);
+  }
+  return map;
+}
+
+// Dense rows: one per (player, matchday), with cumPoints/cumCorrectScores
+// carried forward and a rank computed across all players at that matchday.
+// Ties on points are broken by correctScores, then by name, so ranks are
+// always unique (no shared places).
+rankedSeries = {
+  const playerNames = [...cumPointsByPlayer.keys()];
+  const cursor = new Map(playerNames.map(p => [p, 0]));
+  const lastPoints = new Map(playerNames.map(p => [p, 0]));
+  const lastCorrectScores = new Map(playerNames.map(p => [p, 0]));
+  const rows = [];
+  for (let o = 0; o <= maxOrder; ++o) {
+    for (const p of playerNames) {
+      const changes = cumPointsByPlayer.get(p);
+      let idx = cursor.get(p);
+      while (idx < changes.length && changes[idx].order <= o) {
+        lastPoints.set(p, changes[idx].cumPoints);
+        lastCorrectScores.set(p, changes[idx].cumCorrectScores);
+        idx++;
+      }
+      cursor.set(p, idx);
+    }
+    const standings = playerNames
+      .map(p => ({
+        player: p,
+        cumPoints: lastPoints.get(p),
+        cumCorrectScores: lastCorrectScores.get(p)
+      }))
+      .sort((a, b) =>
+        b.cumPoints - a.cumPoints ||
+        b.cumCorrectScores - a.cumCorrectScores ||
+        a.player.localeCompare(b.player)
+      );
+    standings.forEach((d, i) => {
+      rows.push({
+        player: d.player,
+        order: o,
+        cumPoints: d.cumPoints,
+        cumCorrectScores: d.cumCorrectScores,
+        rank: i + 1
+      });
+    });
+  }
+  return rows;
+}
+
+maxPoints = Math.max(...rankedSeries.map(d => d.cumPoints))
+totalPlayers = players.length
+
+viewof yMode = {
+  const form = Inputs.radio(["Points", "Ranking"], {value: "Points"});
+  form.style.marginBottom = "8px";
+  return form;
+}
+
+valueField = yMode === "Points" ? "cumPoints" : "rank"
+
+currentStandings = rankedSeries
+  .filter(d => d.order === frame)
+  .sort((a, b) => b.cumPoints - a.cumPoints)
+
+chartWidth = width
+chartHeight = 520
+marginLeft = 40
+marginRight = 90
+
+unitsPerPixel = totalMatchdays / (chartWidth - marginLeft - marginRight)
+
+labelPositions = {
+  // Players tied on the current value get their labels spread side by
+  // side (rather than stacked) to the right of the shared point.
+  const groups = d3.groups(currentStandings, d => d[valueField]);
+  const out = [];
+  for (const [, group] of groups) {
+    const sorted = [...group].sort((a, b) => a.player.localeCompare(b.player));
+    sorted.forEach((d, i) => {
+      out.push({...d, labelOrder: d.order + (8 + i * 80) * unitsPerPixel});
+    });
+  }
+  return out;
+}
+
+mutable selectedPlayer = null
+
+// Bring the selected player's marks to the front (drawn last) and make
+// them bigger/bolder, rather than fading everyone else out.
+bringToFront = arr => selectedPlayer === null
+  ? arr
+  : [...arr].sort((a, b) => (a.player === selectedPlayer ? 1 : 0) - (b.player === selectedPlayer ? 1 : 0))
+
+isSelected = d => d.player === selectedPlayer
+
+{
+  const dotData = bringToFront(currentStandings);
+  const labelData = bringToFront(labelPositions);
+
+  const plot = Plot.plot({
+    width: chartWidth,
+    height: chartHeight,
+    marginLeft: marginLeft,
+    marginRight: marginRight,
+    x: {label: "Matchday", domain: [0, totalMatchdays]},
+    y: yMode === "Points"
+      ? {label: "Cumulative points", domain: [0, maxPoints]}
+      : {label: "Rank", domain: [1, totalPlayers], reverse: true, ticks: totalPlayers},
+    color: {legend: false},
+    marks: [
+      Plot.ruleX([maxOrder], {stroke: "currentColor", strokeOpacity: 0.3, strokeDasharray: "4,3"}),
+      Plot.text([{order: maxOrder, label: "today"}], {
+        x: "order",
+        y: yMode === "Points" ? maxPoints : 1,
+        text: "label",
+        dy: -8,
+        fillOpacity: 0.5
+      }),
+      Plot.lineY(bringToFront(rankedSeries.filter(d => d.order <= frame)), {
+        x: "order",
+        y: valueField,
+        stroke: "player",
+        strokeWidth: d => isSelected(d) ? 5 : 1.5,
+        curve: "bump-x"
+      }),
+      Plot.dot(dotData, {
+        x: "order",
+        y: valueField,
+        fill: "player",
+        r: d => isSelected(d) ? 5 : 3
+      }),
+      Plot.text(labelData, {
+        x: "labelOrder",
+        y: valueField,
+        text: "player",
+        fill: "player",
+        fontWeight: d => isSelected(d) ? "bold" : null,
+        textAnchor: "start"
+      })
+    ]
+  });
+
+  // Plot binds each mark's own per-mark index (not the row object) to
+  // its rendered elements, so look elements up via the exact array
+  // passed to that mark, scoped to that mark's own <g aria-label> group.
+  const dotGroup = plot.querySelector('g[aria-label="dot"]');
+  const textGroups = plot.querySelectorAll('g[aria-label="text"]');
+  const labelGroup = textGroups[textGroups.length - 1];
+
+  function bindHover(group, data) {
+    if (!group) return;
+    d3.select(group).selectAll(":scope > *")
+      .style("cursor", "pointer")
+      .on("mouseenter", (event, i) => {
+        const d = data[i];
+        if (!d) return;
+        mutable selectedPlayer = d.player;
+      })
+      .on("mouseleave", () => {
+        mutable selectedPlayer = null;
+      });
+  }
+
+  bindHover(dotGroup, dotData);
+  bindHover(labelGroup, labelData);
+
+  return plot;
+}
+```
+
+```{ojs}
+//| echo: false
+viewof frame = {
+  const form = html`<div style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+    <button type="button" style="width:6em;">▶ Play</button>
+    <input type="range" min="0" max="${maxOrder}" step="1" value="0" style="flex:1;">
+    <output style="width:3em;text-align:right;font-variant-numeric:tabular-nums;"></output>
+  </div>`;
+  const button = form.querySelector("button");
+  const slider = form.querySelector("input");
+  const output = form.querySelector("output");
+
+  let timer = null;
+
+  function setValue(v) {
+    slider.value = v;
+    output.value = v;
+    form.value = +v;
+    form.dispatchEvent(new Event("input"));
+  }
+
+  function stop() {
+    if (timer !== null) clearInterval(timer);
+    timer = null;
+    button.textContent = "▶ Play";
+  }
+
+  function play() {
+    if (+slider.value >= maxOrder) setValue(0);
+    button.textContent = "⏸ Pause";
+    timer = setInterval(() => {
+      const next = +slider.value + 1;
+      if (next > maxOrder) { stop(); return; }
+      setValue(next);
+    }, 350);
+  }
+
+  button.onclick = () => (timer === null ? play() : stop());
+  slider.oninput = () => { stop(); setValue(slider.value); };
+
+  output.value = slider.value;
+  form.value = +slider.value;
+  play();
+  return form;
+}
+```
+
+:::
