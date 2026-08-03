@@ -141,10 +141,12 @@ lineGenerator = d3.line()
 //| echo: false
 // Includes
 d3 = require("d3@7")
-MathJax = require('https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js').catch(
-  () => window['MathJax']
-).then(async (MathJax) => {
-  await MathJax.startup.promise;
-  return MathJax;
-})
+MathJax = {
+  await require('https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js').catch(() => {});
+  while (!(window.MathJax && window.MathJax.startup)) {
+    await new Promise((resolve) => setTimeout(resolve, 20));
+  }
+  await window.MathJax.startup.promise;
+  return window.MathJax;
+}
 ```
