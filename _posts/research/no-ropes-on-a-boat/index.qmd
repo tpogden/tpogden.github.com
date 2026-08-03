@@ -1,0 +1,11 @@
+---
+title: "No Ropes on a Boat"
+date: "2026-06-18"
+categories: [research]
+page-layout: article
+---
+
+I gave this talk at PyData London 2026. It's not about ropes or boats. I kept up
+my record of kicking over my glass of water in public talks.
+
+{{< video https://www.youtube.com/watch?v=cPhr5YWiK5o >}}
