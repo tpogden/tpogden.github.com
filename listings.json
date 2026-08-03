@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/no-ropes-on-a-boat/index.html",
       "/approximate-expectations-of-nonlinear-multivariate-functions/index.html",
       "/simultons/index.html",
       "/automate-scientific-plots-with-python-make/index.html",
