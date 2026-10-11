@@ -1,8 +1,9 @@
 ---
-title: "000: Hello World"
+title: "000: Hello GPU"
 date: "2026-10-11"
 categories: [mf]
 page-layout: article
+draft: true
 listing:
   - id: mf-series
     contents: "../*/index.qmd"
@@ -14,11 +15,10 @@ listing:
     sort: "title asc"
 ---
 
-The smallest possible WebGPU program: clear a canvas to a colour. Ask the browser
-for an _adapter_ (the physical GPU), then a _device_ (a logical handle to it).
-Configure the canvas's _context_ to use that device. Then record commands with a
-_command encoder_, run them in a _render pass_ that clears the canvas texture, and
-submit.
+A dead simple WebGPU program: just clear a canvas to a colour. We ask the browser
+for an _adapter_ (the physical GPU) and a _device_ (a handle to it). Tell the
+canvas _context_ to use that device. Then set up commands with an _encoder_, run
+them in a _render pass_ that just clears the canvas texture, and submit it.
 
 :::{.column-margin}
 #### Moving Figures

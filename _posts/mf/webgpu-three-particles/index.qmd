@@ -3,6 +3,7 @@ title: "001: Three Particles"
 date: "2026-10-11"
 categories: [mf]
 page-layout: article
+draft: true
 listing:
   - id: mf-series
     contents: "../*/index.qmd"
@@ -14,12 +15,11 @@ listing:
     sort: "title asc"
 ---
 
-Building on [Hello World](../webgpu-hello-world/), three points on the same dark
-canvas. New here: a _buffer_ holding the particle positions on the GPU, a
+Building on [Hello GPU](../webgpu-hello-world/), here's three points on the same
+canvas. New stuff: a _buffer_ holding the particle positions on the GPU, a
 _shader module_ (WGSL) with a vertex and a fragment shader, and a _render pipeline_
 that ties them together and tells the GPU to draw the vertices as triangles. GPU
-points are always one pixel, so each particle is a small square made of two
-triangles.
+points are always one pixel, so each particle is a square made of two triangles.
 
 :::{.column-margin}
 #### Moving Figures
@@ -45,8 +45,12 @@ triangles.
   const format = navigator.gpu.getPreferredCanvasFormat();
   context.configure({ device, format });
 
-  // Particle centres: three 2D positions in clip space (-1 to 1)
-  const centres = [[0.0, 0.5], [-0.3, -0.2], [0.4, -0.4]];
+  // Particle centres: three random 2D positions in clip space (-1 to 1),
+  // kept off the edge so each square stays fully on the canvas
+  const centres = Array.from({ length: 3 }, () => [
+    Math.random() * 1.8 - 0.9,
+    Math.random() * 1.8 - 0.9,
+  ]);
 
   // GPU points are always 1px, so draw each particle as a small square
   // made of two triangles (6 vertices). Clip space is stretched to the
