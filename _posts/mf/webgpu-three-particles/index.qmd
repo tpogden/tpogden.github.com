@@ -3,7 +3,6 @@ title: "001: Three Particles"
 date: "2026-10-11"
 categories: [mf]
 page-layout: article
-draft: true
 listing:
   - id: mf-series
     contents: "../*/index.qmd"
