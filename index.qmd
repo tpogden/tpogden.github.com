@@ -9,6 +9,14 @@ listing:
       categories: "research"
     fields: [title]
     sort: "date desc"
+  - id: mf-listing
+    contents: "*/index.qmd"
+    type: default
+    categories: false
+    include:
+      categories: "mf"
+    fields: [title]
+    sort: "title desc"
   - id: books-listing
     contents: "*/index.qmd"
     type: default
@@ -61,6 +69,11 @@ mountaineering and kayaking when I get chance.
 #### Research, Engineering
 
 :::{#research-listing}
+:::
+
+#### Moving Figures
+
+:::{#mf-listing}
 :::
 
 #### Photos, Travel

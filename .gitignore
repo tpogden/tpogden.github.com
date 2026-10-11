@@ -13,6 +13,8 @@
 
 **/*.quarto_ipynb
 # post shadow dirs
+/webgpu-hello-world/
+/webgpu-three-particles/
 /10000-days/
 /sing-of-old-djurgarden/
 /the-oldest-referee/

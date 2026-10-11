@@ -37,11 +37,12 @@ Shadow dirs persist after render so `quarto preview`'s file-hash tracking (`Serv
 | Category | Path |
 |---|---|
 | research | `_posts/research/` |
+| mf | `_posts/mf/` (Moving Figures) |
 | reading | `_posts/reading/` |
 | travel | `_posts/travel/` |
 | personal | `_posts/personal/` |
 
-`index.qmd` uses four Quarto listings with `contents: "*/index.qmd"` and `include: categories:` filters to separate sections.
+`index.qmd` uses five Quarto listings with `contents: "*/index.qmd"` and `include: categories:` filters to separate sections.
 
 ## Creating posts
 
@@ -51,7 +52,7 @@ Each post is a directory under `_posts/category/slug/` containing at minimum an 
 ---
 title: "Post Title"
 date: "YYYY-MM-DD"
-categories: [research]   # one of: research, reading, travel, personal
+categories: [research]   # one of: research, mf, reading, travel, personal
 ---
 ```
 

@@ -52,6 +52,9 @@ _posts/
     optical-solitons/
     simultons/
     …
+  mf/
+    webgpu-hello-world/
+    …
   reading/
     book-notes-2022/
     …

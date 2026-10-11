@@ -1,0 +1,70 @@
+---
+title: "000: Hello World"
+date: "2026-10-11"
+categories: [mf]
+page-layout: article
+listing:
+  - id: mf-series
+    contents: "../*/index.qmd"
+    type: default
+    categories: false
+    include:
+      categories: "mf"
+    fields: [title]
+    sort: "title asc"
+---
+
+The smallest possible WebGPU program: clear a canvas to a colour. Ask the browser
+for an _adapter_ (the physical GPU), then a _device_ (a logical handle to it).
+Configure the canvas's _context_ to use that device. Then record commands with a
+_command encoder_, run them in a _render pass_ that clears the canvas texture, and
+submit.
+
+:::{.column-margin}
+#### Moving Figures
+
+:::{#mf-series}
+:::
+:::
+
+```{ojs}
+//| column: page
+//| code-fold: true
+//| code-summary: "Show code"
+{
+  if (!navigator.gpu) throw new Error("WebGPU is not supported in this browser.");
+
+  // 1. Canvas (640x480 buffer, scaled to fill the column)
+  const canvas = DOM.canvas(640, 480);
+  canvas.style.width = "100%";
+  canvas.style.height = "auto";
+
+  // 2. Adapter and device
+  const adapter = await navigator.gpu.requestAdapter();
+  const device = await adapter.requestDevice();
+
+  // 3. Context
+  const context = canvas.getContext("webgpu");
+  const format = navigator.gpu.getPreferredCanvasFormat();
+  context.configure({ device, format });
+
+  // 4. Record: a render pass that clears to the site's dark background (#1a1a1a)
+  const encoder = device.createCommandEncoder();
+  const pass = encoder.beginRenderPass({
+    colorAttachments: [
+      {
+        view: context.getCurrentTexture().createView(),
+        clearValue: { r: 0.102, g: 0.102, b: 0.102, a: 1.0 }, // #1a1a1a
+        loadOp: "clear",
+        storeOp: "store",
+      },
+    ],
+  });
+  pass.end();
+
+  // 5. Submit
+  device.queue.submit([encoder.finish()]);
+
+  yield canvas;
+}
+```

@@ -1,0 +1,127 @@
+---
+title: "001: Three Particles"
+date: "2026-10-11"
+categories: [mf]
+page-layout: article
+listing:
+  - id: mf-series
+    contents: "../*/index.qmd"
+    type: default
+    categories: false
+    include:
+      categories: "mf"
+    fields: [title]
+    sort: "title asc"
+---
+
+Building on [Hello World](../webgpu-hello-world/), three points on the same dark
+canvas. New here: a _buffer_ holding the particle positions on the GPU, a
+_shader module_ (WGSL) with a vertex and a fragment shader, and a _render pipeline_
+that ties them together and tells the GPU to draw the vertices as triangles. GPU
+points are always one pixel, so each particle is a small square made of two
+triangles.
+
+:::{.column-margin}
+#### Moving Figures
+
+:::{#mf-series}
+:::
+:::
+
+```{ojs}
+//| column: page
+//| code-fold: true
+//| code-summary: "Show code"
+{
+  if (!navigator.gpu) throw new Error("WebGPU is not supported in this browser.");
+
+  // Setup, as before (640x480 buffer, scaled to fill the column)
+  const canvas = DOM.canvas(640, 480);
+  canvas.style.width = "100%";
+  canvas.style.height = "auto";
+  const adapter = await navigator.gpu.requestAdapter();
+  const device = await adapter.requestDevice();
+  const context = canvas.getContext("webgpu");
+  const format = navigator.gpu.getPreferredCanvasFormat();
+  context.configure({ device, format });
+
+  // Particle centres: three 2D positions in clip space (-1 to 1)
+  const centres = [[0.0, 0.5], [-0.3, -0.2], [0.4, -0.4]];
+
+  // GPU points are always 1px, so draw each particle as a small square
+  // made of two triangles (6 vertices). Clip space is stretched to the
+  // canvas, so scale x by the aspect ratio to keep the squares square.
+  const half = 0.03;
+  const aspect = 480 / 640;
+  const corners = [[-1, -1], [1, -1], [1, 1], [-1, -1], [1, 1], [-1, 1]];
+  const vertices = new Float32Array(
+    centres.flatMap(([cx, cy]) =>
+      corners.flatMap(([dx, dy]) => [cx + dx * half * aspect, cy + dy * half])
+    )
+  );
+
+  // Buffer
+  const buffer = device.createBuffer({
+    size: vertices.byteLength,
+    usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
+  });
+  device.queue.writeBuffer(buffer, 0, vertices);
+
+  // Shaders
+  const module = device.createShaderModule({
+    code: `
+      @vertex
+      fn vs(@location(0) pos: vec2f) -> @builtin(position) vec4f {
+        return vec4f(pos, 0.0, 1.0);
+      }
+
+      @fragment
+      fn fs() -> @location(0) vec4f {
+        return vec4f(1.0, 0.282, 0.204, 1.0); // #FF4834
+      }
+    `,
+  });
+
+  // Pipeline
+  const pipeline = device.createRenderPipeline({
+    layout: "auto",
+    vertex: {
+      module,
+      entryPoint: "vs",
+      buffers: [
+        {
+          arrayStride: 2 * 4,
+          attributes: [{ shaderLocation: 0, offset: 0, format: "float32x2" }],
+        },
+      ],
+    },
+    fragment: {
+      module,
+      entryPoint: "fs",
+      targets: [{ format }],
+    },
+    primitive: { topology: "triangle-list" },
+  });
+
+  // Render pass
+  const encoder = device.createCommandEncoder();
+  const pass = encoder.beginRenderPass({
+    colorAttachments: [
+      {
+        view: context.getCurrentTexture().createView(),
+        clearValue: { r: 0.102, g: 0.102, b: 0.102, a: 1.0 }, // #1a1a1a
+        loadOp: "clear",
+        storeOp: "store",
+      },
+    ],
+  });
+  pass.setPipeline(pipeline);
+  pass.setVertexBuffer(0, buffer);
+  pass.draw(vertices.length / 2);
+  pass.end();
+
+  device.queue.submit([encoder.finish()]);
+
+  yield canvas;
+}
+```
