@@ -4,15 +4,19 @@
 # Shadow dirs persist after rendering so quarto preview can hash source files.
 
 # Keep .gitignore in sync with current post slugs
-sed -i '' '/^# post shadow dirs$/,/^# end post shadow dirs$/d' .gitignore
+# (portable: BSD and GNU sed disagree on -i, so write via a temp file)
+tmp=$(mktemp)
+sed '/^# post shadow dirs$/,/^# end post shadow dirs$/d' .gitignore > "$tmp"
 {
+    cat "$tmp"
     echo "# post shadow dirs"
     for post_dir in _posts/*/*/; do
         [ -d "$post_dir" ] || continue
         echo "/$(basename "$post_dir")/"
     done
     echo "# end post shadow dirs"
-} >> .gitignore
+} > .gitignore
+rm -f "$tmp"
 
 # Create shadow dirs (idempotent)
 for post_dir in _posts/*/*/; do
