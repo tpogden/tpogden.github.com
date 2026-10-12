@@ -213,12 +213,97 @@ div.quarto-post {
         min-width: 0;
     }
 
+    input[type="checkbox"] {
+        accent-color: $main;
+        flex: 1;
+        justify-self: start;
+    }
+
     output {
         color: $grey-mid;
         flex: none;
         font-variant-numeric: tabular-nums;
         min-width: 3rem;
         text-align: right;
+    }
+}
+
+// A canvas with its controls laid over the top-right corner (see ui.stage). The
+// panel sits on the dark canvas in both themes, so it has its own colours.
+.mf-stage {
+    position: relative;
+
+    canvas {
+        display: block;
+    }
+
+    .mf-controls {
+        backdrop-filter: blur(6px);
+        background: rgba(26, 26, 26, 0.78);
+        border-radius: 6px;
+        color: #e8e2e0;
+        font-family: $font-family-monospace;
+        font-size: 0.6875rem;
+        line-height: 1.5;
+        padding: 0.4rem 0.75rem 0.5rem;
+        position: absolute;
+        right: 0.75rem;
+        top: 0.75rem;
+        width: min(16.5rem, calc(100% - 1.5rem));
+
+        summary {
+            color: rgba(232, 226, 224, 0.6);
+            cursor: pointer;
+            font-size: 0.625rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        &[open] summary {
+            margin-bottom: 0.25rem;
+        }
+
+        .mf-slider {
+            font-size: 1em;
+            gap: 0.75rem;
+            margin: 0.125rem 0;
+            max-width: none;
+
+            .mf-slider-label {
+                min-width: 4.5rem;
+            }
+
+            output {
+                color: rgba(232, 226, 224, 0.6);
+                min-width: 2.25rem;
+            }
+        }
+    }
+
+    // On a narrow screen there is no room to cover the canvas: put the panel under it
+    @media (max-width: 599px) {
+        .mf-controls {
+            border-radius: 0;
+            margin-top: 0;
+            position: static;
+            width: auto;
+        }
+    }
+}
+
+// Two charts side by side under a simulation (collapses to one column when narrow)
+.mf-charts {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 1.5rem;
+
+    @media (max-width: 767px) {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    svg {
+        max-width: 100%;
     }
 }
 
