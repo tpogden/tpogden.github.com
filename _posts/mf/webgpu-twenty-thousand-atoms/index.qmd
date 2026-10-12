@@ -21,13 +21,21 @@ smaller scale appear.
 
 Heat the box until it is a liquid, then **quench** it: cool it so suddenly that the
 atoms have no time to arrange themselves in an orderly way. It does not freeze into
-one crystal. Crystals nucleate in many places at once, each with its own
-orientation, and they meet along **grain boundaries**. The colour is the direction of each atom's
-hexagonal neighbourhood, so every grain is its own hue, with the atoms in the
-boundaries between them fading to grey. Over time the boundaries move: small grains
-shrink, big ones grow, and the pattern coarsens. This is the structure of nearly
-every metal or ceramic you have touched, and it takes thousands of atoms before it
-shows at all.
+one crystal. Crystals nucleate in many places at once, and each one has its own
+**orientation**: the same hexagonal lattice, but turned to a different angle, like
+tiles laid in different directions. Where two of them meet there is a **grain
+boundary**, a seam where the lattice changes direction and the atoms do not fit
+neatly on either side.
+
+The colour shows the orientation. Every atom looks at the directions of the bonds to
+its neighbours, which in a crystal all line up with the lattice. A hexagonal lattice
+looks the same after a turn of 60 degrees, so the angle only matters between 0 and
+60, and that range is mapped round the colour wheel. Every grain is its own hue, and
+the atoms in the boundaries, where the angle is not well defined, fade to grey.
+
+Over time the boundaries move: small grains shrink, big ones grow, and the pattern
+coarsens. This is the structure of nearly every metal or ceramic you have touched,
+and it takes thousands of atoms before it shows at all.
 
 Getting there took two changes to the force calculation, which is where the time
 goes.
