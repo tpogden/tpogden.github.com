@@ -29,6 +29,7 @@ atmosphere, and with gravity off you are back to droplets and a uniform gas.
 
 ```{ojs}
 //| echo: false
+//| output: false
 viewof temperature = {
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
   return ui.slider({
@@ -44,6 +45,7 @@ viewof temperature = {
 
 ```{ojs}
 //| echo: false
+//| output: false
 viewof gravity = {
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
   return ui.slider({
@@ -65,6 +67,7 @@ viewof gravity = {
 {
   // Shared WebGPU boilerplate: setup, buffers and the animation loop (lib/gpu.js)
   const gpu = await import(new URL("../lib/gpu.js", document.baseURI).href);
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
 
   // The sliders are read live from their input elements (referencing `viewof x`
   // gives the element, not the value), so moving them does not restart the
@@ -365,7 +368,8 @@ viewof gravity = {
 
   gpu.run(invalidation, device, frame);
 
-  yield canvas;
+  // The canvas with the controls laid over its corner
+  yield ui.stage(canvas, [temperatureInput, gravityInput]);
 }
 ```
 
