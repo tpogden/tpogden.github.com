@@ -1,5 +1,19 @@
 [
   {
+    "listing": "/webgpu-animation-loop/index.html",
+    "items": [
+      "/webgpu-hello-world/index.html",
+      "/webgpu-three-particles/index.html"
+    ]
+  },
+  {
+    "listing": "/webgpu-three-particles/index.html",
+    "items": [
+      "/webgpu-hello-world/index.html",
+      "/webgpu-animation-loop/index.html"
+    ]
+  },
+  {
     "listing": "/index.html",
     "items": [
       "/no-ropes-on-a-boat/index.html",
@@ -51,20 +65,6 @@
     "listing": "/webgpu-hello-world/index.html",
     "items": [
       "/webgpu-three-particles/index.html",
-      "/webgpu-animation-loop/index.html"
-    ]
-  },
-  {
-    "listing": "/webgpu-animation-loop/index.html",
-    "items": [
-      "/webgpu-hello-world/index.html",
-      "/webgpu-three-particles/index.html"
-    ]
-  },
-  {
-    "listing": "/webgpu-three-particles/index.html",
-    "items": [
-      "/webgpu-hello-world/index.html",
       "/webgpu-animation-loop/index.html"
     ]
   }
