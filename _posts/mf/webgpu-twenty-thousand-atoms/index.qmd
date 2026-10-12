@@ -19,9 +19,10 @@ you can afford when every atom is compared with every other one. Here there are
 nineteen thousand, ten times more, and a few things that were invisible at the
 smaller scale appear.
 
-Heat the box until it is a liquid, then quench it. It does not freeze into one
-crystal. Crystals nucleate in many places at once, each with its own orientation,
-and they meet along **grain boundaries**. The colour is the direction of each atom's
+Heat the box until it is a liquid, then **quench** it: cool it so suddenly that the
+atoms have no time to arrange themselves in an orderly way. It does not freeze into
+one crystal. Crystals nucleate in many places at once, each with its own
+orientation, and they meet along **grain boundaries**. The colour is the direction of each atom's
 hexagonal neighbourhood, so every grain is its own hue, with the atoms in the
 boundaries between them fading to grey. Over time the boundaries move: small grains
 shrink, big ones grow, and the pattern coarsens. This is the structure of nearly
