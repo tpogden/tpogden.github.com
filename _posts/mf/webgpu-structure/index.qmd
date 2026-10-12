@@ -1,5 +1,5 @@
 ---
-title: "008: Structure"
+title: "008: Solid, Liquid, Gas"
 date: "2026-10-13"
 categories: [mf]
 page-layout: article
