@@ -20,18 +20,23 @@ pull on each other. Every pair interacts through the Lennard-Jones potential,
 $$V(r) = 4\varepsilon\left[\left(\frac{\sigma}{r}\right)^{12} - \left(\frac{\sigma}{r}\right)^{6}\right],$$
 
 which is strongly repulsive up close and weakly attractive further out. A first
-compute pass sums the force on each particle from every other one, a second
-integrates the motion (leapfrog, the same scheme as velocity Verlet), and the walls
-are replaced by _periodic boundaries_: leave on one side, re-enter on the other.
-Particles are coloured by speed. Start hot and they stay a gas; start cool and the
-attraction wins, and they condense into droplets of liquid.
+compute pass sums the force on each particle from every other one, and a second
+integrates the motion (leapfrog, the same scheme as velocity Verlet). The walls are
+replaced by _periodic boundaries_: leave on one side, re-enter on the other.
+
+Condensing releases heat, so on its own the box would just warm up. A _Langevin
+thermostat_ takes it away: every step each particle is slightly slowed and given a
+small random kick, which holds the temperature at the slider's value. The kicks need
+random numbers on the GPU, so each particle carries its own generator state.
+Particles are coloured by speed. Hot and they stay a gas; cool them and the
+attraction wins, and droplets of liquid condense out of it.
 
 ```{ojs}
 //| echo: false
 viewof temperature = Inputs.range([0.1, 1.5], {
   value: 0.3,
   step: 0.05,
-  label: "Initial temperature",
+  label: "Temperature",
 })
 ```
 
@@ -43,6 +48,11 @@ viewof speed = Inputs.range([0.25, 40], {
   transform: Math.log,
   label: "Speed (steps per frame)",
 })
+```
+
+```{ojs}
+//| echo: false
+viewof reset = Inputs.button("Restart")
 ```
 
 :::{.column-margin}
@@ -58,6 +68,13 @@ viewof speed = Inputs.range([0.25, 40], {
 //| code-summary: "Show code"
 {
   if (!navigator.gpu) throw new Error("WebGPU is not supported in this browser.");
+
+  // Clicking Restart re-runs this cell. Temperature and speed are read live from
+  // their input elements (referencing `viewof x` gives the element, not the
+  // value), so moving those sliders does not restart the simulation.
+  reset;
+  const temperatureInput = viewof temperature;
+  const speedInput = viewof speed;
 
   // Setup, as before (640x480 buffer, scaled to fill the column)
   const canvas = DOM.canvas(640, 480);
@@ -76,6 +93,8 @@ viewof speed = Inputs.range([0.25, 40], {
   const Ly = 30;
   const count = 420;
   const dt = 0.005;
+  const friction = 0.5; // thermostat coupling: how fast velocities are refreshed
+  const decay = Math.exp(-friction * dt); // per-step velocity damping
 
   // Initial state: a gas. Drop particles at random, rejecting any that land
   // closer than 0.9 sigma (periodically) to one already placed, so no pair
@@ -99,7 +118,7 @@ viewof speed = Inputs.range([0.25, 40], {
     }
   }
 
-  // Gaussian random velocities, drift removed, rescaled to the chosen temperature
+  // Gaussian random velocities, drift removed, rescaled to the starting temperature
   // (in 2D the mean of v^2 per particle is 2T)
   const gauss = () =>
     Math.sqrt(-2 * Math.log(1 - Math.random())) * Math.cos(2 * Math.PI * Math.random());
@@ -110,7 +129,7 @@ viewof speed = Inputs.range([0.25, 40], {
     for (let i = 0; i < count; i++) velocities[2 * i + axis] -= mean;
   }
   const meanSquare = velocities.reduce((s, v) => s + v * v, 0) / count;
-  const scale = Math.sqrt((2 * temperature) / meanSquare);
+  const scale = Math.sqrt((2 * temperatureInput.value) / meanSquare);
   for (let k = 0; k < velocities.length; k++) velocities[k] *= scale;
 
   // Storage buffers: positions, velocities and the accelerations between passes
@@ -125,6 +144,16 @@ viewof speed = Inputs.range([0.25, 40], {
   const positionBuffer = storage(positions);
   const velocityBuffer = storage(velocities);
   const accelerationBuffer = storage(new Float32Array(count * 2));
+
+  // One random-number-generator state (a u32) per particle, seeded from the CPU
+  const rngBuffer = storage(crypto.getRandomValues(new Uint32Array(count)));
+
+  // Uniform buffer: the strength of the thermostat's random kicks, which follows
+  // the temperature slider
+  const thermostatBuffer = device.createBuffer({
+    size: 16, // uniform buffers are happiest in multiples of 16 bytes
+    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+  });
 
   // Vertex buffer: one unit square (two triangles), shared by every particle
   const corners = new Float32Array([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
@@ -143,10 +172,31 @@ viewof speed = Inputs.range([0.25, 40], {
       const L = vec2f(${Lx}, ${Ly});   // box size
       const DT = ${dt};
       const RC2 = 6.25;                // cutoff radius 2.5 sigma, squared
+      const DECAY = ${decay};          // thermostat: velocity kept each step
+
+      struct Thermostat { noise: f32 } // kick size: sqrt(T (1 - DECAY^2))
 
       @group(0) @binding(0) var<storage, read_write> positions: array<vec2f>;
       @group(0) @binding(1) var<storage, read_write> velocities: array<vec2f>;
       @group(0) @binding(2) var<storage, read_write> accelerations: array<vec2f>;
+      @group(0) @binding(3) var<storage, read_write> rng: array<u32>;
+      @group(0) @binding(4) var<uniform> thermostat: Thermostat;
+
+      // PCG hash: advance the state, scramble it into a random u32
+      fn pcg(state: ptr<function, u32>) -> u32 {
+        *state = *state * 747796405u + 2891336453u;
+        let word = ((*state >> ((*state >> 28u) + 4u)) ^ *state) * 277803737u;
+        return (word >> 22u) ^ word;
+      }
+
+      // Two independent standard normal numbers (Box-Muller)
+      fn gaussian2(state: ptr<function, u32>) -> vec2f {
+        let u1 = (f32(pcg(state) >> 8u) + 0.5) / 16777216.0; // in (0, 1)
+        let u2 = (f32(pcg(state) >> 8u) + 0.5) / 16777216.0;
+        let radius = sqrt(-2.0 * log(u1));
+        let angle = 6.2831853 * u2;
+        return radius * vec2f(cos(angle), sin(angle));
+      }
 
       @compute @workgroup_size(64)
       fn forces(@builtin(global_invocation_id) id: vec3u) {
@@ -176,8 +226,16 @@ viewof speed = Inputs.range([0.25, 40], {
         let i = id.x;
         if (i >= arrayLength(&positions)) { return; }
 
-        // Leapfrog: kick the velocity, then drift the position
-        let v = velocities[i] + accelerations[i] * DT;
+        // Leapfrog: kick the velocity...
+        var v = velocities[i] + accelerations[i] * DT;
+
+        // ...thermostat: slow it a little and add a random kick, which holds the
+        // mean kinetic energy at the target temperature...
+        var state = rng[i];
+        v = v * DECAY + thermostat.noise * gaussian2(&state);
+        rng[i] = state;
+
+        // ...then drift the position
         var p = positions[i] + v * DT;
         p -= L * floor(p / L); // wrap back into the box
 
@@ -210,6 +268,8 @@ viewof speed = Inputs.range([0.25, 40], {
       { binding: 0, resource: { buffer: positionBuffer } },
       { binding: 1, resource: { buffer: velocityBuffer } },
       { binding: 2, resource: { buffer: accelerationBuffer } },
+      { binding: 3, resource: { buffer: rngBuffer } },
+      { binding: 4, resource: { buffer: thermostatBuffer } },
     ],
   });
 
@@ -285,16 +345,16 @@ viewof speed = Inputs.range([0.25, 40], {
 
   // One frame: some number of simulation steps in a single compute pass, then
   // draw. Dispatches in a pass run in order, and each sees the previous one's writes.
-  // The speed slider is read here every frame, so moving it does not restart the
-  // simulation: referencing `viewof speed` gives the input element, and only
-  // `speed` (its value) would re-run the cell. A fractional speed is accumulated
-  // across frames, so below 1 it takes a step every few frames.
-  const speedInput = viewof speed;
+  // The sliders are read here every frame. A fractional speed is accumulated across
+  // frames, so below 1 it takes a step every few frames.
   const workgroups = Math.ceil(count / 64);
   let stepBudget = 0;
 
   function frame() {
     if (!running) return;
+    const noise = Math.sqrt(temperatureInput.value * (1 - decay * decay));
+    device.queue.writeBuffer(thermostatBuffer, 0, new Float32Array([noise]));
+
     stepBudget += speedInput.value;
     const steps = Math.floor(stepBudget);
     stepBudget -= steps;
