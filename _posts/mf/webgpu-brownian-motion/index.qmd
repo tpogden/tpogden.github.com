@@ -131,11 +131,11 @@ viewof showTrail = {
   const accelerationBuffer = gpu.storageBuffer(device, new Float32Array(count * 2));
   const rngBuffer = gpu.storageBuffer(device, crypto.getRandomValues(new Uint32Array(count)));
 
-  // Staging buffer for readback: the big particle's position, then its velocity
-  const stagingBuffer = device.createBuffer({
-    size: 16,
-    usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST,
-  });
+  // Readback (lib/gpu.js): only particle 0, so 8 bytes of position then 8 of velocity
+  const readback = gpu.readback(device, [
+    { buffer: positionBuffer, bytes: 8 },
+    { buffer: velocityBuffer, bytes: 8 },
+  ]);
 
   // Uniform buffer: the thermostat's kick size and the big particle's mass,
   // rewritten every frame
@@ -307,7 +307,7 @@ viewof showTrail = {
 
   // Charts: one Observable Plot per host, redrawn after every few readbacks
   const [msdHost, velocityHost] = charts.children;
-  const style = ui.plotStyle;
+  const draw = ui.plotter(Plot);
   const sampleEvery = 3; // read back every this many frames
   const sampleTime = sampleEvery * stepsPerFrame * dt; // simulated time between samples
   const samples = []; // {t, x, y, vx, vy}: x and y unwrapped, so they can exceed the box
@@ -346,34 +346,28 @@ viewof showTrail = {
   }
 
   function drawCharts() {
-    const width = msdHost.clientWidth || 480;
     const { points, slope } = msd();
     const tMax = points.length ? points[points.length - 1].t : 1;
 
-    msdHost.replaceChildren(
-      Plot.plot({
-        width,
-        height: 280,
-        style,
-        x: { label: "time lag (reduced units)", domain: [0, tMax] },
-        y: { label: "mean squared displacement", grid: true, zero: true },
-        marks: [
-          Plot.dot(points, { x: "t", y: "msd", r: 2, fill: "#FF4834" }),
-          Plot.line(
-            [
-              { t: 0, msd: 0 },
-              { t: tMax, msd: slope * tMax },
-            ],
-            { x: "t", y: "msd", stroke: "currentColor", strokeDasharray: "4 3" }
-          ),
-          Plot.text([`D ≈ ${(slope / 4).toFixed(3)}`], {
-            frameAnchor: "top-left",
-            dx: 8,
-            dy: 8,
-          }),
-        ],
-      })
-    );
+    draw(msdHost, {
+      x: { label: "time lag (reduced units)", domain: [0, tMax] },
+      y: { label: "mean squared displacement", grid: true, zero: true },
+      marks: [
+        Plot.dot(points, { x: "t", y: "msd", r: 2, fill: "#FF4834" }),
+        Plot.line(
+          [
+            { t: 0, msd: 0 },
+            { t: tMax, msd: slope * tMax },
+          ],
+          { x: "t", y: "msd", stroke: "currentColor", strokeDasharray: "4 3" }
+        ),
+        Plot.text([`D ≈ ${(slope / 4).toFixed(3)}`], {
+          frameAnchor: "top-left",
+          dx: 8,
+          dy: 8,
+        }),
+      ],
+    });
 
     // Histogram of both velocity components, against the Gaussian equipartition
     // predicts: mean energy k_B T / 2 per component, so variance T / M
@@ -401,19 +395,14 @@ viewof showTrail = {
       return { v, p: Math.exp(-(v * v) / (2 * spread * spread)) / (spread * Math.sqrt(2 * Math.PI)) };
     });
 
-    velocityHost.replaceChildren(
-      Plot.plot({
-        width,
-        height: 280,
-        style,
-        x: { label: "velocity component of the big particle", domain: [lo, -lo] },
-        y: { label: "probability density", grid: true },
-        marks: [
-          Plot.rectY(rows, { x1: "x0", x2: "x1", y: "p", fill: "#5a80cc", fillOpacity: 0.85 }),
-          Plot.line(curve, { x: "v", y: "p", stroke: "currentColor", strokeDasharray: "4 3" }),
-        ],
-      })
-    );
+    draw(velocityHost, {
+      x: { label: "velocity component of the big particle", domain: [lo, -lo] },
+      y: { label: "probability density", grid: true },
+      marks: [
+        Plot.rectY(rows, { x1: "x0", x2: "x1", y: "p", fill: "#5a80cc", fillOpacity: 0.85 }),
+        Plot.line(curve, { x: "v", y: "p", stroke: "currentColor", strokeDasharray: "4 3" }),
+      ],
+    });
   }
 
   // Turn one readback of the big particle (x, y, vx, vy) into a sample
@@ -452,7 +441,6 @@ viewof showTrail = {
   // One frame: `stepsPerFrame` simulation steps in a single compute pass, then
   // draw. Every `sampleEvery` frames the big particle's state is read back.
   const workgroups = Math.ceil(count / 64);
-  let pending = false; // a mapAsync is in flight: never copy into a mapped buffer
 
   function frame() {
     const noise = Math.sqrt(temperatureInput.value * (1 - decay * decay));
@@ -477,25 +465,13 @@ viewof showTrail = {
     pass.end();
 
     // Readback: only particle 0, 8 bytes of position and 8 of velocity
-    const sample = !pending && ++frameCount % sampleEvery === 0;
-    if (sample) {
-      encoder.copyBufferToBuffer(positionBuffer, 0, stagingBuffer, 0, 8);
-      encoder.copyBufferToBuffer(velocityBuffer, 0, stagingBuffer, 8, 8);
-    }
+    const sample = !readback.pending && ++frameCount % sampleEvery === 0;
+    if (sample) readback.copy(encoder);
     device.queue.submit([encoder.finish()]);
 
     if (sample) {
-      pending = true;
       const time = simTime;
-      stagingBuffer
-        .mapAsync(GPUMapMode.READ)
-        .then(() => {
-          const data = new Float32Array(stagingBuffer.getMappedRange().slice(0));
-          stagingBuffer.unmap();
-          pending = false;
-          record(data, time);
-        })
-        .catch(() => {}); // the device was destroyed because the cell re-ran
+      readback.read((buffer) => record(new Float32Array(buffer), time));
     }
   }
 
@@ -513,14 +489,8 @@ viewof showTrail = {
 //| column: page
 charts = {
   // Two empty hosts; the simulation cell above draws into them as data arrives
-  const root = document.createElement("div");
-  root.className = "mf-charts";
-  for (const name of ["msd", "velocity"]) {
-    const host = document.createElement("div");
-    host.dataset.chart = name;
-    root.append(host);
-  }
-  return root;
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.chartHosts(["msd", "velocity"]);
 }
 ```
 

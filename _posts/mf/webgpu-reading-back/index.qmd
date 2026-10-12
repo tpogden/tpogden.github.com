@@ -154,16 +154,14 @@ viewof gravity = {
   // Per-particle potential energy, written by the force pass and read back
   const potentialBuffer = gpu.storageBuffer(device, new Float32Array(count));
 
-  // Staging buffer for readback: positions, velocities and potentials, back to
-  // back. A buffer that can be mapped for reading cannot also be a storage buffer,
-  // so the data is copied here first.
-  const positionBytes = count * 2 * 4;
-  const velocityBytes = count * 2 * 4;
-  const potentialBytes = count * 4;
-  const stagingBuffer = device.createBuffer({
-    size: positionBytes + velocityBytes + potentialBytes,
-    usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST,
-  });
+  // Readback: positions, velocities and potentials are copied back to back into a
+  // staging buffer (see gpu.readback in lib/gpu.js). A buffer that can be mapped
+  // for reading cannot also be a storage buffer, so the data is copied there first.
+  const readback = gpu.readback(device, [
+    { buffer: positionBuffer, bytes: count * 2 * 4 },
+    { buffer: velocityBuffer, bytes: count * 2 * 4 },
+    { buffer: potentialBuffer, bytes: count * 4 },
+  ]);
 
   // Uniform buffer: the thermostat, gravity and timestep, which follow the
   // controls and are rewritten every frame
@@ -285,6 +283,7 @@ viewof gravity = {
 
   // Charts: one Observable Plot per host, redrawn after every readback
   const [energyHost, densityHost] = charts.children;
+  const draw = ui.plotter(Plot);
   const hot = "#FF4834";
   const cold = "#5a80cc";
   const samples = []; // {t, kind, e}: energy per atom against simulated time
@@ -293,24 +292,16 @@ viewof gravity = {
   let density = new Float32Array(bins); // atoms per sigma^2, smoothed over samples
 
   function drawCharts(temperature, g) {
-    const width = energyHost.clientWidth || 480;
-    const style = ui.plotStyle;
-
-    energyHost.replaceChildren(
-      Plot.plot({
-        width,
-        height: 280,
-        style,
-        x: { label: "time (reduced units)" },
-        y: { label: "energy per atom", grid: true },
-        color: {
-          domain: ["kinetic", "potential", "total"],
-          range: [hot, cold, "currentColor"],
-          legend: true,
-        },
-        marks: [Plot.lineY(samples, { x: "t", y: "e", stroke: "kind" })],
-      })
-    );
+    draw(energyHost, {
+      x: { label: "time (reduced units)" },
+      y: { label: "energy per atom", grid: true },
+      color: {
+        domain: ["kinetic", "potential", "total"],
+        range: [hot, cold, "currentColor"],
+        legend: true,
+      },
+      marks: [Plot.lineY(samples, { x: "t", y: "e", stroke: "kind" })],
+    });
 
     // Barometric profile, n(y) = n_ref exp(-g (y - y_ref) / T), anchored at the
     // surface of the pool: the lowest bin whose density is gas-like. Below that the
@@ -330,19 +321,14 @@ viewof gravity = {
       n,
     }));
 
-    densityHost.replaceChildren(
-      Plot.plot({
-        width,
-        height: 280,
-        style,
-        x: { label: "density (atoms per area)", grid: true, domain: [0, 1] },
-        y: { label: "height", domain: [0, Ly] },
-        marks: [
-          Plot.rectX(rows, { y1: "y0", y2: "y1", x: "n", fill: cold, fillOpacity: 0.85 }),
-          Plot.line(curve, { x: "n", y: "y", stroke: "currentColor", strokeDasharray: "4 3" }),
-        ],
-      })
-    );
+    draw(densityHost, {
+      x: { label: "density (atoms per area)", grid: true, domain: [0, 1] },
+      y: { label: "height", domain: [0, Ly] },
+      marks: [
+        Plot.rectX(rows, { y1: "y0", y2: "y1", x: "n", fill: cold, fillOpacity: 0.85 }),
+        Plot.line(curve, { x: "n", y: "y", stroke: "currentColor", strokeDasharray: "4 3" }),
+      ],
+    });
   }
 
   // Turn one readback into chart data
@@ -380,7 +366,6 @@ viewof gravity = {
   const workgroups = Math.ceil(count / 64);
   let simTime = 0;
   let frameCount = 0;
-  let pending = false; // a mapAsync is in flight: never copy into a mapped buffer
 
   function frame() {
     const dt = timestepInput.value;
@@ -412,30 +397,15 @@ viewof gravity = {
     pass.end();
 
     // Readback, step 1: copy what we want into the staging buffer
-    const sample = !pending && ++frameCount % sampleEvery === 0;
-    if (sample) {
-      encoder.copyBufferToBuffer(positionBuffer, 0, stagingBuffer, 0, positionBytes);
-      encoder.copyBufferToBuffer(
-        velocityBuffer, 0, stagingBuffer, positionBytes, velocityBytes);
-      encoder.copyBufferToBuffer(
-        potentialBuffer, 0, stagingBuffer, positionBytes + velocityBytes, potentialBytes);
-    }
+    const sample = !readback.pending && ++frameCount % sampleEvery === 0;
+    if (sample) readback.copy(encoder);
 
     device.queue.submit([encoder.finish()]);
 
     // Readback, step 2: map it (resolves once the GPU is done), copy out, unmap
     if (sample) {
-      pending = true;
       const time = simTime;
-      stagingBuffer
-        .mapAsync(GPUMapMode.READ)
-        .then(() => {
-          const data = new Float32Array(stagingBuffer.getMappedRange().slice(0));
-          stagingBuffer.unmap();
-          pending = false;
-          record(data, time);
-        })
-        .catch(() => {}); // the device was destroyed because the cell re-ran
+      readback.read((buffer) => record(new Float32Array(buffer), time));
     }
   }
 
@@ -450,16 +420,9 @@ viewof gravity = {
 //| echo: false
 //| column: page
 charts = {
-  // Two empty hosts; the simulation cell above draws into them after each
-  // readback
-  const root = document.createElement("div");
-  root.className = "mf-charts";
-  for (const name of ["energy", "density"]) {
-    const host = document.createElement("div");
-    host.dataset.chart = name;
-    root.append(host);
-  }
-  return root;
+  // Two empty hosts; the simulation cell above draws into them as data arrives
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.chartHosts(["energy", "density"]);
 }
 ```
 

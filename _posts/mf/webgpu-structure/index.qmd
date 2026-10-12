@@ -156,13 +156,13 @@ viewof byOrder = {
   const histogramBuffer = gpu.storageBuffer(device, new Uint32Array(bins));
   const rngBuffer = gpu.storageBuffer(device, crypto.getRandomValues(new Uint32Array(count)));
 
-  // Staging buffer for readback: the histogram, then the orders
+  // Readback (lib/gpu.js): the histogram, then the orders, back to back
   const histogramBytes = bins * 4;
   const orderBytes = count * 4;
-  const stagingBuffer = device.createBuffer({
-    size: histogramBytes + orderBytes,
-    usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST,
-  });
+  const readback = gpu.readback(device, [
+    { buffer: histogramBuffer, bytes: histogramBytes },
+    { buffer: orderBuffer, bytes: orderBytes },
+  ]);
 
   // Uniform buffers, rewritten every frame. `params`: the thermostat's kick size
   // (f32), whether this frame builds the histogram (u32), the box scale (f32) and
@@ -340,39 +340,28 @@ viewof byOrder = {
 
   // Charts: one Observable Plot per host, redrawn after every readback
   const [rdfHost, orderHost] = charts.children;
-  const style = ui.plotStyle;
+  const draw = ui.plotter(Plot);
   const rdf = new Float32Array(bins); // smoothed over samples
   const series = []; // {t, fraction}: atoms with |psi6| > 0.8
   let simTime = 0;
 
   function drawCharts() {
-    const width = rdfHost.clientWidth || 480;
     const rows = Array.from(rdf, (g, k) => ({ r: (k + 0.5) * binWidth, g }));
 
-    rdfHost.replaceChildren(
-      Plot.plot({
-        width,
-        height: 280,
-        style,
-        x: { label: "distance r (σ)", domain: [0, rMax] },
-        y: { label: "g(r)", grid: true, domain: [0, 6], clamp: true },
-        marks: [
-          Plot.ruleY([1], { stroke: "currentColor", strokeOpacity: 0.4, strokeDasharray: "4 3" }),
-          Plot.line(rows, { x: "r", y: "g", stroke: "#FF4834", clip: true }),
-        ],
-      })
-    );
+    draw(rdfHost, {
+      x: { label: "distance r (σ)", domain: [0, rMax] },
+      y: { label: "g(r)", grid: true, domain: [0, 6], clamp: true },
+      marks: [
+        Plot.ruleY([1], { stroke: "currentColor", strokeOpacity: 0.4, strokeDasharray: "4 3" }),
+        Plot.line(rows, { x: "r", y: "g", stroke: "#FF4834", clip: true }),
+      ],
+    });
 
-    orderHost.replaceChildren(
-      Plot.plot({
-        width,
-        height: 280,
-        style,
-        x: { label: "time (reduced units)" },
-        y: { label: "fraction crystalline", domain: [0, 1], grid: true },
-        marks: [Plot.lineY(series, { x: "t", y: "fraction", stroke: "#FF4834" })],
-      })
-    );
+    draw(orderHost, {
+      x: { label: "time (reduced units)" },
+      y: { label: "fraction crystalline", domain: [0, 1], grid: true },
+      marks: [Plot.lineY(series, { x: "t", y: "fraction", stroke: "#FF4834" })],
+    });
   }
 
   // Turn one readback into chart data
@@ -404,10 +393,9 @@ viewof byOrder = {
   const paramBytes = new ArrayBuffer(16);
   const paramView = new DataView(paramBytes);
   let frameCount = 0;
-  let pending = false; // a mapAsync is in flight: never copy into a mapped buffer
 
   function frame() {
-    const sample = !pending && ++frameCount % sampleEvery === 0;
+    const sample = !readback.pending && ++frameCount % sampleEvery === 0;
 
     // Density rho means a box scale of sqrt(rho0 / rho) in each direction; `scale`
     // is last frame's value, so `ratio` is how much to stretch the positions now
@@ -444,25 +432,13 @@ viewof byOrder = {
     (orderInput.value ? orderDiscs : speedDiscs).draw(pass, count);
     pass.end();
 
-    if (sample) {
-      encoder.copyBufferToBuffer(histogramBuffer, 0, stagingBuffer, 0, histogramBytes);
-      encoder.copyBufferToBuffer(orderBuffer, 0, stagingBuffer, histogramBytes, orderBytes);
-    }
+    if (sample) readback.copy(encoder);
     device.queue.submit([encoder.finish()]);
 
     if (sample) {
-      pending = true;
       const time = simTime;
       const rho = densityInput.value;
-      stagingBuffer
-        .mapAsync(GPUMapMode.READ)
-        .then(() => {
-          const copy = stagingBuffer.getMappedRange().slice(0);
-          stagingBuffer.unmap();
-          pending = false;
-          record(copy, time, stepsPerFrame, rho);
-        })
-        .catch(() => {}); // the device was destroyed because the cell re-ran
+      readback.read((buffer) => record(buffer, time, stepsPerFrame, rho));
     }
   }
 
@@ -477,15 +453,9 @@ viewof byOrder = {
 //| echo: false
 //| column: page
 charts = {
-  // Two empty hosts; the simulation cell above draws into them after each readback
-  const root = document.createElement("div");
-  root.className = "mf-charts";
-  for (const name of ["rdf", "order"]) {
-    const host = document.createElement("div");
-    host.dataset.chart = name;
-    root.append(host);
-  }
-  return root;
+  // Two empty hosts; the simulation cell above draws into them as data arrives
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.chartHosts(["rdf", "order"]);
 }
 ```
 
