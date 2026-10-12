@@ -86,9 +86,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-12eaded38a56e20f01ec740f85472ba2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-84ee0ebae0441929d69f419e2865e4a1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../site_libs/bootstrap/bootstrap-12eaded38a56e20f01ec740f85472ba2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-68e675a08c9c85d3293c5513f864ce21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-160dc74c2fd56f18c72c1df68b6e95a9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-68e675a08c9c85d3293c5513f864ce21.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -405,8 +405,8 @@ window.Quarto = {
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" data-startfrom="26" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 25;"><span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>{</span>
 <span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="op">!</span><span class="bu">navigator</span><span class="op">.</span><span class="at">gpu</span>) <span class="cf">throw</span> <span class="kw">new</span> <span class="bu">Error</span>(<span class="st">"WebGPU is not supported in this browser."</span>)<span class="op">;</span></span>
 <span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Setup, as before (640x480 buffer, scaled to fill the column)</span></span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> canvas <span class="op">=</span> DOM<span class="op">.</span><span class="fu">canvas</span>(<span class="dv">640</span><span class="op">,</span> <span class="dv">480</span>)<span class="op">;</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Setup, as before (640x360 buffer, scaled to fill the column)</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> canvas <span class="op">=</span> DOM<span class="op">.</span><span class="fu">canvas</span>(<span class="dv">640</span><span class="op">,</span> <span class="dv">360</span>)<span class="op">;</span></span>
 <span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  canvas<span class="op">.</span><span class="at">style</span><span class="op">.</span><span class="at">width</span> <span class="op">=</span> <span class="st">"100%"</span><span class="op">;</span></span>
 <span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  canvas<span class="op">.</span><span class="at">style</span><span class="op">.</span><span class="at">height</span> <span class="op">=</span> <span class="st">"auto"</span><span class="op">;</span></span>
 <span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> adapter <span class="op">=</span> <span class="cf">await</span> <span class="bu">navigator</span><span class="op">.</span><span class="at">gpu</span><span class="op">.</span><span class="fu">requestAdapter</span>()<span class="op">;</span></span>
@@ -426,7 +426,7 @@ window.Quarto = {
 <span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>  <span class="co">// made of two triangles (6 vertices). Clip space is stretched to the</span></span>
 <span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>  <span class="co">// canvas, so scale x by the aspect ratio to keep the squares square.</span></span>
 <span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> half <span class="op">=</span> <span class="fl">0.03</span><span class="op">;</span></span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> aspect <span class="op">=</span> <span class="dv">480</span> <span class="op">/</span> <span class="dv">640</span><span class="op">;</span></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> aspect <span class="op">=</span> <span class="dv">360</span> <span class="op">/</span> <span class="dv">640</span><span class="op">;</span></span>
 <span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> corners <span class="op">=</span> [[<span class="op">-</span><span class="dv">1</span><span class="op">,</span> <span class="op">-</span><span class="dv">1</span>]<span class="op">,</span> [<span class="dv">1</span><span class="op">,</span> <span class="op">-</span><span class="dv">1</span>]<span class="op">,</span> [<span class="dv">1</span><span class="op">,</span> <span class="dv">1</span>]<span class="op">,</span> [<span class="op">-</span><span class="dv">1</span><span class="op">,</span> <span class="op">-</span><span class="dv">1</span>]<span class="op">,</span> [<span class="dv">1</span><span class="op">,</span> <span class="dv">1</span>]<span class="op">,</span> [<span class="op">-</span><span class="dv">1</span><span class="op">,</span> <span class="dv">1</span>]]<span class="op">;</span></span>
 <span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> vertices <span class="op">=</span> <span class="kw">new</span> <span class="bu">Float32Array</span>(</span>
 <span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>    centres<span class="op">.</span><span class="fu">flatMap</span>(([cx<span class="op">,</span> cy]) <span class="kw">=&gt;</span></span>
@@ -499,7 +499,7 @@ window.Quarto = {
 <span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a>  <span class="kw">yield</span> canvas<span class="op">;</span></span>
 <span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
-<div class="cell-output cell-output-display column-page">
+<div class="cell-output cell-output-display column-screen-inset">
 <div id="ojs-cell-1" data-nodetype="expression">
 
 </div>
@@ -509,7 +509,7 @@ window.Quarto = {
 <p>Moving Figures</p>
 <div id="listing-mf-series" class="quarto-listing quarto-listing-container-default">
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="bWY=" data-listing-date-sort="1791676800000" data-listing-file-modified-sort="1791830427516" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="245">
+<div class="quarto-post image-right" data-index="0" data-categories="bWY=" data-listing-date-sort="1791676800000" data-listing-file-modified-sort="1791830751279" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="245">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-hello-world/index.html" class="no-external">000: Hello GPU</a>
@@ -520,7 +520,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="1" data-categories="bWY=" data-listing-date-sort="1791676800000" data-listing-file-modified-sort="1791830427516" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="999">
+<div class="quarto-post image-right" data-index="1" data-categories="bWY=" data-listing-date-sort="1791676800000" data-listing-file-modified-sort="1791830751279" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="999">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-animation-loop/index.html" class="no-external">002: Animation Loop</a>
@@ -531,7 +531,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="2" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1791830427516" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1209">
+<div class="quarto-post image-right" data-index="2" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1791830751279" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="998">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-bouncing-particles/index.html" class="no-external">003: Bouncing Particles</a>
@@ -542,7 +542,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="3" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1791830427516" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1514">
+<div class="quarto-post image-right" data-index="3" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1791830751279" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1303">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-compute-shader/index.html" class="no-external">004: Compute Shader</a>
@@ -553,7 +553,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="4" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1791830427516" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="16" data-listing-word-count-sort="3025">
+<div class="quarto-post image-right" data-index="4" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1791830751279" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="15" data-listing-word-count-sort="2847">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-lennard-jones/index.html" class="no-external">005: Jiggling Atoms</a>
@@ -561,6 +561,17 @@ window.Quarto = {
 </div>
 <div class="metadata">
 <a href="../webgpu-lennard-jones/index.html" class="no-external">
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="5" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1791830751279" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="15" data-listing-word-count-sort="2950">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="../webgpu-gravity/index.html" class="no-external">006: Falling Atoms</a>
+</h3>
+</div>
+<div class="metadata">
+<a href="../webgpu-gravity/index.html" class="no-external">
 </a>
 </div>
 </div>
@@ -574,7 +585,7 @@ window.Quarto = {
 
 </main> <!-- /main -->
 <script type="ojs-module-contents">
-eyJjb250ZW50cyI6W3sibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMSIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6IntcbiAgaWYgKCFuYXZpZ2F0b3IuZ3B1KSB0aHJvdyBuZXcgRXJyb3IoXCJXZWJHUFUgaXMgbm90IHN1cHBvcnRlZCBpbiB0aGlzIGJyb3dzZXIuXCIpO1xuXG4gIC8vIFNldHVwLCBhcyBiZWZvcmUgKDY0MHg0ODAgYnVmZmVyLCBzY2FsZWQgdG8gZmlsbCB0aGUgY29sdW1uKVxuICBjb25zdCBjYW52YXMgPSBET00uY2FudmFzKDY0MCwgNDgwKTtcbiAgY2FudmFzLnN0eWxlLndpZHRoID0gXCIxMDAlXCI7XG4gIGNhbnZhcy5zdHlsZS5oZWlnaHQgPSBcImF1dG9cIjtcbiAgY29uc3QgYWRhcHRlciA9IGF3YWl0IG5hdmlnYXRvci5ncHUucmVxdWVzdEFkYXB0ZXIoKTtcbiAgY29uc3QgZGV2aWNlID0gYXdhaXQgYWRhcHRlci5yZXF1ZXN0RGV2aWNlKCk7XG4gIGNvbnN0IGNvbnRleHQgPSBjYW52YXMuZ2V0Q29udGV4dChcIndlYmdwdVwiKTtcbiAgY29uc3QgZm9ybWF0ID0gbmF2aWdhdG9yLmdwdS5nZXRQcmVmZXJyZWRDYW52YXNGb3JtYXQoKTtcbiAgY29udGV4dC5jb25maWd1cmUoeyBkZXZpY2UsIGZvcm1hdCB9KTtcblxuICAvLyBQYXJ0aWNsZSBjZW50cmVzOiB0aHJlZSByYW5kb20gMkQgcG9zaXRpb25zIGluIGNsaXAgc3BhY2UgKC0xIHRvIDEpLFxuICAvLyBrZXB0IG9mZiB0aGUgZWRnZSBzbyBlYWNoIHNxdWFyZSBzdGF5cyBmdWxseSBvbiB0aGUgY2FudmFzXG4gIGNvbnN0IGNlbnRyZXMgPSBBcnJheS5mcm9tKHsgbGVuZ3RoOiAzIH0sICgpID0+IFtcbiAgICBNYXRoLnJhbmRvbSgpICogMS44IC0gMC45LFxuICAgIE1hdGgucmFuZG9tKCkgKiAxLjggLSAwLjksXG4gIF0pO1xuXG4gIC8vIEdQVSBwb2ludHMgYXJlIGFsd2F5cyAxcHgsIHNvIGRyYXcgZWFjaCBwYXJ0aWNsZSBhcyBhIHNtYWxsIHNxdWFyZVxuICAvLyBtYWRlIG9mIHR3byB0cmlhbmdsZXMgKDYgdmVydGljZXMpLiBDbGlwIHNwYWNlIGlzIHN0cmV0Y2hlZCB0byB0aGVcbiAgLy8gY2FudmFzLCBzbyBzY2FsZSB4IGJ5IHRoZSBhc3BlY3QgcmF0aW8gdG8ga2VlcCB0aGUgc3F1YXJlcyBzcXVhcmUuXG4gIGNvbnN0IGhhbGYgPSAwLjAzO1xuICBjb25zdCBhc3BlY3QgPSA0ODAgLyA2NDA7XG4gIGNvbnN0IGNvcm5lcnMgPSBbWy0xLCAtMV0sIFsxLCAtMV0sIFsxLCAxXSwgWy0xLCAtMV0sIFsxLCAxXSwgWy0xLCAxXV07XG4gIGNvbnN0IHZlcnRpY2VzID0gbmV3IEZsb2F0MzJBcnJheShcbiAgICBjZW50cmVzLmZsYXRNYXAoKFtjeCwgY3ldKSA9PlxuICAgICAgY29ybmVycy5mbGF0TWFwKChbZHgsIGR5XSkgPT4gW2N4ICsgZHggKiBoYWxmICogYXNwZWN0LCBjeSArIGR5ICogaGFsZl0pXG4gICAgKVxuICApO1xuXG4gIC8vIEJ1ZmZlclxuICBjb25zdCBidWZmZXIgPSBkZXZpY2UuY3JlYXRlQnVmZmVyKHtcbiAgICBzaXplOiB2ZXJ0aWNlcy5ieXRlTGVuZ3RoLFxuICAgIHVzYWdlOiBHUFVCdWZmZXJVc2FnZS5WRVJURVggfCBHUFVCdWZmZXJVc2FnZS5DT1BZX0RTVCxcbiAgfSk7XG4gIGRldmljZS5xdWV1ZS53cml0ZUJ1ZmZlcihidWZmZXIsIDAsIHZlcnRpY2VzKTtcblxuICAvLyBTaGFkZXJzXG4gIGNvbnN0IG1vZHVsZSA9IGRldmljZS5jcmVhdGVTaGFkZXJNb2R1bGUoe1xuICAgIGNvZGU6IGBcbiAgICAgIEB2ZXJ0ZXhcbiAgICAgIGZuIHZzKEBsb2NhdGlvbigwKSBwb3M6IHZlYzJmKSAtPiBAYnVpbHRpbihwb3NpdGlvbikgdmVjNGYge1xuICAgICAgICByZXR1cm4gdmVjNGYocG9zLCAwLjAsIDEuMCk7XG4gICAgICB9XG5cbiAgICAgIEBmcmFnbWVudFxuICAgICAgZm4gZnMoKSAtPiBAbG9jYXRpb24oMCkgdmVjNGYge1xuICAgICAgICByZXR1cm4gdmVjNGYoMS4wLCAwLjI4MiwgMC4yMDQsIDEuMCk7IC8vICNGRjQ4MzRcbiAgICAgIH1cbiAgICBgLFxuICB9KTtcblxuICAvLyBQaXBlbGluZVxuICBjb25zdCBwaXBlbGluZSA9IGRldmljZS5jcmVhdGVSZW5kZXJQaXBlbGluZSh7XG4gICAgbGF5b3V0OiBcImF1dG9cIixcbiAgICB2ZXJ0ZXg6IHtcbiAgICAgIG1vZHVsZSxcbiAgICAgIGVudHJ5UG9pbnQ6IFwidnNcIixcbiAgICAgIGJ1ZmZlcnM6IFtcbiAgICAgICAge1xuICAgICAgICAgIGFycmF5U3RyaWRlOiAyICogNCxcbiAgICAgICAgICBhdHRyaWJ1dGVzOiBbeyBzaGFkZXJMb2NhdGlvbjogMCwgb2Zmc2V0OiAwLCBmb3JtYXQ6IFwiZmxvYXQzMngyXCIgfV0sXG4gICAgICAgIH0sXG4gICAgICBdLFxuICAgIH0sXG4gICAgZnJhZ21lbnQ6IHtcbiAgICAgIG1vZHVsZSxcbiAgICAgIGVudHJ5UG9pbnQ6IFwiZnNcIixcbiAgICAgIHRhcmdldHM6IFt7IGZvcm1hdCB9XSxcbiAgICB9LFxuICAgIHByaW1pdGl2ZTogeyB0b3BvbG9neTogXCJ0cmlhbmdsZS1saXN0XCIgfSxcbiAgfSk7XG5cbiAgLy8gUmVuZGVyIHBhc3NcbiAgY29uc3QgZW5jb2RlciA9IGRldmljZS5jcmVhdGVDb21tYW5kRW5jb2RlcigpO1xuICBjb25zdCBwYXNzID0gZW5jb2Rlci5iZWdpblJlbmRlclBhc3Moe1xuICAgIGNvbG9yQXR0YWNobWVudHM6IFtcbiAgICAgIHtcbiAgICAgICAgdmlldzogY29udGV4dC5nZXRDdXJyZW50VGV4dHVyZSgpLmNyZWF0ZVZpZXcoKSxcbiAgICAgICAgY2xlYXJWYWx1ZTogeyByOiAwLjEwMiwgZzogMC4xMDIsIGI6IDAuMTAyLCBhOiAxLjAgfSwgLy8gIzFhMWExYVxuICAgICAgICBsb2FkT3A6IFwiY2xlYXJcIixcbiAgICAgICAgc3RvcmVPcDogXCJzdG9yZVwiLFxuICAgICAgfSxcbiAgICBdLFxuICB9KTtcbiAgcGFzcy5zZXRQaXBlbGluZShwaXBlbGluZSk7XG4gIHBhc3Muc2V0VmVydGV4QnVmZmVyKDAsIGJ1ZmZlcik7XG4gIHBhc3MuZHJhdyh2ZXJ0aWNlcy5sZW5ndGggLyAyKTtcbiAgcGFzcy5lbmQoKTtcblxuICBkZXZpY2UucXVldWUuc3VibWl0KFtlbmNvZGVyLmZpbmlzaCgpXSk7XG5cbiAgeWllbGQgY2FudmFzO1xufVxuIn1dfQ==
+eyJjb250ZW50cyI6W3sibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMSIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6IntcbiAgaWYgKCFuYXZpZ2F0b3IuZ3B1KSB0aHJvdyBuZXcgRXJyb3IoXCJXZWJHUFUgaXMgbm90IHN1cHBvcnRlZCBpbiB0aGlzIGJyb3dzZXIuXCIpO1xuXG4gIC8vIFNldHVwLCBhcyBiZWZvcmUgKDY0MHgzNjAgYnVmZmVyLCBzY2FsZWQgdG8gZmlsbCB0aGUgY29sdW1uKVxuICBjb25zdCBjYW52YXMgPSBET00uY2FudmFzKDY0MCwgMzYwKTtcbiAgY2FudmFzLnN0eWxlLndpZHRoID0gXCIxMDAlXCI7XG4gIGNhbnZhcy5zdHlsZS5oZWlnaHQgPSBcImF1dG9cIjtcbiAgY29uc3QgYWRhcHRlciA9IGF3YWl0IG5hdmlnYXRvci5ncHUucmVxdWVzdEFkYXB0ZXIoKTtcbiAgY29uc3QgZGV2aWNlID0gYXdhaXQgYWRhcHRlci5yZXF1ZXN0RGV2aWNlKCk7XG4gIGNvbnN0IGNvbnRleHQgPSBjYW52YXMuZ2V0Q29udGV4dChcIndlYmdwdVwiKTtcbiAgY29uc3QgZm9ybWF0ID0gbmF2aWdhdG9yLmdwdS5nZXRQcmVmZXJyZWRDYW52YXNGb3JtYXQoKTtcbiAgY29udGV4dC5jb25maWd1cmUoeyBkZXZpY2UsIGZvcm1hdCB9KTtcblxuICAvLyBQYXJ0aWNsZSBjZW50cmVzOiB0aHJlZSByYW5kb20gMkQgcG9zaXRpb25zIGluIGNsaXAgc3BhY2UgKC0xIHRvIDEpLFxuICAvLyBrZXB0IG9mZiB0aGUgZWRnZSBzbyBlYWNoIHNxdWFyZSBzdGF5cyBmdWxseSBvbiB0aGUgY2FudmFzXG4gIGNvbnN0IGNlbnRyZXMgPSBBcnJheS5mcm9tKHsgbGVuZ3RoOiAzIH0sICgpID0+IFtcbiAgICBNYXRoLnJhbmRvbSgpICogMS44IC0gMC45LFxuICAgIE1hdGgucmFuZG9tKCkgKiAxLjggLSAwLjksXG4gIF0pO1xuXG4gIC8vIEdQVSBwb2ludHMgYXJlIGFsd2F5cyAxcHgsIHNvIGRyYXcgZWFjaCBwYXJ0aWNsZSBhcyBhIHNtYWxsIHNxdWFyZVxuICAvLyBtYWRlIG9mIHR3byB0cmlhbmdsZXMgKDYgdmVydGljZXMpLiBDbGlwIHNwYWNlIGlzIHN0cmV0Y2hlZCB0byB0aGVcbiAgLy8gY2FudmFzLCBzbyBzY2FsZSB4IGJ5IHRoZSBhc3BlY3QgcmF0aW8gdG8ga2VlcCB0aGUgc3F1YXJlcyBzcXVhcmUuXG4gIGNvbnN0IGhhbGYgPSAwLjAzO1xuICBjb25zdCBhc3BlY3QgPSAzNjAgLyA2NDA7XG4gIGNvbnN0IGNvcm5lcnMgPSBbWy0xLCAtMV0sIFsxLCAtMV0sIFsxLCAxXSwgWy0xLCAtMV0sIFsxLCAxXSwgWy0xLCAxXV07XG4gIGNvbnN0IHZlcnRpY2VzID0gbmV3IEZsb2F0MzJBcnJheShcbiAgICBjZW50cmVzLmZsYXRNYXAoKFtjeCwgY3ldKSA9PlxuICAgICAgY29ybmVycy5mbGF0TWFwKChbZHgsIGR5XSkgPT4gW2N4ICsgZHggKiBoYWxmICogYXNwZWN0LCBjeSArIGR5ICogaGFsZl0pXG4gICAgKVxuICApO1xuXG4gIC8vIEJ1ZmZlclxuICBjb25zdCBidWZmZXIgPSBkZXZpY2UuY3JlYXRlQnVmZmVyKHtcbiAgICBzaXplOiB2ZXJ0aWNlcy5ieXRlTGVuZ3RoLFxuICAgIHVzYWdlOiBHUFVCdWZmZXJVc2FnZS5WRVJURVggfCBHUFVCdWZmZXJVc2FnZS5DT1BZX0RTVCxcbiAgfSk7XG4gIGRldmljZS5xdWV1ZS53cml0ZUJ1ZmZlcihidWZmZXIsIDAsIHZlcnRpY2VzKTtcblxuICAvLyBTaGFkZXJzXG4gIGNvbnN0IG1vZHVsZSA9IGRldmljZS5jcmVhdGVTaGFkZXJNb2R1bGUoe1xuICAgIGNvZGU6IGBcbiAgICAgIEB2ZXJ0ZXhcbiAgICAgIGZuIHZzKEBsb2NhdGlvbigwKSBwb3M6IHZlYzJmKSAtPiBAYnVpbHRpbihwb3NpdGlvbikgdmVjNGYge1xuICAgICAgICByZXR1cm4gdmVjNGYocG9zLCAwLjAsIDEuMCk7XG4gICAgICB9XG5cbiAgICAgIEBmcmFnbWVudFxuICAgICAgZm4gZnMoKSAtPiBAbG9jYXRpb24oMCkgdmVjNGYge1xuICAgICAgICByZXR1cm4gdmVjNGYoMS4wLCAwLjI4MiwgMC4yMDQsIDEuMCk7IC8vICNGRjQ4MzRcbiAgICAgIH1cbiAgICBgLFxuICB9KTtcblxuICAvLyBQaXBlbGluZVxuICBjb25zdCBwaXBlbGluZSA9IGRldmljZS5jcmVhdGVSZW5kZXJQaXBlbGluZSh7XG4gICAgbGF5b3V0OiBcImF1dG9cIixcbiAgICB2ZXJ0ZXg6IHtcbiAgICAgIG1vZHVsZSxcbiAgICAgIGVudHJ5UG9pbnQ6IFwidnNcIixcbiAgICAgIGJ1ZmZlcnM6IFtcbiAgICAgICAge1xuICAgICAgICAgIGFycmF5U3RyaWRlOiAyICogNCxcbiAgICAgICAgICBhdHRyaWJ1dGVzOiBbeyBzaGFkZXJMb2NhdGlvbjogMCwgb2Zmc2V0OiAwLCBmb3JtYXQ6IFwiZmxvYXQzMngyXCIgfV0sXG4gICAgICAgIH0sXG4gICAgICBdLFxuICAgIH0sXG4gICAgZnJhZ21lbnQ6IHtcbiAgICAgIG1vZHVsZSxcbiAgICAgIGVudHJ5UG9pbnQ6IFwiZnNcIixcbiAgICAgIHRhcmdldHM6IFt7IGZvcm1hdCB9XSxcbiAgICB9LFxuICAgIHByaW1pdGl2ZTogeyB0b3BvbG9neTogXCJ0cmlhbmdsZS1saXN0XCIgfSxcbiAgfSk7XG5cbiAgLy8gUmVuZGVyIHBhc3NcbiAgY29uc3QgZW5jb2RlciA9IGRldmljZS5jcmVhdGVDb21tYW5kRW5jb2RlcigpO1xuICBjb25zdCBwYXNzID0gZW5jb2Rlci5iZWdpblJlbmRlclBhc3Moe1xuICAgIGNvbG9yQXR0YWNobWVudHM6IFtcbiAgICAgIHtcbiAgICAgICAgdmlldzogY29udGV4dC5nZXRDdXJyZW50VGV4dHVyZSgpLmNyZWF0ZVZpZXcoKSxcbiAgICAgICAgY2xlYXJWYWx1ZTogeyByOiAwLjEwMiwgZzogMC4xMDIsIGI6IDAuMTAyLCBhOiAxLjAgfSwgLy8gIzFhMWExYVxuICAgICAgICBsb2FkT3A6IFwiY2xlYXJcIixcbiAgICAgICAgc3RvcmVPcDogXCJzdG9yZVwiLFxuICAgICAgfSxcbiAgICBdLFxuICB9KTtcbiAgcGFzcy5zZXRQaXBlbGluZShwaXBlbGluZSk7XG4gIHBhc3Muc2V0VmVydGV4QnVmZmVyKDAsIGJ1ZmZlcik7XG4gIHBhc3MuZHJhdyh2ZXJ0aWNlcy5sZW5ndGggLyAyKTtcbiAgcGFzcy5lbmQoKTtcblxuICBkZXZpY2UucXVldWUuc3VibWl0KFtlbmNvZGVyLmZpbmlzaCgpXSk7XG5cbiAgeWllbGQgY2FudmFzO1xufVxuIn1dfQ==
 </script>
 <script type="module">
 if (window.location.protocol === "file:") { alert("The OJS runtime does not work with file:// URLs. Please use a web server to view this document."); }
