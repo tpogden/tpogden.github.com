@@ -15,6 +15,7 @@
 # post shadow dirs
 /webgpu-animation-loop/
 /webgpu-bouncing-particles/
+/webgpu-compute-shader/
 /webgpu-hello-world/
 /webgpu-three-particles/
 /10000-days/

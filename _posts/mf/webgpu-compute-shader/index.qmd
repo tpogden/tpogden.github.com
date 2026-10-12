@@ -1,0 +1,241 @@
+---
+title: "004: Compute Shader"
+date: "2026-10-12"
+categories: [mf]
+page-layout: article
+listing:
+  - id: mf-series
+    contents: "../*/index.qmd"
+    type: default
+    categories: false
+    include:
+      categories: "mf"
+    fields: [title]
+    sort: "title asc"
+---
+
+Building on [Bouncing Particles](../webgpu-bouncing-particles/), the same simulation
+now runs on the GPU. The `step` function from last time becomes a _compute shader_:
+a program with no vertices or pixels, just a function that runs once per particle
+over a storage buffer. A _compute pass_ dispatches it in _workgroups_ of 64, so
+2,000 particles update in parallel. Positions and velocities are uploaded once and
+never touched by the CPU again. The render pass reads the same buffer the compute
+pass has just written.
+
+:::{.column-margin}
+#### Moving Figures
+
+:::{#mf-series}
+:::
+:::
+
+```{ojs}
+//| column: page
+//| code-fold: true
+//| code-summary: "Show code"
+{
+  if (!navigator.gpu) throw new Error("WebGPU is not supported in this browser.");
+
+  // Setup, as before (640x480 buffer, scaled to fill the column)
+  const canvas = DOM.canvas(640, 480);
+  canvas.style.width = "100%";
+  canvas.style.height = "auto";
+  const adapter = await navigator.gpu.requestAdapter();
+  const device = await adapter.requestDevice();
+  const context = canvas.getContext("webgpu");
+  const format = navigator.gpu.getPreferredCanvasFormat();
+  context.configure({ device, format });
+
+  // Initial state, in clip space (-1 to 1). It is uploaded once; after that the
+  // GPU owns it.
+  const count = 2000;
+  const half = [0.0075, 0.01]; // particle half-size; x scaled by 4:3 aspect
+  const positions = new Float32Array(count * 2);
+  const velocities = new Float32Array(count * 2);
+  for (let i = 0; i < count; i++) {
+    positions[2 * i] = (Math.random() * 2 - 1) * (1 - half[0]);
+    positions[2 * i + 1] = (Math.random() * 2 - 1) * (1 - half[1]);
+    const angle = Math.random() * 2 * Math.PI;
+    const speed = 0.3 + Math.random() * 0.5; // clip units per second
+    velocities[2 * i] = Math.cos(angle) * speed;
+    velocities[2 * i + 1] = Math.sin(angle) * speed;
+  }
+
+  // Storage buffers: the compute pass writes them, the render pass reads them
+  const positionBuffer = device.createBuffer({
+    size: positions.byteLength,
+    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+  });
+  const velocityBuffer = device.createBuffer({
+    size: velocities.byteLength,
+    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+  });
+  device.queue.writeBuffer(positionBuffer, 0, positions);
+  device.queue.writeBuffer(velocityBuffer, 0, velocities);
+
+  // Uniform buffer: the fixed timestep, written once
+  const dt = 1 / 120;
+  const paramBuffer = device.createBuffer({
+    size: 16, // uniform buffers are happiest in multiples of 16 bytes
+    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+  });
+  device.queue.writeBuffer(paramBuffer, 0, new Float32Array([dt]));
+
+  // Vertex buffer: one unit square (two triangles), shared by every particle
+  const corners = new Float32Array([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
+  const cornerBuffer = device.createBuffer({
+    size: corners.byteLength,
+    usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
+  });
+  device.queue.writeBuffer(cornerBuffer, 0, corners);
+
+  // Compute shader: the old `step` function, one invocation per particle
+  const computeModule = device.createShaderModule({
+    code: `
+      struct Params { dt: f32 }
+
+      @group(0) @binding(0) var<storage, read_write> positions: array<vec2f>;
+      @group(0) @binding(1) var<storage, read_write> velocities: array<vec2f>;
+      @group(0) @binding(2) var<uniform> params: Params;
+
+      @compute @workgroup_size(64)
+      fn step(@builtin(global_invocation_id) id: vec3u) {
+        let i = id.x;
+        // The last workgroup may run past the end of the array
+        if (i >= arrayLength(&positions)) { return; }
+
+        let limit = vec2f(${1 - half[0]}, ${1 - half[1]});
+        var p = positions[i] + velocities[i] * params.dt;
+        var v = velocities[i];
+
+        // Bounce: clamp to the wall and flip the velocity
+        if (p.x > limit.x)  { p.x = limit.x;  v.x = -v.x; }
+        if (p.x < -limit.x) { p.x = -limit.x; v.x = -v.x; }
+        if (p.y > limit.y)  { p.y = limit.y;  v.y = -v.y; }
+        if (p.y < -limit.y) { p.y = -limit.y; v.y = -v.y; }
+
+        positions[i] = p;
+        velocities[i] = v;
+      }
+    `,
+  });
+
+  const computePipeline = device.createComputePipeline({
+    layout: "auto",
+    compute: { module: computeModule, entryPoint: "step" },
+  });
+
+  const computeBindGroup = device.createBindGroup({
+    layout: computePipeline.getBindGroupLayout(0),
+    entries: [
+      { binding: 0, resource: { buffer: positionBuffer } },
+      { binding: 1, resource: { buffer: velocityBuffer } },
+      { binding: 2, resource: { buffer: paramBuffer } },
+    ],
+  });
+
+  // Render shaders: draw each particle from the positions buffer, as before
+  const renderModule = device.createShaderModule({
+    code: `
+      @group(0) @binding(0) var<storage, read> positions: array<vec2f>;
+
+      @vertex
+      fn vs(
+        @location(0) corner: vec2f,
+        @builtin(instance_index) i: u32,
+      ) -> @builtin(position) vec4f {
+        let half = vec2f(${half[0]}, ${half[1]});
+        return vec4f(positions[i] + corner * half, 0.0, 1.0);
+      }
+
+      @fragment
+      fn fs() -> @location(0) vec4f {
+        return vec4f(1.0, 0.282, 0.204, 1.0); // #FF4834
+      }
+    `,
+  });
+
+  const renderPipeline = device.createRenderPipeline({
+    layout: "auto",
+    vertex: {
+      module: renderModule,
+      entryPoint: "vs",
+      buffers: [
+        {
+          arrayStride: 2 * 4,
+          attributes: [{ shaderLocation: 0, offset: 0, format: "float32x2" }],
+        },
+      ],
+    },
+    fragment: {
+      module: renderModule,
+      entryPoint: "fs",
+      targets: [{ format }],
+    },
+    primitive: { topology: "triangle-list" },
+  });
+
+  const renderBindGroup = device.createBindGroup({
+    layout: renderPipeline.getBindGroupLayout(0),
+    entries: [{ binding: 0, resource: { buffer: positionBuffer } }],
+  });
+
+  // One frame: `steps` compute passes, then a render pass, in one submission
+  const workgroups = Math.ceil(count / 64);
+
+  function frameCommands(steps) {
+    const encoder = device.createCommandEncoder();
+
+    for (let s = 0; s < steps; s++) {
+      const pass = encoder.beginComputePass();
+      pass.setPipeline(computePipeline);
+      pass.setBindGroup(0, computeBindGroup);
+      pass.dispatchWorkgroups(workgroups);
+      pass.end();
+    }
+
+    const pass = encoder.beginRenderPass({
+      colorAttachments: [
+        {
+          view: context.getCurrentTexture().createView(),
+          clearValue: { r: 0.102, g: 0.102, b: 0.102, a: 1.0 }, // #1a1a1a
+          loadOp: "clear",
+          storeOp: "store",
+        },
+      ],
+    });
+    pass.setPipeline(renderPipeline);
+    pass.setBindGroup(0, renderBindGroup);
+    pass.setVertexBuffer(0, cornerBuffer);
+    pass.draw(6, count); // 6 vertices per square, `count` instances
+    pass.end();
+
+    device.queue.submit([encoder.finish()]);
+  }
+
+  // Fixed-timestep loop, as before: real time fills an accumulator, and each
+  // `dt` drained from it becomes one compute pass.
+  let accumulator = 0;
+  let last = null;
+  let running = true;
+  invalidation.then(() => (running = false));
+
+  function frame(ms) {
+    if (!running) return;
+    const now = ms / 1000;
+    const elapsed = last === null ? 0 : Math.min(now - last, 0.25);
+    last = now;
+    accumulator += elapsed;
+    let steps = 0;
+    while (accumulator >= dt) {
+      steps++;
+      accumulator -= dt;
+    }
+    frameCommands(steps);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  yield canvas;
+}
+```
