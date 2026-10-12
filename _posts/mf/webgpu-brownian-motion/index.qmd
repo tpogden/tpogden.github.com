@@ -17,8 +17,8 @@ listing:
 Building on [Solid, Liquid, Gas](../webgpu-structure/), the box is now a hot, dilute
 fluid with one large particle dropped in. The big particle is not pushed by anything
 we put in: it is only ever hit by the small atoms around it, thousands of times a
-second, a little harder from one side than the other. The result is a random walk.
-This is [Brownian motion](https://en.wikipedia.org/wiki/Brownian_motion), and it is
+second, a little harder from one side than the other. The result is a
+[random walk](../random-walks/). This is [Brownian motion](https://en.wikipedia.org/wiki/Brownian_motion), and it is
 what Feynman, in the first lecture, calls "a perpetual jiggling of the particles".
 The tiny kicks cannot be seen, but their sum can.
 
