@@ -27,17 +27,11 @@ pass has just written.
 //| code-fold: true
 //| code-summary: "Show code"
 {
-  if (!navigator.gpu) throw new Error("WebGPU is not supported in this browser.");
+  // Shared WebGPU boilerplate: setup, buffers and the animation loop (lib/gpu.js)
+  const gpu = await import(new URL("../lib/gpu.js", document.baseURI).href);
 
   // Setup, as before (640x480 buffer, scaled to fill the column)
-  const canvas = DOM.canvas(640, 480);
-  canvas.style.width = "100%";
-  canvas.style.height = "auto";
-  const adapter = await navigator.gpu.requestAdapter();
-  const device = await adapter.requestDevice();
-  const context = canvas.getContext("webgpu");
-  const format = navigator.gpu.getPreferredCanvasFormat();
-  context.configure({ device, format });
+  const { canvas, device, context, format } = await gpu.setup();
 
   // Initial state, in clip space (-1 to 1). It is uploaded once; after that the
   // GPU owns it.
@@ -75,12 +69,7 @@ pass has just written.
   device.queue.writeBuffer(paramBuffer, 0, new Float32Array([dt]));
 
   // Vertex buffer: one unit square (two triangles), shared by every particle
-  const corners = new Float32Array([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
-  const cornerBuffer = device.createBuffer({
-    size: corners.byteLength,
-    usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
-  });
-  device.queue.writeBuffer(cornerBuffer, 0, corners);
+  const cornerBuffer = gpu.unitSquare(device);
 
   // Compute shader: the old `step` function, one invocation per particle
   const computeModule = device.createShaderModule({
@@ -153,12 +142,7 @@ pass has just written.
     vertex: {
       module: renderModule,
       entryPoint: "vs",
-      buffers: [
-        {
-          arrayStride: 2 * 4,
-          attributes: [{ shaderLocation: 0, offset: 0, format: "float32x2" }],
-        },
-      ],
+      buffers: [gpu.squareLayout],
     },
     fragment: {
       module: renderModule,
@@ -187,16 +171,7 @@ pass has just written.
       pass.end();
     }
 
-    const pass = encoder.beginRenderPass({
-      colorAttachments: [
-        {
-          view: context.getCurrentTexture().createView(),
-          clearValue: { r: 0.102, g: 0.102, b: 0.102, a: 1.0 }, // #1a1a1a
-          loadOp: "clear",
-          storeOp: "store",
-        },
-      ],
-    });
+    const pass = gpu.beginRenderPass(encoder, context);
     pass.setPipeline(renderPipeline);
     pass.setBindGroup(0, renderBindGroup);
     pass.setVertexBuffer(0, cornerBuffer);
@@ -210,11 +185,8 @@ pass has just written.
   // `dt` drained from it becomes one compute pass.
   let accumulator = 0;
   let last = null;
-  let running = true;
-  invalidation.then(() => (running = false));
 
   function frame(ms) {
-    if (!running) return;
     const now = ms / 1000;
     const elapsed = last === null ? 0 : Math.min(now - last, 0.25);
     last = now;
@@ -225,9 +197,8 @@ pass has just written.
       accumulator -= dt;
     }
     frameCommands(steps);
-    requestAnimationFrame(frame);
   }
-  requestAnimationFrame(frame);
+  gpu.run(invalidation, device, frame);
 
   yield canvas;
 }

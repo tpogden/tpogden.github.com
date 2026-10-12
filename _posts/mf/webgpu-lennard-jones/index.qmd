@@ -51,7 +51,8 @@ viewof temperature = Inputs.range([0.1, 1.5], {
 //| code-fold: true
 //| code-summary: "Show code"
 {
-  if (!navigator.gpu) throw new Error("WebGPU is not supported in this browser.");
+  // Shared WebGPU boilerplate: setup, buffers and the animation loop (lib/gpu.js)
+  const gpu = await import(new URL("../lib/gpu.js", document.baseURI).href);
 
   // The temperature is read live from its input element (referencing `viewof x`
   // gives the element, not the value), so moving the slider does not restart the
@@ -59,14 +60,7 @@ viewof temperature = Inputs.range([0.1, 1.5], {
   const temperatureInput = viewof temperature;
 
   // Setup, as before (640x480 buffer, scaled to fill the column)
-  const canvas = DOM.canvas(640, 480);
-  canvas.style.width = "100%";
-  canvas.style.height = "auto";
-  const adapter = await navigator.gpu.requestAdapter();
-  const device = await adapter.requestDevice();
-  const context = canvas.getContext("webgpu");
-  const format = navigator.gpu.getPreferredCanvasFormat();
-  context.configure({ device, format });
+  const { canvas, device, context, format } = await gpu.setup();
 
   // Reduced units: sigma = epsilon = mass = k_B = 1. The box is 4:3 so it fills
   // the canvas, and a particle (diameter sigma) is about 16 pixels across. At
@@ -116,20 +110,12 @@ viewof temperature = Inputs.range([0.1, 1.5], {
   for (let k = 0; k < velocities.length; k++) velocities[k] *= scale;
 
   // Storage buffers: positions, velocities and the accelerations between passes
-  const storage = (data) => {
-    const buffer = device.createBuffer({
-      size: data.byteLength,
-      usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
-    });
-    if (data.length) device.queue.writeBuffer(buffer, 0, data);
-    return buffer;
-  };
-  const positionBuffer = storage(positions);
-  const velocityBuffer = storage(velocities);
-  const accelerationBuffer = storage(new Float32Array(count * 2));
+  const positionBuffer = gpu.storageBuffer(device, positions);
+  const velocityBuffer = gpu.storageBuffer(device, velocities);
+  const accelerationBuffer = gpu.storageBuffer(device, new Float32Array(count * 2));
 
   // One random-number-generator state (a u32) per particle, seeded from the CPU
-  const rngBuffer = storage(crypto.getRandomValues(new Uint32Array(count)));
+  const rngBuffer = gpu.storageBuffer(device, crypto.getRandomValues(new Uint32Array(count)));
 
   // Uniform buffer: the strength of the thermostat's random kicks, which follows
   // the temperature slider
@@ -139,12 +125,7 @@ viewof temperature = Inputs.range([0.1, 1.5], {
   });
 
   // Vertex buffer: one unit square (two triangles), shared by every particle
-  const corners = new Float32Array([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
-  const cornerBuffer = device.createBuffer({
-    size: corners.byteLength,
-    usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
-  });
-  device.queue.writeBuffer(cornerBuffer, 0, corners);
+  const cornerBuffer = gpu.unitSquare(device);
 
   // Compute shaders. Two entry points, so each pass only touches what it owns:
   // `forces` reads every position but writes only its own acceleration, and
@@ -304,12 +285,7 @@ viewof temperature = Inputs.range([0.1, 1.5], {
     vertex: {
       module: renderModule,
       entryPoint: "vs",
-      buffers: [
-        {
-          arrayStride: 2 * 4,
-          attributes: [{ shaderLocation: 0, offset: 0, format: "float32x2" }],
-        },
-      ],
+      buffers: [gpu.squareLayout],
     },
     fragment: {
       module: renderModule,
@@ -332,7 +308,6 @@ viewof temperature = Inputs.range([0.1, 1.5], {
   const workgroups = Math.ceil(count / 64);
 
   function frame() {
-    if (!running) return;
     const noise = Math.sqrt(temperatureInput.value * (1 - decay * decay));
     device.queue.writeBuffer(thermostatBuffer, 0, new Float32Array([noise]));
 
@@ -349,16 +324,7 @@ viewof temperature = Inputs.range([0.1, 1.5], {
     }
     compute.end();
 
-    const pass = encoder.beginRenderPass({
-      colorAttachments: [
-        {
-          view: context.getCurrentTexture().createView(),
-          clearValue: { r: 0.102, g: 0.102, b: 0.102, a: 1.0 }, // #1a1a1a
-          loadOp: "clear",
-          storeOp: "store",
-        },
-      ],
-    });
+    const pass = gpu.beginRenderPass(encoder, context);
     pass.setPipeline(renderPipeline);
     pass.setBindGroup(0, renderBindGroup);
     pass.setVertexBuffer(0, cornerBuffer);
@@ -366,17 +332,9 @@ viewof temperature = Inputs.range([0.1, 1.5], {
     pass.end();
 
     device.queue.submit([encoder.finish()]);
-    requestAnimationFrame(frame);
   }
 
-  // `invalidation` resolves when this cell re-runs or the page goes away: stop the
-  // loop and free the device.
-  let running = true;
-  invalidation.then(() => {
-    running = false;
-    device.destroy();
-  });
-  requestAnimationFrame(frame);
+  gpu.run(invalidation, device, frame);
 
   yield canvas;
 }
