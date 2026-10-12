@@ -19,13 +19,6 @@ for an _adapter_ (the physical GPU) and a _device_ (a handle to it). Tell the
 canvas _context_ to use that device. Then set up commands with an _encoder_, run
 them in a _render pass_ that just clears the canvas texture, and submit it.
 
-:::{.column-margin}
-#### Moving Figures
-
-:::{#mf-series}
-:::
-:::
-
 ```{ojs}
 //| column: page
 //| code-fold: true
@@ -67,3 +60,10 @@ them in a _render pass_ that just clears the canvas texture, and submit it.
   yield canvas;
 }
 ```
+
+::: {.mf-series-bar}
+Moving Figures
+
+:::{#mf-series}
+:::
+:::

@@ -22,13 +22,6 @@ over a storage buffer. A _compute pass_ dispatches it in _workgroups_ of 64, so
 never touched by the CPU again. The render pass reads the same buffer the compute
 pass has just written.
 
-:::{.column-margin}
-#### Moving Figures
-
-:::{#mf-series}
-:::
-:::
-
 ```{ojs}
 //| column: page
 //| code-fold: true
@@ -239,3 +232,10 @@ pass has just written.
   yield canvas;
 }
 ```
+
+::: {.mf-series-bar}
+Moving Figures
+
+:::{#mf-series}
+:::
+:::

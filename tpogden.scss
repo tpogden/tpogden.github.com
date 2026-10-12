@@ -192,6 +192,35 @@ div.quarto-post {
     }
 }
 
+// Series bar: the Moving Figures post list, inline at the bottom of a post
+.mf-series-bar {
+    margin-top: 3rem;
+    padding-top: 1rem;
+    border-top: 1px solid $grey-subtle;
+
+    > p {
+        color: $grey-mid;
+        font-size: 0.875em;
+        margin-bottom: 0;
+    }
+
+    .quarto-listing-container-default {
+        margin-top: 0.5em;
+    }
+
+    .quarto-listing .list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0 1.5rem;
+    }
+
+    div.quarto-post {
+        flex: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+}
+
 .listing-title {
   font-size: $font-size;
   font-style: normal;

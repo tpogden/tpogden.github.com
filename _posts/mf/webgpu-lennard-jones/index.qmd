@@ -14,13 +14,6 @@ listing:
     sort: "title asc"
 ---
 
-:::{.column-margin}
-#### Moving Figures
-
-:::{#mf-series}
-:::
-:::
-
 Building on [Compute Shader](../webgpu-compute-shader/), the particles now push and
 pull on each other. Every pair interacts through the
 [Lennard-Jones potential](https://en.wikipedia.org/wiki/Lennard-Jones_potential),
@@ -397,3 +390,10 @@ when a little way apart and repel when squeezed together.
 > temperature, we increase the motion.
 >
 > — Richard Feynman, _The Feynman Lectures on Physics_, Vol. I, ch. 1
+
+::: {.mf-series-bar}
+Moving Figures
+
+:::{#mf-series}
+:::
+:::

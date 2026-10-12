@@ -20,13 +20,6 @@ _shader module_ (WGSL) with a vertex and a fragment shader, and a _render pipeli
 that ties them together and tells the GPU to draw the vertices as triangles. GPU
 points are always one pixel, so each particle is a square made of two triangles.
 
-:::{.column-margin}
-#### Moving Figures
-
-:::{#mf-series}
-:::
-:::
-
 ```{ojs}
 //| column: page
 //| code-fold: true
@@ -128,3 +121,10 @@ points are always one pixel, so each particle is a square made of two triangles.
   yield canvas;
 }
 ```
+
+::: {.mf-series-bar}
+Moving Figures
+
+:::{#mf-series}
+:::
+:::
