@@ -20,13 +20,6 @@ copy looks up its own position in a _storage buffer_. A _uniform buffer_ carries
 current time into the shader, and a _bind group_ plugs both buffers in. Then an
 animation loop with `requestAnimationFrame` redraws every frame.
 
-:::{.column-margin}
-#### Moving Figures
-
-:::{#mf-series}
-:::
-:::
-
 ```{ojs}
 //| column: page
 //| code-fold: true
@@ -172,3 +165,10 @@ animation loop with `requestAnimationFrame` redraws every frame.
   yield canvas;
 }
 ```
+
+::: {.mf-series-bar}
+Moving Figures
+
+:::{#mf-series}
+:::
+:::

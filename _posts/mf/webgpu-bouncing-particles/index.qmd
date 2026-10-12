@@ -21,13 +21,6 @@ walls. The new idea is the _fixed timestep_: physics advances in constant steps 
 every display. There is almost no new WebGPU here; positions are simply rewritten
 into the storage buffer each frame with `writeBuffer`.
 
-:::{.column-margin}
-#### Moving Figures
-
-:::{#mf-series}
-:::
-:::
-
 ```{ojs}
 //| column: page
 //| code-fold: true
@@ -191,3 +184,10 @@ into the storage buffer each frame with `writeBuffer`.
   yield canvas;
 }
 ```
+
+::: {.mf-series-bar}
+Moving Figures
+
+:::{#mf-series}
+:::
+:::
