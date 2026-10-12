@@ -3,13 +3,23 @@
     "listing": "/webgpu-animation-loop/index.html",
     "items": [
       "/webgpu-hello-world/index.html",
-      "/webgpu-three-particles/index.html"
+      "/webgpu-three-particles/index.html",
+      "/webgpu-bouncing-particles/index.html"
     ]
   },
   {
     "listing": "/webgpu-three-particles/index.html",
     "items": [
       "/webgpu-hello-world/index.html",
+      "/webgpu-animation-loop/index.html",
+      "/webgpu-bouncing-particles/index.html"
+    ]
+  },
+  {
+    "listing": "/webgpu-bouncing-particles/index.html",
+    "items": [
+      "/webgpu-hello-world/index.html",
+      "/webgpu-three-particles/index.html",
       "/webgpu-animation-loop/index.html"
     ]
   },
@@ -29,6 +39,7 @@
       "/random-walks/index.html",
       "/pi/index.html",
       "/useful-mac-apps-for-scientists/index.html",
+      "/webgpu-bouncing-particles/index.html",
       "/webgpu-animation-loop/index.html",
       "/webgpu-three-particles/index.html",
       "/webgpu-hello-world/index.html",
@@ -65,7 +76,8 @@
     "listing": "/webgpu-hello-world/index.html",
     "items": [
       "/webgpu-three-particles/index.html",
-      "/webgpu-animation-loop/index.html"
+      "/webgpu-animation-loop/index.html",
+      "/webgpu-bouncing-particles/index.html"
     ]
   }
 ]
