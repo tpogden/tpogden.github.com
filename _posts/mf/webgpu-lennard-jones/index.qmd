@@ -15,21 +15,26 @@ listing:
 ---
 
 Building on [Compute Shader](../webgpu-compute-shader/), the particles now push and
-pull on each other. Every pair interacts through the Lennard-Jones potential,
+pull on each other. Every pair interacts through the
+[Lennard-Jones potential](https://en.wikipedia.org/wiki/Lennard-Jones_potential),
 
 $$V(r) = 4\varepsilon\left[\left(\frac{\sigma}{r}\right)^{12} - \left(\frac{\sigma}{r}\right)^{6}\right],$$
 
 which is strongly repulsive up close and weakly attractive further out. A first
 compute pass sums the force on each particle from every other one, and a second
-integrates the motion (leapfrog, the same scheme as velocity Verlet). The walls are
-replaced by _periodic boundaries_: leave on one side, re-enter on the other.
+integrates the motion (leapfrog, which follows the same trajectory as
+[velocity Verlet](https://en.wikipedia.org/wiki/Verlet_integration#Velocity_Verlet)).
+The walls are replaced by _periodic boundaries_: leave on one side, re-enter on the
+other.
 
-Condensing releases heat, so on its own the box would just warm up. A _Langevin
-thermostat_ takes it away: every step each particle is slightly slowed and given a
-small random kick, which holds the temperature at the slider's value. The kicks need
-random numbers on the GPU, so each particle carries its own generator state.
-Particles are coloured by speed. Hot and they stay a gas; cool them and the
-attraction wins, and droplets of liquid condense out of it.
+Condensing lowers the potential energy, and with nothing else to take it, that
+energy becomes motion, so on its own the box would just warm up. A
+[Langevin thermostat](https://en.wikipedia.org/wiki/Langevin_dynamics) takes it
+away: every step each particle is slightly slowed and given a small random kick,
+which holds the temperature at the slider's value. The kicks need random numbers on
+the GPU, so each particle carries its own generator state. Particles are coloured by
+speed. Hot and they stay a gas; cool them and the attraction wins, and droplets of
+liquid condense out of it.
 
 ```{ojs}
 //| echo: false
