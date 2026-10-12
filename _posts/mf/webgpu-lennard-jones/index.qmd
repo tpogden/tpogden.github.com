@@ -1,5 +1,5 @@
 ---
-title: "005: Lennard-Jones"
+title: "005: Jiggling Atoms"
 date: "2026-10-12"
 categories: [mf]
 page-layout: article
@@ -13,6 +13,13 @@ listing:
     fields: [title]
     sort: "title asc"
 ---
+
+:::{.column-margin}
+#### Moving Figures
+
+:::{#mf-series}
+:::
+:::
 
 Building on [Compute Shader](../webgpu-compute-shader/), the particles now push and
 pull on each other. Every pair interacts through the
@@ -45,27 +52,6 @@ viewof temperature = Inputs.range([0.1, 1.5], {
 })
 ```
 
-```{ojs}
-//| echo: false
-viewof speed = Inputs.range([0.25, 40], {
-  value: 8,
-  step: 0.25,
-  transform: Math.log,
-  label: "Speed (steps per frame)",
-})
-```
-
-```{ojs}
-//| echo: false
-viewof reset = Inputs.button("Restart")
-```
-
-:::{.column-margin}
-#### Moving Figures
-
-:::{#mf-series}
-:::
-:::
 
 ```{ojs}
 //| column: page
@@ -74,12 +60,10 @@ viewof reset = Inputs.button("Restart")
 {
   if (!navigator.gpu) throw new Error("WebGPU is not supported in this browser.");
 
-  // Clicking Restart re-runs this cell. Temperature and speed are read live from
-  // their input elements (referencing `viewof x` gives the element, not the
-  // value), so moving those sliders does not restart the simulation.
-  reset;
+  // The temperature is read live from its input element (referencing `viewof x`
+  // gives the element, not the value), so moving the slider does not restart the
+  // simulation.
   const temperatureInput = viewof temperature;
-  const speedInput = viewof speed;
 
   // Setup, as before (640x480 buffer, scaled to fill the column)
   const canvas = DOM.canvas(640, 480);
@@ -98,6 +82,7 @@ viewof reset = Inputs.button("Restart")
   const Ly = 30;
   const count = 420;
   const dt = 0.005;
+  const stepsPerFrame = 5;
   const friction = 0.5; // thermostat coupling: how fast velocities are refreshed
   const decay = Math.exp(-friction * dt); // per-step velocity damping
 
@@ -348,26 +333,20 @@ viewof reset = Inputs.button("Restart")
     ],
   });
 
-  // One frame: some number of simulation steps in a single compute pass, then
+  // One frame: `stepsPerFrame` simulation steps in a single compute pass, then
   // draw. Dispatches in a pass run in order, and each sees the previous one's writes.
-  // The sliders are read here every frame. A fractional speed is accumulated across
-  // frames, so below 1 it takes a step every few frames.
+  // The temperature slider is read here every frame.
   const workgroups = Math.ceil(count / 64);
-  let stepBudget = 0;
 
   function frame() {
     if (!running) return;
     const noise = Math.sqrt(temperatureInput.value * (1 - decay * decay));
     device.queue.writeBuffer(thermostatBuffer, 0, new Float32Array([noise]));
 
-    stepBudget += speedInput.value;
-    const steps = Math.floor(stepBudget);
-    stepBudget -= steps;
-
     const encoder = device.createCommandEncoder();
 
     const compute = encoder.beginComputePass();
-    for (let s = 0; s < steps; s++) {
+    for (let s = 0; s < stepsPerFrame; s++) {
       compute.setPipeline(forcePipeline);
       compute.setBindGroup(0, forceBindGroup);
       compute.dispatchWorkgroups(workgroups);
@@ -397,8 +376,8 @@ viewof reset = Inputs.button("Restart")
     requestAnimationFrame(frame);
   }
 
-  // The slider re-runs this cell; `invalidation` stops the old loop and frees
-  // the old device.
+  // `invalidation` resolves when this cell re-runs or the page goes away: stop the
+  // loop and free the device.
   let running = true;
   invalidation.then(() => {
     running = false;
@@ -409,3 +388,12 @@ viewof reset = Inputs.button("Restart")
   yield canvas;
 }
 ```
+
+The first of Feynman's lectures, [Atoms in Motion](https://www.feynmanlectures.caltech.edu/I_01.html),
+describes this picture: everything is made of atoms that jiggle, attract each other
+when a little way apart and repel when squeezed together.
+
+> Now the jiggling motion is what we represent as heat: when we increase the
+> temperature, we increase the motion.
+>
+> — Richard Feynman, _The Feynman Lectures on Physics_, Vol. I, ch. 1
