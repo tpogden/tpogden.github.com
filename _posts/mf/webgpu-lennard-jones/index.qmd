@@ -392,3 +392,8 @@ viewof temperature = Inputs.range([0.1, 1.5], {
 The first of Feynman's lectures, [Atoms in Motion](https://www.feynmanlectures.caltech.edu/I_01.html),
 describes this picture: everything is made of atoms that jiggle, attract each other
 when a little way apart and repel when squeezed together.
+
+> Now the jiggling motion is what we represent as heat: when we increase the
+> temperature, we increase the motion.
+>
+> — Richard Feynman, _The Feynman Lectures on Physics_, Vol. I, ch. 1
