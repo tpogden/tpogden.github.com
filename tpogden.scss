@@ -237,7 +237,18 @@ div.quarto-post {
         display: block;
     }
 
+    // A transparent 2D canvas laid over the simulation, for paths and annotations
+    .mf-trail {
+        height: 100%;
+        left: 0;
+        pointer-events: none;
+        position: absolute;
+        top: 0;
+        width: 100%;
+    }
+
     .mf-controls {
+        z-index: 1;
         backdrop-filter: blur(6px);
         background: rgba(26, 26, 26, 0.78);
         border-radius: 6px;
