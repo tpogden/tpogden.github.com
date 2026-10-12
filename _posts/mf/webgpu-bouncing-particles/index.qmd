@@ -1,0 +1,193 @@
+---
+title: "003: Bouncing Particles"
+date: "2026-10-12"
+categories: [mf]
+page-layout: article
+listing:
+  - id: mf-series
+    contents: "../*/index.qmd"
+    type: default
+    categories: false
+    include:
+      categories: "mf"
+    fields: [title]
+    sort: "title asc"
+---
+
+Building on [Animation Loop](../webgpu-animation-loop/), the particles now move. Each
+one has a velocity, and every step its position is advanced and reflected off the
+walls. The new idea is the _fixed timestep_: physics advances in constant steps of
+1/120 s, however fast the browser redraws, so the simulation behaves the same on
+every display. There is almost no new WebGPU here; positions are simply rewritten
+into the storage buffer each frame with `writeBuffer`.
+
+:::{.column-margin}
+#### Moving Figures
+
+:::{#mf-series}
+:::
+:::
+
+```{ojs}
+//| column: page
+//| code-fold: true
+//| code-summary: "Show code"
+{
+  if (!navigator.gpu) throw new Error("WebGPU is not supported in this browser.");
+
+  // Setup, as before (640x480 buffer, scaled to fill the column)
+  const canvas = DOM.canvas(640, 480);
+  canvas.style.width = "100%";
+  canvas.style.height = "auto";
+  const adapter = await navigator.gpu.requestAdapter();
+  const device = await adapter.requestDevice();
+  const context = canvas.getContext("webgpu");
+  const format = navigator.gpu.getPreferredCanvasFormat();
+  context.configure({ device, format });
+
+  // Simulation state lives on the CPU, in clip space (-1 to 1)
+  const count = 50;
+  const half = [0.03 * 0.75, 0.03]; // particle half-size; x scaled by 4:3 aspect
+  const positions = new Float32Array(count * 2);
+  const velocities = new Float32Array(count * 2);
+  for (let i = 0; i < count; i++) {
+    positions[2 * i] = (Math.random() * 2 - 1) * (1 - half[0]);
+    positions[2 * i + 1] = (Math.random() * 2 - 1) * (1 - half[1]);
+    const angle = Math.random() * 2 * Math.PI;
+    const speed = 0.3 + Math.random() * 0.5; // clip units per second
+    velocities[2 * i] = Math.cos(angle) * speed;
+    velocities[2 * i + 1] = Math.sin(angle) * speed;
+  }
+
+  // Advance the simulation by one fixed step of `dt` seconds
+  function step(dt) {
+    for (let i = 0; i < count; i++) {
+      for (let axis = 0; axis < 2; axis++) {
+        const k = 2 * i + axis;
+        const limit = 1 - half[axis];
+        positions[k] += velocities[k] * dt;
+        // Bounce: clamp to the wall and flip the velocity
+        if (positions[k] > limit) {
+          positions[k] = limit;
+          velocities[k] = -velocities[k];
+        } else if (positions[k] < -limit) {
+          positions[k] = -limit;
+          velocities[k] = -velocities[k];
+        }
+      }
+    }
+  }
+
+  // Storage buffer: the positions, rewritten every frame
+  const positionBuffer = device.createBuffer({
+    size: positions.byteLength,
+    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+  });
+
+  // Vertex buffer: one unit square (two triangles), shared by every particle
+  const corners = new Float32Array([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
+  const cornerBuffer = device.createBuffer({
+    size: corners.byteLength,
+    usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
+  });
+  device.queue.writeBuffer(cornerBuffer, 0, corners);
+
+  // Shaders
+  const module = device.createShaderModule({
+    code: `
+      @group(0) @binding(0) var<storage, read> positions: array<vec2f>;
+
+      @vertex
+      fn vs(
+        @location(0) corner: vec2f,
+        @builtin(instance_index) i: u32,
+      ) -> @builtin(position) vec4f {
+        let half = vec2f(${half[0]}, ${half[1]});
+        return vec4f(positions[i] + corner * half, 0.0, 1.0);
+      }
+
+      @fragment
+      fn fs() -> @location(0) vec4f {
+        return vec4f(1.0, 0.282, 0.204, 1.0); // #FF4834
+      }
+    `,
+  });
+
+  // Pipeline
+  const pipeline = device.createRenderPipeline({
+    layout: "auto",
+    vertex: {
+      module,
+      entryPoint: "vs",
+      buffers: [
+        {
+          arrayStride: 2 * 4,
+          attributes: [{ shaderLocation: 0, offset: 0, format: "float32x2" }],
+        },
+      ],
+    },
+    fragment: {
+      module,
+      entryPoint: "fs",
+      targets: [{ format }],
+    },
+    primitive: { topology: "triangle-list" },
+  });
+
+  // Bind group: plug the positions into the shader
+  const bindGroup = device.createBindGroup({
+    layout: pipeline.getBindGroupLayout(0),
+    entries: [{ binding: 0, resource: { buffer: positionBuffer } }],
+  });
+
+  // One frame: upload the current positions, then record and submit a render pass
+  function draw() {
+    device.queue.writeBuffer(positionBuffer, 0, positions);
+
+    const encoder = device.createCommandEncoder();
+    const pass = encoder.beginRenderPass({
+      colorAttachments: [
+        {
+          view: context.getCurrentTexture().createView(),
+          clearValue: { r: 0.102, g: 0.102, b: 0.102, a: 1.0 }, // #1a1a1a
+          loadOp: "clear",
+          storeOp: "store",
+        },
+      ],
+    });
+    pass.setPipeline(pipeline);
+    pass.setBindGroup(0, bindGroup);
+    pass.setVertexBuffer(0, cornerBuffer);
+    pass.draw(6, count); // 6 vertices per square, `count` instances
+    pass.end();
+    device.queue.submit([encoder.finish()]);
+  }
+
+  // Fixed-timestep loop. Real elapsed time goes into an accumulator, and
+  // physics drains it in constant steps of `dt`. Rendering happens once per
+  // browser frame, whatever the refresh rate.
+  const dt = 1 / 120;
+  let accumulator = 0;
+  let last = null;
+  let running = true;
+  invalidation.then(() => (running = false));
+
+  function frame(ms) {
+    if (!running) return;
+    const now = ms / 1000;
+    // Clamp the elapsed time so a backgrounded tab doesn't trigger a huge catch-up
+    const elapsed = last === null ? 0 : Math.min(now - last, 0.25);
+    last = now;
+    accumulator += elapsed;
+    while (accumulator >= dt) {
+      step(dt);
+      accumulator -= dt;
+    }
+    draw();
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  yield canvas;
+}
+```
