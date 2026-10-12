@@ -8,67 +8,34 @@
       "/webgpu-compute-shader/index.html",
       "/webgpu-lennard-jones/index.html",
       "/webgpu-gravity/index.html",
-      "/webgpu-reading-back/index.html"
+      "/webgpu-reading-back/index.html",
+      "/webgpu-structure/index.html"
     ]
   },
   {
-    "listing": "/webgpu-reading-back/index.html",
+    "listing": "/webgpu-compute-shader/index.html",
     "items": [
       "/webgpu-hello-world/index.html",
       "/webgpu-three-particles/index.html",
       "/webgpu-animation-loop/index.html",
       "/webgpu-bouncing-particles/index.html",
-      "/webgpu-compute-shader/index.html",
       "/webgpu-lennard-jones/index.html",
-      "/webgpu-gravity/index.html"
-    ]
-  },
-  {
-    "listing": "/webgpu-lennard-jones/index.html",
-    "items": [
-      "/webgpu-hello-world/index.html",
-      "/webgpu-three-particles/index.html",
-      "/webgpu-animation-loop/index.html",
-      "/webgpu-bouncing-particles/index.html",
-      "/webgpu-compute-shader/index.html",
       "/webgpu-gravity/index.html",
-      "/webgpu-reading-back/index.html"
+      "/webgpu-reading-back/index.html",
+      "/webgpu-structure/index.html"
     ]
   },
   {
-    "listing": "/webgpu-gravity/index.html",
+    "listing": "/webgpu-hello-world/index.html",
     "items": [
-      "/webgpu-hello-world/index.html",
       "/webgpu-three-particles/index.html",
-      "/webgpu-animation-loop/index.html",
-      "/webgpu-bouncing-particles/index.html",
-      "/webgpu-compute-shader/index.html",
-      "/webgpu-lennard-jones/index.html",
-      "/webgpu-reading-back/index.html"
-    ]
-  },
-  {
-    "listing": "/webgpu-three-particles/index.html",
-    "items": [
-      "/webgpu-hello-world/index.html",
       "/webgpu-animation-loop/index.html",
       "/webgpu-bouncing-particles/index.html",
       "/webgpu-compute-shader/index.html",
       "/webgpu-lennard-jones/index.html",
       "/webgpu-gravity/index.html",
-      "/webgpu-reading-back/index.html"
-    ]
-  },
-  {
-    "listing": "/webgpu-bouncing-particles/index.html",
-    "items": [
-      "/webgpu-hello-world/index.html",
-      "/webgpu-three-particles/index.html",
-      "/webgpu-animation-loop/index.html",
-      "/webgpu-compute-shader/index.html",
-      "/webgpu-lennard-jones/index.html",
-      "/webgpu-gravity/index.html",
-      "/webgpu-reading-back/index.html"
+      "/webgpu-reading-back/index.html",
+      "/webgpu-structure/index.html"
     ]
   },
   {
@@ -87,6 +54,7 @@
       "/random-walks/index.html",
       "/pi/index.html",
       "/useful-mac-apps-for-scientists/index.html",
+      "/webgpu-structure/index.html",
       "/webgpu-reading-back/index.html",
       "/webgpu-gravity/index.html",
       "/webgpu-lennard-jones/index.html",
@@ -125,24 +93,78 @@
     ]
   },
   {
-    "listing": "/webgpu-hello-world/index.html",
+    "listing": "/webgpu-bouncing-particles/index.html",
     "items": [
+      "/webgpu-hello-world/index.html",
+      "/webgpu-three-particles/index.html",
+      "/webgpu-animation-loop/index.html",
+      "/webgpu-compute-shader/index.html",
+      "/webgpu-lennard-jones/index.html",
+      "/webgpu-gravity/index.html",
+      "/webgpu-reading-back/index.html",
+      "/webgpu-structure/index.html"
+    ]
+  },
+  {
+    "listing": "/webgpu-three-particles/index.html",
+    "items": [
+      "/webgpu-hello-world/index.html",
+      "/webgpu-animation-loop/index.html",
+      "/webgpu-bouncing-particles/index.html",
+      "/webgpu-compute-shader/index.html",
+      "/webgpu-lennard-jones/index.html",
+      "/webgpu-gravity/index.html",
+      "/webgpu-reading-back/index.html",
+      "/webgpu-structure/index.html"
+    ]
+  },
+  {
+    "listing": "/webgpu-gravity/index.html",
+    "items": [
+      "/webgpu-hello-world/index.html",
+      "/webgpu-three-particles/index.html",
+      "/webgpu-animation-loop/index.html",
+      "/webgpu-bouncing-particles/index.html",
+      "/webgpu-compute-shader/index.html",
+      "/webgpu-lennard-jones/index.html",
+      "/webgpu-reading-back/index.html",
+      "/webgpu-structure/index.html"
+    ]
+  },
+  {
+    "listing": "/webgpu-lennard-jones/index.html",
+    "items": [
+      "/webgpu-hello-world/index.html",
+      "/webgpu-three-particles/index.html",
+      "/webgpu-animation-loop/index.html",
+      "/webgpu-bouncing-particles/index.html",
+      "/webgpu-compute-shader/index.html",
+      "/webgpu-gravity/index.html",
+      "/webgpu-reading-back/index.html",
+      "/webgpu-structure/index.html"
+    ]
+  },
+  {
+    "listing": "/webgpu-reading-back/index.html",
+    "items": [
+      "/webgpu-hello-world/index.html",
       "/webgpu-three-particles/index.html",
       "/webgpu-animation-loop/index.html",
       "/webgpu-bouncing-particles/index.html",
       "/webgpu-compute-shader/index.html",
       "/webgpu-lennard-jones/index.html",
       "/webgpu-gravity/index.html",
-      "/webgpu-reading-back/index.html"
+      "/webgpu-structure/index.html"
     ]
   },
   {
-    "listing": "/webgpu-compute-shader/index.html",
+    "listing": "/webgpu-structure/index.html",
     "items": [
       "/webgpu-hello-world/index.html",
       "/webgpu-three-particles/index.html",
       "/webgpu-animation-loop/index.html",
       "/webgpu-bouncing-particles/index.html",
+      "/webgpu-compute-shader/index.html",
       "/webgpu-lennard-jones/index.html",
       "/webgpu-gravity/index.html",
       "/webgpu-reading-back/index.html"
