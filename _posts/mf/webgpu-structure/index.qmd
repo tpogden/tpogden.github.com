@@ -14,8 +14,8 @@ listing:
     sort: "title asc"
 ---
 
-Building on [Jiggling Atoms](../webgpu-lennard-jones/) and
-[Reading Back](../webgpu-reading-back/), the box starts as a triangular
+Building on [Jiggling Atoms](../webgpu-lennard-jones/) and on the measuring tools of
+[Is Energy Conserved?](../webgpu-reading-back/), the box starts as a triangular
 crystal that has been stretched out to a density of 0.5, far thinner than a crystal
 wants to be. It cannot hold together as one piece, and soon breaks into crystalline
 islands floating in vapour. We look at how the atoms are arranged, in two ways.

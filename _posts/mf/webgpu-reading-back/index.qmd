@@ -1,5 +1,5 @@
 ---
-title: "007: Reading Back"
+title: "007: Is Energy Conserved?"
 date: "2026-10-12"
 categories: [mf]
 page-layout: article
