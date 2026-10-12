@@ -1,0 +1,32 @@
+name: Publish
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: quarto-dev/quarto-actions/setup@v2
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - name: Install Python dependencies
+        run: |
+          uv sync
+          # Put the project venv first on PATH so Quarto finds jupyter
+          echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
+      - name: Render and publish to gh-pages
+        uses: quarto-dev/quarto-actions/publish@v2
+        with:
+          target: gh-pages
