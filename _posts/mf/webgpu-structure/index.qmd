@@ -1,5 +1,5 @@
 ---
-title: "008: Structure"
+title: "008: Solid, Liquid, Gas"
 date: "2026-10-13"
 categories: [mf]
 page-layout: article
@@ -15,9 +15,10 @@ listing:
 ---
 
 Building on [Jiggling Atoms](../webgpu-lennard-jones/) and
-[Reading Back](../webgpu-reading-back/), the box starts as a perfect crystal, spread
-out to a density of 0.5, where crystal, liquid and gas can all appear. We look at how
-the atoms are arranged, in two ways.
+[Reading Back](../webgpu-reading-back/), the box starts as a triangular
+crystal that has been stretched out to a density of 0.5, far thinner than a crystal
+wants to be. It cannot hold together as one piece, and soon breaks into crystalline
+islands floating in vapour. We look at how the atoms are arranged, in two ways.
 
 Each atom is coloured by how hexagonal its neighbourhood is. For every bond to a
 neighbour closer than 1.4 σ, take the bond's angle $\theta$ and average
@@ -36,15 +37,16 @@ histogram is built on the GPU. Every thread adds one to a bin with `atomicAdd`
 while it is already looping over its neighbours, and only the 120 counts come back.
 The right chart is the fraction of atoms with $|\psi_6| > 0.8$, over time.
 
-Start cold and it holds; raise the temperature and the crystal melts, the peaks
-wash out and the orange drains away. Cool it again and it freezes back, usually with
+At the starting temperature the islands stay crystalline, with a thin vapour between
+them. Warm it and the islands melt into liquid droplets: the peaks wash out and the
+orange drains away. Cool it and the liquid freezes into crystallites, usually with
 defects and grain boundaries rather than a perfect lattice.
 
-Temperature alone never makes a gas. At the crystal's density even a hot box is just
-a dense liquid, because there is no gas phase that crowded. The density slider
-expands the box (and the atoms in it), so the same atoms can be spread thinly. Dilute
-them, keep it warm, and the colours go blue, the first peak shrinks and g(r) flattens
-towards 1.
+Temperature alone does not tell the whole story, because the phase also depends on
+density. The density slider expands or compresses the box, and the atoms with it. At
+the crystal's own density, 0.87, there is no room for a gas: even a hot box is just a
+dense liquid. Spread the atoms thinly and keep it warm, and the colours go blue, the
+first peak shrinks and g(r) flattens towards 1.
 
 ```{ojs}
 //| echo: false
