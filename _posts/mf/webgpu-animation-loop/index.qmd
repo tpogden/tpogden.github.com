@@ -1,0 +1,174 @@
+---
+title: "002: Animation Loop"
+date: "2026-10-11"
+categories: [mf]
+page-layout: article
+listing:
+  - id: mf-series
+    contents: "../*/index.qmd"
+    type: default
+    categories: false
+    include:
+      categories: "mf"
+    fields: [title]
+    sort: "title asc"
+---
+
+Building on [Three Particles](../webgpu-three-particles/), now there are 50 of them,
+and they pulse. New stuff: _instancing_, where one square is drawn 50 times and each
+copy looks up its own position in a _storage buffer_. A _uniform buffer_ carries the
+current time into the shader, and a _bind group_ plugs both buffers in. Then an
+animation loop with `requestAnimationFrame` redraws every frame.
+
+:::{.column-margin}
+#### Moving Figures
+
+:::{#mf-series}
+:::
+:::
+
+```{ojs}
+//| column: page
+//| code-fold: true
+//| code-summary: "Show code"
+{
+  if (!navigator.gpu) throw new Error("WebGPU is not supported in this browser.");
+
+  // Setup, as before (640x480 buffer, scaled to fill the column)
+  const canvas = DOM.canvas(640, 480);
+  canvas.style.width = "100%";
+  canvas.style.height = "auto";
+  const adapter = await navigator.gpu.requestAdapter();
+  const device = await adapter.requestDevice();
+  const context = canvas.getContext("webgpu");
+  const format = navigator.gpu.getPreferredCanvasFormat();
+  context.configure({ device, format });
+
+  // Storage buffer: one random 2D centre per particle, in clip space
+  const count = 50;
+  const centres = new Float32Array(
+    Array.from({ length: count * 2 }, () => Math.random() * 1.8 - 0.9)
+  );
+  const centreBuffer = device.createBuffer({
+    size: centres.byteLength,
+    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+  });
+  device.queue.writeBuffer(centreBuffer, 0, centres);
+
+  // Uniform buffer: the time in seconds, rewritten every frame
+  const timeBuffer = device.createBuffer({
+    size: 16, // uniform buffers are happiest in multiples of 16 bytes
+    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+  });
+
+  // Vertex buffer: one unit square (two triangles), shared by every particle
+  const corners = new Float32Array([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
+  const cornerBuffer = device.createBuffer({
+    size: corners.byteLength,
+    usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
+  });
+  device.queue.writeBuffer(cornerBuffer, 0, corners);
+
+  // Shaders
+  const module = device.createShaderModule({
+    code: `
+      struct Time { seconds: f32 }
+
+      @group(0) @binding(0) var<storage, read> centres: array<vec2f>;
+      @group(0) @binding(1) var<uniform> time: Time;
+
+      struct Frag {
+        @builtin(position) position: vec4f,
+        @location(0) @interpolate(flat) brightness: f32,
+      }
+
+      @vertex
+      fn vs(
+        @location(0) corner: vec2f,
+        @builtin(instance_index) i: u32,
+      ) -> Frag {
+        // Half-size of a particle; x is scaled by the 4:3 aspect ratio
+        let half = vec2f(0.03 * 0.75, 0.03);
+        var out: Frag;
+        out.position = vec4f(centres[i] + corner * half, 0.0, 1.0);
+        // Each particle pulses with its own phase
+        out.brightness = 0.6 + 0.4 * sin(time.seconds * 2.0 + f32(i));
+        return out;
+      }
+
+      @fragment
+      fn fs(in: Frag) -> @location(0) vec4f {
+        let colour = vec3f(1.0, 0.282, 0.204); // #FF4834
+        return vec4f(colour * in.brightness, 1.0);
+      }
+    `,
+  });
+
+  // Pipeline
+  const pipeline = device.createRenderPipeline({
+    layout: "auto",
+    vertex: {
+      module,
+      entryPoint: "vs",
+      buffers: [
+        {
+          arrayStride: 2 * 4,
+          attributes: [{ shaderLocation: 0, offset: 0, format: "float32x2" }],
+        },
+      ],
+    },
+    fragment: {
+      module,
+      entryPoint: "fs",
+      targets: [{ format }],
+    },
+    primitive: { topology: "triangle-list" },
+  });
+
+  // Bind group: plug the storage and uniform buffers into the shader
+  const bindGroup = device.createBindGroup({
+    layout: pipeline.getBindGroupLayout(0),
+    entries: [
+      { binding: 0, resource: { buffer: centreBuffer } },
+      { binding: 1, resource: { buffer: timeBuffer } },
+    ],
+  });
+
+  // One frame: update the time, then record and submit a render pass
+  function draw(seconds) {
+    device.queue.writeBuffer(timeBuffer, 0, new Float32Array([seconds]));
+
+    const encoder = device.createCommandEncoder();
+    const pass = encoder.beginRenderPass({
+      colorAttachments: [
+        {
+          view: context.getCurrentTexture().createView(),
+          clearValue: { r: 0.102, g: 0.102, b: 0.102, a: 1.0 }, // #1a1a1a
+          loadOp: "clear",
+          storeOp: "store",
+        },
+      ],
+    });
+    pass.setPipeline(pipeline);
+    pass.setBindGroup(0, bindGroup);
+    pass.setVertexBuffer(0, cornerBuffer);
+    pass.draw(6, count); // 6 vertices per square, `count` instances
+    pass.end();
+    device.queue.submit([encoder.finish()]);
+  }
+
+  // Animation loop: the browser calls `frame` before each repaint.
+  // `invalidation` resolves when this cell re-runs, which stops the loop.
+  let running = true;
+  invalidation.then(() => (running = false));
+
+  function frame(ms) {
+    if (!running) return;
+    draw(ms / 1000);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  yield canvas;
+}
+```
