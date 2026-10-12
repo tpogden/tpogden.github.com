@@ -1,0 +1,377 @@
+---
+title: "006: Falling Atoms"
+date: "2026-10-12"
+categories: [mf]
+page-layout: article
+listing:
+  - id: mf-series
+    contents: "../*/index.qmd"
+    type: default
+    categories: false
+    include:
+      categories: "mf"
+    fields: [title]
+    sort: "title asc"
+---
+
+Building on [Jiggling Atoms](../webgpu-lennard-jones/), the box now has a floor and
+a ceiling, and every particle is pulled down. Gravity is one extra line in the
+integrate pass: a constant acceleration $-g$ added to each vertical velocity. The
+sides stay periodic, and the floor and ceiling reflect. The thermostat from last
+time still holds the temperature.
+
+Cool the box and the liquid settles into a pool at the bottom, with vapour above it
+thinning out with height. In an isothermal gas the density falls off exponentially,
+$n(y) \propto e^{-mgy/k_BT}$, the
+[barometric formula](https://en.wikipedia.org/wiki/Barometric_formula) that sets the
+density of the air. Warm it and the surface evaporates, the pool dissolves into the
+atmosphere, and with gravity off you are back to droplets and a uniform gas.
+
+```{ojs}
+//| echo: false
+viewof temperature = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.slider({
+    label: "Temperature",
+    min: 0.1,
+    max: 1.5,
+    step: 0.05,
+    value: 0.45,
+    format: (v) => v.toFixed(2),
+  });
+}
+```
+
+```{ojs}
+//| echo: false
+viewof gravity = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.slider({
+    label: "Gravity",
+    min: 0,
+    max: 0.3,
+    step: 0.01,
+    value: 0.1,
+    format: (v) => v.toFixed(2),
+  });
+}
+```
+
+
+```{ojs}
+//| column: screen-inset
+//| code-fold: true
+//| code-summary: "Show code"
+{
+  // Shared WebGPU boilerplate: setup, buffers and the animation loop (lib/gpu.js)
+  const gpu = await import(new URL("../lib/gpu.js", document.baseURI).href);
+
+  // The sliders are read live from their input elements (referencing `viewof x`
+  // gives the element, not the value), so moving them does not restart the
+  // simulation.
+  const temperatureInput = viewof temperature;
+  const gravityInput = viewof gravity;
+
+  // Setup, as before: the canvas is 16:9 and full width, and the drawing buffer
+  // follows its displayed size
+  const { canvas, device, context, format } = await gpu.setup({
+    width: 640,
+    height: 360,
+    resolution: "auto",
+  });
+
+  // Reduced units: sigma = epsilon = mass = k_B = 1. The box is 16:9 so it fills
+  // the canvas, and a particle (diameter sigma) is roughly 10 pixels across. At
+  // this density (about 0.34) the gas and the liquid can coexist.
+  const Lx = 112;
+  const Ly = 63;
+  const count = 2400;
+  const dt = 0.005;
+  const stepsPerFrame = 5;
+  const friction = 0.5; // thermostat coupling: how fast velocities are refreshed
+  const decay = Math.exp(-friction * dt); // per-step velocity damping
+
+  // Initial state: a gas. Drop particles at random, rejecting any that land
+  // closer than 0.9 sigma (periodically in x) to one already placed, so no pair
+  // starts with a huge repulsive force. Centres stay half a particle off the walls.
+  const positions = new Float32Array(count * 2);
+  for (let k = 0; k < count; ) {
+    const x = Math.random() * Lx;
+    const y = 0.5 + Math.random() * (Ly - 1);
+    let ok = true;
+    for (let j = 0; j < k && ok; j++) {
+      let dx = x - positions[2 * j];
+      let dy = y - positions[2 * j + 1];
+      dx -= Lx * Math.round(dx / Lx);
+      ok = dx * dx + dy * dy > 0.81;
+    }
+    if (ok) {
+      positions[2 * k] = x;
+      positions[2 * k + 1] = y;
+      k++;
+    }
+  }
+
+  // Gaussian random velocities, drift removed, rescaled to the starting temperature
+  // (in 2D the mean of v^2 per particle is 2T)
+  const gauss = () =>
+    Math.sqrt(-2 * Math.log(1 - Math.random())) * Math.cos(2 * Math.PI * Math.random());
+  const velocities = Float32Array.from({ length: count * 2 }, gauss);
+  for (let axis = 0; axis < 2; axis++) {
+    let mean = 0;
+    for (let i = 0; i < count; i++) mean += velocities[2 * i + axis] / count;
+    for (let i = 0; i < count; i++) velocities[2 * i + axis] -= mean;
+  }
+  const meanSquare = velocities.reduce((s, v) => s + v * v, 0) / count;
+  const scale = Math.sqrt((2 * temperatureInput.value) / meanSquare);
+  for (let k = 0; k < velocities.length; k++) velocities[k] *= scale;
+
+  // Storage buffers: positions, velocities and the accelerations between passes
+  const positionBuffer = gpu.storageBuffer(device, positions);
+  const velocityBuffer = gpu.storageBuffer(device, velocities);
+  const accelerationBuffer = gpu.storageBuffer(device, new Float32Array(count * 2));
+
+  // One random-number-generator state (a u32) per particle, seeded from the CPU
+  const rngBuffer = gpu.storageBuffer(device, crypto.getRandomValues(new Uint32Array(count)));
+
+  // Uniform buffer: the thermostat's kick size and gravity, which follow the
+  // sliders and are rewritten every frame
+  const paramBuffer = device.createBuffer({
+    size: 16, // uniform buffers are happiest in multiples of 16 bytes
+    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+  });
+
+  // Vertex buffer: one unit square (two triangles), shared by every particle
+  const cornerBuffer = gpu.unitSquare(device);
+
+  // Compute shaders. Two entry points, so each pass only touches what it owns:
+  // `forces` reads every position but writes only its own acceleration, and
+  // `integrate` reads and writes only its own particle. No thread ever reads
+  // something another thread is writing in the same dispatch.
+  const computeModule = device.createShaderModule({
+    code: `
+      const L = vec2f(${Lx}, ${Ly});   // box size
+      const DT = ${dt};
+      const RC2 = 6.25;                // cutoff radius 2.5 sigma, squared
+      const WALL = 0.5;                // floor and ceiling: half a particle from the edge
+      const DECAY = ${decay};          // thermostat: velocity kept each step
+
+      // noise: thermostat kick size, sqrt(T (1 - DECAY^2)); gravity: acceleration down
+      struct Params { noise: f32, gravity: f32 }
+
+      @group(0) @binding(0) var<storage, read_write> positions: array<vec2f>;
+      @group(0) @binding(1) var<storage, read_write> velocities: array<vec2f>;
+      @group(0) @binding(2) var<storage, read_write> accelerations: array<vec2f>;
+      @group(0) @binding(3) var<storage, read_write> rng: array<u32>;
+      @group(0) @binding(4) var<uniform> params: Params;
+
+      // PCG hash: advance the state, scramble it into a random u32
+      fn pcg(state: ptr<function, u32>) -> u32 {
+        *state = *state * 747796405u + 2891336453u;
+        let word = ((*state >> ((*state >> 28u) + 4u)) ^ *state) * 277803737u;
+        return (word >> 22u) ^ word;
+      }
+
+      // Two independent standard normal numbers (Box-Muller)
+      fn gaussian2(state: ptr<function, u32>) -> vec2f {
+        let u1 = (f32(pcg(state) >> 8u) + 0.5) / 16777216.0; // in (0, 1)
+        let u2 = (f32(pcg(state) >> 8u) + 0.5) / 16777216.0;
+        let radius = sqrt(-2.0 * log(u1));
+        let angle = 6.2831853 * u2;
+        return radius * vec2f(cos(angle), sin(angle));
+      }
+
+      @compute @workgroup_size(64)
+      fn forces(@builtin(global_invocation_id) id: vec3u) {
+        let i = id.x;
+        if (i >= arrayLength(&positions)) { return; }
+
+        let here = positions[i];
+        var a = vec2f(0.0);
+        for (var j = 0u; j < arrayLength(&positions); j++) {
+          if (j == i) { continue; }
+          var d = here - positions[j];
+          // Minimum image in x only: the box is periodic sideways, not vertically
+          d.x -= L.x * round(d.x / L.x);
+          let r2 = dot(d, d);
+          if (r2 < RC2) {
+            let s2 = 1.0 / r2;   // (sigma / r)^2
+            let s6 = s2 * s2 * s2;
+            // force / r = 24 (2 s^12 - s^6) / r^2
+            a += d * (24.0 * s2 * s6 * (2.0 * s6 - 1.0));
+          }
+        }
+        accelerations[i] = a;
+      }
+
+      @compute @workgroup_size(64)
+      fn integrate(@builtin(global_invocation_id) id: vec3u) {
+        let i = id.x;
+        if (i >= arrayLength(&positions)) { return; }
+
+        // Leapfrog: kick the velocity, with gravity added to the pair forces...
+        let a = accelerations[i] + vec2f(0.0, -params.gravity);
+        var v = velocities[i] + a * DT;
+
+        // ...thermostat: slow it a little and add a random kick, which holds the
+        // mean kinetic energy at the target temperature...
+        var state = rng[i];
+        v = v * DECAY + params.noise * gaussian2(&state);
+        rng[i] = state;
+
+        // ...then drift the position
+        var p = positions[i] + v * DT;
+        p.x -= L.x * floor(p.x / L.x); // wrap sideways
+        // Floor and ceiling: reflect the position and flip the velocity
+        if (p.y < WALL) { p.y = 2.0 * WALL - p.y; v.y = -v.y; }
+        if (p.y > L.y - WALL) { p.y = 2.0 * (L.y - WALL) - p.y; v.y = -v.y; }
+
+        velocities[i] = v;
+        positions[i] = p;
+      }
+    `,
+  });
+
+  // With layout "auto" each pipeline only gets the bindings its entry point uses,
+  // so each needs its own bind group.
+  const forcePipeline = device.createComputePipeline({
+    layout: "auto",
+    compute: { module: computeModule, entryPoint: "forces" },
+  });
+  const integratePipeline = device.createComputePipeline({
+    layout: "auto",
+    compute: { module: computeModule, entryPoint: "integrate" },
+  });
+  const forceBindGroup = device.createBindGroup({
+    layout: forcePipeline.getBindGroupLayout(0),
+    entries: [
+      { binding: 0, resource: { buffer: positionBuffer } },
+      { binding: 2, resource: { buffer: accelerationBuffer } },
+    ],
+  });
+  const integrateBindGroup = device.createBindGroup({
+    layout: integratePipeline.getBindGroupLayout(0),
+    entries: [
+      { binding: 0, resource: { buffer: positionBuffer } },
+      { binding: 1, resource: { buffer: velocityBuffer } },
+      { binding: 2, resource: { buffer: accelerationBuffer } },
+      { binding: 3, resource: { buffer: rngBuffer } },
+      { binding: 4, resource: { buffer: paramBuffer } },
+    ],
+  });
+
+  // Render shaders: a disc per particle, coloured by its speed
+  const referenceSpeed = 1.5; // speed at which a particle is fully "hot"
+  const renderModule = device.createShaderModule({
+    code: `
+      const L = vec2f(${Lx}, ${Ly});
+
+      @group(0) @binding(0) var<storage, read> positions: array<vec2f>;
+      @group(0) @binding(1) var<storage, read> velocities: array<vec2f>;
+
+      struct Frag {
+        @builtin(position) position: vec4f,
+        @location(0) uv: vec2f,
+        @location(1) @interpolate(flat) colour: vec3f,
+      }
+
+      @vertex
+      fn vs(
+        @location(0) corner: vec2f,
+        @builtin(instance_index) i: u32,
+      ) -> Frag {
+        // Box coordinates to clip space; the radius is sigma / 2
+        let centre = positions[i] / L * 2.0 - 1.0;
+        let radius = 1.0 / L;
+
+        let t = clamp(length(velocities[i]) / ${referenceSpeed}, 0.0, 1.0);
+        let cold = vec3f(0.35, 0.5, 0.8);
+        let hot = vec3f(1.0, 0.282, 0.204); // #FF4834
+
+        var out: Frag;
+        out.position = vec4f(centre + corner * radius, 0.0, 1.0);
+        out.uv = corner;
+        out.colour = mix(cold, hot, t);
+        return out;
+      }
+
+      @fragment
+      fn fs(in: Frag) -> @location(0) vec4f {
+        // Square to disc, with a soft rim about a pixel wide: alpha falls from 1 to
+        // 0 across the circle's edge (blended, so overlapping squares are fine)
+        let d = length(in.uv);
+        let alpha = 1.0 - smoothstep(1.0 - fwidth(d), 1.0, d);
+        return vec4f(in.colour, alpha);
+      }
+    `,
+  });
+  const renderPipeline = device.createRenderPipeline({
+    layout: "auto",
+    vertex: {
+      module: renderModule,
+      entryPoint: "vs",
+      buffers: [gpu.squareLayout],
+    },
+    fragment: {
+      module: renderModule,
+      entryPoint: "fs",
+      targets: [{ format, blend: gpu.alphaBlend }],
+    },
+    primitive: { topology: "triangle-list" },
+  });
+  const renderBindGroup = device.createBindGroup({
+    layout: renderPipeline.getBindGroupLayout(0),
+    entries: [
+      { binding: 0, resource: { buffer: positionBuffer } },
+      { binding: 1, resource: { buffer: velocityBuffer } },
+    ],
+  });
+
+  // One frame: `stepsPerFrame` simulation steps in a single compute pass, then
+  // draw. Dispatches in a pass run in order, and each sees the previous one's writes.
+  // The sliders are read here every frame.
+  const workgroups = Math.ceil(count / 64);
+
+  function frame() {
+    const noise = Math.sqrt(temperatureInput.value * (1 - decay * decay));
+    device.queue.writeBuffer(
+      paramBuffer,
+      0,
+      new Float32Array([noise, gravityInput.value]),
+    );
+
+    const encoder = device.createCommandEncoder();
+
+    const compute = encoder.beginComputePass();
+    for (let s = 0; s < stepsPerFrame; s++) {
+      compute.setPipeline(forcePipeline);
+      compute.setBindGroup(0, forceBindGroup);
+      compute.dispatchWorkgroups(workgroups);
+      compute.setPipeline(integratePipeline);
+      compute.setBindGroup(0, integrateBindGroup);
+      compute.dispatchWorkgroups(workgroups);
+    }
+    compute.end();
+
+    const pass = gpu.beginRenderPass(encoder, context);
+    pass.setPipeline(renderPipeline);
+    pass.setBindGroup(0, renderBindGroup);
+    pass.setVertexBuffer(0, cornerBuffer);
+    pass.draw(6, count); // 6 vertices per square, `count` instances
+    pass.end();
+
+    device.queue.submit([encoder.finish()]);
+  }
+
+  gpu.run(invalidation, device, frame);
+
+  yield canvas;
+}
+```
+
+::: {.mf-series-bar}
+Moving Figures
+
+:::{#mf-series}
+:::
+:::
