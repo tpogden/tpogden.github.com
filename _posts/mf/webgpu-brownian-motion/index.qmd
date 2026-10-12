@@ -106,7 +106,7 @@ viewof showTrail = {
   const count = bath + 1;
   const bigDiameter = 6;
   const dt = 0.005;
-  const stepsPerFrame = 20;
+  const stepsPerFrame = 12; // the big particle is slow, so many steps per frame
   const friction = 0.5; // thermostat coupling, applied to the bath only
   const decay = Math.exp(-friction * dt); // per-step velocity damping
 
