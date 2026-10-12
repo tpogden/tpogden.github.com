@@ -39,6 +39,12 @@ Start cold and it holds; raise the temperature and the crystal melts, the peaks
 wash out and the orange drains away. Cool it again and it freezes back, usually with
 defects and grain boundaries rather than a perfect lattice.
 
+Temperature alone never makes a gas. At the crystal's density even a hot box is just
+a dense liquid, because there is no gas phase that crowded. The density slider
+expands the box (and the atoms in it), so the same atoms can be spread thinly. Dilute
+them, keep it warm, and the colours go blue, the first peak shrinks and g(r) flattens
+towards 1.
+
 ```{ojs}
 //| echo: false
 //| output: false
@@ -50,6 +56,22 @@ viewof temperature = {
     max: 1.5,
     step: 0.05,
     value: 0.3,
+    format: (v) => v.toFixed(2),
+  });
+}
+```
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof density = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.slider({
+    label: "Density",
+    min: 0.05,
+    max: 0.87,
+    step: 0.01,
+    value: 0.87,
     format: (v) => v.toFixed(2),
   });
 }
@@ -81,6 +103,7 @@ viewof byOrder = {
   // The controls are read live from their input elements (referencing `viewof x`
   // gives the element, not the value), so moving them does not restart anything.
   const temperatureInput = viewof temperature;
+  const densityInput = viewof density;
   const orderInput = viewof byOrder;
 
   const { canvas, device, context, format } = await gpu.setup({
@@ -101,8 +124,9 @@ viewof byOrder = {
     spacing,
     temperature: temperatureInput.value,
   });
-  const [Lx, Ly] = box;
+  const [Lx, Ly] = box; // the box at the crystal's density; the slider expands it
   const count = nx * ny;
+  const density0 = count / (Lx * Ly);
   const dt = 0.005;
   const stepsPerFrame = 5;
   const friction = 0.5; // thermostat coupling: how fast velocities are refreshed
@@ -132,10 +156,15 @@ viewof byOrder = {
     usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST,
   });
 
-  // Uniform buffer: the thermostat's kick size (f32) and whether this frame is
-  // building the histogram (u32), rewritten every frame
+  // Uniform buffers, rewritten every frame. `params`: the thermostat's kick size
+  // (f32), whether this frame builds the histogram (u32), the box scale (f32) and
+  // the change in scale since last frame (f32). `box`: the current box, for drawing.
   const paramBuffer = device.createBuffer({
     size: 16, // uniform buffers are happiest in multiples of 16 bytes
+    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+  });
+  const boxBuffer = device.createBuffer({
+    size: 16,
     usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
   });
 
@@ -144,7 +173,7 @@ viewof byOrder = {
   // and `integrate` reads and writes only its own particle.
   const computeModule = device.createShaderModule({
     code: `
-      const L = vec2f(${Lx}, ${Ly});   // box size
+      const L0 = vec2f(${Lx}, ${Ly});  // box at the crystal's density
       const DT = ${dt};
       const RC2 = 6.25;                // force cutoff 2.5 sigma, squared
       const SHELL2 = 1.96;             // first neighbour shell, 1.4 sigma, squared
@@ -152,7 +181,8 @@ viewof byOrder = {
       const BIN_WIDTH = ${binWidth};
       const RMAX2 = ${rMax * rMax};    // g(r) range, squared
 
-      struct Params { noise: f32, sample: u32 }
+      // scale: the box is L0 * scale; ratio: scale now over scale last frame
+      struct Params { noise: f32, sample: u32, scale: f32, ratio: f32 }
 
       @group(0) @binding(0) var<storage, read_write> positions: array<vec2f>;
       @group(0) @binding(1) var<storage, read_write> velocities: array<vec2f>;
@@ -168,6 +198,7 @@ viewof byOrder = {
         let i = id.x;
         if (i >= arrayLength(&positions)) { return; }
 
+        let L = L0 * params.scale;
         let here = positions[i];
         var a = vec2f(0.0);
         var bond = vec2f(0.0); // sum of e^(6 i theta) over first-shell neighbours
@@ -200,13 +231,25 @@ viewof byOrder = {
           }
         }
         accelerations[i] = a;
-        orders[i] = select(0.0, length(bond) / shell, shell > 0.0);
+        // An atom with one neighbour is trivially "ordered" (its single bond lines
+        // up with itself), so only count atoms with a real neighbourhood
+        orders[i] = select(0.0, length(bond) / shell, shell >= 4.0);
+      }
+
+      // The density slider changed the box: stretch every position with it
+      @compute @workgroup_size(64)
+      fn rescale(@builtin(global_invocation_id) id: vec3u) {
+        let i = id.x;
+        if (i >= arrayLength(&positions)) { return; }
+        positions[i] = positions[i] * params.ratio;
       }
 
       @compute @workgroup_size(64)
       fn integrate(@builtin(global_invocation_id) id: vec3u) {
         let i = id.x;
         if (i >= arrayLength(&positions)) { return; }
+
+        let L = L0 * params.scale;
 
         // Leapfrog: kick the velocity...
         var v = velocities[i] + accelerations[i] * DT;
@@ -236,6 +279,17 @@ viewof byOrder = {
     layout: "auto",
     compute: { module: computeModule, entryPoint: "integrate" },
   });
+  const rescalePipeline = device.createComputePipeline({
+    layout: "auto",
+    compute: { module: computeModule, entryPoint: "rescale" },
+  });
+  const rescaleBindGroup = device.createBindGroup({
+    layout: rescalePipeline.getBindGroupLayout(0),
+    entries: [
+      { binding: 0, resource: { buffer: positionBuffer } },
+      { binding: 4, resource: { buffer: paramBuffer } },
+    ],
+  });
   const forceBindGroup = device.createBindGroup({
     layout: forcePipeline.getBindGroupLayout(0),
     entries: [
@@ -262,12 +316,12 @@ viewof byOrder = {
     format,
     positionBuffer,
     velocityBuffer,
-    box,
+    boxBuffer,
   });
   const orderDiscs = md.discs(device, {
     format,
     positionBuffer,
-    box,
+    boxBuffer,
     colour: {
       buffer: orderBuffer,
       range: [0.3, 0.95],
@@ -279,7 +333,6 @@ viewof byOrder = {
   // Charts: one Observable Plot per host, redrawn after every readback
   const [rdfHost, orderHost] = charts.children;
   const style = ui.plotStyle;
-  const density = count / (Lx * Ly);
   const rdf = new Float32Array(bins); // smoothed over samples
   const series = []; // {t, fraction}: atoms with |psi6| > 0.8
   let simTime = 0;
@@ -315,7 +368,7 @@ viewof byOrder = {
   }
 
   // Turn one readback into chart data
-  function record(buffer, time, steps) {
+  function record(buffer, time, steps, density) {
     const hist = new Uint32Array(buffer, 0, bins);
     const orders = new Float32Array(buffer, histogramBytes, count);
 
@@ -343,18 +396,31 @@ viewof byOrder = {
   const paramBytes = new ArrayBuffer(16);
   const paramView = new DataView(paramBytes);
   let frameCount = 0;
+  let scale = 1; // box scale last frame: lengths grow as the density falls
   let pending = false; // a mapAsync is in flight: never copy into a mapped buffer
 
   function frame() {
     const sample = !pending && ++frameCount % sampleEvery === 0;
+
+    // Density rho means a box scale of sqrt(rho0 / rho) in each direction
+    const nextScale = Math.sqrt(density0 / densityInput.value);
+    const ratio = nextScale / scale;
+    scale = nextScale;
+
     paramView.setFloat32(0, Math.sqrt(temperatureInput.value * (1 - decay * decay)), true);
     paramView.setUint32(4, sample ? 1 : 0, true);
+    paramView.setFloat32(8, scale, true);
+    paramView.setFloat32(12, ratio, true);
     device.queue.writeBuffer(paramBuffer, 0, paramBytes);
+    device.queue.writeBuffer(boxBuffer, 0, new Float32Array([Lx * scale, Ly * scale]));
     if (sample) device.queue.writeBuffer(histogramBuffer, 0, zeros);
 
     const encoder = device.createCommandEncoder();
 
     const compute = encoder.beginComputePass();
+    compute.setPipeline(rescalePipeline);
+    compute.setBindGroup(0, rescaleBindGroup);
+    compute.dispatchWorkgroups(workgroups);
     for (let s = 0; s < stepsPerFrame; s++) {
       compute.setPipeline(forcePipeline);
       compute.setBindGroup(0, forceBindGroup);
@@ -379,13 +445,14 @@ viewof byOrder = {
     if (sample) {
       pending = true;
       const time = simTime;
+      const rho = densityInput.value;
       stagingBuffer
         .mapAsync(GPUMapMode.READ)
         .then(() => {
           const copy = stagingBuffer.getMappedRange().slice(0);
           stagingBuffer.unmap();
           pending = false;
-          record(copy, time, stepsPerFrame);
+          record(copy, time, stepsPerFrame, rho);
         })
         .catch(() => {}); // the device was destroyed because the cell re-ran
     }
@@ -394,7 +461,7 @@ viewof byOrder = {
   gpu.run(invalidation, device, frame);
 
   // The canvas with the controls laid over its corner
-  yield ui.stage(canvas, [temperatureInput, orderInput]);
+  yield ui.stage(canvas, [temperatureInput, densityInput, orderInput]);
 }
 ```
 
