@@ -16,7 +16,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 quarto preview --render html   # dev server with hot reload
 quarto render                  # production build → _site/
 bash scripts/clean.sh          # remove shadow dirs after build
-quarto publish gh-pages        # publish to GitHub Pages
+quarto publish gh-pages        # publish to GitHub Pages (CI does this on push to master)
 
 uv run ruff format .           # black-style formatting + isort
 uv run ruff check --fix .      # lint and auto-fix
