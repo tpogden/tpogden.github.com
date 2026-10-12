@@ -1,0 +1,427 @@
+---
+title: "008: Structure"
+date: "2026-10-13"
+categories: [mf]
+page-layout: article
+listing:
+  - id: mf-series
+    contents: "../*/index.qmd"
+    type: default
+    categories: false
+    include:
+      categories: "mf"
+    fields: [title]
+    sort: "title asc"
+---
+
+Building on [Jiggling Atoms](../webgpu-lennard-jones/) and
+[Reading Back](../webgpu-reading-back/), the box now starts as a perfect crystal and
+we look at how the atoms are arranged, in two ways.
+
+Each atom is coloured by how hexagonal its neighbourhood is. For every bond to a
+neighbour closer than 1.4 σ, take the bond's angle $\theta$ and average
+$e^{6i\theta}$ over the bonds. In a triangular crystal all six bonds line up and the
+magnitude, $|\psi_6|$, is close to 1; in a liquid the angles are scrambled and it
+falls towards 0. Atoms bright orange are crystalline, blue are not. (The same idea
+is behind the [hexatic phase](https://en.wikipedia.org/wiki/Hexatic_phase).) Switch
+the colouring to speed to see the same atoms the way the earlier posts drew them.
+
+The left chart is the
+[radial distribution function](https://en.wikipedia.org/wiki/Radial_distribution_function)
+$g(r)$: how likely you are to find a neighbour at distance $r$, compared with a gas
+of the same density. A crystal has sharp, repeating peaks at the lattice spacings; a
+liquid has a first peak and a couple of fading ripples; a gas is flat at 1. The
+histogram is built on the GPU. Every thread adds one to a bin with `atomicAdd`
+while it is already looping over its neighbours, and only the 120 counts come back.
+The right chart is the fraction of atoms with $|\psi_6| > 0.8$, over time.
+
+Start cold and it holds; raise the temperature and the crystal melts, the peaks
+wash out and the orange drains away. Cool it again and it freezes back, usually with
+defects and grain boundaries rather than a perfect lattice.
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof temperature = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.slider({
+    label: "Temperature",
+    min: 0.1,
+    max: 1.5,
+    step: 0.05,
+    value: 0.3,
+    format: (v) => v.toFixed(2),
+  });
+}
+```
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof byOrder = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.toggle({
+    label: "Colour by",
+    value: true,
+    format: (on) => (on ? "order" : "speed"),
+  });
+}
+```
+
+```{ojs}
+//| column: screen-inset
+//| code-fold: true
+//| code-summary: "Show code"
+{
+  // Shared WebGPU boilerplate: setup, buffers and the animation loop (lib/gpu.js)
+  const gpu = await import(new URL("../lib/gpu.js", document.baseURI).href);
+  const md = await import(new URL("../lib/md.js", document.baseURI).href);
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+
+  // The controls are read live from their input elements (referencing `viewof x`
+  // gives the element, not the value), so moving them does not restart anything.
+  const temperatureInput = viewof temperature;
+  const orderInput = viewof byOrder;
+
+  const { canvas, device, context, format } = await gpu.setup({
+    width: 640,
+    height: 360,
+    resolution: "auto",
+  });
+
+  // Reduced units: sigma = epsilon = mass = k_B = 1. A triangular lattice of
+  // 52 x 34 atoms at spacing 1.15 sigma fills a 16:9 box exactly (34 rows is even,
+  // so it tiles across the periodic boundary).
+  const nx = 52;
+  const ny = 34;
+  const spacing = 1.15;
+  const { positions, velocities, box } = md.triangularLattice({
+    nx,
+    ny,
+    spacing,
+    temperature: temperatureInput.value,
+  });
+  const [Lx, Ly] = box;
+  const count = nx * ny;
+  const dt = 0.005;
+  const stepsPerFrame = 5;
+  const friction = 0.5; // thermostat coupling: how fast velocities are refreshed
+  const decay = Math.exp(-friction * dt); // per-step velocity damping
+
+  // g(r): 120 bins of width 0.05 sigma out to 6 sigma
+  const bins = 120;
+  const rMax = 6;
+  const binWidth = rMax / bins;
+  const sampleEvery = 30; // read back every this many frames
+  const keep = 240; // samples kept in the time series
+
+  // Storage buffers: positions, velocities and the accelerations between passes,
+  // plus the per-particle order parameter and the g(r) histogram (u32 counts)
+  const positionBuffer = gpu.storageBuffer(device, positions);
+  const velocityBuffer = gpu.storageBuffer(device, velocities);
+  const accelerationBuffer = gpu.storageBuffer(device, new Float32Array(count * 2));
+  const orderBuffer = gpu.storageBuffer(device, new Float32Array(count));
+  const histogramBuffer = gpu.storageBuffer(device, new Uint32Array(bins));
+  const rngBuffer = gpu.storageBuffer(device, crypto.getRandomValues(new Uint32Array(count)));
+
+  // Staging buffer for readback: the histogram, then the orders
+  const histogramBytes = bins * 4;
+  const orderBytes = count * 4;
+  const stagingBuffer = device.createBuffer({
+    size: histogramBytes + orderBytes,
+    usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST,
+  });
+
+  // Uniform buffer: the thermostat's kick size (f32) and whether this frame is
+  // building the histogram (u32), rewritten every frame
+  const paramBuffer = device.createBuffer({
+    size: 16, // uniform buffers are happiest in multiples of 16 bytes
+    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+  });
+
+  // Compute shaders. Two entry points, so each pass only touches what it owns:
+  // `forces` reads every position but writes only its own acceleration and order,
+  // and `integrate` reads and writes only its own particle.
+  const computeModule = device.createShaderModule({
+    code: `
+      const L = vec2f(${Lx}, ${Ly});   // box size
+      const DT = ${dt};
+      const RC2 = 6.25;                // force cutoff 2.5 sigma, squared
+      const SHELL2 = 1.96;             // first neighbour shell, 1.4 sigma, squared
+      const DECAY = ${decay};          // thermostat: velocity kept each step
+      const BIN_WIDTH = ${binWidth};
+      const RMAX2 = ${rMax * rMax};    // g(r) range, squared
+
+      struct Params { noise: f32, sample: u32 }
+
+      @group(0) @binding(0) var<storage, read_write> positions: array<vec2f>;
+      @group(0) @binding(1) var<storage, read_write> velocities: array<vec2f>;
+      @group(0) @binding(2) var<storage, read_write> accelerations: array<vec2f>;
+      @group(0) @binding(3) var<storage, read_write> rng: array<u32>;
+      @group(0) @binding(4) var<uniform> params: Params;
+      @group(0) @binding(5) var<storage, read_write> orders: array<f32>;
+      @group(0) @binding(6) var<storage, read_write> histogram: array<atomic<u32>>;
+
+      ${md.rngWGSL}
+      @compute @workgroup_size(64)
+      fn forces(@builtin(global_invocation_id) id: vec3u) {
+        let i = id.x;
+        if (i >= arrayLength(&positions)) { return; }
+
+        let here = positions[i];
+        var a = vec2f(0.0);
+        var bond = vec2f(0.0); // sum of e^(6 i theta) over first-shell neighbours
+        var shell = 0.0;
+        for (var j = 0u; j < arrayLength(&positions); j++) {
+          if (j == i) { continue; }
+          var d = here - positions[j];
+          // Minimum image: use the nearest periodic copy of particle j
+          d -= L * round(d / L);
+          let r2 = dot(d, d);
+
+          if (r2 < RC2) {
+            let s2 = 1.0 / r2;   // (sigma / r)^2
+            let s6 = s2 * s2 * s2;
+            // force / r = 24 (2 s^12 - s^6) / r^2
+            a += d * (24.0 * s2 * s6 * (2.0 * s6 - 1.0));
+          }
+
+          // Bond-orientational order: the angle of each bond to a close neighbour
+          if (r2 < SHELL2) {
+            let theta = atan2(d.y, d.x);
+            bond += vec2f(cos(6.0 * theta), sin(6.0 * theta));
+            shell += 1.0;
+          }
+
+          // g(r): on a sampling frame, every thread counts its pairs into bins.
+          // Many threads may hit the same bin, so the increment must be atomic.
+          if (params.sample == 1u && r2 < RMAX2) {
+            atomicAdd(&histogram[u32(sqrt(r2) / BIN_WIDTH)], 1u);
+          }
+        }
+        accelerations[i] = a;
+        orders[i] = select(0.0, length(bond) / shell, shell > 0.0);
+      }
+
+      @compute @workgroup_size(64)
+      fn integrate(@builtin(global_invocation_id) id: vec3u) {
+        let i = id.x;
+        if (i >= arrayLength(&positions)) { return; }
+
+        // Leapfrog: kick the velocity...
+        var v = velocities[i] + accelerations[i] * DT;
+
+        // ...thermostat: slow it a little and add a random kick...
+        var state = rng[i];
+        v = v * DECAY + params.noise * gaussian2(&state);
+        rng[i] = state;
+
+        // ...then drift the position
+        var p = positions[i] + v * DT;
+        p -= L * floor(p / L); // wrap back into the box
+
+        velocities[i] = v;
+        positions[i] = p;
+      }
+    `,
+  });
+
+  // With layout "auto" each pipeline only gets the bindings its entry point uses,
+  // so each needs its own bind group.
+  const forcePipeline = device.createComputePipeline({
+    layout: "auto",
+    compute: { module: computeModule, entryPoint: "forces" },
+  });
+  const integratePipeline = device.createComputePipeline({
+    layout: "auto",
+    compute: { module: computeModule, entryPoint: "integrate" },
+  });
+  const forceBindGroup = device.createBindGroup({
+    layout: forcePipeline.getBindGroupLayout(0),
+    entries: [
+      { binding: 0, resource: { buffer: positionBuffer } },
+      { binding: 2, resource: { buffer: accelerationBuffer } },
+      { binding: 4, resource: { buffer: paramBuffer } },
+      { binding: 5, resource: { buffer: orderBuffer } },
+      { binding: 6, resource: { buffer: histogramBuffer } },
+    ],
+  });
+  const integrateBindGroup = device.createBindGroup({
+    layout: integratePipeline.getBindGroupLayout(0),
+    entries: [
+      { binding: 0, resource: { buffer: positionBuffer } },
+      { binding: 1, resource: { buffer: velocityBuffer } },
+      { binding: 2, resource: { buffer: accelerationBuffer } },
+      { binding: 3, resource: { buffer: rngBuffer } },
+      { binding: 4, resource: { buffer: paramBuffer } },
+    ],
+  });
+
+  // Render: a disc per particle, coloured by its speed or by its order (lib/md.js)
+  const speedDiscs = md.discs(device, {
+    format,
+    positionBuffer,
+    velocityBuffer,
+    box,
+  });
+  const orderDiscs = md.discs(device, {
+    format,
+    positionBuffer,
+    box,
+    colour: {
+      buffer: orderBuffer,
+      range: [0.3, 0.95],
+      low: [0.28, 0.42, 0.8],
+      high: [1.0, 0.8, 0.52],
+    },
+  });
+
+  // Charts: one Observable Plot per host, redrawn after every readback
+  const [rdfHost, orderHost] = charts.children;
+  const style = {
+    background: "transparent",
+    color: "currentColor",
+    fontFamily: "inherit",
+    fontSize: "12px",
+  };
+  const density = count / (Lx * Ly);
+  const rdf = new Float32Array(bins); // smoothed over samples
+  const series = []; // {t, fraction}: atoms with |psi6| > 0.8
+  let simTime = 0;
+
+  function drawCharts() {
+    const width = rdfHost.clientWidth || 480;
+    const rows = Array.from(rdf, (g, k) => ({ r: (k + 0.5) * binWidth, g }));
+
+    rdfHost.replaceChildren(
+      Plot.plot({
+        width,
+        height: 280,
+        style,
+        x: { label: "distance r (σ)", domain: [0, rMax] },
+        y: { label: "g(r)", grid: true, domain: [0, 6], clamp: true },
+        marks: [
+          Plot.ruleY([1], { stroke: "currentColor", strokeOpacity: 0.4, strokeDasharray: "4 3" }),
+          Plot.line(rows, { x: "r", y: "g", stroke: "#FF4834", clip: true }),
+        ],
+      })
+    );
+
+    orderHost.replaceChildren(
+      Plot.plot({
+        width,
+        height: 280,
+        style,
+        x: { label: "time (reduced units)" },
+        y: { label: "fraction crystalline", domain: [0, 1], grid: true },
+        marks: [Plot.lineY(series, { x: "t", y: "fraction", stroke: "#FF4834" })],
+      })
+    );
+  }
+
+  // Turn one readback into chart data
+  function record(buffer, time, steps) {
+    const hist = new Uint32Array(buffer, 0, bins);
+    const orders = new Float32Array(buffer, histogramBytes, count);
+
+    // g(r): pair counts per particle per step, over the number an ideal gas of the
+    // same density would put in the ring [r, r + dr]
+    for (let k = 0; k < bins; k++) {
+      const r = (k + 0.5) * binWidth;
+      const ideal = count * steps * density * 2 * Math.PI * r * binWidth;
+      const g = hist[k] / ideal;
+      rdf[k] = rdf[k] === 0 ? g : 0.7 * rdf[k] + 0.3 * g;
+    }
+
+    let crystalline = 0;
+    for (let i = 0; i < count; i++) if (orders[i] > 0.8) crystalline++;
+    series.push({ t: time, fraction: crystalline / count });
+    if (series.length > keep) series.shift();
+
+    drawCharts();
+  }
+
+  // One frame: `stepsPerFrame` simulation steps in a single compute pass, then
+  // draw. Every `sampleEvery` frames the histogram is also built and read back.
+  const workgroups = Math.ceil(count / 64);
+  const zeros = new Uint32Array(bins);
+  const paramBytes = new ArrayBuffer(16);
+  const paramView = new DataView(paramBytes);
+  let frameCount = 0;
+  let pending = false; // a mapAsync is in flight: never copy into a mapped buffer
+
+  function frame() {
+    const sample = !pending && ++frameCount % sampleEvery === 0;
+    paramView.setFloat32(0, Math.sqrt(temperatureInput.value * (1 - decay * decay)), true);
+    paramView.setUint32(4, sample ? 1 : 0, true);
+    device.queue.writeBuffer(paramBuffer, 0, paramBytes);
+    if (sample) device.queue.writeBuffer(histogramBuffer, 0, zeros);
+
+    const encoder = device.createCommandEncoder();
+
+    const compute = encoder.beginComputePass();
+    for (let s = 0; s < stepsPerFrame; s++) {
+      compute.setPipeline(forcePipeline);
+      compute.setBindGroup(0, forceBindGroup);
+      compute.dispatchWorkgroups(workgroups);
+      compute.setPipeline(integratePipeline);
+      compute.setBindGroup(0, integrateBindGroup);
+      compute.dispatchWorkgroups(workgroups);
+    }
+    compute.end();
+    simTime += stepsPerFrame * dt;
+
+    const pass = gpu.beginRenderPass(encoder, context);
+    (orderInput.value ? orderDiscs : speedDiscs).draw(pass, count);
+    pass.end();
+
+    if (sample) {
+      encoder.copyBufferToBuffer(histogramBuffer, 0, stagingBuffer, 0, histogramBytes);
+      encoder.copyBufferToBuffer(orderBuffer, 0, stagingBuffer, histogramBytes, orderBytes);
+    }
+    device.queue.submit([encoder.finish()]);
+
+    if (sample) {
+      pending = true;
+      const time = simTime;
+      stagingBuffer
+        .mapAsync(GPUMapMode.READ)
+        .then(() => {
+          const copy = stagingBuffer.getMappedRange().slice(0);
+          stagingBuffer.unmap();
+          pending = false;
+          record(copy, time, stepsPerFrame);
+        })
+        .catch(() => {}); // the device was destroyed because the cell re-ran
+    }
+  }
+
+  gpu.run(invalidation, device, frame);
+
+  // The canvas with the controls laid over its corner
+  yield ui.stage(canvas, [temperatureInput, orderInput]);
+}
+```
+
+```{ojs}
+//| echo: false
+//| column: page
+charts = {
+  // Two empty hosts; the simulation cell above draws into them after each readback
+  const root = document.createElement("div");
+  root.className = "mf-charts";
+  for (const name of ["rdf", "order"]) {
+    const host = document.createElement("div");
+    host.dataset.chart = name;
+    root.append(host);
+  }
+  return root;
+}
+```
+
+::: {.mf-series-bar}
+Moving Figures
+
+:::{#mf-series}
+:::
+:::
