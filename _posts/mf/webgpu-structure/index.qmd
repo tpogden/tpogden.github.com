@@ -278,12 +278,7 @@ viewof byOrder = {
 
   // Charts: one Observable Plot per host, redrawn after every readback
   const [rdfHost, orderHost] = charts.children;
-  const style = {
-    background: "transparent",
-    color: "currentColor",
-    fontFamily: "inherit",
-    fontSize: "12px",
-  };
+  const style = ui.plotStyle;
   const density = count / (Lx * Ly);
   const rdf = new Float32Array(bins); // smoothed over samples
   const series = []; // {t, fraction}: atoms with |psi6| > 0.8

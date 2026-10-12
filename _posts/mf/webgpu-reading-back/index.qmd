@@ -294,12 +294,7 @@ viewof gravity = {
 
   function drawCharts(temperature, g) {
     const width = energyHost.clientWidth || 480;
-    const style = {
-      background: "transparent",
-      color: "currentColor",
-      fontFamily: "inherit",
-      fontSize: "12px",
-    };
+    const style = ui.plotStyle;
 
     energyHost.replaceChildren(
       Plot.plot({
