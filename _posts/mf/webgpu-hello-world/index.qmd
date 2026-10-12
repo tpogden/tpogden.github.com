@@ -20,14 +20,14 @@ canvas _context_ to use that device. Then set up commands with an _encoder_, run
 them in a _render pass_ that just clears the canvas texture, and submit it.
 
 ```{ojs}
-//| column: page
+//| column: screen-inset
 //| code-fold: true
 //| code-summary: "Show code"
 {
   if (!navigator.gpu) throw new Error("WebGPU is not supported in this browser.");
 
-  // 1. Canvas (640x480 buffer, scaled to fill the column)
-  const canvas = DOM.canvas(640, 480);
+  // 1. Canvas (640x360 buffer, scaled to fill the column)
+  const canvas = DOM.canvas(640, 360);
   canvas.style.width = "100%";
   canvas.style.height = "auto";
 

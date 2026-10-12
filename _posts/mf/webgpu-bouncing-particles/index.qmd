@@ -22,19 +22,19 @@ every display. There is almost no new WebGPU here; positions are simply rewritte
 into the storage buffer each frame with `writeBuffer`.
 
 ```{ojs}
-//| column: page
+//| column: screen-inset
 //| code-fold: true
 //| code-summary: "Show code"
 {
   // Shared WebGPU boilerplate: setup, buffers and the animation loop (lib/gpu.js)
   const gpu = await import(new URL("../lib/gpu.js", document.baseURI).href);
 
-  // Setup, as before (640x480 buffer, scaled to fill the column)
-  const { canvas, device, context, format } = await gpu.setup();
+  // Setup, as before (640x360 buffer, scaled to fill the column)
+  const { canvas, device, context, format } = await gpu.setup({ width: 640, height: 360 });
 
   // Simulation state lives on the CPU, in clip space (-1 to 1)
   const count = 50;
-  const half = [0.03 * 0.75, 0.03]; // particle half-size; x scaled by 4:3 aspect
+  const half = [0.03 * 0.5625, 0.03]; // particle half-size; x scaled by 16:9 aspect
   const positions = new Float32Array(count * 2);
   const velocities = new Float32Array(count * 2);
   for (let i = 0; i < count; i++) {

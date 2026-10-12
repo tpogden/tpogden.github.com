@@ -21,14 +21,14 @@ that ties them together and tells the GPU to draw the vertices as triangles. GPU
 points are always one pixel, so each particle is a square made of two triangles.
 
 ```{ojs}
-//| column: page
+//| column: screen-inset
 //| code-fold: true
 //| code-summary: "Show code"
 {
   if (!navigator.gpu) throw new Error("WebGPU is not supported in this browser.");
 
-  // Setup, as before (640x480 buffer, scaled to fill the column)
-  const canvas = DOM.canvas(640, 480);
+  // Setup, as before (640x360 buffer, scaled to fill the column)
+  const canvas = DOM.canvas(640, 360);
   canvas.style.width = "100%";
   canvas.style.height = "auto";
   const adapter = await navigator.gpu.requestAdapter();
@@ -48,7 +48,7 @@ points are always one pixel, so each particle is a square made of two triangles.
   // made of two triangles (6 vertices). Clip space is stretched to the
   // canvas, so scale x by the aspect ratio to keep the squares square.
   const half = 0.03;
-  const aspect = 480 / 640;
+  const aspect = 360 / 640;
   const corners = [[-1, -1], [1, -1], [1, 1], [-1, -1], [1, 1], [-1, 1]];
   const vertices = new Float32Array(
     centres.flatMap(([cx, cy]) =>

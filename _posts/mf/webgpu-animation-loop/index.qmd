@@ -21,14 +21,14 @@ current time into the shader, and a _bind group_ plugs both buffers in. Then an
 animation loop with `requestAnimationFrame` redraws every frame.
 
 ```{ojs}
-//| column: page
+//| column: screen-inset
 //| code-fold: true
 //| code-summary: "Show code"
 {
   if (!navigator.gpu) throw new Error("WebGPU is not supported in this browser.");
 
-  // Setup, as before (640x480 buffer, scaled to fill the column)
-  const canvas = DOM.canvas(640, 480);
+  // Setup, as before (640x360 buffer, scaled to fill the column)
+  const canvas = DOM.canvas(640, 360);
   canvas.style.width = "100%";
   canvas.style.height = "auto";
   const adapter = await navigator.gpu.requestAdapter();
@@ -80,8 +80,8 @@ animation loop with `requestAnimationFrame` redraws every frame.
         @location(0) corner: vec2f,
         @builtin(instance_index) i: u32,
       ) -> Frag {
-        // Half-size of a particle; x is scaled by the 4:3 aspect ratio
-        let half = vec2f(0.03 * 0.75, 0.03);
+        // Half-size of a particle; x is scaled by the 16:9 aspect ratio
+        let half = vec2f(0.03 * 0.5625, 0.03);
         var out: Frag;
         out.position = vec4f(centres[i] + corner * half, 0.0, 1.0);
         // Each particle pulses with its own phase

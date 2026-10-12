@@ -23,20 +23,20 @@ never touched by the CPU again. The render pass reads the same buffer the comput
 pass has just written.
 
 ```{ojs}
-//| column: page
+//| column: screen-inset
 //| code-fold: true
 //| code-summary: "Show code"
 {
   // Shared WebGPU boilerplate: setup, buffers and the animation loop (lib/gpu.js)
   const gpu = await import(new URL("../lib/gpu.js", document.baseURI).href);
 
-  // Setup, as before (640x480 buffer, scaled to fill the column)
-  const { canvas, device, context, format } = await gpu.setup();
+  // Setup, as before (640x360 buffer, scaled to fill the column)
+  const { canvas, device, context, format } = await gpu.setup({ width: 640, height: 360 });
 
   // Initial state, in clip space (-1 to 1). It is uploaded once; after that the
   // GPU owns it.
   const count = 2000;
-  const half = [0.0075, 0.01]; // particle half-size; x scaled by 4:3 aspect
+  const half = [0.005625, 0.01]; // particle half-size; x scaled by 16:9 aspect
   const positions = new Float32Array(count * 2);
   const velocities = new Float32Array(count * 2);
   for (let i = 0; i < count; i++) {

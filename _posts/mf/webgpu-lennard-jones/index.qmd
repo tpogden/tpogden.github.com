@@ -47,7 +47,7 @@ viewof temperature = Inputs.range([0.1, 1.5], {
 
 
 ```{ojs}
-//| column: page
+//| column: screen-inset
 //| code-fold: true
 //| code-summary: "Show code"
 {
@@ -59,15 +59,20 @@ viewof temperature = Inputs.range([0.1, 1.5], {
   // simulation.
   const temperatureInput = viewof temperature;
 
-  // Setup, as before (640x480 buffer, scaled to fill the column)
-  const { canvas, device, context, format } = await gpu.setup();
+  // Setup, as before, but the canvas is 16:9 and the drawing buffer now follows its
+  // displayed size (times the screen's pixel ratio) instead of a fixed size
+  const { canvas, device, context, format } = await gpu.setup({
+    width: 640,
+    height: 360,
+    resolution: "auto",
+  });
 
-  // Reduced units: sigma = epsilon = mass = k_B = 1. The box is 4:3 so it fills
-  // the canvas, and a particle (diameter sigma) is about 16 pixels across. At
+  // Reduced units: sigma = epsilon = mass = k_B = 1. The box is 16:9 so it fills
+  // the canvas, and a particle (diameter sigma) is about 15 pixels across. At
   // this density (about 0.35) the gas and the liquid can coexist.
-  const Lx = 40;
-  const Ly = 30;
-  const count = 420;
+  const Lx = 64;
+  const Ly = 36;
+  const count = 800;
   const dt = 0.005;
   const stepsPerFrame = 5;
   const friction = 0.5; // thermostat coupling: how fast velocities are refreshed
@@ -274,9 +279,11 @@ viewof temperature = Inputs.range([0.1, 1.5], {
 
       @fragment
       fn fs(in: Frag) -> @location(0) vec4f {
-        // Square to disc: drop the corners
-        if (length(in.uv) > 1.0) { discard; }
-        return vec4f(in.colour, 1.0);
+        // Square to disc, with a soft rim about a pixel wide: alpha falls from 1 to
+        // 0 across the circle's edge (blended, so overlapping squares are fine)
+        let d = length(in.uv);
+        let alpha = 1.0 - smoothstep(1.0 - fwidth(d), 1.0, d);
+        return vec4f(in.colour, alpha);
       }
     `,
   });
@@ -290,7 +297,7 @@ viewof temperature = Inputs.range([0.1, 1.5], {
     fragment: {
       module: renderModule,
       entryPoint: "fs",
-      targets: [{ format }],
+      targets: [{ format, blend: gpu.alphaBlend }],
     },
     primitive: { topology: "triangle-list" },
   });
