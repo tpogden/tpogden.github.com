@@ -22,7 +22,7 @@ second, a little harder from one side than the other. The result is a
 what Feynman, in the first lecture, calls "a perpetual jiggling of the particles".
 The tiny kicks cannot be seen, but their sum can.
 
-The white trail is the path of the big particle. The left chart is its mean squared
+The trail is the path of the big particle. The left chart is its mean squared
 displacement: how far it has wandered, squared, after a time $t$, averaged over every
 starting point in the recording. For a random walk in 2D this grows in a straight
 line, $\langle r^2 \rangle = 4Dt$, and the slope gives the diffusion coefficient $D$.
@@ -99,12 +99,12 @@ viewof showTrail = {
   });
 
   // Reduced units: sigma = epsilon = (bath atom) mass = k_B = 1. Particle 0 is the
-  // big one, 6 sigma across; the other 1,100 are bath atoms.
+  // big one, 4 sigma across; the other 1,100 are bath atoms.
   const Lx = 64;
   const Ly = 36;
   const bath = 1100;
   const count = bath + 1;
-  const bigDiameter = 6;
+  const bigDiameter = 4;
   const dt = 0.005;
   const stepsPerFrame = 12; // the big particle is slow, so many steps per frame
   const friction = 0.5; // thermostat coupling, applied to the bath only
@@ -269,7 +269,7 @@ viewof showTrail = {
   trailCanvas.className = "mf-trail";
   const trailContext = trailCanvas.getContext("2d");
   const trail = []; // {x, y, jump}: box coordinates; jump = it wrapped round an edge
-  const trailLength = 500;
+  const trailLength = 900;
 
   function drawTrail() {
     const dpr = window.devicePixelRatio || 1;
@@ -285,14 +285,23 @@ viewof showTrail = {
     const sx = w / Lx;
     const sy = h / Ly;
     trailContext.lineCap = "round";
-    trailContext.lineWidth = 2 * dpr;
-    for (let k = 1; k < trail.length; k++) {
-      if (trail[k].jump) continue; // do not draw across the box
-      trailContext.strokeStyle = `rgba(245, 237, 224, ${0.15 + (0.85 * k) / trail.length})`;
-      trailContext.beginPath();
-      trailContext.moveTo(trail[k - 1].x * sx, h - trail[k - 1].y * sy);
-      trailContext.lineTo(trail[k].x * sx, h - trail[k].y * sy);
-      trailContext.stroke();
+
+    // Two passes, a dark halo then a bright core, so the path shows against both
+    // the pale big particle and the bath atoms. Older segments fade.
+    const passes = [
+      { width: 4.5, colour: (a) => `rgba(20, 20, 20, ${a})` },
+      { width: 2, colour: (a) => `rgba(255, 255, 255, ${a})` },
+    ];
+    for (const { width, colour } of passes) {
+      trailContext.lineWidth = width * dpr;
+      for (let k = 1; k < trail.length; k++) {
+        if (trail[k].jump) continue; // do not draw across the box
+        trailContext.strokeStyle = colour(0.2 + (0.8 * k) / trail.length);
+        trailContext.beginPath();
+        trailContext.moveTo(trail[k - 1].x * sx, h - trail[k - 1].y * sy);
+        trailContext.lineTo(trail[k].x * sx, h - trail[k].y * sy);
+        trailContext.stroke();
+      }
     }
   }
 
