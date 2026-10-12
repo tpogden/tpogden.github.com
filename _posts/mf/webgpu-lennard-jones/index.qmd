@@ -38,6 +38,7 @@ liquid condense out of it.
 
 ```{ojs}
 //| echo: false
+//| output: false
 viewof temperature = {
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
   return ui.slider({
@@ -59,6 +60,7 @@ viewof temperature = {
 {
   // Shared WebGPU boilerplate: setup, buffers and the animation loop (lib/gpu.js)
   const gpu = await import(new URL("../lib/gpu.js", document.baseURI).href);
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
 
   // The temperature is read live from its input element (referencing `viewof x`
   // gives the element, not the value), so moving the slider does not restart the
@@ -349,7 +351,8 @@ viewof temperature = {
 
   gpu.run(invalidation, device, frame);
 
-  yield canvas;
+  // The canvas with the controls laid over its corner
+  yield ui.stage(canvas, [temperatureInput]);
 }
 ```
 
