@@ -1,0 +1,346 @@
+---
+title: "005: Lennard-Jones"
+date: "2026-10-12"
+categories: [mf]
+page-layout: article
+listing:
+  - id: mf-series
+    contents: "../*/index.qmd"
+    type: default
+    categories: false
+    include:
+      categories: "mf"
+    fields: [title]
+    sort: "title asc"
+---
+
+Building on [Compute Shader](../webgpu-compute-shader/), the particles now push and
+pull on each other. Every pair interacts through the Lennard-Jones potential,
+
+$$V(r) = 4\varepsilon\left[\left(\frac{\sigma}{r}\right)^{12} - \left(\frac{\sigma}{r}\right)^{6}\right],$$
+
+which is strongly repulsive up close and weakly attractive further out. A first
+compute pass sums the force on each particle from every other one, a second
+integrates the motion (leapfrog, the same scheme as velocity Verlet), and the walls
+are replaced by _periodic boundaries_: leave on one side, re-enter on the other.
+Particles are coloured by speed. Start hot and they stay a gas; start cool and the
+attraction wins, and they condense into droplets of liquid.
+
+```{ojs}
+//| echo: false
+viewof temperature = Inputs.range([0.1, 1.5], {
+  value: 0.3,
+  step: 0.05,
+  label: "Initial temperature",
+})
+```
+
+```{ojs}
+//| echo: false
+viewof speed = Inputs.range([0.25, 40], {
+  value: 8,
+  step: 0.25,
+  transform: Math.log,
+  label: "Speed (steps per frame)",
+})
+```
+
+:::{.column-margin}
+#### Moving Figures
+
+:::{#mf-series}
+:::
+:::
+
+```{ojs}
+//| column: page
+//| code-fold: true
+//| code-summary: "Show code"
+{
+  if (!navigator.gpu) throw new Error("WebGPU is not supported in this browser.");
+
+  // Setup, as before (640x480 buffer, scaled to fill the column)
+  const canvas = DOM.canvas(640, 480);
+  canvas.style.width = "100%";
+  canvas.style.height = "auto";
+  const adapter = await navigator.gpu.requestAdapter();
+  const device = await adapter.requestDevice();
+  const context = canvas.getContext("webgpu");
+  const format = navigator.gpu.getPreferredCanvasFormat();
+  context.configure({ device, format });
+
+  // Reduced units: sigma = epsilon = mass = k_B = 1. The box is 4:3 so it fills
+  // the canvas, and a particle (diameter sigma) is about 16 pixels across. At
+  // this density (about 0.35) the gas and the liquid can coexist.
+  const Lx = 40;
+  const Ly = 30;
+  const count = 420;
+  const dt = 0.005;
+
+  // Initial state: a gas. Drop particles at random, rejecting any that land
+  // closer than 0.9 sigma (periodically) to one already placed, so no pair
+  // starts with a huge repulsive force.
+  const positions = new Float32Array(count * 2);
+  for (let k = 0; k < count; ) {
+    const x = Math.random() * Lx;
+    const y = Math.random() * Ly;
+    let ok = true;
+    for (let j = 0; j < k && ok; j++) {
+      let dx = x - positions[2 * j];
+      let dy = y - positions[2 * j + 1];
+      dx -= Lx * Math.round(dx / Lx);
+      dy -= Ly * Math.round(dy / Ly);
+      ok = dx * dx + dy * dy > 0.81;
+    }
+    if (ok) {
+      positions[2 * k] = x;
+      positions[2 * k + 1] = y;
+      k++;
+    }
+  }
+
+  // Gaussian random velocities, drift removed, rescaled to the chosen temperature
+  // (in 2D the mean of v^2 per particle is 2T)
+  const gauss = () =>
+    Math.sqrt(-2 * Math.log(1 - Math.random())) * Math.cos(2 * Math.PI * Math.random());
+  const velocities = Float32Array.from({ length: count * 2 }, gauss);
+  for (let axis = 0; axis < 2; axis++) {
+    let mean = 0;
+    for (let i = 0; i < count; i++) mean += velocities[2 * i + axis] / count;
+    for (let i = 0; i < count; i++) velocities[2 * i + axis] -= mean;
+  }
+  const meanSquare = velocities.reduce((s, v) => s + v * v, 0) / count;
+  const scale = Math.sqrt((2 * temperature) / meanSquare);
+  for (let k = 0; k < velocities.length; k++) velocities[k] *= scale;
+
+  // Storage buffers: positions, velocities and the accelerations between passes
+  const storage = (data) => {
+    const buffer = device.createBuffer({
+      size: data.byteLength,
+      usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+    });
+    if (data.length) device.queue.writeBuffer(buffer, 0, data);
+    return buffer;
+  };
+  const positionBuffer = storage(positions);
+  const velocityBuffer = storage(velocities);
+  const accelerationBuffer = storage(new Float32Array(count * 2));
+
+  // Vertex buffer: one unit square (two triangles), shared by every particle
+  const corners = new Float32Array([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
+  const cornerBuffer = device.createBuffer({
+    size: corners.byteLength,
+    usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
+  });
+  device.queue.writeBuffer(cornerBuffer, 0, corners);
+
+  // Compute shaders. Two entry points, so each pass only touches what it owns:
+  // `forces` reads every position but writes only its own acceleration, and
+  // `integrate` reads and writes only its own particle. No thread ever reads
+  // something another thread is writing in the same dispatch.
+  const computeModule = device.createShaderModule({
+    code: `
+      const L = vec2f(${Lx}, ${Ly});   // box size
+      const DT = ${dt};
+      const RC2 = 6.25;                // cutoff radius 2.5 sigma, squared
+
+      @group(0) @binding(0) var<storage, read_write> positions: array<vec2f>;
+      @group(0) @binding(1) var<storage, read_write> velocities: array<vec2f>;
+      @group(0) @binding(2) var<storage, read_write> accelerations: array<vec2f>;
+
+      @compute @workgroup_size(64)
+      fn forces(@builtin(global_invocation_id) id: vec3u) {
+        let i = id.x;
+        if (i >= arrayLength(&positions)) { return; }
+
+        let here = positions[i];
+        var a = vec2f(0.0);
+        for (var j = 0u; j < arrayLength(&positions); j++) {
+          if (j == i) { continue; }
+          var d = here - positions[j];
+          // Minimum image: use the nearest periodic copy of particle j
+          d -= L * round(d / L);
+          let r2 = dot(d, d);
+          if (r2 < RC2) {
+            let s2 = 1.0 / r2;   // (sigma / r)^2
+            let s6 = s2 * s2 * s2;
+            // force / r = 24 (2 s^12 - s^6) / r^2
+            a += d * (24.0 * s2 * s6 * (2.0 * s6 - 1.0));
+          }
+        }
+        accelerations[i] = a;
+      }
+
+      @compute @workgroup_size(64)
+      fn integrate(@builtin(global_invocation_id) id: vec3u) {
+        let i = id.x;
+        if (i >= arrayLength(&positions)) { return; }
+
+        // Leapfrog: kick the velocity, then drift the position
+        let v = velocities[i] + accelerations[i] * DT;
+        var p = positions[i] + v * DT;
+        p -= L * floor(p / L); // wrap back into the box
+
+        velocities[i] = v;
+        positions[i] = p;
+      }
+    `,
+  });
+
+  // With layout "auto" each pipeline only gets the bindings its entry point uses,
+  // so each needs its own bind group.
+  const forcePipeline = device.createComputePipeline({
+    layout: "auto",
+    compute: { module: computeModule, entryPoint: "forces" },
+  });
+  const integratePipeline = device.createComputePipeline({
+    layout: "auto",
+    compute: { module: computeModule, entryPoint: "integrate" },
+  });
+  const forceBindGroup = device.createBindGroup({
+    layout: forcePipeline.getBindGroupLayout(0),
+    entries: [
+      { binding: 0, resource: { buffer: positionBuffer } },
+      { binding: 2, resource: { buffer: accelerationBuffer } },
+    ],
+  });
+  const integrateBindGroup = device.createBindGroup({
+    layout: integratePipeline.getBindGroupLayout(0),
+    entries: [
+      { binding: 0, resource: { buffer: positionBuffer } },
+      { binding: 1, resource: { buffer: velocityBuffer } },
+      { binding: 2, resource: { buffer: accelerationBuffer } },
+    ],
+  });
+
+  // Render shaders: a disc per particle, coloured by its speed
+  const referenceSpeed = 1.5; // speed at which a particle is fully "hot"
+  const renderModule = device.createShaderModule({
+    code: `
+      const L = vec2f(${Lx}, ${Ly});
+
+      @group(0) @binding(0) var<storage, read> positions: array<vec2f>;
+      @group(0) @binding(1) var<storage, read> velocities: array<vec2f>;
+
+      struct Frag {
+        @builtin(position) position: vec4f,
+        @location(0) uv: vec2f,
+        @location(1) @interpolate(flat) colour: vec3f,
+      }
+
+      @vertex
+      fn vs(
+        @location(0) corner: vec2f,
+        @builtin(instance_index) i: u32,
+      ) -> Frag {
+        // Box coordinates to clip space; the radius is sigma / 2
+        let centre = positions[i] / L * 2.0 - 1.0;
+        let radius = 1.0 / L;
+
+        let t = clamp(length(velocities[i]) / ${referenceSpeed}, 0.0, 1.0);
+        let cold = vec3f(0.35, 0.5, 0.8);
+        let hot = vec3f(1.0, 0.282, 0.204); // #FF4834
+
+        var out: Frag;
+        out.position = vec4f(centre + corner * radius, 0.0, 1.0);
+        out.uv = corner;
+        out.colour = mix(cold, hot, t);
+        return out;
+      }
+
+      @fragment
+      fn fs(in: Frag) -> @location(0) vec4f {
+        // Square to disc: drop the corners
+        if (length(in.uv) > 1.0) { discard; }
+        return vec4f(in.colour, 1.0);
+      }
+    `,
+  });
+  const renderPipeline = device.createRenderPipeline({
+    layout: "auto",
+    vertex: {
+      module: renderModule,
+      entryPoint: "vs",
+      buffers: [
+        {
+          arrayStride: 2 * 4,
+          attributes: [{ shaderLocation: 0, offset: 0, format: "float32x2" }],
+        },
+      ],
+    },
+    fragment: {
+      module: renderModule,
+      entryPoint: "fs",
+      targets: [{ format }],
+    },
+    primitive: { topology: "triangle-list" },
+  });
+  const renderBindGroup = device.createBindGroup({
+    layout: renderPipeline.getBindGroupLayout(0),
+    entries: [
+      { binding: 0, resource: { buffer: positionBuffer } },
+      { binding: 1, resource: { buffer: velocityBuffer } },
+    ],
+  });
+
+  // One frame: some number of simulation steps in a single compute pass, then
+  // draw. Dispatches in a pass run in order, and each sees the previous one's writes.
+  // The speed slider is read here every frame, so moving it does not restart the
+  // simulation: referencing `viewof speed` gives the input element, and only
+  // `speed` (its value) would re-run the cell. A fractional speed is accumulated
+  // across frames, so below 1 it takes a step every few frames.
+  const speedInput = viewof speed;
+  const workgroups = Math.ceil(count / 64);
+  let stepBudget = 0;
+
+  function frame() {
+    if (!running) return;
+    stepBudget += speedInput.value;
+    const steps = Math.floor(stepBudget);
+    stepBudget -= steps;
+
+    const encoder = device.createCommandEncoder();
+
+    const compute = encoder.beginComputePass();
+    for (let s = 0; s < steps; s++) {
+      compute.setPipeline(forcePipeline);
+      compute.setBindGroup(0, forceBindGroup);
+      compute.dispatchWorkgroups(workgroups);
+      compute.setPipeline(integratePipeline);
+      compute.setBindGroup(0, integrateBindGroup);
+      compute.dispatchWorkgroups(workgroups);
+    }
+    compute.end();
+
+    const pass = encoder.beginRenderPass({
+      colorAttachments: [
+        {
+          view: context.getCurrentTexture().createView(),
+          clearValue: { r: 0.102, g: 0.102, b: 0.102, a: 1.0 }, // #1a1a1a
+          loadOp: "clear",
+          storeOp: "store",
+        },
+      ],
+    });
+    pass.setPipeline(renderPipeline);
+    pass.setBindGroup(0, renderBindGroup);
+    pass.setVertexBuffer(0, cornerBuffer);
+    pass.draw(6, count); // 6 vertices per square, `count` instances
+    pass.end();
+
+    device.queue.submit([encoder.finish()]);
+    requestAnimationFrame(frame);
+  }
+
+  // The slider re-runs this cell; `invalidation` stops the old loop and frees
+  // the old device.
+  let running = true;
+  invalidation.then(() => {
+    running = false;
+    device.destroy();
+  });
+  requestAnimationFrame(frame);
+
+  yield canvas;
+}
+```
