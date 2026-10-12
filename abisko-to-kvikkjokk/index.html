@@ -289,6 +289,165 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+<style>
+  #route-map {
+    --map-bg: #ffffff; --ink: #1a1a1a; --accent: #FF4834;
+    height: clamp(480px, 88vh, 900px); width: 100%; background: var(--map-bg);
+    font-family: inherit; position: relative; isolation: isolate;
+  }
+  body.quarto-dark #route-map { --map-bg: #1a1a1a; --ink: #e8e2e0; }
+  /* Mountains: greyscale hillshade with the contrast stretched, blended into
+     the page colour (inverted onto dark). */
+  #route-map .relief { filter: url(#relief-light); mix-blend-mode: multiply;
+    opacity: .7; }
+  body.quarto-dark #route-map .relief { filter: url(#relief-dark);
+    mix-blend-mode: screen; opacity: .8; }
+  /* Lakes: the water-blue pixels of the OSM layer, keyed out and recoloured;
+     roads, labels and land cover are discarded. */
+  #route-map .water { filter: url(#lake-light); }
+  body.quarto-dark #route-map .water { filter: url(#lake-dark); }
+  /* Tiles are fetched one zoom finer (half-size, so 4x detail). Leaflet's
+     plus-lighter tile blend leaves light seams once the layers are filtered. */
+  #route-map img.leaflet-tile { mix-blend-mode: normal; }
+  #route-map .leaflet-control-attribution {
+    background: none; color: var(--ink); opacity: .55; font-size: 10px; }
+  #route-map .leaflet-control-attribution a { color: inherit; }
+  #route-map .leaflet-bar a { background: var(--map-bg); color: var(--ink);
+    border-color: color-mix(in srgb, var(--ink) 25%, transparent); }
+  #route-map .camp { width: 20px; height: 20px; border-radius: 50%;
+    background: var(--accent); color: #fff; font: 700 11px/20px sans-serif;
+    text-align: center; box-shadow: 0 0 0 2px var(--map-bg); }
+  #route-map .leaflet-tooltip { background: var(--map-bg); color: var(--ink);
+    border: 0; box-shadow: 0 1px 4px rgba(0,0,0,.3); font-size: 13px; }
+  #route-map .leaflet-tooltip::before { display: none; }
+  #route-map .place { background: none; box-shadow: none; font-weight: 600;
+    letter-spacing: .02em; padding: 0;
+    text-shadow: 0 0 3px var(--map-bg), 0 0 3px var(--map-bg), 0 0 6px var(--map-bg); }
+  #route-map .place.peak { font-weight: 400; font-style: italic; }
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="relief-light" color-interpolation-filters="sRGB">
+    <fecolormatrix type="saturate" values="0"></fecolormatrix>
+    <fecomponenttransfer>
+      <fefuncr type="linear" slope="4.4" intercept="-3.4"></fefuncr>
+      <fefuncg type="linear" slope="4.4" intercept="-3.4"></fefuncg>
+      <fefuncb type="linear" slope="4.4" intercept="-3.4"></fefuncb>
+    </fecomponenttransfer>
+  </filter>
+  <filter id="relief-dark" color-interpolation-filters="sRGB">
+    <fecolormatrix type="saturate" values="0"></fecolormatrix>
+    <fecomponenttransfer>
+      <fefuncr type="linear" slope="-3" intercept="3"></fefuncr>
+      <fefuncg type="linear" slope="-3" intercept="3"></fefuncg>
+      <fefuncb type="linear" slope="-3" intercept="3"></fefuncb>
+    </fecomponenttransfer>
+  </filter>
+  <filter id="lake-light" color-interpolation-filters="sRGB">
+    <!-- alpha := blue minus red; keep only the narrow band water falls in -->
+    <fecolormatrix type="matrix" values="0 0 0 0 0.35  0 0 0 0 0.37  0 0 0 0 0.42  -1 0 1 0 0"></fecolormatrix>
+    <fecomponenttransfer>
+      <fefunca type="table" tablevalues="0 0 0 0.6 1 1 1 0.5 0 0 0 0 0 0 0 0 0 0 0 0 0"></fefunca>
+    </fecomponenttransfer>
+  </filter>
+  <filter id="lake-dark" color-interpolation-filters="sRGB">
+    <!-- alpha := blue minus red; keep only the narrow band water falls in -->
+    <fecolormatrix type="matrix" values="0 0 0 0 0.62  0 0 0 0 0.64  0 0 0 0 0.68  -1 0 1 0 0"></fecolormatrix>
+    <fecomponenttransfer>
+      <fefunca type="table" tablevalues="0 0 0 0.6 1 1 1 0.5 0 0 0 0 0 0 0 0 0 0 0 0 0"></fefunca>
+    </fecomponenttransfer>
+  </filter>
+</svg>
+<div class="column-page" style="margin-bottom: 2.5rem">
+  <div id="route-map" role="img" aria-label="Relief map of our route from Abisko in the north to Kvikkjokk
+                   in the south, with numbered camps"></div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js">
+</script>
+<script>
+(async () => {
+  const el = document.getElementById("route-map");
+  const url = new URL("assets/route.geojson", document.baseURI).href;
+  const data = await (await fetch(url)).json();
+  const map = L.map(el, { scrollWheelZoom: false, zoomSnap: 1,
+    minZoom: 6, maxZoom: 12 }).setView([67.7, 18.3], 8);
+  const esri = "https://server.arcgisonline.com/ArcGIS/rest/services/";
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    className: "water", tileSize: 128, zoomOffset: 1, maxNativeZoom: 18,
+    attribution: "Lakes &copy; <a href='https://openstreetmap.org/copyright'>" +
+      "OpenStreetMap</a> contributors",
+  }).addTo(map);
+  L.tileLayer(esri + "Elevation/World_Hillshade/MapServer/tile/{z}/{y}/{x}", {
+    className: "relief", tileSize: 128, zoomOffset: 1, maxNativeZoom: 12,
+    attribution: "Relief &copy; Esri, USGS, NOAA, NASA, NGA",
+  }).addTo(map);
+
+  const fmt = (iso) => new Date(iso + "T12:00:00Z").toLocaleDateString("en-GB",
+    { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
+  const ll = ([lon, lat]) => [lat, lon];
+  const days = data.features.filter((f) => f.properties.kind === "day");
+  const gaps = data.features.filter((f) => f.properties.kind === "gap");
+  const accent = "#FF4834";
+  const bg = () => document.body.classList.contains("quarto-dark") ? "#1a1a1a" : "#fff";
+
+  const group = L.featureGroup().addTo(map);
+  const casings = [];
+  const casing = (coords, w) => casings.push(L.polyline(coords,
+    { color: bg(), weight: w, opacity: 0.85, lineJoin: "round" }).addTo(group));
+
+  for (const f of days) {
+    const coords = f.geometry.coordinates.map((c) => c.map(ll));
+    casing(coords, 7);
+    L.polyline(coords, { color: accent, weight: 3, lineJoin: "round" })
+      .addTo(group).bindTooltip(
+        `Day ${f.properties.day} &middot; ${fmt(f.properties.date)} &middot; ` +
+        `${f.properties.km} km &middot; up to ${f.properties.max_ele} m`,
+        { sticky: true });
+  }
+  for (const g of gaps) {
+    const coords = g.geometry.coordinates.map(ll);
+    casing(coords, 6);
+    L.polyline(coords, { color: accent, weight: 2.5, dashArray: "1 7",
+      lineCap: "round" }).addTo(group);
+  }
+  new MutationObserver(() => casings.forEach((c) => c.setStyle({ color: bg() })))
+    .observe(document.body, { attributes: true, attributeFilter: ["class"] });
+
+  const first = (f) => f.geometry.coordinates[0][0];
+  const lastOf = (f) => f.geometry.coordinates.at(-1).at(-1);
+  const label = (lonlat, text, dir, cls = "") => L.marker(ll(lonlat), {
+    icon: L.divIcon({ className: "", iconSize: [0, 0] }), interactive: false,
+  }).bindTooltip(text, { permanent: true, direction: dir, className: "place " + cls,
+    offset: dir === "left" ? [-6, 0] : [6, 0] }).addTo(map);
+
+  // Night N is spent where day N+1 starts (equals where day N ends unless the
+  // logger was off, as it was before Saltoluokta).
+  const places = { 8: "Saltoluokta" };
+  days.slice(0, -1).forEach((f, i) => {
+    const n = f.properties.day;
+    L.marker(ll(first(days[i + 1])), { icon: L.divIcon({ className: "",
+      iconSize: [20, 20], html: `<div class="camp">${n}</div>` }) })
+      .bindTooltip(`Camp ${n}` + (places[n] ? ` &middot; ${places[n]}` : ""),
+        { direction: "top", offset: [0, -8] }).addTo(map);
+  });
+  label(first(days[0]), "Abisko", "left");
+  label(lastOf(days.at(-1)), "Kvikkjokk", "right");
+  label([18.5133, 67.9033], "Kebnekaise", "right", "peak");
+
+  const fit = () => map.fitBounds(group.getBounds(), { padding: [16, 16] });
+  fit();
+  // The column is laid out after this script runs; keep the map in step with
+  // its container and re-fit until the reader starts exploring.
+  let explored = false;
+  for (const ev of ["pointerdown", "wheel", "keydown"])
+    el.addEventListener(ev, () => { explored = true; }, { passive: true });
+  new ResizeObserver(() => {
+    map.invalidateSize({ pan: false });
+    if (!explored) fit();
+  }).observe(el);
+  map.on("click", () => map.scrollWheelZoom.enable());
+})();
+</script>
 <div class="page-columns page-full">
 <div class="quarto-figure quarto-figure-center page-columns page-full">
 <figure class="figure page-columns page-full">
