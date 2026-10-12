@@ -15,6 +15,7 @@
 # post shadow dirs
 /webgpu-animation-loop/
 /webgpu-bouncing-particles/
+/webgpu-brownian-motion/
 /webgpu-compute-shader/
 /webgpu-gravity/
 /webgpu-hello-world/
