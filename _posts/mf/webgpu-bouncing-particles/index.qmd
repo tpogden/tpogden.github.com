@@ -22,25 +22,19 @@ every display. There is almost no new WebGPU here; positions are simply rewritte
 into the storage buffer each frame with `writeBuffer`.
 
 ```{ojs}
-//| column: page
+//| column: screen-inset
 //| code-fold: true
 //| code-summary: "Show code"
 {
-  if (!navigator.gpu) throw new Error("WebGPU is not supported in this browser.");
+  // Shared WebGPU boilerplate: setup, buffers and the animation loop (lib/gpu.js)
+  const gpu = await import(new URL("../lib/gpu.js", document.baseURI).href);
 
-  // Setup, as before (640x480 buffer, scaled to fill the column)
-  const canvas = DOM.canvas(640, 480);
-  canvas.style.width = "100%";
-  canvas.style.height = "auto";
-  const adapter = await navigator.gpu.requestAdapter();
-  const device = await adapter.requestDevice();
-  const context = canvas.getContext("webgpu");
-  const format = navigator.gpu.getPreferredCanvasFormat();
-  context.configure({ device, format });
+  // Setup, as before (640x360 buffer, scaled to fill the column)
+  const { canvas, device, context, format } = await gpu.setup({ width: 640, height: 360 });
 
   // Simulation state lives on the CPU, in clip space (-1 to 1)
   const count = 50;
-  const half = [0.03 * 0.75, 0.03]; // particle half-size; x scaled by 4:3 aspect
+  const half = [0.03 * 0.5625, 0.03]; // particle half-size; x scaled by 16:9 aspect
   const positions = new Float32Array(count * 2);
   const velocities = new Float32Array(count * 2);
   for (let i = 0; i < count; i++) {
@@ -78,12 +72,7 @@ into the storage buffer each frame with `writeBuffer`.
   });
 
   // Vertex buffer: one unit square (two triangles), shared by every particle
-  const corners = new Float32Array([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
-  const cornerBuffer = device.createBuffer({
-    size: corners.byteLength,
-    usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
-  });
-  device.queue.writeBuffer(cornerBuffer, 0, corners);
+  const cornerBuffer = gpu.unitSquare(device);
 
   // Shaders
   const module = device.createShaderModule({
@@ -112,12 +101,7 @@ into the storage buffer each frame with `writeBuffer`.
     vertex: {
       module,
       entryPoint: "vs",
-      buffers: [
-        {
-          arrayStride: 2 * 4,
-          attributes: [{ shaderLocation: 0, offset: 0, format: "float32x2" }],
-        },
-      ],
+      buffers: [gpu.squareLayout],
     },
     fragment: {
       module,
@@ -138,16 +122,7 @@ into the storage buffer each frame with `writeBuffer`.
     device.queue.writeBuffer(positionBuffer, 0, positions);
 
     const encoder = device.createCommandEncoder();
-    const pass = encoder.beginRenderPass({
-      colorAttachments: [
-        {
-          view: context.getCurrentTexture().createView(),
-          clearValue: { r: 0.102, g: 0.102, b: 0.102, a: 1.0 }, // #1a1a1a
-          loadOp: "clear",
-          storeOp: "store",
-        },
-      ],
-    });
+    const pass = gpu.beginRenderPass(encoder, context);
     pass.setPipeline(pipeline);
     pass.setBindGroup(0, bindGroup);
     pass.setVertexBuffer(0, cornerBuffer);
@@ -162,11 +137,8 @@ into the storage buffer each frame with `writeBuffer`.
   const dt = 1 / 120;
   let accumulator = 0;
   let last = null;
-  let running = true;
-  invalidation.then(() => (running = false));
 
   function frame(ms) {
-    if (!running) return;
     const now = ms / 1000;
     // Clamp the elapsed time so a backgrounded tab doesn't trigger a huge catch-up
     const elapsed = last === null ? 0 : Math.min(now - last, 0.25);
@@ -177,9 +149,8 @@ into the storage buffer each frame with `writeBuffer`.
       accumulator -= dt;
     }
     draw();
-    requestAnimationFrame(frame);
   }
-  requestAnimationFrame(frame);
+  gpu.run(invalidation, device, frame);
 
   yield canvas;
 }

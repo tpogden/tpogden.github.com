@@ -4,6 +4,8 @@ project:
     - "bash scripts/pre-render.sh"
   post-render:
     - "bash scripts/post-render.sh"
+  resources:
+    - lib/*.js
 
 website:
   title: "Thomas Ogden"

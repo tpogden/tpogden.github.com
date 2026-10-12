@@ -58,6 +58,24 @@ categories: [research]   # one of: research, mf, reading, travel, personal
 
 An optional `assets/` subdirectory holds images and data files. After adding a post, run `quarto preview` or `quarto render` — the pre-render script will create the shadow dir and wire it into the listings automatically.
 
+## Shared JavaScript in `{ojs}` cells
+
+Shared modules live in `lib/` (top-level, non-underscore, so Quarto copies it into `_site/` as-is; underscore-prefixed dirs are ignored). `lib/gpu.js` holds the WebGPU setup, buffer helpers and animation loop used by the Moving Figures posts. Import a module from a cell with a dynamic import resolved against the page URL:
+
+```js
+const gpu = await import(new URL("../lib/gpu.js", document.baseURI).href);
+```
+
+The `../` is relative to the page (`/slug/`), which is also how it works from the shadow dirs. These alternatives were tried and **do not work**:
+
+- `import("../lib/gpu.js")` with a string literal: Quarto resolves it against the OJS runtime script and requests `/site_libs/lib/gpu.js` (404).
+- `import { x } from "../lib/gpu.js"` (static), `import(new URL(...))` without `.href`, `import("/lib/gpu.js")`, and `import { x } from "../lib/gpu.ojs"`: the cells silently render as bare source with no output and no error.
+
+## Gotchas
+
+- Quarto skips project files under a hidden path component, so a full `quarto render` or `quarto preview` inside `.claude/worktrees/...` produces no output (single-file renders still work, but without listings). Build from a normal checkout, or from a copy outside `.claude/`.
+- A single-file `quarto render slug/index.qmd` does not populate listings; use a full-site build to check layout that depends on them.
+
 ## Styling
 
 `tpogden.scss` defines the custom theme; `_brand.yml` sets brand colours. Both light and dark modes use the same `tpogden.scss` theme (set in `_quarto.yml`). Math renders via KaTeX.
