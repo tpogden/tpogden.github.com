@@ -192,6 +192,36 @@ div.quarto-post {
     }
 }
 
+// Labelled sliders in Moving Figures posts: label, range, read-only value
+.mf-slider {
+    align-items: baseline;
+    display: flex;
+    font-family: $font-family-monospace;
+    font-size: 0.875em;
+    gap: 1rem;
+    margin: 0.25rem 0;
+    max-width: 28rem;
+
+    .mf-slider-label {
+        flex: none;
+        min-width: 7rem;
+    }
+
+    input[type="range"] {
+        accent-color: $main;
+        flex: 1;
+        min-width: 0;
+    }
+
+    output {
+        color: $grey-mid;
+        flex: none;
+        font-variant-numeric: tabular-nums;
+        min-width: 3rem;
+        text-align: right;
+    }
+}
+
 // Series bar: the Moving Figures post list, inline at the bottom of a post
 .mf-series-bar {
     margin-top: 3rem;
