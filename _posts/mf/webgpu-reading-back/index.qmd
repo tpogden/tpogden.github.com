@@ -98,6 +98,7 @@ viewof gravity = {
 {
   // Shared WebGPU boilerplate: setup, buffers and the animation loop (lib/gpu.js)
   const gpu = await import(new URL("../lib/gpu.js", document.baseURI).href);
+  const md = await import(new URL("../lib/md.js", document.baseURI).href);
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
 
   // The sliders are read live from their input elements (referencing `viewof x`
@@ -132,40 +133,15 @@ viewof gravity = {
   const cutoff = 2.5;
   const shift = -4 * (Math.pow(1 / cutoff, 12) - Math.pow(1 / cutoff, 6));
 
-  // Initial state: a gas. Drop particles at random, rejecting any that land
-  // closer than 0.9 sigma (periodically in x) to one already placed, so no pair
-  // starts with a huge repulsive force. Centres stay half a particle off the walls.
-  const positions = new Float32Array(count * 2);
-  for (let k = 0; k < count; ) {
-    const x = Math.random() * Lx;
-    const y = 0.5 + Math.random() * (Ly - 1);
-    let ok = true;
-    for (let j = 0; j < k && ok; j++) {
-      let dx = x - positions[2 * j];
-      let dy = y - positions[2 * j + 1];
-      dx -= Lx * Math.round(dx / Lx);
-      ok = dx * dx + dy * dy > 0.81;
-    }
-    if (ok) {
-      positions[2 * k] = x;
-      positions[2 * k + 1] = y;
-      k++;
-    }
-  }
-
-  // Gaussian random velocities, drift removed, rescaled to the starting temperature
-  // (in 2D the mean of v^2 per particle is 2T)
-  const gauss = () =>
-    Math.sqrt(-2 * Math.log(1 - Math.random())) * Math.cos(2 * Math.PI * Math.random());
-  const velocities = Float32Array.from({ length: count * 2 }, gauss);
-  for (let axis = 0; axis < 2; axis++) {
-    let mean = 0;
-    for (let i = 0; i < count; i++) mean += velocities[2 * i + axis] / count;
-    for (let i = 0; i < count; i++) velocities[2 * i + axis] -= mean;
-  }
-  const meanSquare = velocities.reduce((s, v) => s + v * v, 0) / count;
-  const scale = Math.sqrt((2 * temperatureInput.value) / meanSquare);
-  for (let k = 0; k < velocities.length; k++) velocities[k] *= scale;
+  // Initial state: a gas of random, non-overlapping positions, with Gaussian
+  // velocities at the starting temperature (see lib/md.js)
+  const { positions, velocities } = md.randomGas({
+    count,
+    box: [Lx, Ly],
+    temperature: temperatureInput.value,
+    periodic: [true, false],
+    margin: 0.5, // centres stay half a particle off the walls
+  });
 
   // Storage buffers: positions, velocities and the accelerations between passes
   const positionBuffer = gpu.storageBuffer(device, positions);
@@ -196,9 +172,6 @@ viewof gravity = {
     usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
   });
 
-  // Vertex buffer: one unit square (two triangles), shared by every particle
-  const cornerBuffer = gpu.unitSquare(device);
-
   // Compute shaders. Two entry points, so each pass only touches what it owns:
   // `forces` reads every position but writes only its own acceleration, and
   // `integrate` reads and writes only its own particle. No thread ever reads
@@ -221,22 +194,7 @@ viewof gravity = {
       @group(0) @binding(4) var<uniform> params: Params;
       @group(0) @binding(5) var<storage, read_write> potentials: array<f32>;
 
-      // PCG hash: advance the state, scramble it into a random u32
-      fn pcg(state: ptr<function, u32>) -> u32 {
-        *state = *state * 747796405u + 2891336453u;
-        let word = ((*state >> ((*state >> 28u) + 4u)) ^ *state) * 277803737u;
-        return (word >> 22u) ^ word;
-      }
-
-      // Two independent standard normal numbers (Box-Muller)
-      fn gaussian2(state: ptr<function, u32>) -> vec2f {
-        let u1 = (f32(pcg(state) >> 8u) + 0.5) / 16777216.0; // in (0, 1)
-        let u2 = (f32(pcg(state) >> 8u) + 0.5) / 16777216.0;
-        let radius = sqrt(-2.0 * log(u1));
-        let angle = 6.2831853 * u2;
-        return radius * vec2f(cos(angle), sin(angle));
-      }
-
+      ${md.rngWGSL}
       @compute @workgroup_size(64)
       fn forces(@builtin(global_invocation_id) id: vec3u) {
         let i = id.x;
@@ -322,72 +280,8 @@ viewof gravity = {
     ],
   });
 
-  // Render shaders: a disc per particle, coloured by its speed
-  const referenceSpeed = 1.5; // speed at which a particle is fully "hot"
-  const renderModule = device.createShaderModule({
-    code: `
-      const L = vec2f(${Lx}, ${Ly});
-
-      @group(0) @binding(0) var<storage, read> positions: array<vec2f>;
-      @group(0) @binding(1) var<storage, read> velocities: array<vec2f>;
-
-      struct Frag {
-        @builtin(position) position: vec4f,
-        @location(0) uv: vec2f,
-        @location(1) @interpolate(flat) colour: vec3f,
-      }
-
-      @vertex
-      fn vs(
-        @location(0) corner: vec2f,
-        @builtin(instance_index) i: u32,
-      ) -> Frag {
-        // Box coordinates to clip space; the radius is sigma / 2
-        let centre = positions[i] / L * 2.0 - 1.0;
-        let radius = 1.0 / L;
-
-        let t = clamp(length(velocities[i]) / ${referenceSpeed}, 0.0, 1.0);
-        let cold = vec3f(0.35, 0.5, 0.8);
-        let hot = vec3f(1.0, 0.282, 0.204); // #FF4834
-
-        var out: Frag;
-        out.position = vec4f(centre + corner * radius, 0.0, 1.0);
-        out.uv = corner;
-        out.colour = mix(cold, hot, t);
-        return out;
-      }
-
-      @fragment
-      fn fs(in: Frag) -> @location(0) vec4f {
-        // Square to disc, with a soft rim about a pixel wide: alpha falls from 1 to
-        // 0 across the circle's edge (blended, so overlapping squares are fine)
-        let d = length(in.uv);
-        let alpha = 1.0 - smoothstep(1.0 - fwidth(d), 1.0, d);
-        return vec4f(in.colour, alpha);
-      }
-    `,
-  });
-  const renderPipeline = device.createRenderPipeline({
-    layout: "auto",
-    vertex: {
-      module: renderModule,
-      entryPoint: "vs",
-      buffers: [gpu.squareLayout],
-    },
-    fragment: {
-      module: renderModule,
-      entryPoint: "fs",
-      targets: [{ format, blend: gpu.alphaBlend }],
-    },
-    primitive: { topology: "triangle-list" },
-  });
-  const renderBindGroup = device.createBindGroup({
-    layout: renderPipeline.getBindGroupLayout(0),
-    entries: [
-      { binding: 0, resource: { buffer: positionBuffer } },
-      { binding: 1, resource: { buffer: velocityBuffer } },
-    ],
-  });
+  // Render: a disc per particle, coloured by its speed (see lib/md.js)
+  const discs = md.discs(device, { format, positionBuffer, velocityBuffer, box: [Lx, Ly] });
 
   // Charts: one Observable Plot per host, redrawn after every readback
   const [energyHost, densityHost] = charts.children;
@@ -519,10 +413,7 @@ viewof gravity = {
     simTime += stepsPerFrame * dt;
 
     const pass = gpu.beginRenderPass(encoder, context);
-    pass.setPipeline(renderPipeline);
-    pass.setBindGroup(0, renderBindGroup);
-    pass.setVertexBuffer(0, cornerBuffer);
-    pass.draw(6, count); // 6 vertices per square, `count` instances
+    discs.draw(pass, count);
     pass.end();
 
     // Readback, step 1: copy what we want into the staging buffer
