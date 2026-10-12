@@ -1,0 +1,532 @@
+---
+title: "009: Brownian Motion"
+date: "2026-10-13"
+categories: [mf]
+page-layout: article
+listing:
+  - id: mf-series
+    contents: "../*/index.qmd"
+    type: default
+    categories: false
+    include:
+      categories: "mf"
+    fields: [title]
+    sort: "title asc"
+---
+
+Building on [Solid, Liquid, Gas](../webgpu-structure/), the box is now a hot, dilute
+fluid with one large particle dropped in. The big particle is not pushed by anything
+we put in: it is only ever hit by the small atoms around it, thousands of times a
+second, a little harder from one side than the other. The result is a
+[random walk](../random-walks/). This is [Brownian motion](https://en.wikipedia.org/wiki/Brownian_motion), and it is
+what Feynman, in the first lecture, calls "a perpetual jiggling of the particles".
+The tiny kicks cannot be seen, but their sum can.
+
+The trail is the path of the big particle. The left chart is its mean squared
+displacement: how far it has wandered, squared, after a time $t$, averaged over every
+starting point in the recording. For a random walk in 2D this grows in a straight
+line, $\langle r^2 \rangle = 4Dt$, and the slope gives the diffusion coefficient $D$.
+That linear growth, and what $D$ depends on, was how Einstein showed in 1905 that
+atoms had to exist.
+
+The right chart is the distribution of the big particle's velocity components. The
+[equipartition theorem](https://en.wikipedia.org/wiki/Equipartition_theorem) says
+each one has a mean energy of $\tfrac12 k_BT$ no matter how heavy the particle is, so
+the spread is $\sqrt{k_BT/M}$: a heavier particle is a slower one, and the dashed
+curve is that prediction. Moving a slider restarts the statistics.
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof temperature = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.slider({
+    label: "Temperature",
+    min: 0.6,
+    max: 2.5,
+    step: 0.05,
+    value: 1.0,
+    format: (v) => v.toFixed(2),
+  });
+}
+```
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof mass = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.slider({
+    label: "Mass",
+    min: 5,
+    max: 200,
+    step: 5,
+    value: 30,
+    format: (v) => v.toFixed(0),
+  });
+}
+```
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof showTrail = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.toggle({ label: "Trail", value: true });
+}
+```
+
+```{ojs}
+//| column: screen-inset
+//| code-fold: true
+//| code-summary: "Show code"
+{
+  // Shared WebGPU boilerplate: setup, buffers and the animation loop (lib/gpu.js)
+  const gpu = await import(new URL("../lib/gpu.js", document.baseURI).href);
+  const md = await import(new URL("../lib/md.js", document.baseURI).href);
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+
+  // The controls are read live from their input elements (referencing `viewof x`
+  // gives the element, not the value), so moving them does not restart the sim.
+  const temperatureInput = viewof temperature;
+  const massInput = viewof mass;
+  const trailInput = viewof showTrail;
+
+  const { canvas, device, context, format } = await gpu.setup({
+    width: 640,
+    height: 360,
+    resolution: "auto",
+  });
+
+  // Reduced units: sigma = epsilon = (bath atom) mass = k_B = 1. Particle 0 is the
+  // big one, 4 sigma across; the other 1,100 are bath atoms.
+  const Lx = 64;
+  const Ly = 36;
+  const bath = 1100;
+  const count = bath + 1;
+  const bigDiameter = 4;
+  const dt = 0.005;
+  const stepsPerFrame = 12; // the big particle is slow, so many steps per frame
+  const friction = 0.5; // thermostat coupling, applied to the bath only
+  const decay = Math.exp(-friction * dt); // per-step velocity damping
+
+  // Initial state: the big particle in the middle at rest, and a gas of bath atoms
+  // that keeps clear of it (its radius, a bath atom's radius, and a little room)
+  const centre = { x: Lx / 2, y: Ly / 2 };
+  const gas = md.randomGas({
+    count: bath,
+    box: [Lx, Ly],
+    temperature: temperatureInput.value,
+    exclude: [{ ...centre, radius: bigDiameter / 2 + 0.9 }],
+  });
+  const positions = new Float32Array(count * 2);
+  const velocities = new Float32Array(count * 2);
+  positions.set([centre.x, centre.y], 0);
+  positions.set(gas.positions, 2);
+  velocities.set(gas.velocities, 2);
+
+  // Storage buffers: positions, velocities and the accelerations between passes
+  const positionBuffer = gpu.storageBuffer(device, positions);
+  const velocityBuffer = gpu.storageBuffer(device, velocities);
+  const accelerationBuffer = gpu.storageBuffer(device, new Float32Array(count * 2));
+  const rngBuffer = gpu.storageBuffer(device, crypto.getRandomValues(new Uint32Array(count)));
+
+  // Staging buffer for readback: the big particle's position, then its velocity
+  const stagingBuffer = device.createBuffer({
+    size: 16,
+    usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST,
+  });
+
+  // Uniform buffer: the thermostat's kick size and the big particle's mass,
+  // rewritten every frame
+  const paramBuffer = device.createBuffer({
+    size: 16, // uniform buffers are happiest in multiples of 16 bytes
+    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+  });
+
+  // Compute shaders. Particle 0 is the big one: it is heavier, and it meets every
+  // other particle through a purely repulsive contact (the Lennard-Jones potential
+  // cut at its minimum), so bath atoms bounce off it and never stick. It is not
+  // thermostatted: all its energy comes from collisions with the bath.
+  const computeModule = device.createShaderModule({
+    code: `
+      const L = vec2f(${Lx}, ${Ly});   // box size
+      const DT = ${dt};
+      const RC2 = 6.25;                // bath-bath cutoff 2.5 sigma, squared
+      const DECAY = ${decay};          // thermostat: velocity kept each step
+      const BIG_DIAMETER = ${bigDiameter};
+      const CONTACT = 1.2599;          // 2^(1/3): the squared distance of the
+                                       // potential's minimum, in units of sigma^2
+
+      struct Params { noise: f32, mass: f32 }
+
+      @group(0) @binding(0) var<storage, read_write> positions: array<vec2f>;
+      @group(0) @binding(1) var<storage, read_write> velocities: array<vec2f>;
+      @group(0) @binding(2) var<storage, read_write> accelerations: array<vec2f>;
+      @group(0) @binding(3) var<storage, read_write> rng: array<u32>;
+      @group(0) @binding(4) var<uniform> params: Params;
+
+      ${md.rngWGSL}
+      @compute @workgroup_size(64)
+      fn forces(@builtin(global_invocation_id) id: vec3u) {
+        let i = id.x;
+        if (i >= arrayLength(&positions)) { return; }
+
+        let here = positions[i];
+        var a = vec2f(0.0);
+        for (var j = 0u; j < arrayLength(&positions); j++) {
+          if (j == i) { continue; }
+          var d = here - positions[j];
+          // Minimum image: use the nearest periodic copy of particle j
+          d -= L * round(d / L);
+          let r2 = dot(d, d);
+
+          // A pair with the big particle has an effective sigma halfway between
+          // the two diameters, and only repels
+          let withBig = i == 0u || j == 0u;
+          let sigma = select(1.0, 0.5 * (1.0 + BIG_DIAMETER), withBig);
+          let sigma2 = sigma * sigma;
+          let cut2 = select(RC2, CONTACT * sigma2, withBig);
+
+          if (r2 < cut2) {
+            let s2 = sigma2 / r2;      // (sigma / r)^2
+            let s6 = s2 * s2 * s2;
+            // force vector = 24 (2 s^12 - s^6) / r^2 times the separation
+            a += d * (24.0 * (2.0 * s6 * s6 - s6) / r2);
+          }
+        }
+        // Acceleration is force over mass: the big particle is heavier
+        accelerations[i] = a / select(1.0, params.mass, i == 0u);
+      }
+
+      @compute @workgroup_size(64)
+      fn integrate(@builtin(global_invocation_id) id: vec3u) {
+        let i = id.x;
+        if (i >= arrayLength(&positions)) { return; }
+
+        // Leapfrog: kick the velocity...
+        var v = velocities[i] + accelerations[i] * DT;
+
+        // ...thermostat the bath (not the big particle): slow it a little and add a
+        // random kick, which holds the bath at the target temperature...
+        if (i != 0u) {
+          var state = rng[i];
+          v = v * DECAY + params.noise * gaussian2(&state);
+          rng[i] = state;
+        }
+
+        // ...then drift the position
+        var p = positions[i] + v * DT;
+        p -= L * floor(p / L); // wrap back into the box
+
+        velocities[i] = v;
+        positions[i] = p;
+      }
+    `,
+  });
+
+  // With layout "auto" each pipeline only gets the bindings its entry point uses,
+  // so each needs its own bind group.
+  const forcePipeline = device.createComputePipeline({
+    layout: "auto",
+    compute: { module: computeModule, entryPoint: "forces" },
+  });
+  const integratePipeline = device.createComputePipeline({
+    layout: "auto",
+    compute: { module: computeModule, entryPoint: "integrate" },
+  });
+  const forceBindGroup = device.createBindGroup({
+    layout: forcePipeline.getBindGroupLayout(0),
+    entries: [
+      { binding: 0, resource: { buffer: positionBuffer } },
+      { binding: 2, resource: { buffer: accelerationBuffer } },
+      { binding: 4, resource: { buffer: paramBuffer } },
+    ],
+  });
+  const integrateBindGroup = device.createBindGroup({
+    layout: integratePipeline.getBindGroupLayout(0),
+    entries: [
+      { binding: 0, resource: { buffer: positionBuffer } },
+      { binding: 1, resource: { buffer: velocityBuffer } },
+      { binding: 2, resource: { buffer: accelerationBuffer } },
+      { binding: 3, resource: { buffer: rngBuffer } },
+      { binding: 4, resource: { buffer: paramBuffer } },
+    ],
+  });
+
+  // Render: a disc per particle, the first drawn big and in its own colour
+  const discs = md.discs(device, {
+    format,
+    positionBuffer,
+    velocityBuffer,
+    box: [Lx, Ly],
+    firstDiameter: bigDiameter,
+    firstColour: [0.96, 0.93, 0.88],
+  });
+
+  // The path of the big particle is drawn on a transparent 2D canvas over the sim
+  const trailCanvas = document.createElement("canvas");
+  trailCanvas.className = "mf-trail";
+  const trailContext = trailCanvas.getContext("2d");
+  const trail = []; // {x, y, jump}: box coordinates; jump = it wrapped round an edge
+  const trailLength = 900;
+
+  function drawTrail() {
+    const dpr = window.devicePixelRatio || 1;
+    const w = Math.round(canvas.clientWidth * dpr);
+    const h = Math.round(canvas.clientHeight * dpr);
+    if (trailCanvas.width !== w || trailCanvas.height !== h) {
+      trailCanvas.width = w;
+      trailCanvas.height = h;
+    }
+    trailContext.clearRect(0, 0, w, h);
+    if (!trailInput.value || trail.length < 2) return;
+
+    const sx = w / Lx;
+    const sy = h / Ly;
+    trailContext.lineCap = "round";
+
+    // Two passes, a dark halo then a bright core, so the path shows against both
+    // the pale big particle and the bath atoms. Older segments fade.
+    const passes = [
+      { width: 4.5, colour: (a) => `rgba(20, 20, 20, ${a})` },
+      { width: 2, colour: (a) => `rgba(255, 255, 255, ${a})` },
+    ];
+    for (const { width, colour } of passes) {
+      trailContext.lineWidth = width * dpr;
+      for (let k = 1; k < trail.length; k++) {
+        if (trail[k].jump) continue; // do not draw across the box
+        trailContext.strokeStyle = colour(0.2 + (0.8 * k) / trail.length);
+        trailContext.beginPath();
+        trailContext.moveTo(trail[k - 1].x * sx, h - trail[k - 1].y * sy);
+        trailContext.lineTo(trail[k].x * sx, h - trail[k].y * sy);
+        trailContext.stroke();
+      }
+    }
+  }
+
+  // Charts: one Observable Plot per host, redrawn after every few readbacks
+  const [msdHost, velocityHost] = charts.children;
+  const style = ui.plotStyle;
+  const sampleEvery = 3; // read back every this many frames
+  const sampleTime = sampleEvery * stepsPerFrame * dt; // simulated time between samples
+  const samples = []; // {t, x, y, vx, vy}: x and y unwrapped, so they can exceed the box
+  const maxSamples = 1500;
+  let last = null; // the previous sample's wrapped position, to unwrap the path
+  let unwrapped = { x: 0, y: 0 };
+  let simTime = 0;
+  let frameCount = 0;
+  let lastControls = [temperatureInput.value, massInput.value];
+
+  // Mean squared displacement against lag, averaged over many starting points
+  function msd() {
+    const n = samples.length;
+    const maxLag = Math.min(120, Math.floor(n / 2));
+    const origins = Math.max(1, Math.floor(n / 80)); // stride, to keep it cheap
+    const points = [];
+    for (let lag = 1; lag <= maxLag; lag++) {
+      let sum = 0;
+      let used = 0;
+      for (let i = 0; i + lag < n; i += origins) {
+        const dx = samples[i + lag].x - samples[i].x;
+        const dy = samples[i + lag].y - samples[i].y;
+        sum += dx * dx + dy * dy;
+        used++;
+      }
+      points.push({ t: lag * sampleTime, msd: sum / used });
+    }
+    // Straight line through the origin, <r^2> = 4 D t, fitted by least squares
+    let num = 0;
+    let den = 0;
+    for (const p of points) {
+      num += p.t * p.msd;
+      den += p.t * p.t;
+    }
+    return { points, slope: den ? num / den : 0 };
+  }
+
+  function drawCharts() {
+    const width = msdHost.clientWidth || 480;
+    const { points, slope } = msd();
+    const tMax = points.length ? points[points.length - 1].t : 1;
+
+    msdHost.replaceChildren(
+      Plot.plot({
+        width,
+        height: 280,
+        style,
+        x: { label: "time lag (reduced units)", domain: [0, tMax] },
+        y: { label: "mean squared displacement", grid: true, zero: true },
+        marks: [
+          Plot.dot(points, { x: "t", y: "msd", r: 2, fill: "#FF4834" }),
+          Plot.line(
+            [
+              { t: 0, msd: 0 },
+              { t: tMax, msd: slope * tMax },
+            ],
+            { x: "t", y: "msd", stroke: "currentColor", strokeDasharray: "4 3" }
+          ),
+          Plot.text([`D ≈ ${(slope / 4).toFixed(3)}`], {
+            frameAnchor: "top-left",
+            dx: 8,
+            dy: 8,
+          }),
+        ],
+      })
+    );
+
+    // Histogram of both velocity components, against the Gaussian equipartition
+    // predicts: mean energy k_B T / 2 per component, so variance T / M
+    const T = temperatureInput.value;
+    const spread = Math.sqrt(T / massInput.value);
+    const bins = 25;
+    const lo = -4 * spread;
+    const width_ = (8 * spread) / bins;
+    const counts = new Float32Array(bins);
+    let total = 0;
+    for (const s of samples) {
+      for (const v of [s.vx, s.vy]) {
+        const k = Math.floor((v - lo) / width_);
+        if (k >= 0 && k < bins) counts[k]++;
+        total++;
+      }
+    }
+    const rows = Array.from(counts, (c, k) => ({
+      x0: lo + k * width_,
+      x1: lo + (k + 1) * width_,
+      p: total ? c / (total * width_) : 0,
+    }));
+    const curve = Array.from({ length: 81 }, (_, k) => {
+      const v = lo + (8 * spread * k) / 80;
+      return { v, p: Math.exp(-(v * v) / (2 * spread * spread)) / (spread * Math.sqrt(2 * Math.PI)) };
+    });
+
+    velocityHost.replaceChildren(
+      Plot.plot({
+        width,
+        height: 280,
+        style,
+        x: { label: "velocity component of the big particle", domain: [lo, -lo] },
+        y: { label: "probability density", grid: true },
+        marks: [
+          Plot.rectY(rows, { x1: "x0", x2: "x1", y: "p", fill: "#5a80cc", fillOpacity: 0.85 }),
+          Plot.line(curve, { x: "v", y: "p", stroke: "currentColor", strokeDasharray: "4 3" }),
+        ],
+      })
+    );
+  }
+
+  // Turn one readback of the big particle (x, y, vx, vy) into a sample
+  function record(data, time) {
+    const [x, y, vx, vy] = data;
+
+    // Unwrap: the position is wrapped into the box, so add up the shortest steps
+    let jump = false;
+    if (last) {
+      let dx = x - last.x;
+      let dy = y - last.y;
+      jump = Math.abs(dx) > Lx / 2 || Math.abs(dy) > Ly / 2;
+      dx -= Lx * Math.round(dx / Lx);
+      dy -= Ly * Math.round(dy / Ly);
+      unwrapped = { x: unwrapped.x + dx, y: unwrapped.y + dy };
+    }
+    last = { x, y };
+
+    // Moving a control changes the physics, so start the statistics again
+    const controls = [temperatureInput.value, massInput.value];
+    if (controls[0] !== lastControls[0] || controls[1] !== lastControls[1]) {
+      samples.length = 0;
+      trail.length = 0;
+      lastControls = controls;
+    }
+
+    samples.push({ t: time, x: unwrapped.x, y: unwrapped.y, vx, vy });
+    if (samples.length > maxSamples) samples.shift();
+    trail.push({ x, y, jump });
+    if (trail.length > trailLength) trail.shift();
+
+    drawTrail();
+    if (samples.length > 10 && samples.length % 4 === 0) drawCharts();
+  }
+
+  // One frame: `stepsPerFrame` simulation steps in a single compute pass, then
+  // draw. Every `sampleEvery` frames the big particle's state is read back.
+  const workgroups = Math.ceil(count / 64);
+  let pending = false; // a mapAsync is in flight: never copy into a mapped buffer
+
+  function frame() {
+    const noise = Math.sqrt(temperatureInput.value * (1 - decay * decay));
+    device.queue.writeBuffer(paramBuffer, 0, new Float32Array([noise, massInput.value]));
+
+    const encoder = device.createCommandEncoder();
+
+    const compute = encoder.beginComputePass();
+    for (let s = 0; s < stepsPerFrame; s++) {
+      compute.setPipeline(forcePipeline);
+      compute.setBindGroup(0, forceBindGroup);
+      compute.dispatchWorkgroups(workgroups);
+      compute.setPipeline(integratePipeline);
+      compute.setBindGroup(0, integrateBindGroup);
+      compute.dispatchWorkgroups(workgroups);
+    }
+    compute.end();
+    simTime += stepsPerFrame * dt;
+
+    const pass = gpu.beginRenderPass(encoder, context);
+    discs.draw(pass, count);
+    pass.end();
+
+    // Readback: only particle 0, 8 bytes of position and 8 of velocity
+    const sample = !pending && ++frameCount % sampleEvery === 0;
+    if (sample) {
+      encoder.copyBufferToBuffer(positionBuffer, 0, stagingBuffer, 0, 8);
+      encoder.copyBufferToBuffer(velocityBuffer, 0, stagingBuffer, 8, 8);
+    }
+    device.queue.submit([encoder.finish()]);
+
+    if (sample) {
+      pending = true;
+      const time = simTime;
+      stagingBuffer
+        .mapAsync(GPUMapMode.READ)
+        .then(() => {
+          const data = new Float32Array(stagingBuffer.getMappedRange().slice(0));
+          stagingBuffer.unmap();
+          pending = false;
+          record(data, time);
+        })
+        .catch(() => {}); // the device was destroyed because the cell re-ran
+    }
+  }
+
+  gpu.run(invalidation, device, frame);
+
+  // The canvas, with the trail over it and the controls laid over its corner
+  const stage = ui.stage(canvas, [temperatureInput, massInput, trailInput]);
+  stage.append(trailCanvas);
+  yield stage;
+}
+```
+
+```{ojs}
+//| echo: false
+//| column: page
+charts = {
+  // Two empty hosts; the simulation cell above draws into them as data arrives
+  const root = document.createElement("div");
+  root.className = "mf-charts";
+  for (const name of ["msd", "velocity"]) {
+    const host = document.createElement("div");
+    host.dataset.chart = name;
+    root.append(host);
+  }
+  return root;
+}
+```
+
+::: {.mf-series-bar}
+Moving Figures
+
+:::{#mf-series}
+:::
+:::
