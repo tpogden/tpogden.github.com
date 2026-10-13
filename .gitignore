@@ -14,6 +14,7 @@
 **/*.quarto_ipynb
 # post shadow dirs
 /webgpu-animation-loop/
+/webgpu-blast-wave/
 /webgpu-bouncing-particles/
 /webgpu-brownian-motion/
 /webgpu-compute-shader/
