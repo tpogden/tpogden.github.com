@@ -2,6 +2,7 @@
 title: "What is a Simulton?"
 date: "2020-08-26"
 categories: [research]
+recommended: true
 # format: 
 #   html:
 embed-resources: true
