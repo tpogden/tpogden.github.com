@@ -274,6 +274,22 @@ div.quarto-post {
             margin-bottom: 0.25rem;
         }
 
+        select {
+            background: rgba(232, 226, 224, 0.08);
+            border: 1px solid rgba(232, 226, 224, 0.25);
+            border-radius: 4px;
+            color: inherit;
+            flex: 1;
+            font: inherit;
+            min-width: 0;
+            padding: 0.05rem 0.25rem;
+
+            option {
+                background: #1a1a1a;
+                color: #e8e2e0;
+            }
+        }
+
         .mf-button {
             background: transparent;
             border: 1px solid rgba(232, 226, 224, 0.35);
