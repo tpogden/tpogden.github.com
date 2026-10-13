@@ -2,6 +2,7 @@
 title: "Optical Solitons"
 date: "2018-10-12"
 categories: [research]
+recommended: true
 ---
 
 This is part two in a series presenting some of the kinds of systems you can
