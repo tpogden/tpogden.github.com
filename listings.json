@@ -11,7 +11,8 @@
       "/webgpu-gravity/index.html",
       "/webgpu-reading-back/index.html",
       "/webgpu-structure/index.html",
-      "/webgpu-twenty-thousand-atoms/index.html"
+      "/webgpu-twenty-thousand-atoms/index.html",
+      "/webgpu-weather-in-a-box/index.html"
     ]
   },
   {
@@ -26,7 +27,8 @@
       "/webgpu-gravity/index.html",
       "/webgpu-reading-back/index.html",
       "/webgpu-structure/index.html",
-      "/webgpu-brownian-motion/index.html"
+      "/webgpu-brownian-motion/index.html",
+      "/webgpu-weather-in-a-box/index.html"
     ]
   },
   {
@@ -41,7 +43,8 @@
       "/webgpu-reading-back/index.html",
       "/webgpu-structure/index.html",
       "/webgpu-brownian-motion/index.html",
-      "/webgpu-twenty-thousand-atoms/index.html"
+      "/webgpu-twenty-thousand-atoms/index.html",
+      "/webgpu-weather-in-a-box/index.html"
     ]
   },
   {
@@ -56,7 +59,8 @@
       "/webgpu-reading-back/index.html",
       "/webgpu-structure/index.html",
       "/webgpu-brownian-motion/index.html",
-      "/webgpu-twenty-thousand-atoms/index.html"
+      "/webgpu-twenty-thousand-atoms/index.html",
+      "/webgpu-weather-in-a-box/index.html"
     ]
   },
   {
@@ -71,7 +75,8 @@
       "/webgpu-reading-back/index.html",
       "/webgpu-structure/index.html",
       "/webgpu-brownian-motion/index.html",
-      "/webgpu-twenty-thousand-atoms/index.html"
+      "/webgpu-twenty-thousand-atoms/index.html",
+      "/webgpu-weather-in-a-box/index.html"
     ]
   },
   {
@@ -90,6 +95,7 @@
       "/random-walks/index.html",
       "/pi/index.html",
       "/useful-mac-apps-for-scientists/index.html",
+      "/webgpu-weather-in-a-box/index.html",
       "/webgpu-twenty-thousand-atoms/index.html",
       "/webgpu-brownian-motion/index.html",
       "/webgpu-structure/index.html",
@@ -131,11 +137,12 @@
     ]
   },
   {
-    "listing": "/webgpu-bouncing-particles/index.html",
+    "listing": "/webgpu-weather-in-a-box/index.html",
     "items": [
       "/webgpu-hello-world/index.html",
       "/webgpu-three-particles/index.html",
       "/webgpu-animation-loop/index.html",
+      "/webgpu-bouncing-particles/index.html",
       "/webgpu-compute-shader/index.html",
       "/webgpu-lennard-jones/index.html",
       "/webgpu-gravity/index.html",
@@ -157,7 +164,24 @@
       "/webgpu-reading-back/index.html",
       "/webgpu-structure/index.html",
       "/webgpu-brownian-motion/index.html",
-      "/webgpu-twenty-thousand-atoms/index.html"
+      "/webgpu-twenty-thousand-atoms/index.html",
+      "/webgpu-weather-in-a-box/index.html"
+    ]
+  },
+  {
+    "listing": "/webgpu-bouncing-particles/index.html",
+    "items": [
+      "/webgpu-hello-world/index.html",
+      "/webgpu-three-particles/index.html",
+      "/webgpu-animation-loop/index.html",
+      "/webgpu-compute-shader/index.html",
+      "/webgpu-lennard-jones/index.html",
+      "/webgpu-gravity/index.html",
+      "/webgpu-reading-back/index.html",
+      "/webgpu-structure/index.html",
+      "/webgpu-brownian-motion/index.html",
+      "/webgpu-twenty-thousand-atoms/index.html",
+      "/webgpu-weather-in-a-box/index.html"
     ]
   },
   {
@@ -172,7 +196,8 @@
       "/webgpu-reading-back/index.html",
       "/webgpu-structure/index.html",
       "/webgpu-brownian-motion/index.html",
-      "/webgpu-twenty-thousand-atoms/index.html"
+      "/webgpu-twenty-thousand-atoms/index.html",
+      "/webgpu-weather-in-a-box/index.html"
     ]
   },
   {
@@ -187,7 +212,8 @@
       "/webgpu-reading-back/index.html",
       "/webgpu-structure/index.html",
       "/webgpu-brownian-motion/index.html",
-      "/webgpu-twenty-thousand-atoms/index.html"
+      "/webgpu-twenty-thousand-atoms/index.html",
+      "/webgpu-weather-in-a-box/index.html"
     ]
   },
   {
@@ -202,7 +228,8 @@
       "/webgpu-gravity/index.html",
       "/webgpu-structure/index.html",
       "/webgpu-brownian-motion/index.html",
-      "/webgpu-twenty-thousand-atoms/index.html"
+      "/webgpu-twenty-thousand-atoms/index.html",
+      "/webgpu-weather-in-a-box/index.html"
     ]
   },
   {
@@ -217,7 +244,8 @@
       "/webgpu-gravity/index.html",
       "/webgpu-reading-back/index.html",
       "/webgpu-brownian-motion/index.html",
-      "/webgpu-twenty-thousand-atoms/index.html"
+      "/webgpu-twenty-thousand-atoms/index.html",
+      "/webgpu-weather-in-a-box/index.html"
     ]
   }
 ]
