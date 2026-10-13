@@ -418,26 +418,28 @@ window.Quarto = {
 <span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> context <span class="op">=</span> canvas<span class="op">.</span><span class="fu">getContext</span>(<span class="st">"webgpu"</span>)<span class="op">;</span></span>
 <span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> format <span class="op">=</span> <span class="bu">navigator</span><span class="op">.</span><span class="at">gpu</span><span class="op">.</span><span class="fu">getPreferredCanvasFormat</span>()<span class="op">;</span></span>
 <span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>  context<span class="op">.</span><span class="fu">configure</span>({ device<span class="op">,</span> format })<span class="op">;</span></span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 4. Record: a render pass that clears to the site's dark background (#1a1a1a)</span></span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> encoder <span class="op">=</span> device<span class="op">.</span><span class="fu">createCommandEncoder</span>()<span class="op">;</span></span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> pass <span class="op">=</span> encoder<span class="op">.</span><span class="fu">beginRenderPass</span>({</span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>    <span class="dt">colorAttachments</span><span class="op">:</span> [</span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>      {</span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>        <span class="dt">view</span><span class="op">:</span> context<span class="op">.</span><span class="fu">getCurrentTexture</span>()<span class="op">.</span><span class="fu">createView</span>()<span class="op">,</span></span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>        <span class="dt">clearValue</span><span class="op">:</span> { <span class="dt">r</span><span class="op">:</span> <span class="fl">0.102</span><span class="op">,</span> <span class="dt">g</span><span class="op">:</span> <span class="fl">0.102</span><span class="op">,</span> <span class="dt">b</span><span class="op">:</span> <span class="fl">0.102</span><span class="op">,</span> <span class="dt">a</span><span class="op">:</span> <span class="fl">1.0</span> }<span class="op">,</span> <span class="co">// #1a1a1a</span></span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>        <span class="dt">loadOp</span><span class="op">:</span> <span class="st">"clear"</span><span class="op">,</span></span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>        <span class="dt">storeOp</span><span class="op">:</span> <span class="st">"store"</span><span class="op">,</span></span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>      }<span class="op">,</span></span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>    ]<span class="op">,</span></span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>  pass<span class="op">.</span><span class="fu">end</span>()<span class="op">;</span></span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 5. Submit</span></span>
-<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>  device<span class="op">.</span><span class="at">queue</span><span class="op">.</span><span class="fu">submit</span>([encoder<span class="op">.</span><span class="fu">finish</span>()])<span class="op">;</span></span>
-<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>  <span class="kw">yield</span> canvas<span class="op">;</span></span>
-<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Not part of the lesson: lets this canvas be recorded by opening the page with ?record</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>  (<span class="cf">await</span> <span class="im">import</span>(<span class="kw">new</span> <span class="fu">URL</span>(<span class="st">"../lib/gpu.js"</span><span class="op">,</span> <span class="bu">document</span><span class="op">.</span><span class="at">baseURI</span>)<span class="op">.</span><span class="at">href</span>))<span class="op">.</span><span class="fu">enableRecording</span>(canvas)<span class="op">;</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 4. Record: a render pass that clears to the site's dark background (#1a1a1a)</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> encoder <span class="op">=</span> device<span class="op">.</span><span class="fu">createCommandEncoder</span>()<span class="op">;</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> pass <span class="op">=</span> encoder<span class="op">.</span><span class="fu">beginRenderPass</span>({</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>    <span class="dt">colorAttachments</span><span class="op">:</span> [</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>      {</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>        <span class="dt">view</span><span class="op">:</span> context<span class="op">.</span><span class="fu">getCurrentTexture</span>()<span class="op">.</span><span class="fu">createView</span>()<span class="op">,</span></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>        <span class="dt">clearValue</span><span class="op">:</span> { <span class="dt">r</span><span class="op">:</span> <span class="fl">0.102</span><span class="op">,</span> <span class="dt">g</span><span class="op">:</span> <span class="fl">0.102</span><span class="op">,</span> <span class="dt">b</span><span class="op">:</span> <span class="fl">0.102</span><span class="op">,</span> <span class="dt">a</span><span class="op">:</span> <span class="fl">1.0</span> }<span class="op">,</span> <span class="co">// #1a1a1a</span></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>        <span class="dt">loadOp</span><span class="op">:</span> <span class="st">"clear"</span><span class="op">,</span></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>        <span class="dt">storeOp</span><span class="op">:</span> <span class="st">"store"</span><span class="op">,</span></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>      }<span class="op">,</span></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>    ]<span class="op">,</span></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>  pass<span class="op">.</span><span class="fu">end</span>()<span class="op">;</span></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 5. Submit</span></span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>  device<span class="op">.</span><span class="at">queue</span><span class="op">.</span><span class="fu">submit</span>([encoder<span class="op">.</span><span class="fu">finish</span>()])<span class="op">;</span></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>  <span class="kw">yield</span> canvas<span class="op">;</span></span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display column-screen-inset">
 <div id="ojs-cell-1" data-nodetype="expression">
@@ -449,7 +451,7 @@ window.Quarto = {
 <p>Moving Figures</p>
 <div id="listing-mf-series" class="quarto-listing quarto-listing-container-default">
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="bWY=" data-listing-date-sort="1791676800000" data-listing-file-modified-sort="1791888068124" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="658">
+<div class="quarto-post image-right" data-index="0" data-categories="bWY=" data-listing-date-sort="1791676800000" data-listing-file-modified-sort="1791902052730" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="681">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-three-particles/index.html" class="no-external">001: Three Particles</a>
@@ -460,7 +462,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="1" data-categories="bWY=" data-listing-date-sort="1791676800000" data-listing-file-modified-sort="1791888068123" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="999">
+<div class="quarto-post image-right" data-index="1" data-categories="bWY=" data-listing-date-sort="1791676800000" data-listing-file-modified-sort="1791902052730" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1022">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-animation-loop/index.html" class="no-external">002: Animation Loop</a>
@@ -471,7 +473,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="2" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1791888068123" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="998">
+<div class="quarto-post image-right" data-index="2" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1791902052730" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="998">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-bouncing-particles/index.html" class="no-external">003: Bouncing Particles</a>
@@ -482,7 +484,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="3" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1791888068123" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1303">
+<div class="quarto-post image-right" data-index="3" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1791902052730" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1303">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-compute-shader/index.html" class="no-external">004: Compute Shader</a>
@@ -493,7 +495,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="4" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1791888068123" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1814">
+<div class="quarto-post image-right" data-index="4" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1791902052730" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1814">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-lennard-jones/index.html" class="no-external">005: Jiggling Atoms</a>
@@ -504,7 +506,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="5" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1791888068123" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1938">
+<div class="quarto-post image-right" data-index="5" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1791902052730" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1938">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-gravity/index.html" class="no-external">006: Falling Atoms</a>
@@ -515,7 +517,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="6" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1791888068123" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="17" data-listing-word-count-sort="3259">
+<div class="quarto-post image-right" data-index="6" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1791902052730" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="17" data-listing-word-count-sort="3259">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-reading-back/index.html" class="no-external">007: Is Energy Conserved?</a>
@@ -526,7 +528,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="7" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1791888068123" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="18" data-listing-word-count-sort="3522">
+<div class="quarto-post image-right" data-index="7" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1791902052730" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="18" data-listing-word-count-sort="3522">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-structure/index.html" class="no-external">008: Solid, Liquid, Gas</a>
@@ -537,7 +539,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="8" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1791888068123" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="20" data-listing-word-count-sort="3997">
+<div class="quarto-post image-right" data-index="8" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1791902052730" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="20" data-listing-word-count-sort="3997">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-brownian-motion/index.html" class="no-external">009: Brownian Motion</a>
@@ -548,7 +550,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="9" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1791888068124" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="31" data-listing-word-count-sort="6007">
+<div class="quarto-post image-right" data-index="9" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1791902052730" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="31" data-listing-word-count-sort="6007">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-twenty-thousand-atoms/index.html" class="no-external">010: Twenty Thousand Atoms</a>
@@ -559,7 +561,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="10" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1791888068124" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="30" data-listing-word-count-sort="5801">
+<div class="quarto-post image-right" data-index="10" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1791902052730" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="30" data-listing-word-count-sort="5801">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-weather-in-a-box/index.html" class="no-external">011: Weather in a Box</a>
@@ -570,7 +572,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="11" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1791888068123" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="22" data-listing-word-count-sort="4365">
+<div class="quarto-post image-right" data-index="11" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1791902052730" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="22" data-listing-word-count-sort="4365">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-blast-wave/index.html" class="no-external">012: Blast Wave</a>
@@ -591,7 +593,7 @@ window.Quarto = {
 
 </main> <!-- /main -->
 <script type="ojs-module-contents">
-eyJjb250ZW50cyI6W3sibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMSIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6IntcbiAgaWYgKCFuYXZpZ2F0b3IuZ3B1KSB0aHJvdyBuZXcgRXJyb3IoXCJXZWJHUFUgaXMgbm90IHN1cHBvcnRlZCBpbiB0aGlzIGJyb3dzZXIuXCIpO1xuXG4gIC8vIDEuIENhbnZhcyAoNjQweDM2MCBidWZmZXIsIHNjYWxlZCB0byBmaWxsIHRoZSBjb2x1bW4pXG4gIGNvbnN0IGNhbnZhcyA9IERPTS5jYW52YXMoNjQwLCAzNjApO1xuICBjYW52YXMuc3R5bGUud2lkdGggPSBcIjEwMCVcIjtcbiAgY2FudmFzLnN0eWxlLmhlaWdodCA9IFwiYXV0b1wiO1xuXG4gIC8vIDIuIEFkYXB0ZXIgYW5kIGRldmljZVxuICBjb25zdCBhZGFwdGVyID0gYXdhaXQgbmF2aWdhdG9yLmdwdS5yZXF1ZXN0QWRhcHRlcigpO1xuICBjb25zdCBkZXZpY2UgPSBhd2FpdCBhZGFwdGVyLnJlcXVlc3REZXZpY2UoKTtcblxuICAvLyAzLiBDb250ZXh0XG4gIGNvbnN0IGNvbnRleHQgPSBjYW52YXMuZ2V0Q29udGV4dChcIndlYmdwdVwiKTtcbiAgY29uc3QgZm9ybWF0ID0gbmF2aWdhdG9yLmdwdS5nZXRQcmVmZXJyZWRDYW52YXNGb3JtYXQoKTtcbiAgY29udGV4dC5jb25maWd1cmUoeyBkZXZpY2UsIGZvcm1hdCB9KTtcblxuICAvLyA0LiBSZWNvcmQ6IGEgcmVuZGVyIHBhc3MgdGhhdCBjbGVhcnMgdG8gdGhlIHNpdGUncyBkYXJrIGJhY2tncm91bmQgKCMxYTFhMWEpXG4gIGNvbnN0IGVuY29kZXIgPSBkZXZpY2UuY3JlYXRlQ29tbWFuZEVuY29kZXIoKTtcbiAgY29uc3QgcGFzcyA9IGVuY29kZXIuYmVnaW5SZW5kZXJQYXNzKHtcbiAgICBjb2xvckF0dGFjaG1lbnRzOiBbXG4gICAgICB7XG4gICAgICAgIHZpZXc6IGNvbnRleHQuZ2V0Q3VycmVudFRleHR1cmUoKS5jcmVhdGVWaWV3KCksXG4gICAgICAgIGNsZWFyVmFsdWU6IHsgcjogMC4xMDIsIGc6IDAuMTAyLCBiOiAwLjEwMiwgYTogMS4wIH0sIC8vICMxYTFhMWFcbiAgICAgICAgbG9hZE9wOiBcImNsZWFyXCIsXG4gICAgICAgIHN0b3JlT3A6IFwic3RvcmVcIixcbiAgICAgIH0sXG4gICAgXSxcbiAgfSk7XG4gIHBhc3MuZW5kKCk7XG5cbiAgLy8gNS4gU3VibWl0XG4gIGRldmljZS5xdWV1ZS5zdWJtaXQoW2VuY29kZXIuZmluaXNoKCldKTtcblxuICB5aWVsZCBjYW52YXM7XG59XG4ifV19
+eyJjb250ZW50cyI6W3sibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMSIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6IntcbiAgaWYgKCFuYXZpZ2F0b3IuZ3B1KSB0aHJvdyBuZXcgRXJyb3IoXCJXZWJHUFUgaXMgbm90IHN1cHBvcnRlZCBpbiB0aGlzIGJyb3dzZXIuXCIpO1xuXG4gIC8vIDEuIENhbnZhcyAoNjQweDM2MCBidWZmZXIsIHNjYWxlZCB0byBmaWxsIHRoZSBjb2x1bW4pXG4gIGNvbnN0IGNhbnZhcyA9IERPTS5jYW52YXMoNjQwLCAzNjApO1xuICBjYW52YXMuc3R5bGUud2lkdGggPSBcIjEwMCVcIjtcbiAgY2FudmFzLnN0eWxlLmhlaWdodCA9IFwiYXV0b1wiO1xuXG4gIC8vIDIuIEFkYXB0ZXIgYW5kIGRldmljZVxuICBjb25zdCBhZGFwdGVyID0gYXdhaXQgbmF2aWdhdG9yLmdwdS5yZXF1ZXN0QWRhcHRlcigpO1xuICBjb25zdCBkZXZpY2UgPSBhd2FpdCBhZGFwdGVyLnJlcXVlc3REZXZpY2UoKTtcblxuICAvLyAzLiBDb250ZXh0XG4gIGNvbnN0IGNvbnRleHQgPSBjYW52YXMuZ2V0Q29udGV4dChcIndlYmdwdVwiKTtcbiAgY29uc3QgZm9ybWF0ID0gbmF2aWdhdG9yLmdwdS5nZXRQcmVmZXJyZWRDYW52YXNGb3JtYXQoKTtcbiAgY29udGV4dC5jb25maWd1cmUoeyBkZXZpY2UsIGZvcm1hdCB9KTtcbiAgLy8gTm90IHBhcnQgb2YgdGhlIGxlc3NvbjogbGV0cyB0aGlzIGNhbnZhcyBiZSByZWNvcmRlZCBieSBvcGVuaW5nIHRoZSBwYWdlIHdpdGggP3JlY29yZFxuICAoYXdhaXQgaW1wb3J0KG5ldyBVUkwoXCIuLi9saWIvZ3B1LmpzXCIsIGRvY3VtZW50LmJhc2VVUkkpLmhyZWYpKS5lbmFibGVSZWNvcmRpbmcoY2FudmFzKTtcblxuICAvLyA0LiBSZWNvcmQ6IGEgcmVuZGVyIHBhc3MgdGhhdCBjbGVhcnMgdG8gdGhlIHNpdGUncyBkYXJrIGJhY2tncm91bmQgKCMxYTFhMWEpXG4gIGNvbnN0IGVuY29kZXIgPSBkZXZpY2UuY3JlYXRlQ29tbWFuZEVuY29kZXIoKTtcbiAgY29uc3QgcGFzcyA9IGVuY29kZXIuYmVnaW5SZW5kZXJQYXNzKHtcbiAgICBjb2xvckF0dGFjaG1lbnRzOiBbXG4gICAgICB7XG4gICAgICAgIHZpZXc6IGNvbnRleHQuZ2V0Q3VycmVudFRleHR1cmUoKS5jcmVhdGVWaWV3KCksXG4gICAgICAgIGNsZWFyVmFsdWU6IHsgcjogMC4xMDIsIGc6IDAuMTAyLCBiOiAwLjEwMiwgYTogMS4wIH0sIC8vICMxYTFhMWFcbiAgICAgICAgbG9hZE9wOiBcImNsZWFyXCIsXG4gICAgICAgIHN0b3JlT3A6IFwic3RvcmVcIixcbiAgICAgIH0sXG4gICAgXSxcbiAgfSk7XG4gIHBhc3MuZW5kKCk7XG5cbiAgLy8gNS4gU3VibWl0XG4gIGRldmljZS5xdWV1ZS5zdWJtaXQoW2VuY29kZXIuZmluaXNoKCldKTtcblxuICB5aWVsZCBjYW52YXM7XG59XG4ifV19
 </script>
 <script type="module">
 if (window.location.protocol === "file:") { alert("The OJS runtime does not work with file:// URLs. Please use a web server to view this document."); }
