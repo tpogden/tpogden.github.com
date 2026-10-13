@@ -18,14 +18,14 @@ listing:
 thermostat holding the whole box at one temperature. Here is the same physics at ten
 times the size, about twenty thousand atoms, with one change that lets things
 happen. The thermostat is taken off the bulk and applied only at the two ends: a
-thin hot layer at the floor, and a cold region under the ceiling. Everything in
+thin hot layer at the floor, and a cold region under the roof. Everything in
 between is left alone, so heat has to travel through it. The cold region is deep, not
 a thin plate: the vapour thins out exponentially with height, so only a deep cold
 region catches enough of it.
 
 Start with a pool of liquid on the floor (it begins as a lattice, and melts at
 once). The floor heats it and atoms evaporate;
-the vapour rises, hits the cold ceiling and condenses; the droplets get heavy and
+the vapour rises, hits the cold roof and condenses; the droplets get heavy and
 fall back. It is a water cycle, with nothing in it but atoms, gravity and two
 temperatures. The coloured bars mark the two thermostatted layers, labelled with
 their temperatures, and the dashed lines show where each layer ends. Colour by phase
@@ -36,15 +36,15 @@ This is the same Lennard-Jones fluid as before, in reduced units, so the numbers
 not water's. What carries over is the qualitative cycle, and it lives in a narrow
 band of temperature: this fluid has a critical point at about 0.5, above which
 there is no liquid and no vapour, only a dense fluid, and a triple point at about
-0.4, below which the liquid freezes. Floor and ceiling are set either side of that
-window: warm enough to boil, and cold enough to condense, with the ceiling just
+0.4, below which the liquid freezes. Floor and roof are set either side of that
+window: warm enough to boil, and cold enough to condense, with the roof just
 cold enough to be frosty. Rain depends on the vapour
 being thick enough to condense, and that depends on gravity: with weak gravity the
 atmosphere is tall and thin, with strong gravity it hugs the floor. The charts
 measure it. The left is the density of atoms against height on a log axis, where an
 isothermal atmosphere is a straight line, and the dashed line is the barometric
 prediction for the temperature of the vapour. The right is the temperature against
-height, which shows the heat flowing from floor to ceiling. Ten times the atoms is
+height, which shows the heat flowing from floor to roof. Ten times the atoms is
 what makes the measurement clean: a droplet needs a few hundred atoms before it
 behaves like a drop at all.
 
@@ -70,7 +70,7 @@ viewof gravity = {
 viewof floorTemperature = {
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
   return ui.slider({
-    label: "Floor",
+    label: "Floor temp",
     min: 0.35,
     max: 0.7,
     step: 0.01,
@@ -86,7 +86,7 @@ viewof floorTemperature = {
 viewof ceilingTemperature = {
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
   return ui.slider({
-    label: "Ceiling",
+    label: "Roof temp",
     min: 0.25,
     max: 0.55,
     step: 0.01,
@@ -102,7 +102,7 @@ viewof ceilingTemperature = {
 viewof coldDepth = {
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
   return ui.slider({
-    label: "Cold depth",
+    label: "Roof depth",
     min: 4,
     max: 80,
     step: 1,
@@ -477,14 +477,14 @@ viewof byPhase = {
 
       ctx.fillStyle = solid;
       ctx.fillText(
-        `${label}  T = ${T.toFixed(2)}`,
+        `${label} ${T.toFixed(2)}`,
         8 * dpr,
         floorSide ? layerY - 9 * dpr : layerY + 9 * dpr
       );
     };
 
-    mark(floorInput.value, "floor", "floor", floorLayer);
-    mark(ceilingInput.value, "ceiling", "cold region", depthInput.value);
+    mark(floorInput.value, "floor", "floor temp", floorLayer);
+    mark(ceilingInput.value, "ceiling", "roof temp", depthInput.value);
   }
 
   // --------------------------------------------------------------------- charts
