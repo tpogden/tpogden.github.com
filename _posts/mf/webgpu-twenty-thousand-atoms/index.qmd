@@ -1,0 +1,711 @@
+---
+title: "010: Twenty Thousand Atoms"
+date: "2026-10-13"
+categories: [mf]
+page-layout: article
+listing:
+  - id: mf-series
+    contents: "../*/index.qmd"
+    type: default
+    categories: false
+    include:
+      categories: "mf"
+    fields: [title]
+    sort: "title asc"
+---
+
+Every post so far has simulated a thousand or two atoms, because that is about what
+you can afford when every atom is compared with every other one. Here there are
+nineteen thousand, ten times more, and a few things that were invisible at the
+smaller scale appear.
+
+Heat the box until it is a liquid, then **quench** it: cool it so suddenly that the
+atoms have no time to arrange themselves in an orderly way. It does not freeze into
+one crystal. Crystals nucleate in many places at once, and each one has its own
+**orientation**: the same hexagonal lattice, but turned to a different angle, like
+tiles laid in different directions. Where two of them meet there is a **grain
+boundary**, a seam where the lattice changes direction and the atoms do not fit
+neatly on either side.
+
+The colour shows the orientation. Every atom looks at the directions of the bonds to
+its neighbours, which in a crystal all line up with the lattice. A hexagonal lattice
+looks the same after a turn of 60 degrees, so the angle only matters between 0 and
+60, and that range is mapped round the colour wheel. Every grain is its own hue, and
+the atoms in the boundaries, where the angle is not well defined, fade to grey.
+
+Over time the boundaries move: small grains shrink, big ones grow, and the pattern
+coarsens. This is the structure of nearly every metal or ceramic you have touched,
+and it takes thousands of atoms before it shows at all.
+
+Getting there took two changes to the force calculation, which is where the time
+goes.
+
+**Cell lists.** An atom only feels neighbours within 2.5 σ, but the all-pairs loop
+still visits every atom to find them. Instead, divide the box into cells 2.5 σ wide,
+sort the atoms into cells, and look only in an atom's own cell and the eight around
+it. That is about 50 candidates instead of 19,000, so the work grows with the number
+of atoms, $N$, instead of $N^2$. Building the sort on a GPU takes four small passes:
+count the atoms in each cell with `atomicAdd`, turn the counts into start offsets
+with a prefix sum, and scatter each atom's index into its slot.
+
+**Tiling in workgroup memory.** In the all-pairs loop every thread in a workgroup
+reads the same neighbour's position from slow memory, one atom at a time. A tiled
+loop has the 64 threads each fetch one position into fast `var<workgroup>` memory,
+wait at a barrier, and then all read the whole tile from there. It is the standard
+trick for an N-body loop, and it is in the benchmark below. Whether it pays off is
+something to measure rather than assume.
+
+Press **Benchmark** to time all three kernels on your GPU at several sizes (it pauses
+the simulation while it runs). Moving a slider does not restart anything.
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof temperature = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.slider({
+    label: "Temperature",
+    min: 0.1,
+    max: 1.5,
+    step: 0.05,
+    value: 1.3,
+    format: (v) => v.toFixed(2),
+  });
+}
+```
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof byOrientation = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.toggle({
+    label: "Colour by",
+    value: true,
+    format: (on) => (on ? "orientation" : "speed"),
+  });
+}
+```
+
+```{ojs}
+//| column: screen-inset
+//| code-fold: true
+//| code-summary: "Show code"
+{
+  // Shared WebGPU boilerplate: setup, buffers and the animation loop (lib/gpu.js)
+  const gpu = await import(new URL("../lib/gpu.js", document.baseURI).href);
+  const md = await import(new URL("../lib/md.js", document.baseURI).href);
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+
+  // The controls are read live from their input elements (referencing `viewof x`
+  // gives the element, not the value), so moving them does not restart anything.
+  const temperatureInput = viewof temperature;
+  const orientationInput = viewof byOrientation;
+
+  const { canvas, device, context, format } = await gpu.setup({
+    width: 640,
+    height: 360,
+    resolution: "auto",
+  });
+
+  const dt = 0.005;
+  const stepsPerFrame = 16;
+  const friction = 0.5; // thermostat coupling: how fast velocities are refreshed
+  const decay = Math.exp(-friction * dt); // per-step velocity damping
+  const cutoff = 2.5; // force range in sigma, which is also the cell size
+
+  // ---------------------------------------------------------------- the kernels
+  // One shader module holds every kernel, and the sizes live in a uniform, so the
+  // same pipelines run the main simulation and the benchmark's different sizes.
+  const module = device.createShaderModule({
+    code: `
+      const DT = ${dt};
+      const RC2 = ${cutoff * cutoff};  // force cutoff, squared
+      const SHELL2 = 1.96;             // first neighbour shell, 1.4 sigma, squared
+      const DECAY = ${decay};          // thermostat: velocity kept each step
+      const TAU = 6.2831853;
+
+      struct Sim {
+        box: vec2f,     // box size
+        grid: vec2u,    // cells across and up
+        count: u32,     // atoms
+        cells: u32,     // grid.x * grid.y
+        noise: f32,     // thermostat kick size
+        pad: f32,
+      }
+
+      @group(0) @binding(0) var<storage, read_write> positions: array<vec2f>;
+      @group(0) @binding(1) var<storage, read_write> velocities: array<vec2f>;
+      @group(0) @binding(2) var<storage, read_write> accelerations: array<vec2f>;
+      @group(0) @binding(3) var<storage, read_write> rng: array<u32>;
+      @group(0) @binding(4) var<uniform> sim: Sim;
+      // (order, orientation) per atom: |psi6| and the angle of its bonds, 0 to 1
+      @group(0) @binding(5) var<storage, read_write> orders: array<vec2f>;
+      // Cell lists: first the count in each cell, then (after the scan) the index of
+      // the first sorted atom in each cell, with one extra entry for the total
+      @group(0) @binding(6) var<storage, read_write> cellStart: array<atomic<u32>>;
+      @group(0) @binding(7) var<storage, read_write> cellInfo: array<vec2u>; // cell, rank
+      @group(0) @binding(8) var<storage, read_write> sorted: array<u32>; // atom ids
+
+      ${md.rngWGSL}
+
+      // ---- shared pair maths
+      fn minImage(d: vec2f) -> vec2f {
+        return d - sim.box * round(d / sim.box);
+      }
+
+      struct Pair { a: vec2f, bond: vec2f, shell: f32 }
+
+      // Force on an atom from a neighbour at separation d (and its contribution to
+      // the bond-orientational order, see the previous post)
+      fn pair(d: vec2f) -> Pair {
+        var out: Pair;
+        let r2 = dot(d, d);
+        if (r2 < RC2) {
+          let s2 = 1.0 / r2;   // (sigma / r)^2
+          let s6 = s2 * s2 * s2;
+          out.a = d * (24.0 * s2 * s6 * (2.0 * s6 - 1.0));
+        }
+        if (r2 < SHELL2) {
+          let theta = atan2(d.y, d.x);
+          out.bond = vec2f(cos(6.0 * theta), sin(6.0 * theta));
+          out.shell = 1.0;
+        }
+        return out;
+      }
+
+      fn finish(i: u32, a: vec2f, bond: vec2f, shell: f32) {
+        accelerations[i] = a;
+        // An atom needs a real neighbourhood to count as ordered
+        if (shell >= 4.0) {
+          orders[i] = vec2f(length(bond) / shell, atan2(bond.y, bond.x) / TAU + 0.5);
+        } else {
+          orders[i] = vec2f(0.0, 0.5);
+        }
+      }
+
+      // ---- 1. all pairs: every atom against every other
+      @compute @workgroup_size(64)
+      fn forcesAll(@builtin(global_invocation_id) id: vec3u) {
+        let i = id.x;
+        if (i >= sim.count) { return; }
+        let here = positions[i];
+        var a = vec2f(0.0);
+        var bond = vec2f(0.0);
+        var shell = 0.0;
+        for (var j = 0u; j < sim.count; j++) {
+          if (j == i) { continue; }
+          let p = pair(minImage(here - positions[j]));
+          a += p.a;
+          bond += p.bond;
+          shell += p.shell;
+        }
+        finish(i, a, bond, shell);
+      }
+
+      // ---- 2. all pairs, tiled: the same sum, but each group of 64 threads loads
+      // 64 positions into workgroup memory once and reads them from there
+      var<workgroup> tile: array<vec2f, 64>;
+
+      @compute @workgroup_size(64)
+      fn forcesTiled(
+        @builtin(global_invocation_id) id: vec3u,
+        @builtin(local_invocation_id) local: vec3u,
+      ) {
+        let i = id.x;
+        let alive = i < sim.count;
+        // Threads past the end still have to take part in the loads and barriers
+        let here = positions[min(i, sim.count - 1u)];
+        var a = vec2f(0.0);
+        var bond = vec2f(0.0);
+        var shell = 0.0;
+
+        let tiles = (sim.count + 63u) / 64u;
+        for (var t = 0u; t < tiles; t++) {
+          tile[local.x] = positions[min(t * 64u + local.x, sim.count - 1u)];
+          workgroupBarrier(); // everyone's load is done before anyone reads the tile
+          let n = min(64u, sim.count - t * 64u);
+          for (var k = 0u; k < n; k++) {
+            let j = t * 64u + k;
+            if (j != i) {
+              let p = pair(minImage(here - tile[k]));
+              a += p.a;
+              bond += p.bond;
+              shell += p.shell;
+            }
+          }
+          workgroupBarrier(); // everyone is done reading before the tile is reused
+        }
+        if (alive) { finish(i, a, bond, shell); }
+      }
+
+      // ---- 3. cell lists: build the grid, then look only in nearby cells
+      fn cellOf(p: vec2f) -> u32 {
+        let size = sim.box / vec2f(sim.grid);
+        let c = min(vec2u(max(p, vec2f(0.0)) / size), sim.grid - vec2u(1u));
+        return c.y * sim.grid.x + c.x;
+      }
+
+      @compute @workgroup_size(64)
+      fn clearCells(@builtin(global_invocation_id) id: vec3u) {
+        if (id.x <= sim.cells) { atomicStore(&cellStart[id.x], 0u); }
+      }
+
+      // Count the atoms in each cell. The value atomicAdd returns is the atom's
+      // rank within its cell: no two atoms in a cell get the same one.
+      @compute @workgroup_size(64)
+      fn assign(@builtin(global_invocation_id) id: vec3u) {
+        let i = id.x;
+        if (i >= sim.count) { return; }
+        let c = cellOf(positions[i]);
+        cellInfo[i] = vec2u(c, atomicAdd(&cellStart[c], 1u));
+      }
+
+      // Exclusive prefix sum of the counts, in place: cellStart[c] becomes the number
+      // of atoms in all earlier cells. One thread; there are only a few thousand cells.
+      @compute @workgroup_size(1)
+      fn scan() {
+        var sum = 0u;
+        for (var c = 0u; c < sim.cells; c++) {
+          let n = atomicLoad(&cellStart[c]);
+          atomicStore(&cellStart[c], sum);
+          sum += n;
+        }
+        atomicStore(&cellStart[sim.cells], sum);
+      }
+
+      // Put each atom's index at its cell's start plus its rank
+      @compute @workgroup_size(64)
+      fn scatter(@builtin(global_invocation_id) id: vec3u) {
+        let i = id.x;
+        if (i >= sim.count) { return; }
+        sorted[atomicLoad(&cellStart[cellInfo[i].x]) + cellInfo[i].y] = i;
+      }
+
+      @compute @workgroup_size(64)
+      fn forcesCells(@builtin(global_invocation_id) id: vec3u) {
+        let i = id.x;
+        if (i >= sim.count) { return; }
+        let here = positions[i];
+        let cell = cellInfo[i].x;
+        let cx = i32(cell % sim.grid.x);
+        let cy = i32(cell / sim.grid.x);
+        let gx = i32(sim.grid.x);
+        let gy = i32(sim.grid.y);
+
+        var a = vec2f(0.0);
+        var bond = vec2f(0.0);
+        var shell = 0.0;
+        for (var oy = -1; oy <= 1; oy++) {
+          for (var ox = -1; ox <= 1; ox++) {
+            // The neighbouring cell, wrapping round the periodic box
+            let nx = (cx + ox + gx) % gx;
+            let ny = (cy + oy + gy) % gy;
+            let c = u32(ny) * sim.grid.x + u32(nx);
+            let end = atomicLoad(&cellStart[c + 1u]);
+            for (var k = atomicLoad(&cellStart[c]); k < end; k++) {
+              let j = sorted[k];
+              if (j == i) { continue; }
+              let p = pair(minImage(here - positions[j]));
+              a += p.a;
+              bond += p.bond;
+              shell += p.shell;
+            }
+          }
+        }
+        finish(i, a, bond, shell);
+      }
+
+      // ---- the rest of a step
+      @compute @workgroup_size(64)
+      fn integrate(@builtin(global_invocation_id) id: vec3u) {
+        let i = id.x;
+        if (i >= sim.count) { return; }
+
+        // Leapfrog: kick the velocity...
+        var v = velocities[i] + accelerations[i] * DT;
+
+        // ...thermostat: slow it a little and add a random kick...
+        var state = rng[i];
+        v = v * DECAY + sim.noise * gaussian2(&state);
+        rng[i] = state;
+
+        // ...then drift the position, wrapping round the periodic box
+        var p = positions[i] + v * DT;
+        p -= sim.box * floor(p / sim.box);
+
+        velocities[i] = v;
+        positions[i] = p;
+      }
+    `,
+  });
+
+  // One bind group layout for every kernel, so one bind group serves them all
+  const storage = { type: "storage" };
+  const layoutEntries = [0, 1, 2, 3, 5, 6, 7, 8].map((binding) => ({
+    binding,
+    visibility: GPUShaderStage.COMPUTE,
+    buffer: storage,
+  }));
+  layoutEntries.push({
+    binding: 4,
+    visibility: GPUShaderStage.COMPUTE,
+    buffer: { type: "uniform" },
+  });
+  const bindGroupLayout = device.createBindGroupLayout({ entries: layoutEntries });
+  const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
+  const pipelines = Object.fromEntries(
+    [
+      "forcesAll",
+      "forcesTiled",
+      "forcesCells",
+      "clearCells",
+      "assign",
+      "scan",
+      "scatter",
+      "integrate",
+    ].map((entryPoint) => [
+      entryPoint,
+      device.createComputePipeline({
+        layout: pipelineLayout,
+        compute: { module, entryPoint },
+      }),
+    ])
+  );
+
+  // One random-number-generator seed per atom. crypto.getRandomValues refuses more
+  // than 64 KB at a time, so fill it in pieces.
+  function randomSeeds(count) {
+    const seeds = new Uint32Array(count);
+    for (let k = 0; k < count; k += 8192) {
+      crypto.getRandomValues(seeds.subarray(k, Math.min(count, k + 8192)));
+    }
+    return seeds;
+  }
+
+  // ------------------------------------------------------- a simulation of N atoms
+  // The buffers for one system, and the bind group that points the kernels at them
+  function createSim({ positions, velocities, box }) {
+    const count = positions.length / 2;
+    const grid = [Math.floor(box[0] / cutoff), Math.floor(box[1] / cutoff)];
+    const cells = grid[0] * grid[1];
+
+    const buffers = {
+      positions: gpu.storageBuffer(device, positions),
+      velocities: gpu.storageBuffer(device, velocities),
+      accelerations: gpu.storageBuffer(device, new Float32Array(count * 2)),
+      rng: gpu.storageBuffer(device, randomSeeds(count)),
+      orders: gpu.storageBuffer(device, new Float32Array(count * 2)),
+      cellStart: gpu.storageBuffer(device, new Uint32Array(cells + 1)),
+      cellInfo: gpu.storageBuffer(device, new Uint32Array(count * 2)),
+      sorted: gpu.storageBuffer(device, new Uint32Array(count)),
+      sim: device.createBuffer({
+        size: 32,
+        usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+      }),
+    };
+
+    // The uniform's layout is two vec2f, two u32 at 16 and 20, then two f32
+    const bytes = new ArrayBuffer(32);
+    const view = new DataView(bytes);
+    view.setFloat32(0, box[0], true);
+    view.setFloat32(4, box[1], true);
+    view.setUint32(8, grid[0], true);
+    view.setUint32(12, grid[1], true);
+    view.setUint32(16, count, true);
+    view.setUint32(20, cells, true);
+
+    const bindGroup = device.createBindGroup({
+      layout: bindGroupLayout,
+      entries: [
+        { binding: 0, resource: { buffer: buffers.positions } },
+        { binding: 1, resource: { buffer: buffers.velocities } },
+        { binding: 2, resource: { buffer: buffers.accelerations } },
+        { binding: 3, resource: { buffer: buffers.rng } },
+        { binding: 4, resource: { buffer: buffers.sim } },
+        { binding: 5, resource: { buffer: buffers.orders } },
+        { binding: 6, resource: { buffer: buffers.cellStart } },
+        { binding: 7, resource: { buffer: buffers.cellInfo } },
+        { binding: 8, resource: { buffer: buffers.sorted } },
+      ],
+    });
+
+    return {
+      count,
+      cells,
+      box,
+      buffers,
+      bindGroup,
+      atomGroups: Math.ceil(count / 64),
+      cellGroups: Math.ceil((cells + 1) / 64),
+      setNoise(noise) {
+        view.setFloat32(24, noise, true);
+        device.queue.writeBuffer(buffers.sim, 0, bytes);
+      },
+      destroy() {
+        for (const b of Object.values(buffers)) b.destroy();
+      },
+    };
+  }
+
+  // Record the force calculation by the chosen method into a compute pass
+  function recordForces(pass, sim, method) {
+    const dispatch = (name, groups) => {
+      pass.setPipeline(pipelines[name]);
+      pass.dispatchWorkgroups(groups);
+    };
+    pass.setBindGroup(0, sim.bindGroup);
+    if (method === "cells") {
+      dispatch("clearCells", sim.cellGroups);
+      dispatch("assign", sim.atomGroups);
+      dispatch("scan", 1);
+      dispatch("scatter", sim.atomGroups);
+      dispatch("forcesCells", sim.atomGroups);
+    } else if (method === "tiled") {
+      dispatch("forcesTiled", sim.atomGroups);
+    } else {
+      dispatch("forcesAll", sim.atomGroups);
+    }
+  }
+
+  // ------------------------------------------------------------ the main system
+  // A triangular lattice of 173 x 112 atoms: 19,376, close to a 16:9 box. It starts
+  // hot, so it melts at once.
+  const lattice = md.triangularLattice({
+    nx: 173,
+    ny: 112,
+    spacing: 1.15,
+    temperature: temperatureInput.value,
+  });
+  const main = createSim(lattice);
+  const [Lx, Ly] = lattice.box;
+
+  // Render: a disc per atom, coloured by the orientation of its neighbourhood
+  const box = [Lx, Ly];
+  const orientationDiscs = md.discs(device, {
+    format,
+    positionBuffer: main.buffers.positions,
+    box,
+    colour: { buffer: main.buffers.orders, mode: "orientation" },
+  });
+  const speedDiscs = md.discs(device, {
+    format,
+    positionBuffer: main.buffers.positions,
+    velocityBuffer: main.buffers.velocities,
+    box,
+  });
+
+  // ------------------------------------------------------------------- the charts
+  const [fractionHost, benchmarkHost] = charts.children;
+  const draw = ui.plotter(Plot);
+  const series = []; // {t, fraction}: atoms with |psi6| > 0.8
+  const results = []; // {method, n, ms}: benchmark timings
+  let agreementNote = ""; // how closely the three kernels agree, once measured
+  let simTime = 0;
+
+  const readback = gpu.readback(device, [
+    { buffer: main.buffers.orders, bytes: main.count * 8 },
+  ]);
+  const sampleEvery = 30; // read back every this many frames
+  let frameCount = 0;
+  let paused = false; // the benchmark has the GPU to itself
+
+  function drawFraction() {
+    draw(fractionHost, {
+      x: { label: "time (reduced units)" },
+      y: { label: "fraction crystalline", domain: [0, 1], grid: true },
+      marks: [Plot.lineY(series, { x: "t", y: "fraction", stroke: "#FF4834" })],
+    });
+  }
+
+  function drawBenchmark() {
+    const names = { all: "all pairs", tiled: "tiled", cells: "cell lists" };
+    const rows = results.map((r) => ({ ...r, method: names[r.method] }));
+    draw(benchmarkHost, {
+      x: { label: "atoms", type: "log", grid: true },
+      y: { label: "milliseconds per force calculation", type: "log", grid: true },
+      color: {
+        domain: Object.values(names),
+        range: ["#5a80cc", "#e8a838", "#FF4834"],
+        legend: true,
+      },
+      caption: agreementNote || undefined,
+      marks: [
+        Plot.line(rows, { x: "n", y: "ms", stroke: "method", z: "method" }),
+        Plot.dot(rows, { x: "n", y: "ms", stroke: "method" }),
+      ],
+    });
+  }
+
+  function record(buffer) {
+    const orders = new Float32Array(buffer);
+    let crystalline = 0;
+    for (let i = 0; i < main.count; i++) if (orders[2 * i] > 0.8) crystalline++;
+    series.push({ t: simTime, fraction: crystalline / main.count });
+    if (series.length > 400) series.shift();
+    drawFraction();
+  }
+
+  // ------------------------------------------------------------------ benchmark
+  // Do the three kernels compute the same forces? Run each on the main system, read
+  // the accelerations back, and compare with the all-pairs result. The sums are done
+  // in a different order, so expect rounding-level differences, not exact equality.
+  async function agreement(sim) {
+    const rb = gpu.readback(device, [
+      { buffer: sim.buffers.accelerations, bytes: sim.count * 8 },
+    ]);
+    const get = (method) =>
+      new Promise((resolve) => {
+        const encoder = device.createCommandEncoder();
+        const pass = encoder.beginComputePass();
+        recordForces(pass, sim, method);
+        pass.end();
+        rb.copy(encoder);
+        device.queue.submit([encoder.finish()]);
+        rb.read((buffer) => resolve(new Float32Array(buffer)));
+      });
+    const reference = await get("all");
+    let largest = 0;
+    for (const a of reference) largest = Math.max(largest, Math.abs(a));
+    let worst = 0;
+    for (const method of ["tiled", "cells"]) {
+      const other = await get(method);
+      for (let k = 0; k < reference.length; k++) {
+        worst = Math.max(worst, Math.abs(other[k] - reference[k]));
+      }
+    }
+    return { worst, largest };
+  }
+
+  // Time one method on a system of about `target` atoms at the same density
+  async function timeMethod(sim, method) {
+    const run = async (reps) => {
+      const encoder = device.createCommandEncoder();
+      const pass = encoder.beginComputePass();
+      for (let r = 0; r < reps; r++) recordForces(pass, sim, method);
+      pass.end();
+      const start = performance.now();
+      device.queue.submit([encoder.finish()]);
+      await device.queue.onSubmittedWorkDone();
+      return (performance.now() - start) / reps;
+    };
+    await run(1); // warm up: compile, allocate
+    const once = await run(1);
+    const reps = Math.max(1, Math.min(40, Math.round(150 / once)));
+    const times = [await run(reps), await run(reps), await run(reps)];
+    return times.sort((a, b) => a - b)[1]; // the median
+  }
+
+  async function runBenchmark(setStatus) {
+    paused = true;
+    results.length = 0;
+    const slow = new Set(); // methods that were already too slow at a smaller size
+    for (const target of [1000, 2000, 4000, 8000, 16000]) {
+      // A lattice of about `target` atoms in a 16:9 box, at the main system's density
+      const ny = 2 * Math.max(2, Math.round(Math.sqrt(target / 1.54) / 2));
+      const nx = Math.round(1.54 * ny);
+      const system = md.triangularLattice({ nx, ny, spacing: 1.15, temperature: 0.3 });
+      const sim = createSim(system);
+      sim.setNoise(0);
+      for (const method of ["all", "tiled", "cells"]) {
+        if (slow.has(method)) continue;
+        setStatus(`benchmark: ${method}, ${sim.count.toLocaleString()} atoms`);
+        const ms = await timeMethod(sim, method);
+        results.push({ method, n: sim.count, ms });
+        if (ms > 250) slow.add(method); // do not make anyone wait on a huge size
+        drawBenchmark();
+      }
+      sim.destroy();
+    }
+    setStatus("checking the kernels agree");
+    const { worst, largest } = await agreement(main);
+    agreementNote =
+      `The three kernels agree on the ${main.count.toLocaleString()}-atom system: ` +
+      `largest difference in any acceleration ${worst.toExponential(1)}, ` +
+      `against a largest acceleration of ${largest.toPrecision(3)}.`;
+    drawBenchmark();
+    setStatus("");
+    lastFrame = performance.now();
+    stepsPerSecond = 0;
+    paused = false;
+  }
+
+  // -------------------------------------------------------------------- the frame
+  const readout = ui.readout();
+  const quench = ui.button({
+    label: "Quench",
+    onClick: () => (temperatureInput.value = 0.35),
+  });
+  const bench = ui.button({
+    label: "Benchmark",
+    onClick: async () => {
+      bench.querySelector("button").disabled = true;
+      await runBenchmark((text) => (readout.textContent = text));
+      bench.querySelector("button").disabled = false;
+    },
+  });
+
+  let lastFrame = performance.now();
+  let stepsPerSecond = 0;
+
+  function frame() {
+    if (paused) return;
+    const now = performance.now();
+    const elapsed = now - lastFrame;
+    lastFrame = now;
+    if (elapsed > 0) {
+      const instant = (stepsPerFrame * 1000) / elapsed;
+      // A smoothed rate; the first frame after a pause starts it afresh
+      stepsPerSecond = stepsPerSecond ? 0.9 * stepsPerSecond + 0.1 * instant : instant;
+    }
+    if (frameCount % 15 === 0) {
+      readout.textContent =
+        `${main.count.toLocaleString()} atoms · ` +
+        `${Math.round(stepsPerSecond)} steps per second`;
+    }
+
+    main.setNoise(Math.sqrt(temperatureInput.value * (1 - decay * decay)));
+
+    const encoder = device.createCommandEncoder();
+    const compute = encoder.beginComputePass();
+    for (let s = 0; s < stepsPerFrame; s++) {
+      recordForces(compute, main, "cells");
+      compute.setPipeline(pipelines.integrate);
+      compute.dispatchWorkgroups(main.atomGroups);
+    }
+    compute.end();
+    simTime += stepsPerFrame * dt;
+
+    const pass = gpu.beginRenderPass(encoder, context);
+    (orientationInput.value ? orientationDiscs : speedDiscs).draw(pass, main.count);
+    pass.end();
+
+    const sample = !readback.pending && ++frameCount % sampleEvery === 0;
+    if (sample) readback.copy(encoder);
+    device.queue.submit([encoder.finish()]);
+    if (sample) readback.read(record);
+  }
+
+  gpu.run(invalidation, device, frame);
+
+  // The canvas with the controls laid over its corner
+  yield ui.stage(canvas, [temperatureInput, orientationInput, quench, bench, readout]);
+}
+```
+
+```{ojs}
+//| echo: false
+//| column: page
+charts = {
+  // Two empty hosts; the simulation cell above draws into them as data arrives
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.chartHosts(["fraction", "benchmark"]);
+}
+```
+
+::: {.mf-series-bar}
+Moving Figures
+
+:::{#mf-series}
+:::
+:::
