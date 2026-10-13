@@ -36,6 +36,8 @@ animation loop with `requestAnimationFrame` redraws every frame.
   const context = canvas.getContext("webgpu");
   const format = navigator.gpu.getPreferredCanvasFormat();
   context.configure({ device, format });
+  // Not part of the lesson: lets this canvas be recorded by opening the page with ?record
+  (await import(new URL("../lib/gpu.js", document.baseURI).href)).enableRecording(canvas);
 
   // Storage buffer: one random 2D centre per particle, in clip space
   const count = 50;

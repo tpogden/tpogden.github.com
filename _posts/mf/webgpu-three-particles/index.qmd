@@ -36,6 +36,8 @@ points are always one pixel, so each particle is a square made of two triangles.
   const context = canvas.getContext("webgpu");
   const format = navigator.gpu.getPreferredCanvasFormat();
   context.configure({ device, format });
+  // Not part of the lesson: lets this canvas be recorded by opening the page with ?record
+  (await import(new URL("../lib/gpu.js", document.baseURI).href)).enableRecording(canvas);
 
   // Particle centres: three random 2D positions in clip space (-1 to 1),
   // kept off the edge so each square stays fully on the canvas
