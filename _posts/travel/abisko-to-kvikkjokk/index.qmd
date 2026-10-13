@@ -2,6 +2,7 @@
 title: "A Walk in Northern Sweden from Abisko to Kvikkjokk"
 date: 2013-08-09
 categories: [travel]
+recommended: true
 page-layout: full
 # fetched at runtime by the route map, so Quarto does not see it as a dependency
 resources:
