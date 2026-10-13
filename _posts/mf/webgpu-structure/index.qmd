@@ -83,12 +83,12 @@ viewof density = {
 ```{ojs}
 //| echo: false
 //| output: false
-viewof byOrder = {
+viewof colouring = {
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
-  return ui.toggle({
+  return ui.segmented({
     label: "Colour by",
-    value: true,
-    format: (on) => (on ? "order" : "speed"),
+    options: ["order", "speed"],
+    value: "order",
   });
 }
 ```
@@ -107,7 +107,7 @@ viewof byOrder = {
   // gives the element, not the value), so moving them does not restart anything.
   const temperatureInput = viewof temperature;
   const densityInput = viewof density;
-  const orderInput = viewof byOrder;
+  const colourInput = viewof colouring;
 
   const { canvas, device, context, format } = await gpu.setup({
     width: 640,
@@ -429,7 +429,7 @@ viewof byOrder = {
     simTime += stepsPerFrame * dt;
 
     const pass = gpu.beginRenderPass(encoder, context);
-    (orderInput.value ? orderDiscs : speedDiscs).draw(pass, count);
+    (colourInput.value === "order" ? orderDiscs : speedDiscs).draw(pass, count);
     pass.end();
 
     if (sample) readback.copy(encoder);
@@ -445,7 +445,7 @@ viewof byOrder = {
   gpu.run(invalidation, device, frame);
 
   // The canvas with the controls laid over its corner
-  yield ui.stage(canvas, [temperatureInput, densityInput, orderInput]);
+  yield ui.stage(canvas, [temperatureInput, densityInput, colourInput]);
 }
 ```
 
