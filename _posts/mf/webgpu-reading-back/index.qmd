@@ -27,9 +27,8 @@ picture a little.
 Two charts are drawn with [Observable Plot](https://observablehq.com/plot/). The left
 one is the energy per atom: kinetic, potential and total. Turn the thermostat off and
 the box is an isolated system, so the total should stay flat apart from small
-wiggles. That is the test of the integrator. Make the timestep bigger and watch the
-total drift; make it much bigger and the simulation blows up. The right one is the
-density of atoms against height. The dashed line is the barometric profile of an
+wiggles. That is the test of the integrator. The right one is the density of atoms
+against height. The dashed line is the barometric profile of an
 ideal gas, started at the top of the liquid pool: the vapour above follows it, while
 the pool below does not, because a liquid is nearly incompressible.
 
@@ -55,22 +54,6 @@ viewof temperature = {
 viewof thermostat = {
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
   return ui.toggle({ label: "Thermostat", value: true });
-}
-```
-
-```{ojs}
-//| echo: false
-//| output: false
-viewof timestep = {
-  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
-  return ui.slider({
-    label: "Timestep",
-    min: 0.001,
-    max: 0.02,
-    step: 0.001,
-    value: 0.005,
-    format: (v) => v.toFixed(3),
-  });
 }
 ```
 
@@ -107,7 +90,6 @@ viewof gravity = {
   const temperatureInput = viewof temperature;
   const gravityInput = viewof gravity;
   const thermostatInput = viewof thermostat;
-  const timestepInput = viewof timestep;
 
   // Setup, as before: the canvas is 16:9 and full width, and the drawing buffer
   // follows its displayed size
@@ -123,6 +105,7 @@ viewof gravity = {
   const Lx = 112;
   const Ly = 63;
   const count = 2400;
+  const dt = 0.005; // the timestep, fixed
   const stepsPerFrame = 5;
   const friction = 0.5; // thermostat coupling: how fast velocities are refreshed
   const sampleEvery = 6; // read back every this many frames
@@ -163,8 +146,8 @@ viewof gravity = {
     { buffer: potentialBuffer, bytes: count * 4 },
   ]);
 
-  // Uniform buffer: the thermostat, gravity and timestep, which follow the
-  // controls and are rewritten every frame
+  // Uniform buffer: the thermostat, gravity and timestep (fixed here), which are
+  // rewritten every frame with the current controls
   const paramBuffer = device.createBuffer({
     size: 16, // uniform buffers are happiest in multiples of 16 bytes
     usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
@@ -241,7 +224,7 @@ viewof gravity = {
         // Floor and ceiling: reflect the position and flip the velocity
         if (p.y < WALL) { p.y = 2.0 * WALL - p.y; v.y = -v.y; }
         if (p.y > L.y - WALL) { p.y = 2.0 * (L.y - WALL) - p.y; v.y = -v.y; }
-        p.y = clamp(p.y, WALL, L.y - WALL); // a huge timestep must not escape the box
+        p.y = clamp(p.y, WALL, L.y - WALL); // and never let an atom out of the box
 
         velocities[i] = v;
         positions[i] = p;
@@ -368,7 +351,6 @@ viewof gravity = {
   let frameCount = 0;
 
   function frame() {
-    const dt = timestepInput.value;
     const on = thermostatInput.value;
     const decay = on ? Math.exp(-friction * dt) : 1;
     const noise = on ? Math.sqrt(temperatureInput.value * (1 - decay * decay)) : 0;
@@ -412,7 +394,7 @@ viewof gravity = {
   gpu.run(invalidation, device, frame);
 
   // The canvas with the controls laid over its corner
-  yield ui.stage(canvas, [temperatureInput, thermostatInput, timestepInput, gravityInput]);
+  yield ui.stage(canvas, [temperatureInput, thermostatInput, gravityInput]);
 }
 ```
 
