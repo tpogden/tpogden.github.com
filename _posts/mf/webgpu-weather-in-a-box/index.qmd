@@ -125,7 +125,7 @@ viewof coldDepth = {
 //| output: false
 viewof colouring = {
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
-  return ui.select({
+  return ui.segmented({
     label: "Colour by",
     options: ["phase", "orientation", "speed"],
     value: "phase",

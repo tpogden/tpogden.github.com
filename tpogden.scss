@@ -274,19 +274,41 @@ div.quarto-post {
             margin-bottom: 0.25rem;
         }
 
-        select {
-            background: rgba(232, 226, 224, 0.08);
-            border: 1px solid rgba(232, 226, 224, 0.25);
-            border-radius: 4px;
-            color: inherit;
-            flex: 1;
-            font: inherit;
-            min-width: 0;
-            padding: 0.05rem 0.25rem;
+        // A row of buttons, one pressed: wraps under its label so it has the width
+        .mf-stacked {
+            flex-wrap: wrap;
+            row-gap: 0.125rem;
+        }
 
-            option {
-                background: #1a1a1a;
-                color: #e8e2e0;
+        .mf-segmented {
+            display: flex;
+            flex: 1 1 100%;
+
+            button {
+                background: transparent;
+                border: 1px solid rgba(232, 226, 224, 0.3);
+                color: rgba(232, 226, 224, 0.7);
+                cursor: pointer;
+                flex: 1;
+                font: inherit;
+                padding: 0.05rem 0.25rem;
+
+                &:first-child {
+                    border-radius: 4px 0 0 4px;
+                }
+
+                &:last-child {
+                    border-radius: 0 4px 4px 0;
+                }
+
+                & + button {
+                    border-left: none;
+                }
+
+                &.on {
+                    background: rgba(232, 226, 224, 0.2);
+                    color: #fff;
+                }
             }
         }
 
