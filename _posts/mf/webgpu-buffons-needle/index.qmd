@@ -376,7 +376,9 @@ viewof needle = {
   // and the error is quoted to one figure.
   function current() {
     const [N, crossings] = total;
-    if (crossings === 0) return null;
+    // With no crossing, or only crossings, the spread would come out as zero (and the
+    // number of digits infinite): too few needles to say anything yet
+    if (crossings === 0 || crossings === N) return null;
     const estimate = (2 * lengthInput.value * N) / (spacing * crossings);
     const sigma = estimate * Math.sqrt((N - crossings) / (crossings * N));
     const rounded = Number(sigma.toPrecision(1)); // 0.0096 is quoted as 0.01
