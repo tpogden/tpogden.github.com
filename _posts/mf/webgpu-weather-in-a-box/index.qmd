@@ -23,8 +23,10 @@ Everything in between is left alone, so heat has to travel through it.
 Start with a pool of liquid on the floor (it begins as a lattice, and melts at once). The floor heats it and atoms evaporate;
 the vapour rises, hits the cold ceiling and condenses; the droplets get heavy and
 fall back. It is a water cycle, with nothing in it but atoms, gravity and two
-temperatures. Colour by phase shows each atom's neighbours: atoms in the liquid have
-many, atoms in the vapour almost none.
+temperatures. The coloured bars mark the two thermostatted layers, labelled with
+their temperatures, and the dashed lines show where each layer ends. Colour by phase
+shows each atom's neighbours: atoms in the liquid have many, atoms in the vapour
+almost none.
 
 This is the same Lennard-Jones fluid as before, in reduced units, so the numbers are
 not water's. What carries over is the qualitative cycle, and it lives in a narrow
@@ -393,6 +395,70 @@ viewof byPhase = {
     box,
   });
 
+  // ---------------------------------------------------- floor and ceiling markers
+  // A transparent 2D canvas over the simulation marks the two thermostatted layers:
+  // a bar along the floor and the ceiling, coloured by its temperature (blue cold to
+  // red hot), a dashed line where the layer ends, and a label.
+  const overlay = document.createElement("canvas");
+  overlay.className = "mf-trail";
+  const overlayContext = overlay.getContext("2d");
+
+  // Cold blue to hot red, across the window where the fluid is a liquid (about 0.4)
+  // and a vapour (about 0.5), so the default floor and ceiling look clearly different
+  function temperatureColour(T) {
+    const t = Math.min(1, Math.max(0, (T - 0.34) / 0.2));
+    const cold = [80, 130, 235];
+    const hot = [255, 72, 52];
+    return cold.map((c, k) => Math.round(c + t * (hot[k] - c)));
+  }
+
+  function drawLimits() {
+    const dpr = window.devicePixelRatio || 1;
+    const w = Math.round(canvas.clientWidth * dpr);
+    const h = Math.round(canvas.clientHeight * dpr);
+    if (overlay.width !== w || overlay.height !== h) {
+      overlay.width = w;
+      overlay.height = h;
+    }
+    const ctx = overlayContext;
+    ctx.clearRect(0, 0, w, h);
+    const perSigma = h / Ly;
+    const bar = 4 * dpr;
+    ctx.font = `${11 * dpr}px ui-monospace, Menlo, monospace`;
+    ctx.textBaseline = "middle";
+
+    const mark = (T, edge, label) => {
+      const [r, g, b] = temperatureColour(T);
+      const solid = `rgb(${r}, ${g}, ${b})`;
+      const floorSide = edge === "floor";
+      const barY = floorSide ? h - bar : 0; // the wall is the edge of the canvas
+      const layerY = floorSide ? h - layer * perSigma : layer * perSigma;
+
+      ctx.fillStyle = solid;
+      ctx.fillRect(0, barY, w, bar);
+
+      ctx.save();
+      ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, 0.7)`;
+      ctx.lineWidth = dpr;
+      ctx.setLineDash([6 * dpr, 6 * dpr]);
+      ctx.beginPath();
+      ctx.moveTo(0, layerY);
+      ctx.lineTo(w, layerY);
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.fillStyle = solid;
+      ctx.fillText(
+        `${label}  T = ${T.toFixed(2)}`,
+        8 * dpr,
+        floorSide ? layerY - 9 * dpr : layerY + 9 * dpr
+      );
+    };
+
+    mark(floorInput.value, "floor", "floor");
+    mark(ceilingInput.value, "ceiling", "ceiling");
+  }
+
   // --------------------------------------------------------------------- charts
   const [densityHost, temperatureHost] = charts.children;
   const draw = ui.plotter(Plot);
@@ -505,6 +571,8 @@ viewof byPhase = {
         `${count.toLocaleString()} atoms · ${Math.round(stepsPerSecond)} steps per second`;
     }
 
+    drawLimits();
+
     simView.setFloat32(24, kick(floorInput.value), true);
     simView.setFloat32(28, kick(ceilingInput.value), true);
     simView.setFloat32(32, gravityInput.value, true);
@@ -542,8 +610,10 @@ viewof byPhase = {
 
   gpu.run(invalidation, device, frame);
 
-  // The canvas with the controls laid over its corner
-  yield ui.stage(canvas, [gravityInput, floorInput, ceilingInput, phaseInput, readout]);
+  // The canvas, with the floor and ceiling markers over it and the controls on top
+  const stage = ui.stage(canvas, [gravityInput, floorInput, ceilingInput, phaseInput, readout]);
+  stage.append(overlay);
+  yield stage;
 }
 ```
 
