@@ -42,8 +42,10 @@ The right-hand chart measures that on log axes, where a power law is a straight 
 and the dashed line has the slope $\tfrac12$ the theory predicts. The left-hand chart
 is the density against distance from the centre, with the shell of the shock as its
 peak (a modest one: the gas is compressed by about half again, not by an order of
-magnitude). **Detonate** puts the quiet gas back and sets off a new explosion; the slider is
-the temperature the blast atoms are given.
+magnitude). The walls reflect, so once the shock reaches them it bounces back and the
+box keeps sloshing; the chart stops measuring there. **Detonate** puts the quiet gas
+back and sets off a new explosion; the slider is the temperature the blast atoms are
+given.
 
 ```{ojs}
 //| echo: false
@@ -75,7 +77,7 @@ viewof energy = {
   // the element, not the value), so moving it does not restart anything.
   const energyInput = viewof energy;
 
-  // Reduced units: sigma = epsilon = mass = k_B = 1. The box is periodic both ways,
+  // Reduced units: sigma = epsilon = mass = k_B = 1. The box has reflecting walls,
   // 300 x 168.75 sigma: 120 x 67 cells of the force range, 16:9 to fill the canvas.
   const Lx = 300;
   const Ly = 168.75;
@@ -136,10 +138,6 @@ viewof energy = {
 
       ${md.rngWGSL}
 
-      fn minImage(d: vec2f) -> vec2f {
-        return d - sim.box * round(d / sim.box);
-      }
-
       fn cellOf(p: vec2f) -> u32 {
         let size = sim.box / vec2f(sim.grid);
         let c = min(vec2u(max(p, vec2f(0.0)) / size), sim.grid - vec2u(1u));
@@ -191,14 +189,15 @@ viewof energy = {
         var a = vec2f(0.0);
         for (var oy = -1; oy <= 1; oy++) {
           for (var ox = -1; ox <= 1; ox++) {
-            let nx = (cx + ox + gx) % gx;
-            let ny = (cy + oy + gy) % gy;
+            let nx = cx + ox;
+            let ny = cy + oy;
+            if (nx < 0 || ny < 0 || nx >= gx || ny >= gy) { continue; }
             let c = u32(ny) * sim.grid.x + u32(nx);
             let end = atomicLoad(&cellStart[c + 1u]);
             for (var k = atomicLoad(&cellStart[c]); k < end; k++) {
               let j = sorted[k];
               if (j == i) { continue; }
-              let d = minImage(here - positions[j]);
+              let d = here - positions[j];
               let r2 = dot(d, d);
               if (r2 < RC2) {
                 // Floor r^2: a very fast atom can step inside the core, where the
@@ -221,8 +220,13 @@ viewof energy = {
         if (i >= sim.count) { return; }
         let v = velocities[i] + accelerations[i] * DT;
         var p = positions[i] + v * DT;
-        p -= sim.box * floor(p / sim.box);
-        velocities[i] = v;
+        var w = v;
+        // Reflecting walls: an atom that would pass through bounces back in
+        if (p.x < 0.0) { p.x = -p.x; w.x = -w.x; }
+        if (p.y < 0.0) { p.y = -p.y; w.y = -w.y; }
+        if (p.x > sim.box.x) { p.x = 2.0 * sim.box.x - p.x; w.x = -w.x; }
+        if (p.y > sim.box.y) { p.y = 2.0 * sim.box.y - p.y; w.y = -w.y; }
+        velocities[i] = w;
         positions[i] = p;
       }
 
@@ -233,7 +237,7 @@ viewof energy = {
       fn detonate(@builtin(global_invocation_id) id: vec3u) {
         let i = id.x;
         if (i >= sim.count) { return; }
-        let d = minImage(positions[i] - sim.blast.xy);
+        let d = positions[i] - sim.blast.xy;
         if (dot(d, d) < sim.blast.z * sim.blast.z) {
           var state = rng[i];
           velocities[i] = sim.blast.w * gaussian2(&state);
@@ -324,7 +328,7 @@ viewof energy = {
   // --------------------------------------------------------------------- charts
   const [profileHost, radiusHost] = charts.children;
   const draw = ui.plotter(Plot);
-  const rMax = Ly / 2; // beyond this the periodic box wraps round
+  const rMax = Ly / 2; // beyond this a ring is cut off by the top and bottom walls
   const bins = Math.floor(rMax); // 1 sigma wide rings
   const track = []; // {t, R}: the radius of the shock against time since detonation
   let profile = new Float32Array(bins);
@@ -341,10 +345,8 @@ viewof energy = {
     const data = new Float32Array(buffer);
     const counts = new Float32Array(bins);
     for (let i = 0; i < count; i++) {
-      let dx = data[2 * i] - Lx / 2;
-      let dy = data[2 * i + 1] - Ly / 2;
-      dx -= Lx * Math.round(dx / Lx);
-      dy -= Ly * Math.round(dy / Ly);
+      const dx = data[2 * i] - Lx / 2;
+      const dy = data[2 * i + 1] - Ly / 2;
       const k = Math.floor(Math.hypot(dx, dy));
       if (k < bins) counts[k]++;
     }
@@ -362,7 +364,9 @@ viewof energy = {
           best = k;
         }
       }
-      if (best >= 0 && peak > 1.25 * density && t > 0.5) track.push({ t, R: best + 0.5 });
+      if (best >= 0 && peak > 1.25 * density && t > 0.5 && best + 0.5 < rMax - 4) {
+        track.push({ t, R: best + 0.5 });
+      }
     }
     drawCharts();
   }
