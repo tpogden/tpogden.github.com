@@ -24,13 +24,15 @@ a thin plate: the vapour thins out exponentially with height, so only a deep col
 region catches enough of it.
 
 Start with a pool of liquid on the floor (it begins as a lattice, and melts at
-once). The floor heats it and atoms evaporate;
-the vapour rises, hits the cold roof and condenses; the droplets get heavy and
-fall back. It is a water cycle, with nothing in it but atoms, gravity and two
-temperatures. The coloured bars mark the two thermostatted layers, labelled with
-their temperatures, and the dashed lines show where each layer ends. Colour by phase
+once). The floor heats it and atoms evaporate. The vapour rises into the cold
+region under the roof, where it cools and begins to cluster, and clusters that grow
+heavy enough fall back. It is a water cycle in miniature, with nothing in it but
+atoms, gravity and two temperatures. How far the clustering gets depends on the
+roof's temperature and depth and on gravity, and the controls let you push on each.
+The coloured bars mark the two thermostatted layers, labelled with their
+temperatures, and the dashed lines show where each layer ends. Colour by phase
 shows each atom's neighbours: atoms in the liquid have many, atoms in the vapour
-almost none.
+almost none, and a cluster is a few blue atoms turning warm together.
 
 This is the same Lennard-Jones fluid as before, in reduced units, so the numbers are
 not water's. What carries over is the qualitative cycle, and it lives in a narrow
@@ -38,15 +40,16 @@ band of temperature: this fluid has a critical point at about 0.5, above which
 there is no liquid and no vapour, only a dense fluid, and a triple point at about
 0.4, below which the liquid freezes. Floor and roof are set either side of that
 window: warm enough to boil, and cold enough to condense, with the roof just
-cold enough to be frosty. Rain depends on the vapour
-being thick enough to condense, and that depends on gravity: with weak gravity the
-atmosphere is tall and thin, with strong gravity it hugs the floor. The charts
-measure it. The left is the density of atoms against height on a log axis, where an
-isothermal atmosphere is a straight line, and the dashed line is the barometric
-prediction for the temperature of the vapour. The right is the temperature against
-height, which shows the heat flowing from floor to roof. Ten times the atoms is
-what makes the measurement clean: a droplet needs a few hundred atoms before it
-behaves like a drop at all.
+cold enough to be frosty. Condensing depends on the vapour being thick enough,
+and that depends on gravity: with weak gravity the atmosphere is tall and thin,
+with strong gravity it hugs the floor.
+
+The charts measure it. The left is the density of atoms against height on a log
+axis, where an isothermal atmosphere is a straight line, and the dashed line is the
+barometric prediction for the temperature of the vapour. The right is the
+temperature against height, which shows the heat flowing from floor to roof. Twenty
+thousand atoms is what makes these profiles smooth: every height band holds enough
+atoms to average over.
 
 ```{ojs}
 //| echo: false
