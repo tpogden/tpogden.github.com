@@ -11,6 +11,12 @@ you know you can measure $\pi$ just by dropping sticks on a table and counting t
 This is because $\pi$ has a role in statistics too. Try it for yourself, and below 
 we'll visit the story of how this remarkable trick was discovered.
 
+::: {.callout-tip title="Try the GPU version"}
+Clicking out a million sticks is a lot of clicking. I've since made a
+[GPU version](../webgpu-buffons-needle/) that drops up to a hundred million a
+second and shows how the error shrinks as it goes.
+:::
+
 _Click on the board to drop sticks._ Each time you click, <span id="num-sticks">100</span> 
 will be dropped and the number that cross a line will be counted. I dropped 10 to 
 start you off.
