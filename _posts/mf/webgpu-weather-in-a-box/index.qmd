@@ -1,0 +1,677 @@
+---
+title: "011: Weather in a Box"
+date: "2026-10-13"
+categories: [mf]
+page-layout: article
+listing:
+  - id: mf-series
+    contents: "../*/index.qmd"
+    type: default
+    categories: false
+    include:
+      categories: "mf"
+    fields: [title]
+    sort: "title asc"
+---
+
+[Falling Atoms](../webgpu-gravity/) had gravity, a pool and an atmosphere, with a
+thermostat holding the whole box at one temperature. Here is the same physics at ten
+times the size, about twenty thousand atoms, with one change that lets things
+happen. The thermostat is taken off the bulk and applied only at the two ends: a
+thin hot layer at the floor, and a cold region under the roof. Everything in
+between is left alone, so heat has to travel through it. The cold region is deep, not
+a thin plate: the vapour thins out exponentially with height, so only a deep cold
+region catches enough of it.
+
+Start with a pool of liquid on the floor (it begins as a lattice, and melts at
+once). The floor heats it and atoms evaporate. The vapour rises into the cold
+region under the roof, where it cools and begins to cluster, and clusters that grow
+heavy enough fall back. It is a water cycle in miniature, with nothing in it but
+atoms, gravity and two temperatures. How far the clustering gets depends on the
+roof's temperature and depth and on gravity, and the controls let you push on each.
+The coloured bars mark the two thermostatted layers, labelled with their
+temperatures, and the dashed lines show where each layer ends. Colour by phase
+shows each atom's neighbours: atoms in the liquid have many, atoms in the vapour
+almost none, and a cluster is a few blue atoms turning warm together.
+
+This is the same Lennard-Jones fluid as before, in reduced units, so the numbers are
+not water's. What carries over is the qualitative picture, and it lives around two
+temperatures: this fluid has a critical point at about 0.5, above which there is no
+liquid and no vapour, only a dense fluid, and a triple point at about 0.4, below
+which the liquid freezes. The floor starts above the critical point, so the bottom
+layer is a hot dense fluid that throws vapour up, and the roof starts well below the
+triple point, so whatever reaches it freezes: frost and hail, more than rain.
+Condensing depends on the vapour being thick enough, and that depends on gravity:
+with weak gravity the atmosphere is tall and thin, with strong gravity it hugs the
+floor.
+
+The charts measure it. The left is the density of atoms against height on a log
+axis, where an isothermal atmosphere is a straight line, and the dashed line is the
+barometric prediction for the temperature of the vapour. The right is the
+temperature against height, which shows the heat flowing from floor to roof. Twenty
+thousand atoms is what makes these profiles smooth: every height band holds enough
+atoms to average over.
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof gravity = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.slider({
+    label: "Gravity",
+    min: 0.003,
+    max: 0.04,
+    step: 0.001,
+    value: 0.015,
+    format: (v) => v.toFixed(3),
+  });
+}
+```
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof floorTemperature = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.slider({
+    label: "Floor temp",
+    min: 0.35,
+    max: 0.7,
+    step: 0.01,
+    value: 0.6,
+    format: (v) => v.toFixed(2),
+  });
+}
+```
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof ceilingTemperature = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.slider({
+    label: "Roof temp",
+    min: 0.25,
+    max: 0.55,
+    step: 0.01,
+    value: 0.32,
+    format: (v) => v.toFixed(2),
+  });
+}
+```
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof coldDepth = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.slider({
+    label: "Roof depth",
+    min: 4,
+    max: 80,
+    step: 1,
+    value: 30,
+    format: (v) => `${v.toFixed(0)} σ`,
+  });
+}
+```
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof byPhase = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.toggle({
+    label: "Colour by",
+    value: true,
+    format: (on) => (on ? "phase" : "speed"),
+  });
+}
+```
+
+```{ojs}
+//| column: screen-inset
+//| code-fold: true
+//| code-summary: "Show code"
+{
+  // Shared WebGPU boilerplate: setup, buffers and the animation loop (lib/gpu.js)
+  const gpu = await import(new URL("../lib/gpu.js", document.baseURI).href);
+  const md = await import(new URL("../lib/md.js", document.baseURI).href);
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+
+  // The controls are read live from their input elements (referencing `viewof x`
+  // gives the element, not the value), so moving them does not restart anything.
+  const gravityInput = viewof gravity;
+  const floorInput = viewof floorTemperature;
+  const ceilingInput = viewof ceilingTemperature;
+  const depthInput = viewof coldDepth;
+  const phaseInput = viewof byPhase;
+
+  // Reduced units: sigma = epsilon = mass = k_B = 1. The box is periodic sideways
+  // and has a floor and a ceiling. 360 x 155 sigma: 144 x 62 cells of the force
+  // range. Not too tall: the vapour thins out exponentially with height, so the
+  // ceiling needs to be within a couple of scale heights of the pool.
+  const Lx = 360;
+  const Ly = 155;
+
+  // The canvas has the box's own aspect ratio, so an atom is round on the screen
+  const { canvas, device, context, format } = await gpu.setup({
+    width: 640,
+    height: Math.round((640 * Ly) / Lx),
+    resolution: "auto",
+  });
+  const dt = 0.005;
+  // A water cycle takes hundreds of time units, so many steps per frame; more than
+  // this and the picture judders, because the frames get uneven.
+  const stepsPerFrame = 30;
+  const friction = 0.5; // thermostat coupling, applied to the two layers only
+  const decay = Math.exp(-friction * dt);
+  const cutoff = 2.5; // force range in sigma, which is also the cell size
+  const wall = 0.5; // atoms' centres stay half a diameter off the floor and ceiling
+  const floorLayer = 4; // thickness of the hot layer at the floor, in sigma
+
+  // ---------------------------------------------------------------- the kernels
+  const module = device.createShaderModule({
+    code: `
+      const DT = ${dt};
+      const RC2 = ${cutoff * cutoff};  // force cutoff, squared
+      const SHELL2 = 1.96;             // first neighbour shell, 1.4 sigma, squared
+      const DECAY = ${decay};          // thermostat: velocity kept each step
+      const WALL = ${wall};
+      const FLOOR_LAYER = ${floorLayer};
+
+      struct Sim {
+        box: vec2f,         // box size
+        grid: vec2u,        // cells across and up
+        count: u32,         // atoms
+        cells: u32,         // grid.x * grid.y
+        floorNoise: f32,    // thermostat kick size in the floor layer
+        ceilingNoise: f32,  // ... and in the ceiling layer
+        gravity: f32,       // acceleration downwards
+        ceilingLayer: f32,  // depth of the cold region under the ceiling
+      }
+
+      @group(0) @binding(0) var<storage, read_write> positions: array<vec2f>;
+      @group(0) @binding(1) var<storage, read_write> velocities: array<vec2f>;
+      @group(0) @binding(2) var<storage, read_write> accelerations: array<vec2f>;
+      @group(0) @binding(3) var<storage, read_write> rng: array<u32>;
+      @group(0) @binding(4) var<uniform> sim: Sim;
+      // How many neighbours each atom has within 1.4 sigma: a liquid atom has many,
+      // an atom in a vapour has almost none
+      @group(0) @binding(5) var<storage, read_write> neighbours: array<f32>;
+      // Cell lists, as in the previous post
+      @group(0) @binding(6) var<storage, read_write> cellStart: array<atomic<u32>>;
+      @group(0) @binding(7) var<storage, read_write> cellInfo: array<vec2u>; // cell, rank
+      @group(0) @binding(8) var<storage, read_write> sorted: array<u32>;
+
+      ${md.rngWGSL}
+
+      fn cellOf(p: vec2f) -> u32 {
+        let size = sim.box / vec2f(sim.grid);
+        let c = min(vec2u(max(p, vec2f(0.0)) / size), sim.grid - vec2u(1u));
+        return c.y * sim.grid.x + c.x;
+      }
+
+      @compute @workgroup_size(64)
+      fn clearCells(@builtin(global_invocation_id) id: vec3u) {
+        if (id.x <= sim.cells) { atomicStore(&cellStart[id.x], 0u); }
+      }
+
+      @compute @workgroup_size(64)
+      fn assign(@builtin(global_invocation_id) id: vec3u) {
+        let i = id.x;
+        if (i >= sim.count) { return; }
+        let c = cellOf(positions[i]);
+        cellInfo[i] = vec2u(c, atomicAdd(&cellStart[c], 1u));
+      }
+
+      @compute @workgroup_size(1)
+      fn scan() {
+        var sum = 0u;
+        for (var c = 0u; c < sim.cells; c++) {
+          let n = atomicLoad(&cellStart[c]);
+          atomicStore(&cellStart[c], sum);
+          sum += n;
+        }
+        atomicStore(&cellStart[sim.cells], sum);
+      }
+
+      @compute @workgroup_size(64)
+      fn scatter(@builtin(global_invocation_id) id: vec3u) {
+        let i = id.x;
+        if (i >= sim.count) { return; }
+        sorted[atomicLoad(&cellStart[cellInfo[i].x]) + cellInfo[i].y] = i;
+      }
+
+      @compute @workgroup_size(64)
+      fn forces(@builtin(global_invocation_id) id: vec3u) {
+        let i = id.x;
+        if (i >= sim.count) { return; }
+        let here = positions[i];
+        let cell = cellInfo[i].x;
+        let cx = i32(cell % sim.grid.x);
+        let cy = i32(cell / sim.grid.x);
+        let gx = i32(sim.grid.x);
+        let gy = i32(sim.grid.y);
+
+        var a = vec2f(0.0);
+        var near = 0.0;
+        for (var oy = -1; oy <= 1; oy++) {
+          // The box is not periodic vertically: no cell above the ceiling or
+          // below the floor
+          let ny = cy + oy;
+          if (ny < 0 || ny >= gy) { continue; }
+          for (var ox = -1; ox <= 1; ox++) {
+            let nx = (cx + ox + gx) % gx; // sideways it wraps round
+            let c = u32(ny) * sim.grid.x + u32(nx);
+            let end = atomicLoad(&cellStart[c + 1u]);
+            for (var k = atomicLoad(&cellStart[c]); k < end; k++) {
+              let j = sorted[k];
+              if (j == i) { continue; }
+              var d = here - positions[j];
+              d.x -= sim.box.x * round(d.x / sim.box.x); // minimum image, sideways only
+              let r2 = dot(d, d);
+              if (r2 < RC2) {
+                let s2 = 1.0 / r2;   // (sigma / r)^2
+                let s6 = s2 * s2 * s2;
+                a += d * (24.0 * s2 * s6 * (2.0 * s6 - 1.0));
+              }
+              if (r2 < SHELL2) { near += 1.0; }
+            }
+          }
+        }
+        accelerations[i] = a;
+        neighbours[i] = near;
+      }
+
+      @compute @workgroup_size(64)
+      fn integrate(@builtin(global_invocation_id) id: vec3u) {
+        let i = id.x;
+        if (i >= sim.count) { return; }
+
+        // Leapfrog: kick the velocity, gravity included...
+        var v = velocities[i] + (accelerations[i] - vec2f(0.0, sim.gravity)) * DT;
+
+        // ...thermostat, but only in the thin hot layer at the floor and the deep cold
+        // region under the ceiling. The bulk is left alone, so heat has to cross it.
+        let y = positions[i].y;
+        var state = rng[i];
+        if (y < FLOOR_LAYER) {
+          v = v * DECAY + sim.floorNoise * gaussian2(&state);
+        } else if (y > sim.box.y - sim.ceilingLayer) {
+          v = v * DECAY + sim.ceilingNoise * gaussian2(&state);
+        }
+        rng[i] = state;
+
+        // ...then drift, wrapping sideways and bouncing off the floor and ceiling
+        var p = positions[i] + v * DT;
+        p.x -= sim.box.x * floor(p.x / sim.box.x);
+        if (p.y < WALL) { p.y = 2.0 * WALL - p.y; v.y = -v.y; }
+        if (p.y > sim.box.y - WALL) { p.y = 2.0 * (sim.box.y - WALL) - p.y; v.y = -v.y; }
+        p.y = clamp(p.y, WALL, sim.box.y - WALL);
+
+        velocities[i] = v;
+        positions[i] = p;
+      }
+    `,
+  });
+
+  // A bind group layout shared by every kernel
+  const layoutEntries = [0, 1, 2, 3, 5, 6, 7, 8].map((binding) => ({
+    binding,
+    visibility: GPUShaderStage.COMPUTE,
+    buffer: { type: "storage" },
+  }));
+  layoutEntries.push({
+    binding: 4,
+    visibility: GPUShaderStage.COMPUTE,
+    buffer: { type: "uniform" },
+  });
+  const bindGroupLayout = device.createBindGroupLayout({ entries: layoutEntries });
+  const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
+  const pipelines = Object.fromEntries(
+    ["clearCells", "assign", "scan", "scatter", "forces", "integrate"].map((entryPoint) => [
+      entryPoint,
+      device.createComputePipeline({ layout: pipelineLayout, compute: { module, entryPoint } }),
+    ])
+  );
+
+  // ------------------------------------------------------------------- the atoms
+  // A slab of liquid on the floor: a triangular lattice, 295 atoms across and 68
+  // rows, about 20,000 atoms. At spacing 1.22 its density is 0.77, about that of the liquid at these
+  // temperatures (a tighter lattice would be a solid that never melts), and the
+  // extra kinetic energy it starts with goes into melting it. The rest of the box
+  // is empty and fills with vapour.
+  const slab = md.triangularLattice({
+    nx: 295,
+    ny: 68,
+    spacing: 1.22,
+    temperature: 0.6,
+  });
+  const positions = slab.positions;
+  for (let i = 0; i < positions.length; i += 2) {
+    positions[i + 1] += wall + 0.5; // sit on the floor, not in it
+  }
+  const velocities = slab.velocities;
+  const count = positions.length / 2;
+
+  const grid = [Math.floor(Lx / cutoff), Math.floor(Ly / cutoff)];
+  const cells = grid[0] * grid[1];
+
+  const seeds = new Uint32Array(count);
+  for (let k = 0; k < count; k += 8192) {
+    crypto.getRandomValues(seeds.subarray(k, Math.min(count, k + 8192)));
+  }
+
+  const buffers = {
+    positions: gpu.storageBuffer(device, positions),
+    velocities: gpu.storageBuffer(device, velocities),
+    accelerations: gpu.storageBuffer(device, new Float32Array(count * 2)),
+    rng: gpu.storageBuffer(device, seeds),
+    neighbours: gpu.storageBuffer(device, new Float32Array(count)),
+    cellStart: gpu.storageBuffer(device, new Uint32Array(cells + 1)),
+    cellInfo: gpu.storageBuffer(device, new Uint32Array(count * 2)),
+    sorted: gpu.storageBuffer(device, new Uint32Array(count)),
+    sim: device.createBuffer({
+      size: 48,
+      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+    }),
+  };
+  const bindGroup = device.createBindGroup({
+    layout: bindGroupLayout,
+    entries: [
+      { binding: 0, resource: { buffer: buffers.positions } },
+      { binding: 1, resource: { buffer: buffers.velocities } },
+      { binding: 2, resource: { buffer: buffers.accelerations } },
+      { binding: 3, resource: { buffer: buffers.rng } },
+      { binding: 4, resource: { buffer: buffers.sim } },
+      { binding: 5, resource: { buffer: buffers.neighbours } },
+      { binding: 6, resource: { buffer: buffers.cellStart } },
+      { binding: 7, resource: { buffer: buffers.cellInfo } },
+      { binding: 8, resource: { buffer: buffers.sorted } },
+    ],
+  });
+
+  // The uniform: box, grid, counts, then the live numbers
+  const simBytes = new ArrayBuffer(48);
+  const simView = new DataView(simBytes);
+  simView.setFloat32(0, Lx, true);
+  simView.setFloat32(4, Ly, true);
+  simView.setUint32(8, grid[0], true);
+  simView.setUint32(12, grid[1], true);
+  simView.setUint32(16, count, true);
+  simView.setUint32(20, cells, true);
+
+  // The thermostat's kick size for a target temperature T is sqrt(T (1 - decay^2))
+  const kick = (T) => Math.sqrt(T * (1 - decay * decay));
+
+  // ------------------------------------------------------------------ rendering
+  const box = [Lx, Ly];
+  const phaseDiscs = md.discs(device, {
+    format,
+    positionBuffer: buffers.positions,
+    box,
+    colour: {
+      buffer: buffers.neighbours,
+      range: [0, 5],
+      low: [0.3, 0.45, 0.85],
+      high: [1.0, 0.78, 0.42],
+    },
+  });
+  const speedDiscs = md.discs(device, {
+    format,
+    positionBuffer: buffers.positions,
+    velocityBuffer: buffers.velocities,
+    box,
+  });
+
+  // ---------------------------------------------------- floor and ceiling markers
+  // A transparent 2D canvas over the simulation marks the two thermostatted layers:
+  // a bar along the floor and the ceiling, coloured by its temperature (blue cold to
+  // red hot), a dashed line where the layer ends, and a label.
+  const overlay = document.createElement("canvas");
+  overlay.className = "mf-trail";
+  const overlayContext = overlay.getContext("2d");
+
+  // Cold blue to hot red, from below the triple point (about 0.4) to above the
+  // critical point (about 0.5), so floor and roof look clearly different
+  function temperatureColour(T) {
+    const t = Math.min(1, Math.max(0, (T - 0.3) / 0.3));
+    const cold = [80, 130, 235];
+    const hot = [255, 72, 52];
+    return cold.map((c, k) => Math.round(c + t * (hot[k] - c)));
+  }
+
+  function drawLimits() {
+    const dpr = window.devicePixelRatio || 1;
+    const w = Math.round(canvas.clientWidth * dpr);
+    const h = Math.round(canvas.clientHeight * dpr);
+    if (overlay.width !== w || overlay.height !== h) {
+      overlay.width = w;
+      overlay.height = h;
+    }
+    const ctx = overlayContext;
+    ctx.clearRect(0, 0, w, h);
+    const perSigma = h / Ly;
+    const bar = 4 * dpr;
+    ctx.font = `${11 * dpr}px ui-monospace, Menlo, monospace`;
+    ctx.textBaseline = "middle";
+
+    const mark = (T, edge, label, depth) => {
+      const [r, g, b] = temperatureColour(T);
+      const solid = `rgb(${r}, ${g}, ${b})`;
+      const floorSide = edge === "floor";
+      const barY = floorSide ? h - bar : 0; // the wall is the edge of the canvas
+      const layerY = floorSide ? h - depth * perSigma : depth * perSigma;
+
+      // The thermostatted region, lightly shaded, and a bar along its wall
+      ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.10)`;
+      if (floorSide) ctx.fillRect(0, layerY, w, h - layerY);
+      else ctx.fillRect(0, 0, w, layerY);
+      ctx.fillStyle = solid;
+      ctx.fillRect(0, barY, w, bar);
+
+      ctx.save();
+      ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, 0.7)`;
+      ctx.lineWidth = dpr;
+      ctx.setLineDash([6 * dpr, 6 * dpr]);
+      ctx.beginPath();
+      ctx.moveTo(0, layerY);
+      ctx.lineTo(w, layerY);
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.fillStyle = solid;
+      ctx.fillText(
+        `${label} ${T.toFixed(2)}`,
+        8 * dpr,
+        floorSide ? layerY - 9 * dpr : layerY + 9 * dpr
+      );
+    };
+
+    mark(floorInput.value, "floor", "floor temp", floorLayer);
+    mark(ceilingInput.value, "ceiling", "roof temp", depthInput.value);
+  }
+
+  // --------------------------------------------------------------------- charts
+  const [densityHost, temperatureHost] = charts.children;
+  const draw = ui.plotter(Plot);
+  const bins = 73; // height bins, 2 sigma tall
+  const binHeight = Ly / bins;
+  const density = new Float32Array(bins); // atoms per sigma^2, smoothed over samples
+  const temperature = new Float32Array(bins); // mean kinetic energy per atom, ditto
+
+  const readback = gpu.readback(device, [
+    { buffer: buffers.positions, bytes: count * 8 },
+    { buffer: buffers.velocities, bytes: count * 8 },
+  ]);
+  const sampleEvery = 30; // read back every this many frames
+  let frameCount = 0;
+
+  function drawCharts(g) {
+    // The vapour: bins above the surface of the pool, where the density has fallen
+    // below 0.05. The barometric profile is anchored at the first of them and runs
+    // at the vapour's own temperature, so it is a prediction, not a fit.
+    let surface = -1;
+    for (let k = bins - 1; k >= 0; k--) {
+      if (density[k] > 0.3) {
+        surface = k;
+        break;
+      }
+    }
+    const rows = [];
+    for (let k = 0; k < bins; k++) {
+      if (density[k] > 0) rows.push({ y: (k + 0.5) * binHeight, n: density[k] });
+    }
+
+    const curve = [];
+    if (surface >= 0 && surface < bins - 8 && density[surface + 2] > 0) {
+      const first = surface + 2;
+      let sum = 0;
+      let used = 0;
+      for (let k = first; k < bins; k++) {
+        if (density[k] > 0) {
+          sum += temperature[k];
+          used++;
+        }
+      }
+      const T = used ? sum / used : 0.5;
+      const yRef = (first + 0.5) * binHeight;
+      for (let k = first; k < bins; k++) {
+        const y = (k + 0.5) * binHeight;
+        curve.push({ y, n: density[first] * Math.exp((-g * (y - yRef)) / T) });
+      }
+    }
+
+    draw(densityHost, {
+      x: { label: "density (atoms per area)", type: "log", domain: [0.0005, 1.5], grid: true },
+      y: { label: "height", domain: [0, Ly] },
+      marks: [
+        Plot.line(rows, { x: "n", y: "y", stroke: "#5a80cc" }),
+        Plot.line(curve, { x: "n", y: "y", stroke: "currentColor", strokeDasharray: "4 3" }),
+      ],
+    });
+
+    // A bin with only a few atoms has a meaningless mean, so leave those out
+    const temps = [];
+    for (let k = 0; k < bins; k++) {
+      if (density[k] * Lx * binHeight >= 10) {
+        temps.push({ y: (k + 0.5) * binHeight, T: temperature[k] });
+      }
+    }
+    draw(temperatureHost, {
+      x: { label: "temperature", domain: [0, 1.6], grid: true },
+      y: { label: "height", domain: [0, Ly] },
+      marks: [Plot.line(temps, { x: "T", y: "y", stroke: "#FF4834" })],
+    });
+  }
+
+  function record(buffer) {
+    const data = new Float32Array(buffer);
+    const vel = data.subarray(count * 2);
+    const counts = new Float32Array(bins);
+    const energy = new Float32Array(bins);
+    for (let i = 0; i < count; i++) {
+      const k = Math.min(bins - 1, Math.max(0, Math.floor(data[2 * i + 1] / binHeight)));
+      counts[k]++;
+      energy[k] += 0.5 * (vel[2 * i] ** 2 + vel[2 * i + 1] ** 2);
+    }
+    for (let k = 0; k < bins; k++) {
+      const n = counts[k] / (Lx * binHeight);
+      const T = counts[k] > 0 ? energy[k] / counts[k] : 0;
+      density[k] = density[k] === 0 ? n : 0.8 * density[k] + 0.2 * n;
+      temperature[k] = temperature[k] === 0 ? T : 0.8 * temperature[k] + 0.2 * T;
+    }
+    drawCharts(gravityInput.value);
+  }
+
+  // ------------------------------------------------------------------- the frame
+  const atomGroups = Math.ceil(count / 64);
+  const cellGroups = Math.ceil((cells + 1) / 64);
+  const readout = ui.readout();
+  let lastFrame = performance.now();
+  let stepsPerSecond = 0;
+
+  function frame() {
+    const now = performance.now();
+    const elapsed = now - lastFrame;
+    lastFrame = now;
+    if (elapsed > 0) {
+      const instant = (stepsPerFrame * 1000) / elapsed;
+      stepsPerSecond = stepsPerSecond ? 0.9 * stepsPerSecond + 0.1 * instant : instant;
+    }
+    if (frameCount % 15 === 0) {
+      readout.textContent =
+        `${count.toLocaleString()} atoms · ${Math.round(stepsPerSecond)} steps per second`;
+    }
+
+    drawLimits();
+
+    simView.setFloat32(24, kick(floorInput.value), true);
+    simView.setFloat32(28, kick(ceilingInput.value), true);
+    simView.setFloat32(32, gravityInput.value, true);
+    simView.setFloat32(36, depthInput.value, true);
+    device.queue.writeBuffer(buffers.sim, 0, simBytes);
+
+    const encoder = device.createCommandEncoder();
+    const compute = encoder.beginComputePass();
+    compute.setBindGroup(0, bindGroup);
+    for (let s = 0; s < stepsPerFrame; s++) {
+      // Build the cell lists, then the forces, then move the atoms
+      compute.setPipeline(pipelines.clearCells);
+      compute.dispatchWorkgroups(cellGroups);
+      compute.setPipeline(pipelines.assign);
+      compute.dispatchWorkgroups(atomGroups);
+      compute.setPipeline(pipelines.scan);
+      compute.dispatchWorkgroups(1);
+      compute.setPipeline(pipelines.scatter);
+      compute.dispatchWorkgroups(atomGroups);
+      compute.setPipeline(pipelines.forces);
+      compute.dispatchWorkgroups(atomGroups);
+      compute.setPipeline(pipelines.integrate);
+      compute.dispatchWorkgroups(atomGroups);
+    }
+    compute.end();
+
+    const pass = gpu.beginRenderPass(encoder, context);
+    (phaseInput.value ? phaseDiscs : speedDiscs).draw(pass, count);
+    pass.end();
+
+    const sample = !readback.pending && ++frameCount % sampleEvery === 0;
+    if (sample) readback.copy(encoder);
+    device.queue.submit([encoder.finish()]);
+    if (sample) readback.read(record);
+  }
+
+  gpu.run(invalidation, device, frame);
+
+  // The canvas, with the floor and ceiling markers over it and the controls on top
+  const stage = ui.stage(canvas, [
+    gravityInput,
+    floorInput,
+    ceilingInput,
+    depthInput,
+    phaseInput,
+    readout,
+  ]);
+  stage.append(overlay);
+  yield stage;
+}
+```
+
+```{ojs}
+//| echo: false
+//| column: page
+charts = {
+  // Two empty hosts; the simulation cell above draws into them as data arrives
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.chartHosts(["density", "temperature"]);
+}
+```
+
+::: {.mf-series-bar}
+Moving Figures
+
+:::{#mf-series}
+:::
+:::
