@@ -141,18 +141,19 @@ viewof byPhase = {
   const depthInput = viewof coldDepth;
   const phaseInput = viewof byPhase;
 
-  const { canvas, device, context, format } = await gpu.setup({
-    width: 640,
-    height: 360,
-    resolution: "auto",
-  });
-
   // Reduced units: sigma = epsilon = mass = k_B = 1. The box is periodic sideways
   // and has a floor and a ceiling. 260 x 112.5 sigma: 104 x 45 cells of the force
   // range. Not too tall: the vapour thins out exponentially with height, so the
   // ceiling needs to be within a couple of scale heights of the pool.
   const Lx = 260;
   const Ly = 112.5;
+
+  // The canvas has the box's own aspect ratio, so an atom is round on the screen
+  const { canvas, device, context, format } = await gpu.setup({
+    width: 640,
+    height: Math.round((640 * Ly) / Lx),
+    resolution: "auto",
+  });
   const dt = 0.005;
   const stepsPerFrame = 30; // a water cycle takes hundreds of time units
   const friction = 0.5; // thermostat coupling, applied to the two layers only
