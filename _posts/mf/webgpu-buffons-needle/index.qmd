@@ -1,5 +1,5 @@
 ---
-title: "013: Dropping Needles"
+title: "013: Dropping Sticks Again"
 date: "2026-10-13"
 categories: [mf]
 page-layout: article
