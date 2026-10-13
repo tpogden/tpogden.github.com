@@ -115,22 +115,6 @@ viewof coldDepth = {
 ```{ojs}
 //| echo: false
 //| output: false
-viewof speed = {
-  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
-  return ui.slider({
-    label: "Speed",
-    min: 5,
-    max: 150,
-    step: 5,
-    value: 50,
-    format: (v) => `${v.toFixed(0)} steps`,
-  });
-}
-```
-
-```{ojs}
-//| echo: false
-//| output: false
 viewof byPhase = {
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
   return ui.toggle({
@@ -157,7 +141,6 @@ viewof byPhase = {
   const floorInput = viewof floorTemperature;
   const ceilingInput = viewof ceilingTemperature;
   const depthInput = viewof coldDepth;
-  const speedInput = viewof speed;
   const phaseInput = viewof byPhase;
 
   // Reduced units: sigma = epsilon = mass = k_B = 1. The box is periodic sideways
@@ -174,8 +157,9 @@ viewof byPhase = {
     resolution: "auto",
   });
   const dt = 0.005;
-  // A water cycle takes hundreds of time units, so the Speed control is simulation
-  // steps per frame; how many a GPU can do at 60 frames per second varies a lot.
+  // A water cycle takes hundreds of time units, so many steps per frame; more than
+  // this and the picture judders, because the frames get uneven.
+  const stepsPerFrame = 30;
   const friction = 0.5; // thermostat coupling, applied to the two layers only
   const decay = Math.exp(-friction * dt);
   const cutoff = 2.5; // force range in sigma, which is also the cell size
@@ -608,7 +592,6 @@ viewof byPhase = {
     const now = performance.now();
     const elapsed = now - lastFrame;
     lastFrame = now;
-    const stepsPerFrame = speedInput.value;
     if (elapsed > 0) {
       const instant = (stepsPerFrame * 1000) / elapsed;
       stepsPerSecond = stepsPerSecond ? 0.9 * stepsPerSecond + 0.1 * instant : instant;
@@ -664,7 +647,6 @@ viewof byPhase = {
     floorInput,
     ceilingInput,
     depthInput,
-    speedInput,
     phaseInput,
     readout,
   ]);
