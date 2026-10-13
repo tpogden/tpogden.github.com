@@ -58,6 +58,8 @@ categories: [research]   # one of: research, mf, reading, travel, personal
 
 An optional `assets/` subdirectory holds images and data files. After adding a post, run `quarto preview` or `quarto render` — the pre-render script will create the shadow dir and wire it into the listings automatically.
 
+Optional `recommended: true` frontmatter adds a star (`.star`) after the title in the homepage listings, via the custom listing template `_templates/listing.ejs.md`. It replaces the default listing markup, so it only renders the title (no date/image fields).
+
 ## Shared JavaScript in `{ojs}` cells
 
 Shared modules live in `lib/` (top-level, non-underscore, so Quarto copies it into `_site/` as-is; underscore-prefixed dirs are ignored). `lib/gpu.js` holds the WebGPU setup, buffer helpers and animation loop used by the Moving Figures posts. Import a module from a cell with a dynamic import resolved against the page URL:

@@ -7,7 +7,8 @@ listing:
     categories: false
     include:
       categories: "research"
-    fields: [title]
+    fields: [title, recommended]
+    template: _templates/listing.ejs.md
     sort: "date desc"
   - id: mf-listing
     contents: "*/index.qmd"
@@ -15,7 +16,8 @@ listing:
     categories: false
     include:
       categories: "mf"
-    fields: [title]
+    fields: [title, recommended]
+    template: _templates/listing.ejs.md
     sort: "title desc"
   - id: books-listing
     contents: "*/index.qmd"
@@ -23,7 +25,8 @@ listing:
     categories: false
     include:
       categories: "reading"
-    fields: [title]
+    fields: [title, recommended]
+    template: _templates/listing.ejs.md
     sort: "date desc"
   - id: travel-listing
     contents: "*/index.qmd"
@@ -31,7 +34,8 @@ listing:
     categories: false
     include:
       categories: "travel"
-    fields: [title]
+    fields: [title, recommended]
+    template: _templates/listing.ejs.md
     sort: "date desc"
   - id: personal-listing
     contents: "*/index.qmd"
@@ -39,7 +43,8 @@ listing:
     categories: false
     include:
       categories: "personal"
-    fields: [title]
+    fields: [title, recommended]
+    template: _templates/listing.ejs.md
     sort: "date desc"
 title-block-banner: false
 ---
