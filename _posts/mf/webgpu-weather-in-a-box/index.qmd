@@ -30,9 +30,13 @@ heavy enough fall back. It is a water cycle in miniature, with nothing in it but
 atoms, gravity and two temperatures. How far the clustering gets depends on the
 roof's temperature and depth and on gravity, and the controls let you push on each.
 The coloured bars mark the two thermostatted layers, labelled with their
-temperatures, and the dashed lines show where each layer ends. Colour by phase
-shows each atom's neighbours: atoms in the liquid have many, atoms in the vapour
-almost none, and a cluster is a few blue atoms turning warm together.
+temperatures, and the dashed lines show where each layer ends. There are three
+ways to colour the atoms. Phase shows each atom's neighbours: atoms in the liquid
+have many, atoms in the vapour almost none, and a cluster is a few blue atoms turning
+warm together. Angle shows which way each atom's bonds point, the orientation of its
+lattice, so where the roof freezes whatever reaches it, crystals appear as patches
+of a single colour, each its own hue where it is turned differently, with the
+disordered atoms between them grey. Speed is the usual temperature picture.
 
 This is the same Lennard-Jones fluid as before, in reduced units, so the numbers are
 not water's. What carries over is the qualitative picture, and it lives around two
@@ -119,12 +123,16 @@ viewof coldDepth = {
 ```{ojs}
 //| echo: false
 //| output: false
-viewof byPhase = {
+viewof colouring = {
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
-  return ui.toggle({
+  return ui.segmented({
     label: "Colour by",
-    value: true,
-    format: (on) => (on ? "phase" : "speed"),
+    options: [
+      ["phase", "phase"],
+      ["orientation", "angle"], // the lattice direction; short enough for the button
+      ["speed", "speed"],
+    ],
+    value: "phase",
   });
 }
 ```
@@ -145,7 +153,7 @@ viewof byPhase = {
   const floorInput = viewof floorTemperature;
   const ceilingInput = viewof ceilingTemperature;
   const depthInput = viewof coldDepth;
-  const phaseInput = viewof byPhase;
+  const colourInput = viewof colouring;
 
   // Reduced units: sigma = epsilon = mass = k_B = 1. The box is periodic sideways
   // and has a floor and a ceiling. 360 x 155 sigma: 144 x 62 cells of the force
@@ -176,6 +184,7 @@ viewof byPhase = {
       const DT = ${dt};
       const RC2 = ${cutoff * cutoff};  // force cutoff, squared
       const SHELL2 = 1.96;             // first neighbour shell, 1.4 sigma, squared
+      const TAU = 6.2831853;
       const DECAY = ${decay};          // thermostat: velocity kept each step
       const WALL = ${wall};
       const FLOOR_LAYER = ${floorLayer};
@@ -196,9 +205,10 @@ viewof byPhase = {
       @group(0) @binding(2) var<storage, read_write> accelerations: array<vec2f>;
       @group(0) @binding(3) var<storage, read_write> rng: array<u32>;
       @group(0) @binding(4) var<uniform> sim: Sim;
-      // How many neighbours each atom has within 1.4 sigma: a liquid atom has many,
-      // an atom in a vapour has almost none
-      @group(0) @binding(5) var<storage, read_write> neighbours: array<f32>;
+      // Per atom: x = how many neighbours it has within 1.4 sigma (a liquid atom has
+      // many, an atom in a vapour almost none), y = bond-orientational order |psi6|,
+      // z = the angle of its bonds, 0 to 1. One vec4 so it takes one storage binding.
+      @group(0) @binding(5) var<storage, read_write> fields: array<vec4f>;
       // Cell lists, as in the previous post
       @group(0) @binding(6) var<storage, read_write> cellStart: array<atomic<u32>>;
       @group(0) @binding(7) var<storage, read_write> cellInfo: array<vec2u>; // cell, rank
@@ -256,6 +266,7 @@ viewof byPhase = {
 
         var a = vec2f(0.0);
         var near = 0.0;
+        var bond = vec2f(0.0); // sum of e^(6 i theta) over the first shell
         for (var oy = -1; oy <= 1; oy++) {
           // The box is not periodic vertically: no cell above the ceiling or
           // below the floor
@@ -276,12 +287,23 @@ viewof byPhase = {
                 let s6 = s2 * s2 * s2;
                 a += d * (24.0 * s2 * s6 * (2.0 * s6 - 1.0));
               }
-              if (r2 < SHELL2) { near += 1.0; }
+              if (r2 < SHELL2) {
+                near += 1.0;
+                let theta = atan2(d.y, d.x);
+                bond += vec2f(cos(6.0 * theta), sin(6.0 * theta));
+              }
             }
           }
         }
         accelerations[i] = a;
-        neighbours[i] = near;
+        // An atom needs a real neighbourhood to count as ordered
+        var order = 0.0;
+        var angle = 0.5;
+        if (near >= 4.0) {
+          order = length(bond) / near;
+          angle = atan2(bond.y, bond.x) / TAU + 0.5;
+        }
+        fields[i] = vec4f(near, order, angle, 0.0);
       }
 
       @compute @workgroup_size(64)
@@ -368,7 +390,7 @@ viewof byPhase = {
     velocities: gpu.storageBuffer(device, velocities),
     accelerations: gpu.storageBuffer(device, new Float32Array(count * 2)),
     rng: gpu.storageBuffer(device, seeds),
-    neighbours: gpu.storageBuffer(device, new Float32Array(count)),
+    fields: gpu.storageBuffer(device, new Float32Array(count * 4)),
     cellStart: gpu.storageBuffer(device, new Uint32Array(cells + 1)),
     cellInfo: gpu.storageBuffer(device, new Uint32Array(count * 2)),
     sorted: gpu.storageBuffer(device, new Uint32Array(count)),
@@ -385,7 +407,7 @@ viewof byPhase = {
       { binding: 2, resource: { buffer: buffers.accelerations } },
       { binding: 3, resource: { buffer: buffers.rng } },
       { binding: 4, resource: { buffer: buffers.sim } },
-      { binding: 5, resource: { buffer: buffers.neighbours } },
+      { binding: 5, resource: { buffer: buffers.fields } },
       { binding: 6, resource: { buffer: buffers.cellStart } },
       { binding: 7, resource: { buffer: buffers.cellInfo } },
       { binding: 8, resource: { buffer: buffers.sorted } },
@@ -412,10 +434,23 @@ viewof byPhase = {
     positionBuffer: buffers.positions,
     box,
     colour: {
-      buffer: buffers.neighbours,
+      buffer: buffers.fields,
+      layout: "vec4",
+      component: 0, // the neighbour count
       range: [0, 5],
       low: [0.3, 0.45, 0.85],
       high: [1.0, 0.78, 0.42],
+    },
+  });
+  const orientationDiscs = md.discs(device, {
+    format,
+    positionBuffer: buffers.positions,
+    box,
+    colour: {
+      buffer: buffers.fields,
+      mode: "orientation",
+      layout: "vec4",
+      components: [1, 2], // order, angle
     },
   });
   const speedDiscs = md.discs(device, {
@@ -634,7 +669,8 @@ viewof byPhase = {
     compute.end();
 
     const pass = gpu.beginRenderPass(encoder, context);
-    (phaseInput.value ? phaseDiscs : speedDiscs).draw(pass, count);
+    const discs = { phase: phaseDiscs, orientation: orientationDiscs, speed: speedDiscs };
+    discs[colourInput.value].draw(pass, count);
     pass.end();
 
     const sample = !readback.pending && ++frameCount % sampleEvery === 0;
@@ -651,7 +687,7 @@ viewof byPhase = {
     floorInput,
     ceilingInput,
     depthInput,
-    phaseInput,
+    colourInput,
     readout,
   ]);
   stage.append(overlay);
