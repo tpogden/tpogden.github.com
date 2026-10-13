@@ -75,6 +75,8 @@ The `../` is relative to the page (`/slug/`), which is also how it works from th
 
 - Quarto skips project files under a hidden path component, so a full `quarto render` or `quarto preview` inside `.claude/worktrees/...` produces no output (single-file renders still work, but without listings). Build from a normal checkout, or from a copy outside `.claude/`.
 - A single-file `quarto render slug/index.qmd` does not populate listings; use a full-site build to check layout that depends on them.
+- The simulations pause while the page is hidden (`gpu.run` in `lib/gpu.js` runs no frames and schedules none when `document.hidden`; `visibilitychange` resumes it), so a GPU-heavy post does not keep working in a background tab. An embedded or off-screen browser view reports `document.hidden === true`, so a simulation loaded there will not run. To test one anyway, override it and fire the event: `Object.defineProperty(document, 'hidden', {configurable: true, get: () => false}); document.dispatchEvent(new Event('visibilitychange'))`.
+- The browser caches `lib/*.js` between local builds. After changing one, force a refresh (`fetch(url, {cache: 'reload'})`, or a hard reload) before concluding the change did not work.
 
 ## Styling
 

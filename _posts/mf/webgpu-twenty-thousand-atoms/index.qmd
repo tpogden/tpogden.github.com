@@ -653,7 +653,8 @@ viewof byOrientation = {
     const now = performance.now();
     const elapsed = now - lastFrame;
     lastFrame = now;
-    if (elapsed > 0) {
+    // A long gap is a pause (the page was hidden), not a slow frame
+    if (elapsed > 0 && elapsed < 500) {
       const instant = (stepsPerFrame * 1000) / elapsed;
       // A smoothed rate; the first frame after a pause starts it afresh
       stepsPerSecond = stepsPerSecond ? 0.9 * stepsPerSecond + 0.1 * instant : instant;
