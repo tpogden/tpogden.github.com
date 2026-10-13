@@ -1,0 +1,591 @@
+---
+title: "013: Dropping Sticks Again"
+date: "2026-10-13"
+categories: [mf]
+page-layout: article
+listing:
+  - id: mf-series
+    contents: "../*/index.qmd"
+    type: default
+    categories: false
+    include:
+      categories: "mf"
+    fields: [title]
+    sort: "title asc"
+---
+
+One of the first things I ever put on the web, in 2011, was a [page that estimates
+π by dropping sticks](https://ogden.eu/pi). You clicked, a hundred sticks fell on a
+board of parallel lines, and the page counted how many landed across a line. This is
+the same experiment with a graphics card to do the dropping.
+
+It is [Buffon's needle](https://en.wikipedia.org/wiki/Buffon%27s_needle_problem),
+from 1777. Drop a needle of length $\ell$ on a floor ruled with parallel lines a
+distance $d$ apart. If $\ell \le d$ it crosses a line with probability
+
+$$p = \frac{2\ell}{\pi d},$$
+
+so the fraction of $N$ needles that cross, $n/N$, estimates $p$, and
+
+$$\pi \approx \frac{2\ell}{d}\,\frac{N}{n}.$$
+
+Nothing about a circle goes in, and π comes out, because a needle that lands at a
+random angle is a circle of directions in disguise.
+
+The slider is the number of needles dropped per second, up to a hundred million, on
+a scale that goes up by a factor of ten a step. The board shows the latest needles, which fade
+out after a second or two; the millions that have gone before are only counted. The left chart is the
+estimate as the needles pile up, with the shaded band the size of a typical error.
+The right chart is the size of the error itself, against the dashed line a random
+process of this kind is expected to follow. **Start over** clears the count, and
+changing the needle length does too, since an estimate made with one length means
+nothing for another.
+
+Each needle lands at a random place with a random direction. The direction is the
+part that is easy to get wrong: drawing the angle uniformly from 0 to π uses the very
+number we are trying to find. Instead each needle's direction is a random point in
+the unit square, thrown away if it falls outside the unit circle, and only its
+direction is used. That is uniform in angle without ever writing down π.
+
+The error shrinks as $1/\sqrt{N}$, which is slow: a hundred times more needles buys
+one more digit. A graphics card does not change that, only how soon you get there.
+That is the dashed line on the right, and the red dots wander about it.
+
+The needle length matters too. A short needle crosses a line less often, so π is
+read off a smaller count: a needle half the spacing long needs about four times as
+many drops as one the full spacing long for the same precision. Switching the length
+moves the band and the dashed line to match.
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof rate = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.slider({
+    label: "Needles/s",
+    min: 0,
+    max: 8,
+    step: 1,
+    value: 4,
+    format: (v) => `10^${v}`, // short: a long label squeezes the slider
+  });
+}
+```
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof needle = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.segmented({
+    label: "Needle length",
+    options: [
+      [0.5, "½"],
+      [1, "1"],
+    ],
+    value: 1,
+  });
+}
+```
+
+```{ojs}
+//| column: screen-inset
+//| code-fold: true
+//| code-summary: "Show code"
+{
+  // Shared WebGPU boilerplate: setup, buffers and the animation loop (lib/gpu.js)
+  const gpu = await import(new URL("../lib/gpu.js", document.baseURI).href);
+  const md = await import(new URL("../lib/md.js", document.baseURI).href);
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+
+  // Controls are read live from their elements (referencing `viewof x` gives the
+  // element, not the value), so moving them does not restart this cell.
+  const rateInput = viewof rate; // log10 of needles per second
+  const lengthInput = viewof needle; // needle length in line spacings
+  // Lines are one unit apart, so the length is in units of the spacing d
+  const spacing = 1;
+
+  const { canvas, device, context, format } = await gpu.setup({
+    width: 640,
+    height: 360,
+    resolution: "auto",
+  });
+
+  const board = [12, 6.75]; // line spacings across and down: 16:9 like the canvas
+  const ringSize = 4096; // the most recent needles kept for drawing
+  const maxThreads = 1 << 20;
+  const maxDrawnPerFrame = 256;
+  const lifetime = 1.5; // seconds for a needle on the board to fade away
+  const groupSize = 256;
+
+  // ---------------------------------------------------------------- the dropping
+  const dropModule = device.createShaderModule({
+    code: `
+      const BOARD = vec2f(${board[0]}, ${board[1]});
+      const RING = ${ringSize}u;
+
+      struct Params {
+        length: f32,      // needle length, in line spacings
+        scale: f32,       // pixels per line spacing (for drawing)
+        perThread: u32,   // needles every thread drops this frame
+        head: u32,        // ring slot of the first needle recorded this frame
+        drawn: u32,       // threads that record their first needle for drawing
+        threads: u32,     // threads that drop at all
+        now: f32,         // seconds on the animation clock
+      }
+
+      @group(0) @binding(0) var<uniform> params: Params;
+      @group(0) @binding(1) var<storage, read_write> rng: array<u32>;
+      // Running totals: needles dropped, needles that crossed a line
+      @group(0) @binding(2) var<storage, read_write> totals: array<atomic<u32>, 2>;
+      // The most recent needles: x, y, cos, sin of the angle
+      @group(0) @binding(3) var<storage, read_write> ring: array<vec4f>;
+      // When each of those needles landed, for fading them out
+      @group(0) @binding(4) var<storage, read_write> born: array<f32>;
+
+      ${md.rngWGSL}
+
+      // A uniform number in [0, 1)
+      fn rand(state: ptr<function, u32>) -> f32 {
+        return f32(pcg(state) >> 8u) * (1.0 / 16777216.0);
+      }
+
+      var<workgroup> thrown: array<u32, ${groupSize}>;
+      var<workgroup> crossing: array<u32, ${groupSize}>;
+
+      @compute @workgroup_size(${groupSize})
+      fn drop(
+        @builtin(global_invocation_id) id: vec3u,
+        @builtin(local_invocation_index) local: u32,
+      ) {
+        var nThrown = 0u;
+        var nCross = 0u;
+
+        if (id.x < params.threads) {
+          var state = rng[id.x];
+          for (var k = 0u; k < params.perThread; k++) {
+            // The needle's direction is a point in the unit disc, found by
+            // rejection: the angle is never computed, so no pi is needed.
+            var a = 0.0;
+            var b = 0.0;
+            var r2 = 0.0;
+            for (var tries = 0u; tries < 32u; tries++) {
+              a = 2.0 * rand(&state) - 1.0;
+              b = 2.0 * rand(&state) - 1.0;
+              r2 = a * a + b * b;
+              if (r2 > 0.0 && r2 <= 1.0) { break; }
+            }
+            let c = a * inverseSqrt(r2);
+            let s = b * inverseSqrt(r2);
+
+            // Where the middle of the needle lands; the lines are at whole numbers
+            let x = rand(&state) * BOARD.x;
+            let y = rand(&state) * BOARD.y;
+
+            // It crosses if the line is closer than half its width across
+            let hit = abs(x - round(x)) <= 0.5 * params.length * abs(c);
+            nThrown += 1u;
+            if (hit) { nCross += 1u; }
+
+            if (k == 0u && id.x < params.drawn) {
+              let slot = (params.head + id.x) % RING;
+              ring[slot] = vec4f(x, y, c, s);
+              born[slot] = params.now;
+            }
+          }
+          rng[id.x] = state;
+        }
+
+        // Add up the group's needles in shared memory, then one atomic each
+        thrown[local] = nThrown;
+        crossing[local] = nCross;
+        workgroupBarrier();
+        for (var stride = ${groupSize / 2}u; stride > 0u; stride >>= 1u) {
+          if (local < stride) {
+            thrown[local] += thrown[local + stride];
+            crossing[local] += crossing[local + stride];
+          }
+          workgroupBarrier();
+        }
+        if (local == 0u) {
+          atomicAdd(&totals[0], thrown[0]);
+          atomicAdd(&totals[1], crossing[0]);
+        }
+      }
+    `,
+  });
+  const dropPipeline = device.createComputePipeline({
+    layout: "auto",
+    compute: { module: dropModule, entryPoint: "drop" },
+  });
+
+  // ------------------------------------------------------------------- the atoms
+  const seeds = new Uint32Array(maxThreads);
+  for (let k = 0; k < maxThreads; k += 8192) {
+    crypto.getRandomValues(seeds.subarray(k, k + 8192)); // 64 KB at most a call
+  }
+  const emptyRing = new Float32Array(ringSize * 4).fill(-1000); // off the board
+  const emptyBorn = new Float32Array(ringSize).fill(-1000); // long ago: invisible
+  const buffers = {
+    rng: gpu.storageBuffer(device, seeds),
+    totals: gpu.storageBuffer(device, new Uint32Array(2)),
+    ring: gpu.storageBuffer(device, emptyRing),
+    born: gpu.storageBuffer(device, emptyBorn),
+    params: device.createBuffer({
+      size: 32,
+      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+    }),
+  };
+  const paramBytes = new ArrayBuffer(32);
+  const paramView = new DataView(paramBytes);
+
+  const dropBindGroup = device.createBindGroup({
+    layout: dropPipeline.getBindGroupLayout(0),
+    entries: [
+      { binding: 0, resource: { buffer: buffers.params } },
+      { binding: 1, resource: { buffer: buffers.rng } },
+      { binding: 2, resource: { buffer: buffers.totals } },
+      { binding: 3, resource: { buffer: buffers.ring } },
+      { binding: 4, resource: { buffer: buffers.born } },
+    ],
+  });
+
+  // --------------------------------------------------------------------- drawing
+  // Needles and lines are thin rectangles, one instance each, from one unit square
+  const cornerBuffer = gpu.unitSquare(device);
+  const drawModule = device.createShaderModule({
+    code: `
+      const BOARD = vec2f(${board[0]}, ${board[1]});
+
+      struct Params {
+        length: f32,
+        scale: f32,
+        perThread: u32,
+        head: u32,
+        drawn: u32,
+        threads: u32,
+        now: f32,
+      }
+      @group(0) @binding(0) var<uniform> params: Params;
+      @group(0) @binding(1) var<storage, read> ring: array<vec4f>;
+      @group(0) @binding(2) var<storage, read> born: array<f32>;
+
+      struct Out {
+        @builtin(position) position: vec4f,
+        @location(0) colour: vec4f,
+      }
+
+      // Board coordinates (down the page) to clip space
+      fn toClip(p: vec2f) -> vec4f {
+        return vec4f(p.x / BOARD.x * 2.0 - 1.0, 1.0 - p.y / BOARD.y * 2.0, 0.0, 1.0);
+      }
+
+      @vertex
+      fn lineVertex(
+        @location(0) corner: vec2f,
+        @builtin(instance_index) i: u32,
+      ) -> Out {
+        let halfWidth = 0.75 / params.scale;
+        let p = vec2f(f32(i) + corner.x * halfWidth, (corner.y * 0.5 + 0.5) * BOARD.y);
+        return Out(toClip(p), vec4f(0.62, 0.62, 0.62, 0.55));
+      }
+
+      @vertex
+      fn needleVertex(
+        @location(0) corner: vec2f,
+        @builtin(instance_index) i: u32,
+      ) -> Out {
+        let n = ring[i];
+        let dir = n.zw;
+        let across = vec2f(-dir.y, dir.x);
+        let half = 0.5 * params.length;
+        let halfWidth = 1.0 / params.scale;
+        let p = n.xy + dir * (corner.x * half) + across * (corner.y * halfWidth);
+
+        // The same test as in the compute shader, to colour the crossings
+        let hit = abs(n.x - round(n.x)) <= half * abs(dir.x);
+        let cold = vec3f(0.35, 0.5, 0.8);
+        let hot = vec3f(1.0, 0.282, 0.204); // #FF4834
+        // Fade out over its lifetime, so the board does not fill up
+        let fade = clamp(1.0 - (params.now - born[i]) / ${lifetime}, 0.0, 1.0);
+        return Out(toClip(p), vec4f(select(cold, hot, hit), 0.95 * fade));
+      }
+
+      @fragment
+      fn fill(in: Out) -> @location(0) vec4f {
+        return in.colour;
+      }
+    `,
+  });
+  const makePipeline = (entryPoint) =>
+    device.createRenderPipeline({
+      layout: "auto",
+      vertex: {
+        module: drawModule,
+        entryPoint,
+        buffers: [gpu.squareLayout],
+      },
+      fragment: {
+        module: drawModule,
+        entryPoint: "fill",
+        targets: [{ format, blend: gpu.alphaBlend }],
+      },
+      primitive: { topology: "triangle-list" },
+    });
+  const linePipeline = makePipeline("lineVertex");
+  const needlePipeline = makePipeline("needleVertex");
+  const lineBindGroup = device.createBindGroup({
+    layout: linePipeline.getBindGroupLayout(0),
+    entries: [{ binding: 0, resource: { buffer: buffers.params } }],
+  });
+  const needleBindGroup = device.createBindGroup({
+    layout: needlePipeline.getBindGroupLayout(0),
+    entries: [
+      { binding: 0, resource: { buffer: buffers.params } },
+      { binding: 1, resource: { buffer: buffers.ring } },
+      { binding: 2, resource: { buffer: buffers.born } },
+    ],
+  });
+
+  // --------------------------------------------------------------------- the run
+  const readback = gpu.readback(device, [{ buffer: buffers.totals, bytes: 8 }]);
+  const sampleEvery = 6; // frames between reads of the totals
+  let frameCount = 0;
+  let epoch = 0; // bumped on reset, so a read in flight from before is dropped
+  let previous = [0, 0]; // the GPU's (wrapping, 32-bit) counters at the last read
+  const total = [0, 0]; // needles dropped, needles that crossed (as JS numbers)
+  const series = []; // {N, estimate, error}
+  let owed = 0; // needles due but not yet dropped (rates below one a frame)
+  let head = 0; // next ring slot
+  let lastTime = null;
+  let clock = 0; // seconds of running time (stands still while the page is hidden)
+
+  const [estimateHost, errorHost] = charts.children;
+  const draw = ui.plotter(Plot);
+
+  // The relative spread of the estimate after N needles: n is binomial with
+  // p = 2 l / (pi d), and pi is estimated from 1 / (n/N)
+  const spread = (N, length) => {
+    const p = (2 * length) / (Math.PI * spacing);
+    return Math.sqrt((1 - p) / (p * N));
+  };
+
+  // The estimate so far with its standard error, from the counts alone: n crossings
+  // in N needles has a relative spread sqrt((1 - n/N) / n). Only the digits down to
+  // the error's own leading digit are meaningful, so that is where it is cut off,
+  // and the error is quoted to one figure.
+  function current() {
+    const [N, crossings] = total;
+    if (crossings === 0) return null;
+    const estimate = (2 * lengthInput.value * N) / (spacing * crossings);
+    const sigma = estimate * Math.sqrt((N - crossings) / (crossings * N));
+    const rounded = Number(sigma.toPrecision(1)); // 0.0096 is quoted as 0.01
+    const decimals = Math.max(0, -Math.floor(Math.log10(rounded)));
+    return {
+      N,
+      estimate,
+      sigma,
+      text: `π ≈ ${estimate.toFixed(decimals)} ± ${rounded.toFixed(decimals)}`,
+    };
+  }
+
+  function drawCharts() {
+    const length = lengthInput.value;
+    const now = current();
+    const decades = Array.from({ length: 60 }, (_, k) => 10 ** (1 + (10 * k) / 59));
+    const band = decades.map((N) => ({
+      N,
+      low: Math.PI * (1 - spread(N, length)),
+      high: Math.PI * (1 + spread(N, length)),
+      sigma: Math.PI * spread(N, length),
+    }));
+    const xAxis = {
+      label: "needles dropped",
+      type: "log",
+      grid: true,
+      domain: [10, 1e11],
+    };
+
+    draw(estimateHost, {
+      x: xAxis,
+      y: { label: "estimate of π", grid: true, domain: [2.6, 3.7] },
+      marks: [
+        Plot.areaY(band, { x: "N", y1: "low", y2: "high", fillOpacity: 0.15, clip: true }),
+        Plot.ruleY([Math.PI], { stroke: "currentColor", strokeOpacity: 0.5 }),
+        Plot.line(series, { x: "N", y: "estimate", stroke: "#FF4834", clip: true }),
+        // Where it stands now, with its error bar, and the number in words
+        ...(now
+          ? [
+              Plot.ruleX([now], {
+                x: "N",
+                y1: (d) => d.estimate - d.sigma,
+                y2: (d) => d.estimate + d.sigma,
+                stroke: "#FF4834",
+                strokeWidth: 2,
+                clip: true,
+              }),
+              Plot.dot([now], { x: "N", y: "estimate", r: 4, fill: "#FF4834", clip: true }),
+              Plot.text([now.text], {
+                frameAnchor: "top-left",
+                dx: 10,
+                dy: 8,
+                fontSize: 20,
+                fontWeight: 600,
+                fill: "currentColor",
+              }),
+            ]
+          : []),
+      ],
+    });
+
+    draw(errorHost, {
+      x: xAxis,
+      y: {
+        label: "error in the estimate",
+        type: "log",
+        grid: true,
+        domain: [1e-6, 3],
+      },
+      marks: [
+        Plot.line(band, {
+          x: "N",
+          y: "sigma",
+          stroke: "currentColor",
+          strokeDasharray: "4 3",
+        }),
+        Plot.dot(
+          series.filter((p) => p.error > 0),
+          { x: "N", y: "error", r: 2, fill: "#FF4834" }
+        ),
+      ],
+    });
+  }
+
+  function record() {
+    const [N, crossings] = total;
+    if (crossings === 0) return;
+    const last = series[series.length - 1];
+    if (!last || N >= 1.15 * last.N) {
+      const estimate = (2 * lengthInput.value * N) / (spacing * crossings);
+      series.push({ N, estimate, error: Math.abs(estimate - Math.PI) });
+    }
+    drawCharts();
+  }
+
+  // Start again: the estimate for one needle length means nothing for another
+  function reset() {
+    epoch++;
+    total[0] = total[1] = 0;
+    previous = [0, 0];
+    series.length = 0;
+    owed = 0;
+    head = 0;
+    device.queue.writeBuffer(buffers.totals, 0, new Uint32Array(2));
+    device.queue.writeBuffer(buffers.ring, 0, emptyRing);
+    device.queue.writeBuffer(buffers.born, 0, emptyBorn);
+    drawCharts();
+  }
+  lengthInput.addEventListener("input", reset);
+  invalidation.then(() => lengthInput.removeEventListener("input", reset));
+
+  const resetButton = ui.button({ label: "Start over", onClick: reset });
+  const readout = ui.readout();
+  drawCharts();
+
+  function frame(ms) {
+    // Seconds since the last frame, capped so a pause does not become a flood
+    const dt = lastTime === null ? 0 : Math.min((ms - lastTime) / 1000, 0.1);
+    lastTime = ms;
+    clock += dt;
+    owed += 10 ** rateInput.value * dt;
+    const due = Math.floor(owed);
+
+    const encoder = device.createCommandEncoder();
+    const length = lengthInput.value;
+
+    // Spread the needles over threads: at most 64 each until the thread cap
+    let drawn = 0;
+    if (due >= 1) {
+      const threads = Math.min(maxThreads, Math.ceil(due / 64));
+      const perThread = Math.ceil(due / threads);
+      owed -= threads * perThread;
+      drawn = Math.min(threads, maxDrawnPerFrame);
+
+      paramView.setFloat32(0, length, true);
+      paramView.setFloat32(4, canvas.width / board[0], true);
+      paramView.setUint32(8, perThread, true);
+      paramView.setUint32(12, head, true);
+      paramView.setUint32(16, drawn, true);
+      paramView.setUint32(20, threads, true);
+      paramView.setFloat32(24, clock, true);
+      device.queue.writeBuffer(buffers.params, 0, paramBytes);
+      head = (head + drawn) % ringSize;
+
+      const compute = encoder.beginComputePass();
+      compute.setPipeline(dropPipeline);
+      compute.setBindGroup(0, dropBindGroup);
+      compute.dispatchWorkgroups(Math.ceil(threads / groupSize));
+      compute.end();
+    } else {
+      // Nothing dropped, but the drawing still needs the length and scale
+      paramView.setFloat32(0, length, true);
+      paramView.setFloat32(4, canvas.width / board[0], true);
+      paramView.setFloat32(24, clock, true);
+      device.queue.writeBuffer(buffers.params, 0, paramBytes);
+    }
+
+    const pass = gpu.beginRenderPass(encoder, context);
+    pass.setVertexBuffer(0, cornerBuffer);
+    pass.setPipeline(linePipeline);
+    pass.setBindGroup(0, lineBindGroup);
+    pass.draw(6, board[0] + 1);
+    pass.setPipeline(needlePipeline);
+    pass.setBindGroup(0, needleBindGroup);
+    pass.draw(6, ringSize);
+    pass.end();
+
+    const sample = !readback.pending && ++frameCount % sampleEvery === 0;
+    if (sample) readback.copy(encoder);
+    device.queue.submit([encoder.finish()]);
+    if (sample) {
+      const mine = epoch;
+      readback.read((buffer) => {
+        if (mine !== epoch) return; // from before a reset
+        const counters = new Uint32Array(buffer);
+        // The GPU counters wrap at 2^32: take the difference modulo 2^32
+        total[0] += (counters[0] - previous[0]) >>> 0;
+        total[1] += (counters[1] - previous[1]) >>> 0;
+        previous = [counters[0], counters[1]];
+        record();
+      });
+    }
+
+    if (frameCount % 6 === 0) {
+      const now = current();
+      readout.textContent = `${total[0].toLocaleString()} needles · ${total[1].toLocaleString()} across a line${now ? " · " + now.text : ""}`;
+    }
+  }
+
+  gpu.run(invalidation, device, frame);
+
+  // The canvas with the controls laid over its corner
+  yield ui.stage(canvas, [rateInput, lengthInput, resetButton, readout]);
+}
+```
+
+```{ojs}
+//| echo: false
+//| column: page
+charts = {
+  // Two empty hosts; the simulation cell above draws into them as data arrives
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.chartHosts(["estimate", "error"]);
+}
+```
+
+::: {.mf-series-bar}
+Moving Figures
+
+:::{#mf-series}
+:::
+:::
