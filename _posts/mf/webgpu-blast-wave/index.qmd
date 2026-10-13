@@ -1,0 +1,512 @@
+---
+title: "012: Blast Wave"
+date: "2026-10-13"
+categories: [mf]
+page-layout: article
+listing:
+  - id: mf-series
+    contents: "../*/index.qmd"
+    type: default
+    categories: false
+    include:
+      categories: "mf"
+    fields: [title]
+    sort: "title asc"
+---
+
+Twenty thousand atoms of a cold, thin gas sit in a box. At the centre about a hundred
+atoms are suddenly given a huge amount of energy, and the picture that follows is an
+explosion: a ring of compressed, fast atoms racing outwards with a thinned-out
+cavity behind it.
+
+The atoms only repel one another, the short-range half of the Lennard-Jones force
+with the attraction removed. A gas with an attraction condenses when it is cold, and
+a blast wave needs a gas that stays a gas: cold enough that the explosion is by far
+the most energetic thing in the box.
+
+This is a [shock wave](https://en.wikipedia.org/wiki/Shock_wave), and it is a result
+of the atoms and nothing else. No equation for a fluid is in the code. Each atom
+only feels the Lennard-Jones force from its neighbours, and yet a front forms and
+moves much faster than the speed of sound in the gas ahead of it, which therefore
+has no warning and no time to move out of the way.
+
+How fast does it grow? Dimensional analysis answers it, in the
+[Sedov–Taylor](https://en.wikipedia.org/wiki/Taylor%E2%80%93von_Neumann%E2%80%93Sedov_blast_wave)
+solution. A point explosion releases an energy $E$ into a gas of density $\rho$. The
+only length you can make from those two numbers and the time $t$ is
+$R \sim (E t^2 / \rho)^{1/4}$ in two dimensions, so the radius of the blast grows as
+
+$$R \propto t^{1/2}.$$
+
+The right-hand chart measures that on log axes, where a power law is a straight line
+and the dashed line has the slope $\tfrac12$ the theory predicts. The left-hand chart
+is the density against distance from the centre, with the shell of the shock as its
+peak (a modest one: the gas is compressed by about half again, not by an order of
+magnitude). **Detonate** puts the quiet gas back and sets off a new explosion; the slider is
+the temperature the blast atoms are given.
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof energy = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.slider({
+    label: "Blast energy",
+    min: 10,
+    max: 120,
+    step: 5,
+    value: 60,
+    format: (v) => `${v.toFixed(0)} per atom`,
+  });
+}
+```
+
+```{ojs}
+//| column: screen-inset
+//| code-fold: true
+//| code-summary: "Show code"
+{
+  // Shared WebGPU boilerplate: setup, buffers and the animation loop (lib/gpu.js)
+  const gpu = await import(new URL("../lib/gpu.js", document.baseURI).href);
+  const md = await import(new URL("../lib/md.js", document.baseURI).href);
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+
+  // The control is read live from its input element (referencing `viewof x` gives
+  // the element, not the value), so moving it does not restart anything.
+  const energyInput = viewof energy;
+
+  // Reduced units: sigma = epsilon = mass = k_B = 1. The box is periodic both ways,
+  // 300 x 168.75 sigma: 120 x 67 cells of the force range, 16:9 to fill the canvas.
+  const Lx = 300;
+  const Ly = 168.75;
+  const { canvas, device, context, format } = await gpu.setup({
+    width: 640,
+    height: 360,
+    resolution: "auto",
+  });
+
+  const dt = 0.0025; // short: the blast atoms are fast and the force is stiff
+  const stepsPerFrame = 12; // 0.03 time units a frame
+  const cutoff = 2.5; // the grid's cell size in sigma: more than the force needs
+  const bathTemperature = 0.03; // cold: the explosion dwarfs the gas's own energy
+  const blastRadius = 10; // sigma: about 125 atoms
+  const settle = 3; // time units of quiet gas before the first detonation
+
+  // ----------------------------------------------------- initial state: a quiet gas
+  // A square lattice with a little jitter, at density 0.4: no atoms start on top of
+  // each other, and it relaxes into a uniform gas at once. Velocities are thermal.
+  const nx = 190;
+  const ny = 107;
+  const count = nx * ny;
+  const positions0 = new Float32Array(count * 2);
+  for (let iy = 0; iy < ny; iy++) {
+    for (let ix = 0; ix < nx; ix++) {
+      const k = iy * nx + ix;
+      positions0[2 * k] = (ix + 0.5 + 0.3 * (Math.random() - 0.5)) * (Lx / nx);
+      positions0[2 * k + 1] = (iy + 0.5 + 0.3 * (Math.random() - 0.5)) * (Ly / ny);
+    }
+  }
+  const velocities0 = md.gaussianVelocities(count, bathTemperature);
+  const density = count / (Lx * Ly);
+
+  // ---------------------------------------------------------------- the kernels
+  const module = device.createShaderModule({
+    code: `
+      const DT = ${dt};
+      // Repulsive only: the Lennard-Jones force cut at its minimum, 2^(1/6) sigma.
+      // Squared, that is 2^(1/3), and nothing beyond it pulls atoms together.
+      const RC2 = 1.2599;
+
+      struct Sim {
+        box: vec2f,     // box size
+        grid: vec2u,    // cells across and up
+        count: u32,     // atoms
+        cells: u32,     // grid.x * grid.y
+        blast: vec4f,   // the explosion: centre x, centre y, radius, speed scale
+      }
+
+      @group(0) @binding(0) var<storage, read_write> positions: array<vec2f>;
+      @group(0) @binding(1) var<storage, read_write> velocities: array<vec2f>;
+      @group(0) @binding(2) var<storage, read_write> accelerations: array<vec2f>;
+      @group(0) @binding(3) var<storage, read_write> rng: array<u32>;
+      @group(0) @binding(4) var<uniform> sim: Sim;
+      @group(0) @binding(5) var<storage, read_write> cellStart: array<atomic<u32>>;
+      @group(0) @binding(6) var<storage, read_write> cellInfo: array<vec2u>; // cell, rank
+      @group(0) @binding(7) var<storage, read_write> sorted: array<u32>;
+
+      ${md.rngWGSL}
+
+      fn minImage(d: vec2f) -> vec2f {
+        return d - sim.box * round(d / sim.box);
+      }
+
+      fn cellOf(p: vec2f) -> u32 {
+        let size = sim.box / vec2f(sim.grid);
+        let c = min(vec2u(max(p, vec2f(0.0)) / size), sim.grid - vec2u(1u));
+        return c.y * sim.grid.x + c.x;
+      }
+
+      @compute @workgroup_size(64)
+      fn clearCells(@builtin(global_invocation_id) id: vec3u) {
+        if (id.x <= sim.cells) { atomicStore(&cellStart[id.x], 0u); }
+      }
+
+      @compute @workgroup_size(64)
+      fn assign(@builtin(global_invocation_id) id: vec3u) {
+        let i = id.x;
+        if (i >= sim.count) { return; }
+        let c = cellOf(positions[i]);
+        cellInfo[i] = vec2u(c, atomicAdd(&cellStart[c], 1u));
+      }
+
+      @compute @workgroup_size(1)
+      fn scan() {
+        var sum = 0u;
+        for (var c = 0u; c < sim.cells; c++) {
+          let n = atomicLoad(&cellStart[c]);
+          atomicStore(&cellStart[c], sum);
+          sum += n;
+        }
+        atomicStore(&cellStart[sim.cells], sum);
+      }
+
+      @compute @workgroup_size(64)
+      fn scatter(@builtin(global_invocation_id) id: vec3u) {
+        let i = id.x;
+        if (i >= sim.count) { return; }
+        sorted[atomicLoad(&cellStart[cellInfo[i].x]) + cellInfo[i].y] = i;
+      }
+
+      @compute @workgroup_size(64)
+      fn forces(@builtin(global_invocation_id) id: vec3u) {
+        let i = id.x;
+        if (i >= sim.count) { return; }
+        let here = positions[i];
+        let cell = cellInfo[i].x;
+        let cx = i32(cell % sim.grid.x);
+        let cy = i32(cell / sim.grid.x);
+        let gx = i32(sim.grid.x);
+        let gy = i32(sim.grid.y);
+
+        var a = vec2f(0.0);
+        for (var oy = -1; oy <= 1; oy++) {
+          for (var ox = -1; ox <= 1; ox++) {
+            let nx = (cx + ox + gx) % gx;
+            let ny = (cy + oy + gy) % gy;
+            let c = u32(ny) * sim.grid.x + u32(nx);
+            let end = atomicLoad(&cellStart[c + 1u]);
+            for (var k = atomicLoad(&cellStart[c]); k < end; k++) {
+              let j = sorted[k];
+              if (j == i) { continue; }
+              let d = minImage(here - positions[j]);
+              let r2 = dot(d, d);
+              if (r2 < RC2) {
+                // Floor r^2: a very fast atom can step inside the core, where the
+                // force is so large that one step would throw it out of the box
+                let s2 = 1.0 / max(r2, 0.36);   // (sigma / r)^2
+                let s6 = s2 * s2 * s2;
+                a += d * (24.0 * s2 * s6 * (2.0 * s6 - 1.0));
+              }
+            }
+          }
+        }
+        accelerations[i] = a;
+      }
+
+      // No thermostat: leapfrog on its own, so energy is conserved and the shock is
+      // the atoms' own doing.
+      @compute @workgroup_size(64)
+      fn integrate(@builtin(global_invocation_id) id: vec3u) {
+        let i = id.x;
+        if (i >= sim.count) { return; }
+        let v = velocities[i] + accelerations[i] * DT;
+        var p = positions[i] + v * DT;
+        p -= sim.box * floor(p / sim.box);
+        velocities[i] = v;
+        positions[i] = p;
+      }
+
+      // The detonation, run once: every atom inside the blast radius has its
+      // velocity replaced by a random one of a much higher temperature. That is the
+      // only energy ever put in.
+      @compute @workgroup_size(64)
+      fn detonate(@builtin(global_invocation_id) id: vec3u) {
+        let i = id.x;
+        if (i >= sim.count) { return; }
+        let d = minImage(positions[i] - sim.blast.xy);
+        if (dot(d, d) < sim.blast.z * sim.blast.z) {
+          var state = rng[i];
+          velocities[i] = sim.blast.w * gaussian2(&state);
+          rng[i] = state;
+        }
+      }
+    `,
+  });
+
+  // One bind group layout for every kernel
+  const layoutEntries = [0, 1, 2, 3, 5, 6, 7].map((binding) => ({
+    binding,
+    visibility: GPUShaderStage.COMPUTE,
+    buffer: { type: "storage" },
+  }));
+  layoutEntries.push({
+    binding: 4,
+    visibility: GPUShaderStage.COMPUTE,
+    buffer: { type: "uniform" },
+  });
+  const bindGroupLayout = device.createBindGroupLayout({ entries: layoutEntries });
+  const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
+  const pipelines = Object.fromEntries(
+    ["clearCells", "assign", "scan", "scatter", "forces", "integrate", "detonate"].map(
+      (entryPoint) => [
+        entryPoint,
+        device.createComputePipeline({ layout: pipelineLayout, compute: { module, entryPoint } }),
+      ]
+    )
+  );
+
+  // ------------------------------------------------------------------- the atoms
+  const grid = [Math.floor(Lx / cutoff), Math.floor(Ly / cutoff)];
+  const cells = grid[0] * grid[1];
+  const seeds = new Uint32Array(count);
+  for (let k = 0; k < count; k += 8192) {
+    crypto.getRandomValues(seeds.subarray(k, Math.min(count, k + 8192)));
+  }
+  const buffers = {
+    positions: gpu.storageBuffer(device, positions0),
+    velocities: gpu.storageBuffer(device, velocities0),
+    accelerations: gpu.storageBuffer(device, new Float32Array(count * 2)),
+    rng: gpu.storageBuffer(device, seeds),
+    cellStart: gpu.storageBuffer(device, new Uint32Array(cells + 1)),
+    cellInfo: gpu.storageBuffer(device, new Uint32Array(count * 2)),
+    sorted: gpu.storageBuffer(device, new Uint32Array(count)),
+    sim: device.createBuffer({
+      size: 48,
+      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+    }),
+  };
+  const bindGroup = device.createBindGroup({
+    layout: bindGroupLayout,
+    entries: [
+      { binding: 0, resource: { buffer: buffers.positions } },
+      { binding: 1, resource: { buffer: buffers.velocities } },
+      { binding: 2, resource: { buffer: buffers.accelerations } },
+      { binding: 3, resource: { buffer: buffers.rng } },
+      { binding: 4, resource: { buffer: buffers.sim } },
+      { binding: 5, resource: { buffer: buffers.cellStart } },
+      { binding: 6, resource: { buffer: buffers.cellInfo } },
+      { binding: 7, resource: { buffer: buffers.sorted } },
+    ],
+  });
+
+  // The uniform: box, grid, counts, then the explosion (centre, radius, speed scale)
+  const simBytes = new ArrayBuffer(48);
+  const simView = new DataView(simBytes);
+  simView.setFloat32(0, Lx, true);
+  simView.setFloat32(4, Ly, true);
+  simView.setUint32(8, grid[0], true);
+  simView.setUint32(12, grid[1], true);
+  simView.setUint32(16, count, true);
+  simView.setUint32(20, cells, true);
+  simView.setFloat32(32, Lx / 2, true);
+  simView.setFloat32(36, Ly / 2, true);
+  simView.setFloat32(40, blastRadius, true);
+
+  // Render: a disc per atom, coloured by its speed (fast atoms are the blast)
+  const discs = md.discs(device, {
+    format,
+    positionBuffer: buffers.positions,
+    velocityBuffer: buffers.velocities,
+    box: [Lx, Ly],
+    referenceSpeed: 5,
+  });
+
+  // --------------------------------------------------------------------- charts
+  const [profileHost, radiusHost] = charts.children;
+  const draw = ui.plotter(Plot);
+  const rMax = Ly / 2; // beyond this the periodic box wraps round
+  const bins = Math.floor(rMax); // 1 sigma wide rings
+  const track = []; // {t, R}: the radius of the shock against time since detonation
+  let profile = new Float32Array(bins);
+  let simTime = 0;
+  let detonatedAt = null; // simulated time of the explosion, or null
+  let pendingDetonation = false;
+
+  const readback = gpu.readback(device, [{ buffer: buffers.positions, bytes: count * 8 }]);
+  const sampleEvery = 4; // 0.12 time units between measurements
+  let frameCount = 0;
+
+  // The radius of the shock: the distance of the densest ring beyond the cavity
+  function analyse(buffer) {
+    const data = new Float32Array(buffer);
+    const counts = new Float32Array(bins);
+    for (let i = 0; i < count; i++) {
+      let dx = data[2 * i] - Lx / 2;
+      let dy = data[2 * i + 1] - Ly / 2;
+      dx -= Lx * Math.round(dx / Lx);
+      dy -= Ly * Math.round(dy / Ly);
+      const k = Math.floor(Math.hypot(dx, dy));
+      if (k < bins) counts[k]++;
+    }
+    profile = Float32Array.from(counts, (n, k) => n / (2 * Math.PI * (k + 0.5)));
+
+    if (detonatedAt !== null) {
+      const t = simTime - detonatedAt;
+      // Smooth over three rings, then the peak above the background
+      let best = -1;
+      let peak = 0;
+      for (let k = 4; k < bins - 1; k++) {
+        const m = (profile[k - 1] + profile[k] + profile[k + 1]) / 3;
+        if (m > peak) {
+          peak = m;
+          best = k;
+        }
+      }
+      if (best >= 0 && peak > 1.25 * density && t > 0.5) track.push({ t, R: best + 0.5 });
+    }
+    drawCharts();
+  }
+
+  function drawCharts() {
+    const rows = Array.from(profile, (n, k) => ({ r: k + 0.5, n }));
+    draw(profileHost, {
+      x: { label: "distance from the centre (σ)", domain: [0, rMax] },
+      y: { label: "density (atoms per area)", grid: true, domain: [0, 1.5] },
+      marks: [
+        Plot.ruleY([density], { stroke: "currentColor", strokeOpacity: 0.4, strokeDasharray: "4 3" }),
+        Plot.line(rows, { x: "r", y: "n", stroke: "#FF4834", clip: true }),
+      ],
+    });
+
+    // A line of slope 1/2 through the data on log axes, and the measured exponent
+    const used = track.filter((p) => p.R > 8 && p.R < 0.45 * Ly && p.t > 1);
+    let guide = [];
+    let note = "";
+    if (used.length >= 5) {
+      const lx = used.map((p) => Math.log(p.t));
+      const ly = used.map((p) => Math.log(p.R));
+      const mean = (a) => a.reduce((s, v) => s + v, 0) / a.length;
+      const mx = mean(lx);
+      const my = mean(ly);
+      let num = 0;
+      let den = 0;
+      for (let i = 0; i < lx.length; i++) {
+        num += (lx[i] - mx) * (ly[i] - my);
+        den += (lx[i] - mx) ** 2;
+      }
+      const slope = den ? num / den : 0;
+      note = `measured exponent ${slope.toFixed(2)}  (theory 0.50)`;
+      const t0 = used[0].t;
+      const t1 = used[used.length - 1].t;
+      const R0 = Math.exp(my + 0.5 * (Math.log(t0) - mx));
+      guide = [
+        { t: t0, R: R0 },
+        { t: t1, R: R0 * Math.sqrt(t1 / t0) },
+      ];
+    }
+    draw(radiusHost, {
+      x: { label: "time since the explosion", type: "log", grid: true, domain: [0.3, 60] },
+      y: { label: "radius of the shock (σ)", type: "log", grid: true, domain: [2, rMax] },
+      caption: note || undefined,
+      marks: [
+        Plot.dot(track, { x: "t", y: "R", r: 2, fill: "#FF4834" }),
+        Plot.line(guide, { x: "t", y: "R", stroke: "currentColor", strokeDasharray: "4 3" }),
+      ],
+    });
+  }
+
+  // ------------------------------------------------------------------- controls
+  // Put the quiet gas back and set it off at once, so every press is a fresh blast
+  function detonate() {
+    device.queue.writeBuffer(buffers.positions, 0, positions0);
+    device.queue.writeBuffer(buffers.velocities, 0, velocities0);
+    track.length = 0;
+    autoDone = true; // no second automatic one
+    pendingDetonation = true;
+  }
+  let autoDone = false;
+
+  const detonateButton = ui.button({ label: "Detonate", onClick: detonate });
+  const readout = ui.readout();
+
+  // ------------------------------------------------------------------- the frame
+  const atomGroups = Math.ceil(count / 64);
+  const cellGroups = Math.ceil((cells + 1) / 64);
+
+  function frame() {
+    // The quiet gas settles for a few time units, then goes off by itself, once
+    if (!autoDone && detonatedAt === null && simTime >= settle) {
+      autoDone = true;
+      pendingDetonation = true;
+    }
+
+    simView.setFloat32(44, Math.sqrt(energyInput.value), true);
+    device.queue.writeBuffer(buffers.sim, 0, simBytes);
+
+    const encoder = device.createCommandEncoder();
+    const compute = encoder.beginComputePass();
+    compute.setBindGroup(0, bindGroup);
+    if (pendingDetonation) {
+      compute.setPipeline(pipelines.detonate);
+      compute.dispatchWorkgroups(atomGroups);
+      detonatedAt = simTime;
+      track.length = 0;
+      pendingDetonation = false;
+    }
+    for (let s = 0; s < stepsPerFrame; s++) {
+      compute.setPipeline(pipelines.clearCells);
+      compute.dispatchWorkgroups(cellGroups);
+      compute.setPipeline(pipelines.assign);
+      compute.dispatchWorkgroups(atomGroups);
+      compute.setPipeline(pipelines.scan);
+      compute.dispatchWorkgroups(1);
+      compute.setPipeline(pipelines.scatter);
+      compute.dispatchWorkgroups(atomGroups);
+      compute.setPipeline(pipelines.forces);
+      compute.dispatchWorkgroups(atomGroups);
+      compute.setPipeline(pipelines.integrate);
+      compute.dispatchWorkgroups(atomGroups);
+    }
+    compute.end();
+    simTime += stepsPerFrame * dt;
+
+    const pass = gpu.beginRenderPass(encoder, context);
+    discs.draw(pass, count);
+    pass.end();
+
+    const sample = !readback.pending && ++frameCount % sampleEvery === 0;
+    if (sample) readback.copy(encoder);
+    device.queue.submit([encoder.finish()]);
+    if (sample) readback.read(analyse);
+
+    if (frameCount % 15 === 0) {
+      readout.textContent =
+        detonatedAt === null
+          ? `${count.toLocaleString()} atoms · quiet gas, t = ${simTime.toFixed(1)}`
+          : `${count.toLocaleString()} atoms · ${(simTime - detonatedAt).toFixed(1)} since the explosion`;
+    }
+  }
+
+  gpu.run(invalidation, device, frame);
+
+  // The canvas with the controls laid over its corner
+  yield ui.stage(canvas, [energyInput, detonateButton, readout]);
+}
+```
+
+```{ojs}
+//| echo: false
+//| column: page
+charts = {
+  // Two empty hosts; the simulation cell above draws into them as data arrives
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.chartHosts(["profile", "radius"]);
+}
+```
+
+::: {.mf-series-bar}
+Moving Figures
+
+:::{#mf-series}
+:::
+:::
