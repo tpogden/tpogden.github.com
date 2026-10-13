@@ -18,7 +18,9 @@ listing:
 thermostat holding the whole box at one temperature. Here is the same physics at ten
 times the size, with one change that lets things happen. The thermostat is taken
 off the bulk and applied only to two thin layers: a hot floor and a cold ceiling.
-Everything in between is left alone, so heat has to travel through it.
+Everything in between is left alone, so heat has to travel through it. The cold
+layer is deep, not a thin plate: the vapour thins out exponentially with height, so
+only a deep cold region catches enough of it.
 
 Start with a pool of liquid on the floor (it begins as a lattice, and melts at once). The floor heats it and atoms evaporate;
 the vapour rises, hits the cold ceiling and condenses; the droplets get heavy and
@@ -70,7 +72,7 @@ viewof floorTemperature = {
     min: 0.35,
     max: 0.7,
     step: 0.01,
-    value: 0.5,
+    value: 0.52,
     format: (v) => v.toFixed(2),
   });
 }
@@ -88,6 +90,22 @@ viewof ceilingTemperature = {
     step: 0.01,
     value: 0.38,
     format: (v) => v.toFixed(2),
+  });
+}
+```
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof coldDepth = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.slider({
+    label: "Cold depth",
+    min: 4,
+    max: 60,
+    step: 1,
+    value: 35,
+    format: (v) => `${v.toFixed(0)} σ`,
   });
 }
 ```
@@ -120,6 +138,7 @@ viewof byPhase = {
   const gravityInput = viewof gravity;
   const floorInput = viewof floorTemperature;
   const ceilingInput = viewof ceilingTemperature;
+  const depthInput = viewof coldDepth;
   const phaseInput = viewof byPhase;
 
   const { canvas, device, context, format } = await gpu.setup({
@@ -129,16 +148,18 @@ viewof byPhase = {
   });
 
   // Reduced units: sigma = epsilon = mass = k_B = 1. The box is periodic sideways
-  // and has a floor and a ceiling. 260 x 146 sigma: 104 x 58 cells of the force range.
+  // and has a floor and a ceiling. 260 x 112.5 sigma: 104 x 45 cells of the force
+  // range. Not too tall: the vapour thins out exponentially with height, so the
+  // ceiling needs to be within a couple of scale heights of the pool.
   const Lx = 260;
-  const Ly = 146.25;
+  const Ly = 112.5;
   const dt = 0.005;
   const stepsPerFrame = 30; // a water cycle takes hundreds of time units
   const friction = 0.5; // thermostat coupling, applied to the two layers only
   const decay = Math.exp(-friction * dt);
   const cutoff = 2.5; // force range in sigma, which is also the cell size
   const wall = 0.5; // atoms' centres stay half a diameter off the floor and ceiling
-  const layer = 4; // thickness of the thermostatted layers, in sigma
+  const floorLayer = 4; // thickness of the hot layer at the floor, in sigma
 
   // ---------------------------------------------------------------- the kernels
   const module = device.createShaderModule({
@@ -148,7 +169,7 @@ viewof byPhase = {
       const SHELL2 = 1.96;             // first neighbour shell, 1.4 sigma, squared
       const DECAY = ${decay};          // thermostat: velocity kept each step
       const WALL = ${wall};
-      const LAYER = ${layer};
+      const FLOOR_LAYER = ${floorLayer};
 
       struct Sim {
         box: vec2f,         // box size
@@ -158,7 +179,7 @@ viewof byPhase = {
         floorNoise: f32,    // thermostat kick size in the floor layer
         ceilingNoise: f32,  // ... and in the ceiling layer
         gravity: f32,       // acceleration downwards
-        pad: f32,
+        ceilingLayer: f32,  // depth of the cold region under the ceiling
       }
 
       @group(0) @binding(0) var<storage, read_write> positions: array<vec2f>;
@@ -262,13 +283,13 @@ viewof byPhase = {
         // Leapfrog: kick the velocity, gravity included...
         var v = velocities[i] + (accelerations[i] - vec2f(0.0, sim.gravity)) * DT;
 
-        // ...thermostat, but only in the floor and ceiling layers. The bulk is left
-        // alone, so heat has to cross it.
+        // ...thermostat, but only in the thin hot layer at the floor and the deep cold
+        // region under the ceiling. The bulk is left alone, so heat has to cross it.
         let y = positions[i].y;
         var state = rng[i];
-        if (y < LAYER) {
+        if (y < FLOOR_LAYER) {
           v = v * DECAY + sim.floorNoise * gaussian2(&state);
-        } else if (y > sim.box.y - LAYER) {
+        } else if (y > sim.box.y - sim.ceilingLayer) {
           v = v * DECAY + sim.ceilingNoise * gaussian2(&state);
         }
         rng[i] = state;
@@ -362,7 +383,7 @@ viewof byPhase = {
     ],
   });
 
-  // The uniform: box, grid, counts, then the three live numbers
+  // The uniform: box, grid, counts, then the live numbers
   const simBytes = new ArrayBuffer(48);
   const simView = new DataView(simBytes);
   simView.setFloat32(0, Lx, true);
@@ -427,13 +448,17 @@ viewof byPhase = {
     ctx.font = `${11 * dpr}px ui-monospace, Menlo, monospace`;
     ctx.textBaseline = "middle";
 
-    const mark = (T, edge, label) => {
+    const mark = (T, edge, label, depth) => {
       const [r, g, b] = temperatureColour(T);
       const solid = `rgb(${r}, ${g}, ${b})`;
       const floorSide = edge === "floor";
       const barY = floorSide ? h - bar : 0; // the wall is the edge of the canvas
-      const layerY = floorSide ? h - layer * perSigma : layer * perSigma;
+      const layerY = floorSide ? h - depth * perSigma : depth * perSigma;
 
+      // The thermostatted region, lightly shaded, and a bar along its wall
+      ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.10)`;
+      if (floorSide) ctx.fillRect(0, layerY, w, h - layerY);
+      else ctx.fillRect(0, 0, w, layerY);
       ctx.fillStyle = solid;
       ctx.fillRect(0, barY, w, bar);
 
@@ -455,8 +480,8 @@ viewof byPhase = {
       );
     };
 
-    mark(floorInput.value, "floor", "floor");
-    mark(ceilingInput.value, "ceiling", "ceiling");
+    mark(floorInput.value, "floor", "floor", floorLayer);
+    mark(ceilingInput.value, "ceiling", "cold region", depthInput.value);
   }
 
   // --------------------------------------------------------------------- charts
@@ -576,6 +601,7 @@ viewof byPhase = {
     simView.setFloat32(24, kick(floorInput.value), true);
     simView.setFloat32(28, kick(ceilingInput.value), true);
     simView.setFloat32(32, gravityInput.value, true);
+    simView.setFloat32(36, depthInput.value, true);
     device.queue.writeBuffer(buffers.sim, 0, simBytes);
 
     const encoder = device.createCommandEncoder();
@@ -611,7 +637,14 @@ viewof byPhase = {
   gpu.run(invalidation, device, frame);
 
   // The canvas, with the floor and ceiling markers over it and the controls on top
-  const stage = ui.stage(canvas, [gravityInput, floorInput, ceilingInput, phaseInput, readout]);
+  const stage = ui.stage(canvas, [
+    gravityInput,
+    floorInput,
+    ceilingInput,
+    depthInput,
+    phaseInput,
+    readout,
+  ]);
   stage.append(overlay);
   yield stage;
 }
