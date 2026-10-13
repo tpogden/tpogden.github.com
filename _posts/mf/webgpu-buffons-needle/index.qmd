@@ -66,7 +66,7 @@ viewof rate = {
     min: 0,
     max: 8,
     step: 1,
-    value: 4,
+    value: 1, // ten a second: slow enough to watch each one land
     format: (v) => `10^${v}`, // short: a long label squeezes the slider
   });
 }
