@@ -39,6 +39,8 @@ them in a _render pass_ that just clears the canvas texture, and submit it.
   const context = canvas.getContext("webgpu");
   const format = navigator.gpu.getPreferredCanvasFormat();
   context.configure({ device, format });
+  // Not part of the lesson: lets this canvas be recorded by opening the page with ?record
+  (await import(new URL("../lib/gpu.js", document.baseURI).href)).enableRecording(canvas);
 
   // 4. Record: a render pass that clears to the site's dark background (#1a1a1a)
   const encoder = device.createCommandEncoder();
