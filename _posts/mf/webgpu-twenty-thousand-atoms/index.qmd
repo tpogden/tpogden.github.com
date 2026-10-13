@@ -77,12 +77,15 @@ viewof temperature = {
 ```{ojs}
 //| echo: false
 //| output: false
-viewof byOrientation = {
+viewof colouring = {
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
-  return ui.toggle({
+  return ui.segmented({
     label: "Colour by",
-    value: true,
-    format: (on) => (on ? "orientation" : "speed"),
+    options: [
+      ["orientation", "angle"], // the lattice direction of each grain
+      ["speed", "speed"],
+    ],
+    value: "orientation",
   });
 }
 ```
@@ -100,7 +103,7 @@ viewof byOrientation = {
   // The controls are read live from their input elements (referencing `viewof x`
   // gives the element, not the value), so moving them does not restart anything.
   const temperatureInput = viewof temperature;
-  const orientationInput = viewof byOrientation;
+  const colourInput = viewof colouring;
 
   const { canvas, device, context, format } = await gpu.setup({
     width: 640,
@@ -677,7 +680,7 @@ viewof byOrientation = {
     simTime += stepsPerFrame * dt;
 
     const pass = gpu.beginRenderPass(encoder, context);
-    (orientationInput.value ? orientationDiscs : speedDiscs).draw(pass, main.count);
+    (colourInput.value === "orientation" ? orientationDiscs : speedDiscs).draw(pass, main.count);
     pass.end();
 
     const sample = !readback.pending && ++frameCount % sampleEvery === 0;
@@ -689,7 +692,7 @@ viewof byOrientation = {
   gpu.run(invalidation, device, frame);
 
   // The canvas with the controls laid over its corner
-  yield ui.stage(canvas, [temperatureInput, orientationInput, quench, bench, readout]);
+  yield ui.stage(canvas, [temperatureInput, colourInput, quench, bench, readout]);
 }
 ```
 
