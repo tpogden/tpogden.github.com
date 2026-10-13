@@ -16,13 +16,15 @@ listing:
 
 [Falling Atoms](../webgpu-gravity/) had gravity, a pool and an atmosphere, with a
 thermostat holding the whole box at one temperature. Here is the same physics at ten
-times the size, with one change that lets things happen. The thermostat is taken
-off the bulk and applied only to two thin layers: a hot floor and a cold ceiling.
-Everything in between is left alone, so heat has to travel through it. The cold
-layer is deep, not a thin plate: the vapour thins out exponentially with height, so
-only a deep cold region catches enough of it.
+times the size, about twenty thousand atoms, with one change that lets things
+happen. The thermostat is taken off the bulk and applied only at the two ends: a
+thin hot layer at the floor, and a cold region under the ceiling. Everything in
+between is left alone, so heat has to travel through it. The cold region is deep, not
+a thin plate: the vapour thins out exponentially with height, so only a deep cold
+region catches enough of it.
 
-Start with a pool of liquid on the floor (it begins as a lattice, and melts at once). The floor heats it and atoms evaporate;
+Start with a pool of liquid on the floor (it begins as a lattice, and melts at
+once). The floor heats it and atoms evaporate;
 the vapour rises, hits the cold ceiling and condenses; the droplets get heavy and
 fall back. It is a water cycle, with nothing in it but atoms, gravity and two
 temperatures. The coloured bars mark the two thermostatted layers, labelled with
@@ -102,9 +104,9 @@ viewof coldDepth = {
   return ui.slider({
     label: "Cold depth",
     min: 4,
-    max: 60,
+    max: 80,
     step: 1,
-    value: 35,
+    value: 45,
     format: (v) => `${v.toFixed(0)} σ`,
   });
 }
@@ -142,11 +144,11 @@ viewof byPhase = {
   const phaseInput = viewof byPhase;
 
   // Reduced units: sigma = epsilon = mass = k_B = 1. The box is periodic sideways
-  // and has a floor and a ceiling. 260 x 112.5 sigma: 104 x 45 cells of the force
+  // and has a floor and a ceiling. 360 x 155 sigma: 144 x 62 cells of the force
   // range. Not too tall: the vapour thins out exponentially with height, so the
   // ceiling needs to be within a couple of scale heights of the pool.
-  const Lx = 260;
-  const Ly = 112.5;
+  const Lx = 360;
+  const Ly = 155;
 
   // The canvas has the box's own aspect ratio, so an atom is round on the screen
   const { canvas, device, context, format } = await gpu.setup({
@@ -155,7 +157,7 @@ viewof byPhase = {
     resolution: "auto",
   });
   const dt = 0.005;
-  const stepsPerFrame = 30; // a water cycle takes hundreds of time units
+  const stepsPerFrame = 20; // a water cycle takes hundreds of time units
   const friction = 0.5; // thermostat coupling, applied to the two layers only
   const decay = Math.exp(-friction * dt);
   const cutoff = 2.5; // force range in sigma, which is also the cell size
@@ -329,14 +331,14 @@ viewof byPhase = {
   );
 
   // ------------------------------------------------------------------- the atoms
-  // A slab of liquid on the floor: a triangular lattice, 213 atoms across and 44
-  // rows. At spacing 1.22 its density is 0.77, about that of the liquid at these
+  // A slab of liquid on the floor: a triangular lattice, 295 atoms across and 68
+  // rows, about 20,000 atoms. At spacing 1.22 its density is 0.77, about that of the liquid at these
   // temperatures (a tighter lattice would be a solid that never melts), and the
   // extra kinetic energy it starts with goes into melting it. The rest of the box
   // is empty and fills with vapour.
   const slab = md.triangularLattice({
-    nx: 213,
-    ny: 44,
+    nx: 295,
+    ny: 68,
     spacing: 1.22,
     temperature: 0.6,
   });
