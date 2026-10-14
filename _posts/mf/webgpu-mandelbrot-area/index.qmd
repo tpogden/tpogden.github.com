@@ -1,0 +1,692 @@
+---
+title: "014: Throwing Darts at a Fractal"
+date: "2026-10-14"
+categories: [mf]
+page-layout: article
+listing:
+  - id: mf-series
+    contents: "../*/index.qmd"
+    type: default
+    categories: false
+    include:
+      categories: "mf"
+    fields: [title]
+    sort: "title asc"
+---
+
+[Dropping sticks](../webgpu-buffons-needle/) found π by counting how many random
+sticks crossed a line. The same idea measures any area you cannot work out with a
+formula: throw darts at a box at random, and the fraction that land inside the shape
+is the shape's fraction of the box.
+
+The shape here is the [Mandelbrot set](https://en.wikipedia.org/wiki/Mandelbrot_set):
+the points $c$ in the plane for which repeating $z \to z^2 + c$ from $z = 0$ never
+runs away. It has no known formula for its area. The best values are numerical, and
+they are about 1.5066.
+
+Each dart picks a random $c$ in the box, repeats that step up to a fixed number of
+times, and is **inside** if $z$ never gets further than 2 from the origin. The
+picture develops as the darts land: red ones are inside, blue ones ran away.
+
+Two things stand in the way of a clean answer.
+
+**The iterations.** You cannot repeat for ever. A dart that is still going after $n$
+steps is counted as inside, even though some of them would run away later. So what
+is measured is the area of a slightly bigger shape, which shrinks towards the true
+one as $n$ grows. The flat dashed line on the left chart, the reference, is the area of that
+$n$-step shape, found by testing a fixed grid of 150 million points. It is where the
+darts should settle. It sits at about 1.73 for 20 steps, 1.5465 for 100 and 1.5103
+for 1,000: still some way above 1.5066.
+
+**The error.** Random darts give an error that falls as $1/\sqrt{N}$, as it did for
+the sticks. The other set of darts, in blue, are not random: they are
+[Halton points](https://en.wikipedia.org/wiki/Halton_sequence), which are spread as
+evenly as they can be, so they never clump or leave gaps the way random ones do.
+They are thrown at the same rate, and the right chart shows how far each has got
+from the reference. The sloping dashed line there is the size of error the random
+darts are expected to have. The reference is itself only as good as its grid, about $10^{-5}$,
+so that is as low as the chart can go.
+
+The slider is the number of darts a second of each kind. **Iterations** is $n$, and
+changing it, like **Start over**, begins again.
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof rate = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.slider({
+    label: "Darts/s",
+    min: 1,
+    max: 7,
+    step: 1,
+    value: 1,
+    format: (v) => `10^${v}`,
+  });
+}
+```
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof iterations = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.segmented({
+    label: "Iterations",
+    options: [
+      [20, "20"],
+      [100, "100"],
+      [1000, "1000"],
+    ],
+    value: 100,
+  });
+}
+```
+
+```{ojs}
+//| column: screen-inset
+//| code-fold: true
+//| code-summary: "Show code"
+{
+  // Shared WebGPU boilerplate: setup, buffers and the animation loop (lib/gpu.js)
+  const gpu = await import(new URL("../lib/gpu.js", document.baseURI).href);
+  const random = await import(new URL("../lib/random.js", document.baseURI).href);
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+
+  // Controls are read live from their elements (referencing `viewof x` gives the
+  // element, not the value), so moving them does not restart this cell.
+  const rateInput = viewof rate; // log10 of darts per second
+  const iterationsInput = viewof iterations;
+
+  const { canvas, device, context, format } = await gpu.setup({
+    width: 640,
+    height: 360,
+    resolution: "auto",
+  });
+
+  // The box the darts are thrown into, 16:9 like the canvas. The set lies inside it:
+  // it reaches x from -2 to 0.47 and y out to about 1.12.
+  const origin = [-2.9, -1.265625];
+  const size = [4.5, 2.53125];
+  const boxArea = size[0] * size[1];
+  const groupSize = 256;
+  const maxThreads = 1 << 20;
+  const maxDrawnPerFrame = 4096;
+
+  // The reference: every point of a fixed grid, tested a slice at a time
+  const gridColumns = 16384;
+  const gridRows = 9216;
+  const gridChunks = 64;
+  const rowsPerChunk = gridRows / gridChunks;
+
+  // ------------------------------------------------------------------ the shaders
+  const module = device.createShaderModule({
+    code: `
+      struct Params {
+        origin: vec2f,
+        size: vec2f,
+        maxIter: u32,    // iterations before a point counts as inside
+        perThread: u32,  // darts of each kind every thread throws this frame
+        threads: u32,    // threads that throw at all
+        drawn: u32,      // threads that record their first dart for drawing
+        start: u32,      // Halton index of the first dart this frame
+        refRow: u32,     // first row of the reference grid slice to test
+        refRows: u32,    // rows in that slice
+        pad: u32,
+      }
+
+      @group(0) @binding(0) var<uniform> params: Params;
+      @group(0) @binding(1) var<storage, read_write> rng: array<u32>;
+      // Counters: darts thrown, random darts inside, Halton darts inside, and the
+      // reference grid's points inside
+      @group(0) @binding(2) var<storage, read_write> totals: array<atomic<u32>, 4>;
+      // This frame's drawn darts: x, y, 1 if inside
+      @group(0) @binding(3) var<storage, read_write> darts: array<vec4f>;
+
+      ${random.rngWGSL}
+
+      // Is c in the set (or, past maxIter steps, not yet seen to run away)?
+      fn inside(c: vec2f) -> bool {
+        // The big cardioid and the circle to its left are known to be inside: skip
+        // them, which is most of the set's area and all of its slow points
+        let xq = c.x - 0.25;
+        let q = xq * xq + c.y * c.y;
+        if (q * (q + xq) <= 0.25 * c.y * c.y) { return true; }
+        let xp = c.x + 1.0;
+        if (xp * xp + c.y * c.y <= 0.0625) { return true; }
+
+        var z = vec2f(0.0);
+        for (var i = 0u; i < params.maxIter; i++) {
+          z = vec2f(z.x * z.x - z.y * z.y + c.x, 2.0 * z.x * z.y + c.y);
+          if (dot(z, z) > 4.0) { return false; }
+        }
+        return true;
+      }
+
+      // Halton points: the base-2 and base-3 radical inverses of the index
+      fn halton2(i: u32) -> f32 {
+        return f32(reverseBits(i) >> 8u) * (1.0 / 16777216.0);
+      }
+      fn halton3(i: u32) -> f32 {
+        var f = 1.0 / 3.0;
+        var r = 0.0;
+        var n = i;
+        for (var d = 0u; d < 21u; d++) {
+          if (n == 0u) { break; }
+          r += f * f32(n % 3u);
+          n /= 3u;
+          f /= 3.0;
+        }
+        return r;
+      }
+
+      var<workgroup> thrown: array<u32, ${groupSize}>;
+      var<workgroup> byRandom: array<u32, ${groupSize}>;
+      var<workgroup> byHalton: array<u32, ${groupSize}>;
+
+      @compute @workgroup_size(${groupSize})
+      fn drop(
+        @builtin(global_invocation_id) id: vec3u,
+        @builtin(local_invocation_index) local: u32,
+      ) {
+        var nThrown = 0u;
+        var nRandom = 0u;
+        var nHalton = 0u;
+
+        if (id.x < params.threads) {
+          var state = rng[id.x];
+          for (var k = 0u; k < params.perThread; k++) {
+            // The Halton dart: the whole frame's darts are consecutive indices
+            let index = params.start + 1u + k * params.threads + id.x;
+            let h = vec2f(halton2(index), halton3(index));
+            let r = vec2f(rand(&state), rand(&state));
+
+            let randomInside = inside(params.origin + r * params.size);
+            let haltonInside = inside(params.origin + h * params.size);
+            nThrown += 1u;
+            if (randomInside) { nRandom += 1u; }
+            if (haltonInside) { nHalton += 1u; }
+
+            // Only the random darts are drawn, one per thread each frame
+            if (k == 0u && id.x < params.drawn) {
+              let p = params.origin + r * params.size;
+              darts[id.x] = vec4f(p.x, p.y, select(0.0, 1.0, randomInside), 0.0);
+            }
+          }
+          rng[id.x] = state;
+        }
+
+        // Add up the group's darts in shared memory, then one atomic each
+        thrown[local] = nThrown;
+        byRandom[local] = nRandom;
+        byHalton[local] = nHalton;
+        workgroupBarrier();
+        for (var stride = ${groupSize / 2}u; stride > 0u; stride >>= 1u) {
+          if (local < stride) {
+            thrown[local] += thrown[local + stride];
+            byRandom[local] += byRandom[local + stride];
+            byHalton[local] += byHalton[local + stride];
+          }
+          workgroupBarrier();
+        }
+        if (local == 0u) {
+          atomicAdd(&totals[0], thrown[0]);
+          atomicAdd(&totals[1], byRandom[0]);
+          atomicAdd(&totals[2], byHalton[0]);
+        }
+      }
+
+      // The reference: test a slice of rows of a fixed grid, at the cell centres
+      var<workgroup> gridCount: array<u32, 256>;
+
+      @compute @workgroup_size(16, 16)
+      fn grid(
+        @builtin(global_invocation_id) id: vec3u,
+        @builtin(local_invocation_index) local: u32,
+      ) {
+        var n = 0u;
+        if (id.y < params.refRows) {
+          let cell = vec2f(f32(id.x) + 0.5, f32(params.refRow + id.y) + 0.5);
+          let c = params.origin + cell / vec2f(${gridColumns}.0, ${gridRows}.0) * params.size;
+          if (inside(c)) { n = 1u; }
+        }
+        gridCount[local] = n;
+        workgroupBarrier();
+        for (var stride = 128u; stride > 0u; stride >>= 1u) {
+          if (local < stride) { gridCount[local] += gridCount[local + stride]; }
+          workgroupBarrier();
+        }
+        if (local == 0u) { atomicAdd(&totals[3], gridCount[0]); }
+      }
+    `,
+  });
+  const dropPipeline = device.createComputePipeline({
+    layout: "auto",
+    compute: { module, entryPoint: "drop" },
+  });
+  const gridPipeline = device.createComputePipeline({
+    layout: "auto",
+    compute: { module, entryPoint: "grid" },
+  });
+
+  // --------------------------------------------------------------------- buffers
+  const buffers = {
+    rng: gpu.storageBuffer(device, random.seeds(maxThreads)),
+    totals: gpu.storageBuffer(device, new Uint32Array(4)),
+    darts: gpu.storageBuffer(device, new Float32Array(maxDrawnPerFrame * 4)),
+    params: device.createBuffer({
+      size: 48,
+      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+    }),
+  };
+  const paramBytes = new ArrayBuffer(48);
+  const paramView = new DataView(paramBytes);
+
+  const dropBindGroup = device.createBindGroup({
+    layout: dropPipeline.getBindGroupLayout(0),
+    entries: [
+      { binding: 0, resource: { buffer: buffers.params } },
+      { binding: 1, resource: { buffer: buffers.rng } },
+      { binding: 2, resource: { buffer: buffers.totals } },
+      { binding: 3, resource: { buffer: buffers.darts } },
+    ],
+  });
+  const gridBindGroup = device.createBindGroup({
+    layout: gridPipeline.getBindGroupLayout(0),
+    entries: [
+      { binding: 0, resource: { buffer: buffers.params } },
+      { binding: 2, resource: { buffer: buffers.totals } },
+    ],
+  });
+
+  // --------------------------------------------------------------------- drawing
+  // The darts are drawn into a texture that keeps them, so the picture builds up;
+  // that texture is then drawn to the canvas.
+  const textureSize = [1280, 720];
+  const picture = device.createTexture({
+    size: textureSize,
+    format: "rgba8unorm",
+    usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,
+  });
+  const background = { r: 0.102, g: 0.102, b: 0.102, a: 1 };
+
+  const cornerBuffer = gpu.unitSquare(device);
+  const drawModule = device.createShaderModule({
+    code: `
+      struct Params {
+        origin: vec2f,
+        size: vec2f,
+        maxIter: u32,
+        perThread: u32,
+        threads: u32,
+        drawn: u32,
+        start: u32,
+        refRow: u32,
+        refRows: u32,
+        pad: u32,
+      }
+      @group(0) @binding(0) var<uniform> params: Params;
+      @group(0) @binding(1) var<storage, read> darts: array<vec4f>;
+
+      struct Out {
+        @builtin(position) position: vec4f,
+        @location(0) colour: vec4f,
+      }
+
+      @vertex
+      fn dartVertex(
+        @location(0) corner: vec2f,
+        @builtin(instance_index) i: u32,
+      ) -> Out {
+        let d = darts[i];
+        let uv = (d.xy - params.origin) / params.size; // 0 to 1 across the box
+        // About 2.5 pixels across, in the texture
+        let half = vec2f(1.25 / ${textureSize[0]}.0, 1.25 / ${textureSize[1]}.0) * 2.0;
+        let centre = vec2f(uv.x * 2.0 - 1.0, 1.0 - uv.y * 2.0);
+        let cold = vec4f(0.35, 0.5, 0.8, 0.8);
+        let hot = vec4f(1.0, 0.282, 0.204, 0.95); // #FF4834
+        return Out(
+          vec4f(centre + corner * half, 0.0, 1.0),
+          select(cold, hot, d.z > 0.5),
+        );
+      }
+
+      @fragment
+      fn dartFragment(in: Out) -> @location(0) vec4f {
+        return in.colour;
+      }
+    `,
+  });
+  const dartPipeline = device.createRenderPipeline({
+    layout: "auto",
+    vertex: { module: drawModule, entryPoint: "dartVertex", buffers: [gpu.squareLayout] },
+    fragment: {
+      module: drawModule,
+      entryPoint: "dartFragment",
+      targets: [{ format: "rgba8unorm", blend: gpu.alphaBlend }],
+    },
+    primitive: { topology: "triangle-list" },
+  });
+  const dartBindGroup = device.createBindGroup({
+    layout: dartPipeline.getBindGroupLayout(0),
+    entries: [
+      { binding: 0, resource: { buffer: buffers.params } },
+      { binding: 1, resource: { buffer: buffers.darts } },
+    ],
+  });
+
+  // The texture onto the canvas
+  const sampler = device.createSampler({ magFilter: "linear", minFilter: "linear" });
+  const showModule = device.createShaderModule({
+    code: `
+      @group(0) @binding(0) var picture: texture_2d<f32>;
+      @group(0) @binding(1) var smp: sampler;
+
+      struct Out {
+        @builtin(position) position: vec4f,
+        @location(0) uv: vec2f,
+      }
+
+      @vertex
+      fn showVertex(@location(0) corner: vec2f) -> Out {
+        return Out(
+          vec4f(corner, 0.0, 1.0),
+          vec2f(corner.x * 0.5 + 0.5, 0.5 - corner.y * 0.5),
+        );
+      }
+
+      @fragment
+      fn showFragment(in: Out) -> @location(0) vec4f {
+        return textureSample(picture, smp, in.uv);
+      }
+    `,
+  });
+  const showPipeline = device.createRenderPipeline({
+    layout: "auto",
+    vertex: { module: showModule, entryPoint: "showVertex", buffers: [gpu.squareLayout] },
+    fragment: { module: showModule, entryPoint: "showFragment", targets: [{ format }] },
+    primitive: { topology: "triangle-list" },
+  });
+  const showBindGroup = device.createBindGroup({
+    layout: showPipeline.getBindGroupLayout(0),
+    entries: [
+      { binding: 0, resource: picture.createView() },
+      { binding: 1, resource: sampler },
+    ],
+  });
+
+  // ------------------------------------------------------------------- the state
+  const readback = gpu.readback(device, [{ buffer: buffers.totals, bytes: 16 }]);
+  const sampleEvery = 6; // frames between reads of the counters
+  let frameCount = 0;
+  let epoch = 0; // bumped on reset, so a read in flight from before is dropped
+  let previous = [0, 0, 0, 0]; // the GPU's (wrapping, 32-bit) counters at the last read
+  const total = [0, 0, 0, 0]; // darts, random inside, Halton inside, grid inside
+  const series = []; // {N, random, halton}: area estimates
+  let owed = 0; // darts due but not yet thrown
+  let haltonStart = 0; // index of the next Halton dart
+  let chunk = 0; // reference grid slices tested so far
+  let clearPicture = true; // clear the picture on the next frame
+  let lastTime = null;
+
+  const [areaHost, errorHost] = charts.children;
+  const draw = ui.plotter(Plot);
+
+  const reference = () =>
+    chunk >= gridChunks && total[3] > 0 ? (boxArea * total[3]) / (gridColumns * gridRows) : null;
+
+  // The spread of the random estimate after N darts: n inside is binomial
+  const spread = (N, p) => boxArea * Math.sqrt((p * (1 - p)) / N);
+
+  // The area estimate with its standard error, to the digits that error justifies
+  function current() {
+    const [N, inside] = total;
+    if (inside === 0 || inside === N) return null;
+    const p = inside / N;
+    const estimate = boxArea * p;
+    const sigma = spread(N, p);
+    const rounded = Number(sigma.toPrecision(1));
+    const decimals = Math.max(0, -Math.floor(Math.log10(rounded)));
+    return {
+      N,
+      estimate,
+      sigma,
+      text: `area ≈ ${estimate.toFixed(decimals)} ± ${rounded.toFixed(decimals)}`,
+    };
+  }
+
+  function drawCharts() {
+    const now = current();
+    const ref = reference();
+    const xAxis = { label: "darts of each kind", type: "log", grid: true, domain: [10, 1e10] };
+    const pRef = ref === null ? 0.13 : ref / boxArea;
+    const band =
+      ref === null
+        ? []
+        : Array.from({ length: 60 }, (_, k) => 10 ** (1 + (9 * k) / 59)).map((N) => ({
+            N,
+            low: ref - spread(N, pRef),
+            high: ref + spread(N, pRef),
+            sigma: spread(N, pRef),
+          }));
+
+    draw(areaHost, {
+      x: xAxis,
+      y: { label: "estimate of the area", grid: true, domain: [1.2, 1.9] },
+      marks: [
+        Plot.areaY(band, { x: "N", y1: "low", y2: "high", fillOpacity: 0.15, clip: true }),
+        ...(ref === null
+          ? []
+          : [
+              Plot.ruleY([ref], {
+                stroke: "currentColor",
+                strokeOpacity: 0.6,
+                strokeDasharray: "4 3",
+              }),
+            ]),
+        Plot.line(series, { x: "N", y: "halton", stroke: "#5980CC", clip: true }),
+        Plot.line(series, { x: "N", y: "random", stroke: "#FF4834", clip: true }),
+        ...(now
+          ? [
+              Plot.text([now.text], {
+                frameAnchor: "top-left",
+                dx: 10,
+                dy: 8,
+                fontSize: 20,
+                fontWeight: 600,
+                fill: "currentColor",
+              }),
+            ]
+          : []),
+      ],
+    });
+
+    const errors = ref === null ? [] : series.map((p) => ({
+      N: p.N,
+      random: Math.abs(p.random - ref),
+      halton: Math.abs(p.halton - ref),
+    }));
+    draw(errorHost, {
+      x: xAxis,
+      y: { label: "error: distance from the reference", type: "log", grid: true, domain: [1e-6, 3] },
+      marks: [
+        Plot.line(band, {
+          x: "N",
+          y: "sigma",
+          stroke: "currentColor",
+          strokeDasharray: "4 3",
+        }),
+        Plot.dot(errors.filter((p) => p.halton > 0), {
+          x: "N",
+          y: "halton",
+          r: 2,
+          fill: "#5980CC",
+        }),
+        Plot.dot(errors.filter((p) => p.random > 0), {
+          x: "N",
+          y: "random",
+          r: 2,
+          fill: "#FF4834",
+        }),
+      ],
+    });
+  }
+
+  function record() {
+    const [N, byRandom, byHalton] = total;
+    if (byRandom === 0 || byHalton === 0) return;
+    const last = series[series.length - 1];
+    if (!last || N >= 1.15 * last.N) {
+      series.push({ N, random: (boxArea * byRandom) / N, halton: (boxArea * byHalton) / N });
+    }
+    drawCharts();
+  }
+
+  // Start again, including the reference for the current number of iterations
+  function reset() {
+    epoch++;
+    total.fill(0);
+    previous = [0, 0, 0, 0];
+    series.length = 0;
+    owed = 0;
+    haltonStart = 0;
+    chunk = 0;
+    clearPicture = true;
+    device.queue.writeBuffer(buffers.totals, 0, new Uint32Array(4));
+    drawCharts();
+  }
+  iterationsInput.addEventListener("input", reset);
+  invalidation.then(() => iterationsInput.removeEventListener("input", reset));
+
+  const resetButton = ui.button({ label: "Start over", onClick: reset });
+  const readout = ui.readout();
+  drawCharts();
+
+  function frame(ms) {
+    // Seconds since the last frame, capped so a pause does not become a flood
+    const dt = lastTime === null ? 0 : Math.min((ms - lastTime) / 1000, 0.1);
+    lastTime = ms;
+    owed += 10 ** rateInput.value * dt;
+    const due = Math.floor(owed);
+    const encoder = device.createCommandEncoder();
+
+    // Spread the darts over threads, at most 64 of each kind a thread
+    let threads = 0;
+    let perThread = 0;
+    let drawn = 0;
+    if (due >= 1) {
+      threads = Math.min(maxThreads, Math.ceil(due / 64));
+      perThread = Math.ceil(due / threads);
+      owed -= threads * perThread;
+      drawn = Math.min(threads, maxDrawnPerFrame);
+      if (haltonStart + threads * perThread >= 2 ** 32 - 2) reset(); // keep indices distinct
+    }
+
+    paramView.setFloat32(0, origin[0], true);
+    paramView.setFloat32(4, origin[1], true);
+    paramView.setFloat32(8, size[0], true);
+    paramView.setFloat32(12, size[1], true);
+    paramView.setUint32(16, iterationsInput.value, true);
+    paramView.setUint32(20, perThread, true);
+    paramView.setUint32(24, threads, true);
+    paramView.setUint32(28, drawn, true);
+    paramView.setUint32(32, haltonStart, true);
+    const doGrid = chunk < gridChunks;
+    paramView.setUint32(36, chunk * rowsPerChunk, true);
+    paramView.setUint32(40, rowsPerChunk, true);
+    device.queue.writeBuffer(buffers.params, 0, paramBytes);
+
+    const compute = encoder.beginComputePass();
+    if (doGrid) {
+      compute.setPipeline(gridPipeline);
+      compute.setBindGroup(0, gridBindGroup);
+      compute.dispatchWorkgroups(gridColumns / 16, rowsPerChunk / 16);
+      chunk++;
+    }
+    if (threads > 0) {
+      compute.setPipeline(dropPipeline);
+      compute.setBindGroup(0, dropBindGroup);
+      compute.dispatchWorkgroups(Math.ceil(threads / groupSize));
+      haltonStart += threads * perThread;
+    }
+    compute.end();
+
+    // New darts into the picture (cleared after a reset), then the picture to the
+    // canvas
+    if (clearPicture || drawn > 0) {
+      const picturePass = encoder.beginRenderPass({
+        colorAttachments: [
+          {
+            view: picture.createView(),
+            clearValue: background,
+            loadOp: clearPicture ? "clear" : "load",
+            storeOp: "store",
+          },
+        ],
+      });
+      if (drawn > 0) {
+        picturePass.setPipeline(dartPipeline);
+        picturePass.setBindGroup(0, dartBindGroup);
+        picturePass.setVertexBuffer(0, cornerBuffer);
+        picturePass.draw(6, drawn);
+      }
+      picturePass.end();
+      clearPicture = false;
+    }
+    const pass = gpu.beginRenderPass(encoder, context);
+    pass.setPipeline(showPipeline);
+    pass.setBindGroup(0, showBindGroup);
+    pass.setVertexBuffer(0, cornerBuffer);
+    pass.draw(6);
+    pass.end();
+
+    const sample = !readback.pending && ++frameCount % sampleEvery === 0;
+    if (sample) readback.copy(encoder);
+    device.queue.submit([encoder.finish()]);
+    if (sample) {
+      const mine = epoch;
+      readback.read((buffer) => {
+        if (mine !== epoch) return; // from before a reset
+        const counters = new Uint32Array(buffer);
+        // The GPU counters wrap at 2^32: take the difference modulo 2^32
+        for (let k = 0; k < 4; k++) {
+          total[k] += (counters[k] - previous[k]) >>> 0;
+          previous[k] = counters[k];
+        }
+        record();
+      });
+    }
+
+    if (frameCount % 6 === 0) {
+      const now = current();
+      const ref = reference();
+      readout.textContent =
+        `${total[0].toLocaleString()} darts of each kind · ` +
+        (now ? now.text : "area –") +
+        (ref === null ? " · measuring the reference…" : ` · reference ${ref.toFixed(4)}`);
+    }
+  }
+
+  gpu.run(invalidation, device, frame);
+
+  // The canvas with the controls laid over its corner
+  yield ui.stage(canvas, [rateInput, iterationsInput, resetButton, readout]);
+}
+```
+
+```{ojs}
+//| echo: false
+//| column: page
+charts = {
+  // Two empty hosts; the simulation cell above draws into them as data arrives
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.chartHosts(["area", "error"]);
+}
+```
+
+::: {.mf-series-bar}
+Moving Figures
+
+:::{#mf-series}
+:::
+:::
