@@ -95,7 +95,7 @@ viewof needle = {
 {
   // Shared WebGPU boilerplate: setup, buffers and the animation loop (lib/gpu.js)
   const gpu = await import(new URL("../lib/gpu.js", document.baseURI).href);
-  const md = await import(new URL("../lib/md.js", document.baseURI).href);
+  const random = await import(new URL("../lib/random.js", document.baseURI).href);
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
 
   // Controls are read live from their elements (referencing `viewof x` gives the
@@ -143,12 +143,7 @@ viewof needle = {
       // When each of those needles landed, for fading them out
       @group(0) @binding(4) var<storage, read_write> born: array<f32>;
 
-      ${md.rngWGSL}
-
-      // A uniform number in [0, 1)
-      fn rand(state: ptr<function, u32>) -> f32 {
-        return f32(pcg(state) >> 8u) * (1.0 / 16777216.0);
-      }
+      ${random.rngWGSL}
 
       var<workgroup> thrown: array<u32, ${groupSize}>;
       var<workgroup> crossing: array<u32, ${groupSize}>;
@@ -220,14 +215,10 @@ viewof needle = {
   });
 
   // ------------------------------------------------------------------- the atoms
-  const seeds = new Uint32Array(maxThreads);
-  for (let k = 0; k < maxThreads; k += 8192) {
-    crypto.getRandomValues(seeds.subarray(k, k + 8192)); // 64 KB at most a call
-  }
   const emptyRing = new Float32Array(ringSize * 4).fill(-1000); // off the board
   const emptyBorn = new Float32Array(ringSize).fill(-1000); // long ago: invisible
   const buffers = {
-    rng: gpu.storageBuffer(device, seeds),
+    rng: gpu.storageBuffer(device, random.seeds(maxThreads)),
     totals: gpu.storageBuffer(device, new Uint32Array(2)),
     ring: gpu.storageBuffer(device, emptyRing),
     born: gpu.storageBuffer(device, emptyBorn),

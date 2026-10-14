@@ -71,6 +71,7 @@ viewof energy = {
   // Shared WebGPU boilerplate: setup, buffers and the animation loop (lib/gpu.js)
   const gpu = await import(new URL("../lib/gpu.js", document.baseURI).href);
   const md = await import(new URL("../lib/md.js", document.baseURI).href);
+  const random = await import(new URL("../lib/random.js", document.baseURI).href);
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
 
   // The control is read live from its input element (referencing `viewof x` gives
@@ -136,7 +137,7 @@ viewof energy = {
       @group(0) @binding(6) var<storage, read_write> cellInfo: array<vec2u>; // cell, rank
       @group(0) @binding(7) var<storage, read_write> sorted: array<u32>;
 
-      ${md.rngWGSL}
+      ${random.rngWGSL}
 
       fn cellOf(p: vec2f) -> u32 {
         let size = sim.box / vec2f(sim.grid);
@@ -272,15 +273,11 @@ viewof energy = {
   // ------------------------------------------------------------------- the atoms
   const grid = [Math.floor(Lx / cutoff), Math.floor(Ly / cutoff)];
   const cells = grid[0] * grid[1];
-  const seeds = new Uint32Array(count);
-  for (let k = 0; k < count; k += 8192) {
-    crypto.getRandomValues(seeds.subarray(k, Math.min(count, k + 8192)));
-  }
   const buffers = {
     positions: gpu.storageBuffer(device, positions0),
     velocities: gpu.storageBuffer(device, velocities0),
     accelerations: gpu.storageBuffer(device, new Float32Array(count * 2)),
-    rng: gpu.storageBuffer(device, seeds),
+    rng: gpu.storageBuffer(device, random.seeds(count)),
     cellStart: gpu.storageBuffer(device, new Uint32Array(cells + 1)),
     cellInfo: gpu.storageBuffer(device, new Uint32Array(count * 2)),
     sorted: gpu.storageBuffer(device, new Uint32Array(count)),
