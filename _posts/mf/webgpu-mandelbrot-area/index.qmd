@@ -470,8 +470,17 @@ viewof iterations = {
             sigma: spread(N, pRef),
           }));
 
+    // One row per method and sample, so colour can say which is which
+    const methods = ["random", "Halton"];
+    const colours = { domain: methods, range: ["#FF4834", "#5980CC"], legend: true };
+    const estimates = series.flatMap((p) => [
+      { N: p.N, method: "random", area: p.random },
+      { N: p.N, method: "Halton", area: p.halton },
+    ]);
+
     draw(areaHost, {
       x: xAxis,
+      color: colours,
       y: { label: "estimate of the area", grid: true, domain: [1.2, 1.9] },
       marks: [
         Plot.areaY(band, { x: "N", y1: "low", y2: "high", fillOpacity: 0.15, clip: true }),
@@ -484,8 +493,7 @@ viewof iterations = {
                 strokeDasharray: "4 3",
               }),
             ]),
-        Plot.line(series, { x: "N", y: "halton", stroke: "#5980CC", clip: true }),
-        Plot.line(series, { x: "N", y: "random", stroke: "#FF4834", clip: true }),
+        Plot.line(estimates, { x: "N", y: "area", stroke: "method", clip: true }),
         ...(now
           ? [
               Plot.text([now.text], {
@@ -501,13 +509,18 @@ viewof iterations = {
       ],
     });
 
-    const errors = ref === null ? [] : series.map((p) => ({
-      N: p.N,
-      random: Math.abs(p.random - ref),
-      halton: Math.abs(p.halton - ref),
-    }));
+    const errors =
+      ref === null
+        ? []
+        : series
+            .flatMap((p) => [
+              { N: p.N, method: "random", error: Math.abs(p.random - ref) },
+              { N: p.N, method: "Halton", error: Math.abs(p.halton - ref) },
+            ])
+            .filter((p) => p.error > 0);
     draw(errorHost, {
       x: xAxis,
+      color: colours,
       y: { label: "error: distance from the reference", type: "log", grid: true, domain: [1e-6, 3] },
       marks: [
         Plot.line(band, {
@@ -516,18 +529,7 @@ viewof iterations = {
           stroke: "currentColor",
           strokeDasharray: "4 3",
         }),
-        Plot.dot(errors.filter((p) => p.halton > 0), {
-          x: "N",
-          y: "halton",
-          r: 2,
-          fill: "#5980CC",
-        }),
-        Plot.dot(errors.filter((p) => p.random > 0), {
-          x: "N",
-          y: "random",
-          r: 2,
-          fill: "#FF4834",
-        }),
+        Plot.dot(errors, { x: "N", y: "error", r: 2, fill: "method" }),
       ],
     });
   }
