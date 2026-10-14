@@ -62,7 +62,7 @@ Optional `recommended: true` frontmatter adds a star (`.star`) after the title i
 
 ## Shared JavaScript in `{ojs}` cells
 
-Shared modules live in `lib/` (top-level, non-underscore, so Quarto copies it into `_site/` as-is; underscore-prefixed dirs are ignored). `lib/gpu.js` holds the WebGPU setup, buffer helpers and animation loop used by the Moving Figures posts. Import a module from a cell with a dynamic import resolved against the page URL:
+Shared modules live in `lib/` (top-level, non-underscore, so Quarto copies it into `_site/` as-is; underscore-prefixed dirs are ignored). `lib/gpu.js` holds the WebGPU setup, buffer helpers and animation loop used by the Moving Figures posts. `lib/random.js` holds the per-thread GPU random number generator (`rngWGSL`: `rand`, `gaussian2`) and `seeds(count)` for the state buffer; `lib/md.js` and `lib/ui.js` hold the molecular-dynamics and control/chart helpers. Import a module from a cell with a dynamic import resolved against the page URL:
 
 ```js
 const gpu = await import(new URL("../lib/gpu.js", document.baseURI).href);
