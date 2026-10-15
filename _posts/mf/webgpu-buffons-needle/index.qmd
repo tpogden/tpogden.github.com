@@ -37,7 +37,7 @@ a scale that goes up by a factor of ten a step. The board shows the latest needl
 out after a second or two; the millions that have gone before are only counted. The left chart is the
 estimate as the needles pile up, with the shaded band the size of a typical error.
 The right chart is the size of the error itself, against the dashed line a random
-process of this kind is expected to follow. **Start over** clears the count, and
+process of this kind is expected to follow. **Restart** clears the count, and
 changing the needle length does too, since an estimate made with one length means
 nothing for another.
 
@@ -481,7 +481,7 @@ viewof needle = {
   lengthInput.addEventListener("input", reset);
   invalidation.then(() => lengthInput.removeEventListener("input", reset));
 
-  const resetButton = ui.button({ label: "Start over", onClick: reset });
+  const resetButton = ui.button({ label: "Restart", onClick: reset });
   const readout = ui.readout();
   drawCharts();
 
