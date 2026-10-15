@@ -28,22 +28,22 @@ Each dart picks a random $c$ in the box, repeats that step up to a fixed number 
 times, and is **inside** if $z$ never gets further than 2 from the origin. The
 picture develops as the darts land: red ones are inside, grey ones ran away.
 
-Two things stand in the way of a clean answer.
+Two things stand in the way of a clean answer:
 
-**The iterations.** You cannot repeat for ever. A dart that is still going after $n$
-steps is counted as inside, even though some of them would run away later. So what
-is measured is the area of a slightly bigger shape, which shrinks towards the true
-one as $n$ grows. The flat dashed line on the left chart, the reference, is the area of that
-$n$-step shape, found by testing a fixed grid of 600 million points. It is where the
-darts should settle. It sits at about 1.7309 for 20 steps, 1.5465 for 100 and 1.5103
-for 1,000: still some way above 1.5066.
+1. _The iterations._ You cannot repeat for ever. A dart that is still going after $n$
+    steps is counted as inside, even though some of them would run away later. So what
+    is measured is the area of a slightly bigger shape, which shrinks towards the true
+    one as $n$ grows. The flat dashed line on the left chart, the reference, is the
+    area of that $n$-step shape, found by testing a fixed grid of 600 million points.
+    It is where the darts should settle. It sits at about 1.7309 for 20 steps, 1.5465
+    for 100 and 1.5103 for 1,000: still some way above 1.5066.
 
-**The error.** Random darts give an error that falls as $1/\sqrt{N}$, as it did for
-the sticks: a hundred times more darts for one more digit. The right chart shows how
-far the estimate is from the reference, against the sloping dashed line that size of
-error is expected to follow. The reference is itself only so exact: making its grid
-four times coarser or finer moves it by up to about $5 \times 10^{-5}$ (at 100 steps,
-less at the others), so that is as low as the chart can meaningfully go.
+2. _The error._ Random darts give an error that falls as $1/\sqrt{N}$, as it did for
+    the sticks: a hundred times more darts for one more digit. The right chart shows
+    how far the estimate is from the reference, against the sloping dashed line that
+    size of error is expected to follow. The reference is itself only so exact: making
+    its grid four times coarser or finer moves it by up to about $5 \times 10^{-5}$ (at
+    100 steps, less at the others), so that is as low as the chart can meaningfully go.
 
 The slider is the number of darts a second. **Iterations** is $n$, and
 changing it, like **Start over**, begins again.
