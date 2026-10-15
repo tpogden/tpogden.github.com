@@ -15,7 +15,8 @@
       "/webgpu-weather-in-a-box/index.html",
       "/webgpu-blast-wave/index.html",
       "/webgpu-buffons-needle/index.html",
-      "/webgpu-mandelbrot-area/index.html"
+      "/webgpu-mandelbrot-area/index.html",
+      "/webgpu-darts-in-many-dimensions/index.html"
     ]
   },
   {
@@ -34,7 +35,8 @@
       "/webgpu-weather-in-a-box/index.html",
       "/webgpu-blast-wave/index.html",
       "/webgpu-buffons-needle/index.html",
-      "/webgpu-mandelbrot-area/index.html"
+      "/webgpu-mandelbrot-area/index.html",
+      "/webgpu-darts-in-many-dimensions/index.html"
     ]
   },
   {
@@ -53,7 +55,8 @@
       "/webgpu-weather-in-a-box/index.html",
       "/webgpu-blast-wave/index.html",
       "/webgpu-buffons-needle/index.html",
-      "/webgpu-mandelbrot-area/index.html"
+      "/webgpu-mandelbrot-area/index.html",
+      "/webgpu-darts-in-many-dimensions/index.html"
     ]
   },
   {
@@ -72,7 +75,8 @@
       "/webgpu-weather-in-a-box/index.html",
       "/webgpu-blast-wave/index.html",
       "/webgpu-buffons-needle/index.html",
-      "/webgpu-mandelbrot-area/index.html"
+      "/webgpu-mandelbrot-area/index.html",
+      "/webgpu-darts-in-many-dimensions/index.html"
     ]
   },
   {
@@ -91,50 +95,14 @@
       "/webgpu-twenty-thousand-atoms/index.html",
       "/webgpu-weather-in-a-box/index.html",
       "/webgpu-blast-wave/index.html",
-      "/webgpu-mandelbrot-area/index.html"
+      "/webgpu-mandelbrot-area/index.html",
+      "/webgpu-darts-in-many-dimensions/index.html"
     ]
   },
   {
-    "listing": "/webgpu-gravity/index.html",
+    "listing": "/webgpu-darts-in-many-dimensions/index.html",
     "items": [
       "/webgpu-hello-world/index.html",
-      "/webgpu-three-particles/index.html",
-      "/webgpu-animation-loop/index.html",
-      "/webgpu-bouncing-particles/index.html",
-      "/webgpu-compute-shader/index.html",
-      "/webgpu-lennard-jones/index.html",
-      "/webgpu-reading-back/index.html",
-      "/webgpu-structure/index.html",
-      "/webgpu-brownian-motion/index.html",
-      "/webgpu-twenty-thousand-atoms/index.html",
-      "/webgpu-weather-in-a-box/index.html",
-      "/webgpu-blast-wave/index.html",
-      "/webgpu-buffons-needle/index.html",
-      "/webgpu-mandelbrot-area/index.html"
-    ]
-  },
-  {
-    "listing": "/webgpu-mandelbrot-area/index.html",
-    "items": [
-      "/webgpu-hello-world/index.html",
-      "/webgpu-three-particles/index.html",
-      "/webgpu-animation-loop/index.html",
-      "/webgpu-bouncing-particles/index.html",
-      "/webgpu-compute-shader/index.html",
-      "/webgpu-lennard-jones/index.html",
-      "/webgpu-gravity/index.html",
-      "/webgpu-reading-back/index.html",
-      "/webgpu-structure/index.html",
-      "/webgpu-brownian-motion/index.html",
-      "/webgpu-twenty-thousand-atoms/index.html",
-      "/webgpu-weather-in-a-box/index.html",
-      "/webgpu-blast-wave/index.html",
-      "/webgpu-buffons-needle/index.html"
-    ]
-  },
-  {
-    "listing": "/webgpu-hello-world/index.html",
-    "items": [
       "/webgpu-three-particles/index.html",
       "/webgpu-animation-loop/index.html",
       "/webgpu-bouncing-particles/index.html",
@@ -152,45 +120,7 @@
     ]
   },
   {
-    "listing": "/webgpu-bouncing-particles/index.html",
-    "items": [
-      "/webgpu-hello-world/index.html",
-      "/webgpu-three-particles/index.html",
-      "/webgpu-animation-loop/index.html",
-      "/webgpu-compute-shader/index.html",
-      "/webgpu-lennard-jones/index.html",
-      "/webgpu-gravity/index.html",
-      "/webgpu-reading-back/index.html",
-      "/webgpu-structure/index.html",
-      "/webgpu-brownian-motion/index.html",
-      "/webgpu-twenty-thousand-atoms/index.html",
-      "/webgpu-weather-in-a-box/index.html",
-      "/webgpu-blast-wave/index.html",
-      "/webgpu-buffons-needle/index.html",
-      "/webgpu-mandelbrot-area/index.html"
-    ]
-  },
-  {
-    "listing": "/webgpu-three-particles/index.html",
-    "items": [
-      "/webgpu-hello-world/index.html",
-      "/webgpu-animation-loop/index.html",
-      "/webgpu-bouncing-particles/index.html",
-      "/webgpu-compute-shader/index.html",
-      "/webgpu-lennard-jones/index.html",
-      "/webgpu-gravity/index.html",
-      "/webgpu-reading-back/index.html",
-      "/webgpu-structure/index.html",
-      "/webgpu-brownian-motion/index.html",
-      "/webgpu-twenty-thousand-atoms/index.html",
-      "/webgpu-weather-in-a-box/index.html",
-      "/webgpu-blast-wave/index.html",
-      "/webgpu-buffons-needle/index.html",
-      "/webgpu-mandelbrot-area/index.html"
-    ]
-  },
-  {
-    "listing": "/webgpu-weather-in-a-box/index.html",
+    "listing": "/webgpu-blast-wave/index.html",
     "items": [
       "/webgpu-hello-world/index.html",
       "/webgpu-three-particles/index.html",
@@ -203,9 +133,10 @@
       "/webgpu-structure/index.html",
       "/webgpu-brownian-motion/index.html",
       "/webgpu-twenty-thousand-atoms/index.html",
-      "/webgpu-blast-wave/index.html",
+      "/webgpu-weather-in-a-box/index.html",
       "/webgpu-buffons-needle/index.html",
-      "/webgpu-mandelbrot-area/index.html"
+      "/webgpu-mandelbrot-area/index.html",
+      "/webgpu-darts-in-many-dimensions/index.html"
     ]
   },
   {
@@ -224,6 +155,7 @@
       "/random-walks/index.html",
       "/pi/index.html",
       "/useful-mac-apps-for-scientists/index.html",
+      "/webgpu-darts-in-many-dimensions/index.html",
       "/webgpu-mandelbrot-area/index.html",
       "/webgpu-buffons-needle/index.html",
       "/webgpu-blast-wave/index.html",
@@ -269,7 +201,87 @@
     ]
   },
   {
-    "listing": "/webgpu-blast-wave/index.html",
+    "listing": "/webgpu-weather-in-a-box/index.html",
+    "items": [
+      "/webgpu-hello-world/index.html",
+      "/webgpu-three-particles/index.html",
+      "/webgpu-animation-loop/index.html",
+      "/webgpu-bouncing-particles/index.html",
+      "/webgpu-compute-shader/index.html",
+      "/webgpu-lennard-jones/index.html",
+      "/webgpu-gravity/index.html",
+      "/webgpu-reading-back/index.html",
+      "/webgpu-structure/index.html",
+      "/webgpu-brownian-motion/index.html",
+      "/webgpu-twenty-thousand-atoms/index.html",
+      "/webgpu-blast-wave/index.html",
+      "/webgpu-buffons-needle/index.html",
+      "/webgpu-mandelbrot-area/index.html",
+      "/webgpu-darts-in-many-dimensions/index.html"
+    ]
+  },
+  {
+    "listing": "/webgpu-three-particles/index.html",
+    "items": [
+      "/webgpu-hello-world/index.html",
+      "/webgpu-animation-loop/index.html",
+      "/webgpu-bouncing-particles/index.html",
+      "/webgpu-compute-shader/index.html",
+      "/webgpu-lennard-jones/index.html",
+      "/webgpu-gravity/index.html",
+      "/webgpu-reading-back/index.html",
+      "/webgpu-structure/index.html",
+      "/webgpu-brownian-motion/index.html",
+      "/webgpu-twenty-thousand-atoms/index.html",
+      "/webgpu-weather-in-a-box/index.html",
+      "/webgpu-blast-wave/index.html",
+      "/webgpu-buffons-needle/index.html",
+      "/webgpu-mandelbrot-area/index.html",
+      "/webgpu-darts-in-many-dimensions/index.html"
+    ]
+  },
+  {
+    "listing": "/webgpu-bouncing-particles/index.html",
+    "items": [
+      "/webgpu-hello-world/index.html",
+      "/webgpu-three-particles/index.html",
+      "/webgpu-animation-loop/index.html",
+      "/webgpu-compute-shader/index.html",
+      "/webgpu-lennard-jones/index.html",
+      "/webgpu-gravity/index.html",
+      "/webgpu-reading-back/index.html",
+      "/webgpu-structure/index.html",
+      "/webgpu-brownian-motion/index.html",
+      "/webgpu-twenty-thousand-atoms/index.html",
+      "/webgpu-weather-in-a-box/index.html",
+      "/webgpu-blast-wave/index.html",
+      "/webgpu-buffons-needle/index.html",
+      "/webgpu-mandelbrot-area/index.html",
+      "/webgpu-darts-in-many-dimensions/index.html"
+    ]
+  },
+  {
+    "listing": "/webgpu-hello-world/index.html",
+    "items": [
+      "/webgpu-three-particles/index.html",
+      "/webgpu-animation-loop/index.html",
+      "/webgpu-bouncing-particles/index.html",
+      "/webgpu-compute-shader/index.html",
+      "/webgpu-lennard-jones/index.html",
+      "/webgpu-gravity/index.html",
+      "/webgpu-reading-back/index.html",
+      "/webgpu-structure/index.html",
+      "/webgpu-brownian-motion/index.html",
+      "/webgpu-twenty-thousand-atoms/index.html",
+      "/webgpu-weather-in-a-box/index.html",
+      "/webgpu-blast-wave/index.html",
+      "/webgpu-buffons-needle/index.html",
+      "/webgpu-mandelbrot-area/index.html",
+      "/webgpu-darts-in-many-dimensions/index.html"
+    ]
+  },
+  {
+    "listing": "/webgpu-mandelbrot-area/index.html",
     "items": [
       "/webgpu-hello-world/index.html",
       "/webgpu-three-particles/index.html",
@@ -283,8 +295,29 @@
       "/webgpu-brownian-motion/index.html",
       "/webgpu-twenty-thousand-atoms/index.html",
       "/webgpu-weather-in-a-box/index.html",
+      "/webgpu-blast-wave/index.html",
       "/webgpu-buffons-needle/index.html",
-      "/webgpu-mandelbrot-area/index.html"
+      "/webgpu-darts-in-many-dimensions/index.html"
+    ]
+  },
+  {
+    "listing": "/webgpu-gravity/index.html",
+    "items": [
+      "/webgpu-hello-world/index.html",
+      "/webgpu-three-particles/index.html",
+      "/webgpu-animation-loop/index.html",
+      "/webgpu-bouncing-particles/index.html",
+      "/webgpu-compute-shader/index.html",
+      "/webgpu-lennard-jones/index.html",
+      "/webgpu-reading-back/index.html",
+      "/webgpu-structure/index.html",
+      "/webgpu-brownian-motion/index.html",
+      "/webgpu-twenty-thousand-atoms/index.html",
+      "/webgpu-weather-in-a-box/index.html",
+      "/webgpu-blast-wave/index.html",
+      "/webgpu-buffons-needle/index.html",
+      "/webgpu-mandelbrot-area/index.html",
+      "/webgpu-darts-in-many-dimensions/index.html"
     ]
   },
   {
@@ -303,7 +336,8 @@
       "/webgpu-weather-in-a-box/index.html",
       "/webgpu-blast-wave/index.html",
       "/webgpu-buffons-needle/index.html",
-      "/webgpu-mandelbrot-area/index.html"
+      "/webgpu-mandelbrot-area/index.html",
+      "/webgpu-darts-in-many-dimensions/index.html"
     ]
   },
   {
@@ -322,7 +356,8 @@
       "/webgpu-weather-in-a-box/index.html",
       "/webgpu-blast-wave/index.html",
       "/webgpu-buffons-needle/index.html",
-      "/webgpu-mandelbrot-area/index.html"
+      "/webgpu-mandelbrot-area/index.html",
+      "/webgpu-darts-in-many-dimensions/index.html"
     ]
   },
   {
@@ -341,7 +376,8 @@
       "/webgpu-weather-in-a-box/index.html",
       "/webgpu-blast-wave/index.html",
       "/webgpu-buffons-needle/index.html",
-      "/webgpu-mandelbrot-area/index.html"
+      "/webgpu-mandelbrot-area/index.html",
+      "/webgpu-darts-in-many-dimensions/index.html"
     ]
   }
 ]
