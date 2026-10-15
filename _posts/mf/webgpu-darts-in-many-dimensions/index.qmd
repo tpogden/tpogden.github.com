@@ -1,0 +1,614 @@
+---
+title: "015: Lost in the Corners"
+date: "2026-10-15"
+categories: [mf]
+page-layout: article
+listing:
+  - id: mf-series
+    contents: "../*/index.qmd"
+    type: default
+    categories: false
+    include:
+      categories: "mf"
+    fields: [title]
+    sort: "title asc"
+---
+
+[Last time](../webgpu-mandelbrot-area/) the darts measured an area. Nothing in the
+method was special to two dimensions, so this time they measure a volume, and then a
+volume in four dimensions, and then in twenty.
+
+The shape is the unit ball: all the points within distance 1 of the origin. The box is
+the cube around it, from $-1$ to $1$ in every direction. A dart is a random point of
+the cube, and it is _inside_ if its coordinates satisfy $x_1^2 + x_2^2 + \dots + x_d^2
+\le 1$. In two dimensions that is a circle in a square, the fraction inside is $\pi/4$,
+and this is the [π of the sticks](../webgpu-buffons-needle/) again.
+
+The ball does have a formula, which is what makes it a good test:
+
+$$V_d = \frac{\pi^{d/2}}{\Gamma(d/2 + 1)}$$
+
+so the darts can be checked against it. One dart serves every dimension at once: its
+first $d$ coordinates are a dart in $d$ dimensions. All twenty estimates on the left
+chart come from the same throws.
+
+The picture is a slice. It shows the first two coordinates of each dart, in the
+dimension chosen with the slider, and the circle is the ball's edge in that slice. In
+two dimensions the red darts fill the circle. In higher ones a dart can land inside the
+circle and still be a miss, because some other coordinate carried it out of the ball.
+
+Three things to watch:
+
+1. _The error doesn't care about the dimension._ The right chart follows the estimate
+    of the chosen dimension. It is the same $1/\sqrt{N}$ as the sticks and the fractal,
+    with a hundred times more darts for one more digit.
+
+2. _The cost does._ What the darts have to measure is a fraction, and the ball takes up
+    a smaller and smaller part of its cube: about 0.8 in two dimensions, 0.16 in five,
+    0.0025 in ten and $2.5 \times 10^{-8}$ in twenty. The relative error after $N$
+    darts is $\sqrt{(1-p)/(pN)}$, so a rare hit costs a lot of darts. The grey lines on
+    the right chart are that for every dimension: the same slope, each one higher than
+    the last.
+
+3. _The volume peaks and falls._ The ball's volume grows to a maximum of about 5.26
+    in five dimensions and then shrinks towards nothing, while the cube's is $2^d$.
+    Almost all of a high-dimensional cube is in its corners, far from any ball.
+
+When no dart has hit yet, the left chart shows a hollow triangle at $3/N$, the most the
+fraction could be and still not have been seen (the "rule of three"). Bars on the
+estimates are one standard error.
+
+The slider is the number of darts a second, and **Dimension** is the one the picture
+and the right chart follow; it does not restart the run, **Restart** does. At the
+top speed the twenty-dimensional ball gets a few hits a second.
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof rate = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.slider({
+    label: "Darts/s",
+    min: 2,
+    max: 9,
+    step: 1,
+    value: 2,
+    format: (v) => `10^${v}`,
+  });
+}
+```
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof dimension = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.slider({
+    label: "Dimension",
+    min: 2,
+    max: 20,
+    step: 1,
+    value: 3,
+    format: (v) => String(v),
+  });
+}
+```
+
+```{ojs}
+//| column: screen-inset
+//| code-fold: true
+//| code-summary: "Show code"
+{
+  // Shared WebGPU boilerplate: setup, buffers and the animation loop (lib/gpu.js)
+  const gpu = await import(new URL("../lib/gpu.js", document.baseURI).href);
+  const random = await import(new URL("../lib/random.js", document.baseURI).href);
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+
+  // Controls are read live from their elements (referencing `viewof x` gives the
+  // element, not the value), so moving them does not restart this cell.
+  const rateInput = viewof rate; // log10 of darts per second
+  const dimensionInput = viewof dimension;
+
+  const { canvas, device, context, format } = await gpu.setup({
+    width: 640,
+    height: 360,
+    resolution: "auto",
+  });
+
+  const maxDim = 20;
+  const groupSize = 256;
+  const maxThreads = 1 << 20;
+  const maxDrawnPerFrame = 4096;
+  const half = 1.15; // half the height of the picture, in box units (the box is +-1)
+  const aspect = 16 / 9;
+  const counters = maxDim + 1; // darts inside each dimension, then darts thrown
+
+  // The ball's volume (radius 1) by V_d = V_{d-2} 2 pi / d, and its share of the cube
+  const volume = [1, 2];
+  for (let d = 2; d <= maxDim; d++) volume[d] = (volume[d - 2] * 2 * Math.PI) / d;
+  const exact = (d) => volume[d] / 2 ** d; // fraction of the cube inside the ball
+
+  // ------------------------------------------------------------------ the shaders
+  const module = device.createShaderModule({
+    code: `
+      struct Params {
+        dim: u32,        // the dimension the picture follows
+        perThread: u32,  // darts every thread throws this frame
+        threads: u32,    // threads that throw at all
+        drawn: u32,      // threads that record their first dart for drawing
+      }
+
+      @group(0) @binding(0) var<uniform> params: Params;
+      @group(0) @binding(1) var<storage, read_write> rng: array<u32>;
+      // Darts inside the ball in each dimension 1..${maxDim}, then darts thrown
+      @group(0) @binding(2) var<storage, read_write> totals: array<atomic<u32>, ${counters}>;
+      // This frame's drawn darts: x1, x2, 1 if inside the chosen dimension's ball
+      @group(0) @binding(3) var<storage, read_write> darts: array<vec4f>;
+
+      ${random.rngWGSL}
+
+      var<workgroup> partial: array<u32, ${groupSize}>;
+
+      @compute @workgroup_size(${groupSize})
+      fn drop(
+        @builtin(global_invocation_id) id: vec3u,
+        @builtin(local_invocation_index) local: u32,
+      ) {
+        var counts: array<u32, ${counters}>;
+
+        if (id.x < params.threads) {
+          var state = rng[id.x];
+          for (var k = 0u; k < params.perThread; k++) {
+            // The dart's coordinates, one at a time, adding up the squares. The
+            // running sum only grows, so once it passes 1 the dart is a miss in this
+            // dimension and every higher one, and we stop drawing numbers.
+            var sum = 0.0;
+            var depth = 0u; // the highest dimension the dart is still inside
+            var x1 = 0.0;
+            var x2 = 0.0;
+            for (var j = 0u; j < ${maxDim}u; j++) {
+              let x = rand(&state) * 2.0 - 1.0;
+              if (j == 0u) { x1 = x; }
+              if (j == 1u) { x2 = x; }
+              sum += x * x;
+              if (sum > 1.0) { break; }
+              counts[j] += 1u;
+              depth = j + 1u;
+            }
+
+            // One dart per thread each frame is kept for drawing
+            if (k == 0u && id.x < params.drawn) {
+              darts[id.x] = vec4f(x1, x2, select(0.0, 1.0, depth >= params.dim), 0.0);
+            }
+          }
+          counts[${maxDim}] = params.perThread;
+          rng[id.x] = state;
+        }
+
+        // Add up each counter over the group in shared memory, then one atomic each
+        for (var c = 0u; c < ${counters}u; c++) {
+          partial[local] = counts[c];
+          workgroupBarrier();
+          for (var stride = ${groupSize / 2}u; stride > 0u; stride >>= 1u) {
+            if (local < stride) { partial[local] += partial[local + stride]; }
+            workgroupBarrier();
+          }
+          if (local == 0u) { atomicAdd(&totals[c], partial[0]); }
+          workgroupBarrier();
+        }
+      }
+    `,
+  });
+  const dropPipeline = device.createComputePipeline({
+    layout: "auto",
+    compute: { module, entryPoint: "drop" },
+  });
+
+  // --------------------------------------------------------------------- buffers
+  const buffers = {
+    rng: gpu.storageBuffer(device, random.seeds(maxThreads)),
+    totals: gpu.storageBuffer(device, new Uint32Array(counters)),
+    darts: gpu.storageBuffer(device, new Float32Array(maxDrawnPerFrame * 4)),
+    params: device.createBuffer({
+      size: 16,
+      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+    }),
+  };
+  const paramBytes = new ArrayBuffer(16);
+  const paramView = new DataView(paramBytes);
+
+  const dropBindGroup = device.createBindGroup({
+    layout: dropPipeline.getBindGroupLayout(0),
+    entries: [
+      { binding: 0, resource: { buffer: buffers.params } },
+      { binding: 1, resource: { buffer: buffers.rng } },
+      { binding: 2, resource: { buffer: buffers.totals } },
+      { binding: 3, resource: { buffer: buffers.darts } },
+    ],
+  });
+
+  // --------------------------------------------------------------------- drawing
+  // The darts are drawn into a texture that keeps them, so the picture builds up;
+  // that texture is then drawn to the canvas with the box and the circle over it.
+  const textureSize = [1280, 720];
+  const picture = device.createTexture({
+    size: textureSize,
+    format: "rgba8unorm",
+    usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,
+  });
+  const background = { r: 0.102, g: 0.102, b: 0.102, a: 1 };
+
+  const cornerBuffer = gpu.unitSquare(device);
+  const drawModule = device.createShaderModule({
+    code: `
+      @group(0) @binding(0) var<storage, read> darts: array<vec4f>;
+
+      struct Out {
+        @builtin(position) position: vec4f,
+        @location(0) colour: vec4f,
+      }
+
+      @vertex
+      fn dartVertex(
+        @location(0) corner: vec2f,
+        @builtin(instance_index) i: u32,
+      ) -> Out {
+        let d = darts[i];
+        // About 2.5 pixels across, in the texture
+        let size = vec2f(1.25 / ${textureSize[0]}.0, 1.25 / ${textureSize[1]}.0) * 2.0;
+        let centre = vec2f(d.x / ${half * aspect}, d.y / ${half});
+        // Dark grey: the brand's text colour #e8e2e0, a third of the way up from
+        // the #1a1a1a background.
+        let cold = vec4f(0.38, 0.37, 0.365, 0.9);
+        let hot = vec4f(1.0, 0.282, 0.204, 0.95); // #FF4834
+        return Out(
+          vec4f(centre + corner * size, 0.0, 1.0),
+          select(cold, hot, d.z > 0.5),
+        );
+      }
+
+      @fragment
+      fn dartFragment(in: Out) -> @location(0) vec4f {
+        return in.colour;
+      }
+    `,
+  });
+  const dartPipeline = device.createRenderPipeline({
+    layout: "auto",
+    vertex: { module: drawModule, entryPoint: "dartVertex", buffers: [gpu.squareLayout] },
+    fragment: {
+      module: drawModule,
+      entryPoint: "dartFragment",
+      targets: [{ format: "rgba8unorm", blend: gpu.alphaBlend }],
+    },
+    primitive: { topology: "triangle-list" },
+  });
+  const dartBindGroup = device.createBindGroup({
+    layout: dartPipeline.getBindGroupLayout(0),
+    entries: [{ binding: 0, resource: { buffer: buffers.darts } }],
+  });
+
+  // The texture onto the canvas, with the box's edge and the ball's edge in the slice
+  const sampler = device.createSampler({ magFilter: "linear", minFilter: "linear" });
+  const showModule = device.createShaderModule({
+    code: `
+      @group(0) @binding(0) var picture: texture_2d<f32>;
+      @group(0) @binding(1) var smp: sampler;
+
+      struct Out {
+        @builtin(position) position: vec4f,
+        @location(0) uv: vec2f,
+      }
+
+      @vertex
+      fn showVertex(@location(0) corner: vec2f) -> Out {
+        return Out(
+          vec4f(corner, 0.0, 1.0),
+          vec2f(corner.x * 0.5 + 0.5, 0.5 - corner.y * 0.5),
+        );
+      }
+
+      @fragment
+      fn showFragment(in: Out) -> @location(0) vec4f {
+        let colour = textureSample(picture, smp, in.uv);
+        // Position in box units, to draw the edges at +-1 and r = 1
+        let p = vec2f(
+          (in.uv.x - 0.5) * 2.0 * ${half * aspect},
+          (0.5 - in.uv.y) * 2.0 * ${half},
+        );
+        let ring = 1.0 - smoothstep(0.0015, 0.0035, abs(length(p) - 1.0));
+        let edge = 1.0 - smoothstep(0.0015, 0.0035, abs(max(abs(p.x), abs(p.y)) - 1.0));
+        let line = max(ring, edge) * 0.55;
+        return vec4f(mix(colour.rgb, vec3f(0.91, 0.886, 0.878), line), 1.0);
+      }
+    `,
+  });
+  const showPipeline = device.createRenderPipeline({
+    layout: "auto",
+    vertex: { module: showModule, entryPoint: "showVertex", buffers: [gpu.squareLayout] },
+    fragment: { module: showModule, entryPoint: "showFragment", targets: [{ format }] },
+    primitive: { topology: "triangle-list" },
+  });
+  const showBindGroup = device.createBindGroup({
+    layout: showPipeline.getBindGroupLayout(0),
+    entries: [
+      { binding: 0, resource: picture.createView() },
+      { binding: 1, resource: sampler },
+    ],
+  });
+
+  // ------------------------------------------------------------------- the state
+  const readback = gpu.readback(device, [{ buffer: buffers.totals, bytes: counters * 4 }]);
+  const sampleEvery = 6; // frames between reads of the counters
+  let frameCount = 0;
+  let epoch = 0; // bumped on reset, so a read in flight from before is dropped
+  let previous = new Array(counters).fill(0); // the GPU's wrapping 32-bit counters
+  const total = new Array(counters).fill(0); // inside per dimension, then thrown
+  const series = []; // {N, inside: [per dimension]}: the counts as the darts pile up
+  let owed = 0; // darts due but not yet thrown
+  let clearPicture = true; // clear the picture on the next frame
+  let lastTime = null;
+
+  const [fractionHost, errorHost] = charts.children;
+  const draw = ui.plotter(Plot);
+  const dims = Array.from({ length: maxDim }, (_, k) => k + 1);
+
+  // The share of the cube inside, with its standard error, for dimension d
+  function estimate(d, inside = total[d - 1], N = total[maxDim]) {
+    if (N === 0) return null;
+    const p = inside / N;
+    return { N, inside, p, sigma: Math.sqrt((p * (1 - p)) / N) };
+  }
+
+  // The ball's volume with its standard error, to the digits that error justifies
+  function volumeLabel(d) {
+    const e = estimate(d);
+    if (!e) return null;
+    if (e.inside === 0) return "no hits yet";
+    const scale = 2 ** d;
+    const sigma = scale * e.sigma;
+    if (sigma === 0) return `volume ≈ ${(scale * e.p).toPrecision(4)}`;
+    const rounded = Number(sigma.toPrecision(1));
+    const decimals = Math.max(0, -Math.floor(Math.log10(rounded)));
+    return `volume ≈ ${(scale * e.p).toFixed(decimals)} ± ${rounded.toFixed(decimals)}`;
+  }
+
+  function volumeText(d) {
+    const label = volumeLabel(d);
+    return label === null ? "" : `${d} dimensions: ${label} (exact ${volume[d].toPrecision(4)})`;
+  }
+
+  function drawCharts() {
+    const d = dimensionInput.value;
+    const N = total[maxDim];
+
+    // Left: the share of the cube inside the ball, every dimension
+    const hitsLabel = "estimate, ± one standard error";
+    const missesLabel = "no hits yet: at most 3/darts";
+    const seen = [];
+    const unseen = [];
+    for (const k of dims) {
+      const e = estimate(k);
+      if (!e) continue;
+      if (e.inside === 0) unseen.push({ d: k, upper: 3 / N });
+      else {
+        const rel = e.sigma / e.p;
+        seen.push({ d: k, p: e.p, low: e.p / (1 + rel), high: e.p * (1 + rel) });
+      }
+    }
+    draw(fractionHost, {
+      x: { label: "dimension", grid: true, domain: [0.5, maxDim + 0.5], ticks: 10 },
+      y: { label: "share of the cube inside the ball", type: "log", grid: true, domain: [1e-10, 2] },
+      marks: [
+        Plot.ruleX([d], { stroke: "currentColor", strokeOpacity: 0.2, strokeWidth: 10 }),
+        Plot.line(
+          dims.map((k) => ({ d: k, p: exact(k) })),
+          { x: "d", y: "p", stroke: "currentColor", strokeOpacity: 0.6, strokeDasharray: "4 3" },
+        ),
+        Plot.ruleX(seen, { x: "d", y1: "low", y2: "high", stroke: "#FF4834", clip: true }),
+        // Circles are estimates; triangles are dimensions with no hit yet, at the most
+        // the share could be and still not have been seen
+        Plot.dot(
+          [
+            ...seen.map((r) => ({ d: r.d, y: r.p, kind: hitsLabel })),
+            ...unseen.map((r) => ({ d: r.d, y: r.upper, kind: missesLabel })),
+          ],
+          {
+            x: "d",
+            y: "y",
+            symbol: "kind",
+            r: 4,
+            stroke: "#FF4834",
+            fill: (r) => (r.kind === hitsLabel ? "#FF4834" : "none"),
+            clip: true,
+          },
+        ),
+      ],
+      symbol: {
+        legend: true,
+        domain: [hitsLabel, missesLabel],
+        range: ["circle", "triangle"],
+      },
+    });
+
+    // Right: the relative error of the chosen dimension, against what is expected
+    const pd = exact(d);
+    const grid = Array.from({ length: 60 }, (_, k) => 10 ** (1 + (9 * k) / 59));
+    const expected = (k, n) => Math.sqrt((1 - exact(k)) / (exact(k) * n));
+    const others = [];
+    for (const k of dims.filter((k) => k > 1 && k !== d)) {
+      for (const n of grid) others.push({ d: k, N: n, err: expected(k, n) });
+    }
+    const measured = series
+      .map((s) => ({ N: s.N, err: Math.abs(s.inside[d - 1] / s.N - pd) / pd }))
+      .filter((r) => r.err > 0);
+    draw(errorHost, {
+      x: { label: "darts thrown", type: "log", grid: true, domain: [10, 1e10] },
+      y: { label: "relative error of the share", type: "log", grid: true, domain: [1e-5, 1e3] },
+      marks: [
+        Plot.line(others, {
+          x: "N",
+          y: "err",
+          z: "d",
+          stroke: "currentColor",
+          strokeOpacity: 0.18,
+          clip: true,
+        }),
+        Plot.line(
+          grid.map((n) => ({ N: n, err: expected(d, n) })),
+          { x: "N", y: "err", stroke: "currentColor", strokeDasharray: "4 3", clip: true },
+        ),
+        Plot.dot(measured, { x: "N", y: "err", r: 2, fill: "#FF4834", clip: true }),
+        ...(volumeLabel(d)
+          ? [
+              Plot.text([`${d} dimensions: ${volumeLabel(d)}`], {
+                frameAnchor: "top-left",
+                dx: 10,
+                dy: 8,
+                fontSize: 20,
+                fontWeight: 600,
+                fill: "currentColor",
+              }),
+            ]
+          : []),
+      ],
+    });
+  }
+
+  function record() {
+    const N = total[maxDim];
+    if (N === 0) return;
+    const last = series[series.length - 1];
+    if (!last || N >= 1.15 * last.N) series.push({ N, inside: total.slice(0, maxDim) });
+    drawCharts();
+  }
+
+  function reset() {
+    epoch++;
+    total.fill(0);
+    previous.fill(0);
+    series.length = 0;
+    owed = 0;
+    clearPicture = true;
+    device.queue.writeBuffer(buffers.totals, 0, new Uint32Array(counters));
+    drawCharts();
+  }
+  // A new dimension keeps the counts, but the picture starts again
+  const changeDimension = () => {
+    clearPicture = true;
+    drawCharts();
+  };
+  dimensionInput.addEventListener("input", changeDimension);
+  invalidation.then(() => dimensionInput.removeEventListener("input", changeDimension));
+
+  const resetButton = ui.button({ label: "Restart", onClick: reset });
+  const readout = ui.readout();
+  drawCharts();
+
+  function frame(ms) {
+    // Seconds since the last frame, capped so a pause does not become a flood
+    const dt = lastTime === null ? 0 : Math.min((ms - lastTime) / 1000, 0.1);
+    lastTime = ms;
+    owed += 10 ** rateInput.value * dt;
+    const due = Math.floor(owed);
+    const encoder = device.createCommandEncoder();
+
+    // Spread the darts over threads, at most 64 a thread
+    let threads = 0;
+    let perThread = 0;
+    let drawn = 0;
+    if (due >= 1) {
+      threads = Math.min(maxThreads, Math.ceil(due / 64));
+      perThread = Math.ceil(due / threads);
+      owed -= threads * perThread;
+      drawn = Math.min(threads, maxDrawnPerFrame);
+    }
+
+    paramView.setUint32(0, dimensionInput.value, true);
+    paramView.setUint32(4, perThread, true);
+    paramView.setUint32(8, threads, true);
+    paramView.setUint32(12, drawn, true);
+    device.queue.writeBuffer(buffers.params, 0, paramBytes);
+
+    if (threads > 0) {
+      const compute = encoder.beginComputePass();
+      compute.setPipeline(dropPipeline);
+      compute.setBindGroup(0, dropBindGroup);
+      compute.dispatchWorkgroups(Math.ceil(threads / groupSize));
+      compute.end();
+    }
+
+    // New darts into the picture (cleared after a reset), then the picture to the
+    // canvas
+    if (clearPicture || drawn > 0) {
+      const picturePass = encoder.beginRenderPass({
+        colorAttachments: [
+          {
+            view: picture.createView(),
+            clearValue: background,
+            loadOp: clearPicture ? "clear" : "load",
+            storeOp: "store",
+          },
+        ],
+      });
+      if (drawn > 0) {
+        picturePass.setPipeline(dartPipeline);
+        picturePass.setBindGroup(0, dartBindGroup);
+        picturePass.setVertexBuffer(0, cornerBuffer);
+        picturePass.draw(6, drawn);
+      }
+      picturePass.end();
+      clearPicture = false;
+    }
+    const pass = gpu.beginRenderPass(encoder, context);
+    pass.setPipeline(showPipeline);
+    pass.setBindGroup(0, showBindGroup);
+    pass.setVertexBuffer(0, cornerBuffer);
+    pass.draw(6);
+    pass.end();
+
+    const sample = !readback.pending && ++frameCount % sampleEvery === 0;
+    if (sample) readback.copy(encoder);
+    device.queue.submit([encoder.finish()]);
+    if (sample) {
+      const mine = epoch;
+      readback.read((buffer) => {
+        if (mine !== epoch) return; // from before a reset
+        const gpuCounts = new Uint32Array(buffer);
+        // The GPU counters wrap at 2^32: take the difference modulo 2^32
+        for (let k = 0; k < counters; k++) {
+          total[k] += (gpuCounts[k] - previous[k]) >>> 0;
+          previous[k] = gpuCounts[k];
+        }
+        record();
+      });
+    }
+
+    if (frameCount % 6 === 0) {
+      readout.textContent = `${total[maxDim].toLocaleString()} darts · ${volumeText(dimensionInput.value)}`;
+    }
+  }
+
+  gpu.run(invalidation, device, frame);
+
+  // The canvas with the controls laid over its corner
+  yield ui.stage(canvas, [rateInput, dimensionInput, resetButton, readout]);
+}
+```
+
+```{ojs}
+//| echo: false
+//| column: page
+charts = {
+  // Two empty hosts; the simulation cell above draws into them as data arrives
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.chartHosts(["fraction", "error"]);
+}
+```
+
+::: {.mf-series-bar}
+Moving Figures
+
+:::{#mf-series}
+:::
+:::
