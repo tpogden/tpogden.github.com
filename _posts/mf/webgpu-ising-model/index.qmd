@@ -1,0 +1,515 @@
+---
+title: "017: Melting a Magnet"
+date: "2026-10-15"
+categories: [mf]
+page-layout: article
+listing:
+  - id: mf-series
+    contents: "../*/index.qmd"
+    type: default
+    categories: false
+    include:
+      categories: "mf"
+    fields: [title]
+    sort: "title asc"
+---
+
+Heat a magnet and, at some temperature, it stops being a magnet. It does not fade: there
+is one temperature, the Curie point, where it switches. This post is a toy magnet that
+shows why, small enough to run in the browser.
+
+Each cell below is a tiny compass needle, pointing up (red) or down (dark). Two things
+act on every needle:
+
+- It prefers to agree with its four neighbours.
+- Heat shakes it, at random.
+
+Cold, the neighbours win and the whole sheet is one colour: a magnet. Hot, the shaking
+wins and it is static: no magnet at all. This is the
+[Ising model](https://en.wikipedia.org/wiki/Ising_model).
+
+It runs slowly on purpose, a few sweeps a second, so the flips can be followed; **Sweeps/s**
+speeds it up. **Drag Temperature upwards** from the start. The sheet is solid red at first, with a
+few specks of dark that the heat has flipped. Somewhere near 2.27 it falls apart.
+Then bring it back down: it does not always return to one colour, but freezes into
+patches of red and dark that slowly eat each other.
+
+Under the picture are two charts:
+
+- **Left.** How magnetised the sheet is, $|m|$, against the temperature it was at. $|m|$ is 1 when
+  every needle agrees and 0 when half point each way. The dots are what the sheet does, and
+  the dashed line is Onsager's exact answer from 1944. Near the switch the dots sit above
+  the line, because a sheet of finite size has a smeared switch rather than a sharp one:
+  try the smallest and largest **Grid**.
+- **Right.** The magnetisation as time goes on. Below the switch it is pinned, above it
+  is noise, and at the switch it wanders slowly, because needles that are close to
+  deciding drag one another about.
+
+## How the computer shakes the needles
+
+This is the walker's rule from [the last post](../webgpu-metropolis-walkers/), with a
+different map. There the walker's position was a point on a landscape. Here it is
+the whole sheet: one arrangement of needles out of far too many to count, even
+for this small sheet, $2^{14{,}400}$ of them. Nobody can throw darts at "a magnet at
+temperature $T$", but a walker can feel whether a change makes things better or worse.
+Change one needle, and the same rule decides:
+
+1. Pick a needle and work out the change in energy $\Delta E$ if it flipped.
+2. If $\Delta E \le 0$ (it would agree better), flip it.
+3. Otherwise flip it with probability $e^{-\Delta E / T}$.
+
+Cold, a flip that costs energy is almost never accepted, as with a walker unwilling to
+go downhill. Hot, nearly every flip is, which is the walker with the rule turned off.
+Count the arrangements the walk visits and you have the average a magnet would show.
+
+The GPU does a sweep (one try per needle) in two halves, like a chessboard: all
+the black squares, then all the white. A needle's neighbours are all the other colour, so
+no two needles in the same half affect each other and they can all flip at once.
+
+::: {.callout-note collapse="true"}
+## The energy, and the exact switch
+
+With the needles $s = \pm 1$, the energy is
+
+$$E = -\sum_{\langle ij \rangle} s_i s_j$$
+
+summed over neighbouring pairs, in units where the coupling and Boltzmann's constant are
+both 1, so $T$ here is in those units. The switch is at
+$T_c = 2/\ln(1+\sqrt{2}) \approx 2.269$.
+:::
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof temperature = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.slider({
+    label: "Temperature",
+    min: 1,
+    max: 4,
+    step: 0.01,
+    value: 1.5,
+    format: (v) => v.toFixed(2),
+  });
+}
+```
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof speed = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.slider({
+    label: "Sweeps/s",
+    min: 0,
+    max: 3,
+    step: 0.5,
+    value: 0.5,
+    format: (v) => String(Math.round(10 ** v)),
+  });
+}
+```
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof gridSize = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.segmented({
+    label: "Grid",
+    options: [
+      [64, "64×36"],
+      [160, "160×90"],
+      [320, "320×180"],
+      [640, "640×360"],
+      [1280, "1280×720"],
+    ],
+    value: 160,
+  });
+}
+```
+
+```{ojs}
+//| column: screen-inset
+//| code-fold: true
+//| code-summary: "Show code"
+{
+  // Shared WebGPU boilerplate: setup, buffers and the animation loop (lib/gpu.js)
+  const gpu = await import(new URL("../lib/gpu.js", document.baseURI).href);
+  const random = await import(new URL("../lib/random.js", document.baseURI).href);
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+
+  // Controls are read live from their elements (referencing `viewof x` gives the
+  // element, not the value), so moving them does not restart this cell.
+  const temperatureInput = viewof temperature;
+  const speedInput = viewof speed; // log10 of sweeps a second
+  const gridInput = viewof gridSize;
+
+  const { canvas, device, context, format } = await gpu.setup({
+    width: 640,
+    height: 360,
+    resolution: "auto",
+  });
+
+  // The grid is 16:9 and wraps round its edges; both sides are even so the two
+  // chessboard colours tile it. Buffers are made for the largest grid and the
+  // chosen one uses the start of them.
+  const maxWidth = 1280;
+  const maxSites = maxWidth * ((maxWidth * 9) / 16);
+  let width = gridInput.value;
+  let height = (width * 9) / 16;
+  let sites = width * height;
+  const groupSide = 16;
+
+  // ------------------------------------------------------------------ the shaders
+  const module = device.createShaderModule({
+    code: `
+      struct Params {
+        width: u32,
+        height: u32,
+        parity: u32,         // which chessboard colour to update
+        temperature: f32,
+      }
+
+      @group(0) @binding(0) var<uniform> params: Params;
+      @group(0) @binding(1) var<storage, read_write> spins: array<i32>;
+      @group(0) @binding(2) var<storage, read_write> rng: array<u32>;
+      // Sum of the spins, and sum of s_i s_j over the right and down bonds
+      @group(0) @binding(3) var<storage, read_write> totals: array<atomic<i32>, 2>;
+
+      ${random.rngWGSL}
+
+      @compute @workgroup_size(${groupSide}, ${groupSide})
+      fn sweep(@builtin(global_invocation_id) id: vec3u) {
+        // Each thread takes one site of one colour: half a row of the grid
+        if (id.x >= params.width / 2u || id.y >= params.height) { return; }
+        let y = id.y;
+        let x = 2u * id.x + ((y + params.parity) & 1u);
+        let w = params.width;
+        let h = params.height;
+        let i = y * w + x;
+
+        // Neighbours, wrapping round the edges
+        let left = y * w + (x + w - 1u) % w;
+        let right = y * w + (x + 1u) % w;
+        let up = ((y + h - 1u) % h) * w + x;
+        let down = ((y + 1u) % h) * w + x;
+        let s = spins[i];
+        let dE = 2 * s * (spins[left] + spins[right] + spins[up] + spins[down]);
+
+        var state = rng[i];
+        let u = rand(&state);
+        rng[i] = state;
+        if (dE <= 0 || u < exp(-f32(dE) / params.temperature)) {
+          spins[i] = -s;
+        }
+      }
+
+      var<workgroup> sumSpin: array<i32, ${groupSide * groupSide}>;
+      var<workgroup> sumBond: array<i32, ${groupSide * groupSide}>;
+
+      @compute @workgroup_size(${groupSide}, ${groupSide})
+      fn measure(
+        @builtin(global_invocation_id) id: vec3u,
+        @builtin(local_invocation_index) local: u32,
+      ) {
+        var m = 0;
+        var b = 0;
+        if (id.x < params.width && id.y < params.height) {
+          let w = params.width;
+          let h = params.height;
+          let s = spins[id.y * w + id.x];
+          let right = spins[id.y * w + (id.x + 1u) % w];
+          let down = spins[((id.y + 1u) % h) * w + id.x];
+          m = s;
+          b = s * (right + down);
+        }
+        sumSpin[local] = m;
+        sumBond[local] = b;
+        workgroupBarrier();
+        for (var stride = ${groupSide * groupSide / 2}u; stride > 0u; stride >>= 1u) {
+          if (local < stride) {
+            sumSpin[local] += sumSpin[local + stride];
+            sumBond[local] += sumBond[local + stride];
+          }
+          workgroupBarrier();
+        }
+        if (local == 0u) {
+          atomicAdd(&totals[0], sumSpin[0]);
+          atomicAdd(&totals[1], sumBond[0]);
+        }
+      }
+    `,
+  });
+  const sweepPipeline = device.createComputePipeline({
+    layout: "auto",
+    compute: { module, entryPoint: "sweep" },
+  });
+  const measurePipeline = device.createComputePipeline({
+    layout: "auto",
+    compute: { module, entryPoint: "measure" },
+  });
+
+  // --------------------------------------------------------------------- buffers
+  const startSpins = () => new Int32Array(sites).fill(1); // a cold magnet: every needle up
+
+  const buffers = {
+    spins: gpu.storageBuffer(device, new Int32Array(maxSites)),
+    rng: gpu.storageBuffer(device, random.seeds(maxSites)),
+    totals: gpu.storageBuffer(device, new Int32Array(2)),
+    // One uniform buffer for each chessboard colour, so a sweep's two halves can be
+    // recorded in one command buffer with their own parity
+    params: [0, 1].map(() =>
+      device.createBuffer({
+        size: 16,
+        usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+      }),
+    ),
+  };
+  device.queue.writeBuffer(buffers.spins, 0, startSpins());
+  const paramBytes = new ArrayBuffer(16);
+  const paramView = new DataView(paramBytes);
+
+  const sweepBindGroups = [0, 1].map((parity) =>
+    device.createBindGroup({
+      layout: sweepPipeline.getBindGroupLayout(0),
+      entries: [
+        { binding: 0, resource: { buffer: buffers.params[parity] } },
+        { binding: 1, resource: { buffer: buffers.spins } },
+        { binding: 2, resource: { buffer: buffers.rng } },
+      ],
+    }),
+  );
+  const measureBindGroup = device.createBindGroup({
+    layout: measurePipeline.getBindGroupLayout(0),
+    entries: [
+      { binding: 0, resource: { buffer: buffers.params[0] } },
+      { binding: 1, resource: { buffer: buffers.spins } },
+      { binding: 3, resource: { buffer: buffers.totals } },
+    ],
+  });
+
+  // --------------------------------------------------------------------- drawing
+  const cornerBuffer = gpu.unitSquare(device);
+  const showModule = device.createShaderModule({
+    code: `
+      struct Params {
+        width: u32,
+        height: u32,
+        parity: u32,
+        temperature: f32,
+      }
+
+      @group(0) @binding(0) var<uniform> params: Params;
+      @group(0) @binding(1) var<storage, read> spins: array<i32>;
+
+      struct Out {
+        @builtin(position) position: vec4f,
+        @location(0) uv: vec2f,
+      }
+
+      @vertex
+      fn showVertex(@location(0) corner: vec2f) -> Out {
+        return Out(
+          vec4f(corner, 0.0, 1.0),
+          vec2f(corner.x * 0.5 + 0.5, 0.5 - corner.y * 0.5),
+        );
+      }
+
+      @fragment
+      fn showFragment(in: Out) -> @location(0) vec4f {
+        let x = min(u32(in.uv.x * f32(params.width)), params.width - 1u);
+        let y = min(u32(in.uv.y * f32(params.height)), params.height - 1u);
+        let up = vec4f(1.0, 0.282, 0.204, 1.0); // #FF4834
+        let down = vec4f(0.15, 0.145, 0.145, 1.0);
+        return select(down, up, spins[y * params.width + x] > 0);
+      }
+    `,
+  });
+  const showPipeline = device.createRenderPipeline({
+    layout: "auto",
+    vertex: { module: showModule, entryPoint: "showVertex", buffers: [gpu.squareLayout] },
+    fragment: { module: showModule, entryPoint: "showFragment", targets: [{ format }] },
+    primitive: { topology: "triangle-list" },
+  });
+  const showBindGroup = device.createBindGroup({
+    layout: showPipeline.getBindGroupLayout(0),
+    entries: [
+      { binding: 0, resource: { buffer: buffers.params[0] } },
+      { binding: 1, resource: { buffer: buffers.spins } },
+    ],
+  });
+
+  // ------------------------------------------------------------------- the state
+  const readback = gpu.readback(device, [{ buffer: buffers.totals, bytes: 8 }]);
+  const sampleEvery = 6; // frames between measurements
+  const keep = 400; // samples kept for the charts
+  let frameCount = 0;
+  let epoch = 0; // bumped on reset, so a read in flight from before is dropped
+  let sweepCount = 0;
+  let latest = null; // {m, e} at the last measurement
+  const cloud = []; // {T, m}: |m| against the temperature it was measured at
+  const trace = []; // {t, m}: the signed magnetisation as the run goes
+
+  const [magnetHost, traceHost] = charts.children;
+  const draw = ui.plotter(Plot);
+
+  const Tc = 2 / Math.log(1 + Math.SQRT2);
+  // Onsager's exact spontaneous magnetisation
+  const onsager = (T) => (T >= Tc ? 0 : (1 - Math.sinh(2 / T) ** -4) ** (1 / 8));
+  const curve = Array.from({ length: 121 }, (_, k) => {
+    const T = 1 + (3 * k) / 120;
+    return { T, m: onsager(T) };
+  });
+
+  function drawCharts() {
+    draw(magnetHost, {
+      x: { label: "temperature", grid: true, domain: [1, 4] },
+      y: { label: "magnetisation |m|", grid: true, domain: [0, 1] },
+      marks: [
+        Plot.ruleX([Tc], { stroke: "currentColor", strokeOpacity: 0.3 }),
+        Plot.line(curve, {
+          x: "T",
+          y: "m",
+          stroke: "currentColor",
+          strokeOpacity: 0.7,
+          strokeDasharray: "4 3",
+        }),
+        Plot.dot(cloud, { x: "T", y: "m", r: 2, fill: "#FF4834", fillOpacity: 0.6 }),
+      ],
+    });
+    draw(traceHost, {
+      x: { label: "sweeps", grid: true },
+      y: { label: "magnetisation m", grid: true, domain: [-1, 1] },
+      marks: [
+        Plot.ruleY([0], { stroke: "currentColor", strokeOpacity: 0.3 }),
+        Plot.line(trace, { x: "t", y: "m", stroke: "#FF4834", clip: true }),
+      ],
+    });
+  }
+
+  function record(m, e, T) {
+    latest = { m, e, T };
+    cloud.push({ T, m: Math.abs(m) });
+    if (cloud.length > keep) cloud.shift();
+    trace.push({ t: sweepCount, m });
+    if (trace.length > keep) trace.shift();
+    drawCharts();
+  }
+
+  const groups = { x: 0, y: 0 };
+  function reset() {
+    width = gridInput.value;
+    height = (width * 9) / 16;
+    sites = width * height;
+    groups.x = Math.ceil(width / 2 / groupSide);
+    groups.y = Math.ceil(height / groupSide);
+    epoch++;
+    sweepCount = 0;
+    latest = null;
+    cloud.length = 0;
+    trace.length = 0;
+    device.queue.writeBuffer(buffers.spins, 0, startSpins());
+    drawCharts();
+  }
+  gridInput.addEventListener("input", reset);
+  invalidation.then(() => gridInput.removeEventListener("input", reset));
+
+  const resetButton = ui.button({ label: "Restart", onClick: reset });
+  const readout = ui.readout();
+  drawCharts();
+
+  groups.x = Math.ceil(width / 2 / groupSide);
+  groups.y = Math.ceil(height / groupSide);
+
+  let owed = 0; // sweeps due but not yet done
+  let lastTime = null;
+
+  function frame(ms) {
+    const T = temperatureInput.value;
+    // Seconds since the last frame, capped so a pause does not become a flood
+    const dt = lastTime === null ? 0 : Math.min((ms - lastTime) / 1000, 0.1);
+    lastTime = ms;
+    owed += 10 ** speedInput.value * dt;
+    const count = Math.floor(owed);
+    owed -= count;
+
+    for (let parity = 0; parity < 2; parity++) {
+      paramView.setUint32(0, width, true);
+      paramView.setUint32(4, height, true);
+      paramView.setUint32(8, parity, true);
+      paramView.setFloat32(12, T, true);
+      device.queue.writeBuffer(buffers.params[parity], 0, paramBytes);
+    }
+
+    const encoder = device.createCommandEncoder();
+    const compute = encoder.beginComputePass();
+    compute.setPipeline(sweepPipeline);
+    for (let s = 0; s < count; s++) {
+      for (let parity = 0; parity < 2; parity++) {
+        compute.setBindGroup(0, sweepBindGroups[parity]);
+        compute.dispatchWorkgroups(groups.x, groups.y);
+      }
+    }
+    compute.end();
+    sweepCount += count;
+
+    // Every few frames: add up the spins and the bonds, and read the sums back
+    const sample = !readback.pending && ++frameCount % sampleEvery === 0;
+    if (sample) {
+      device.queue.writeBuffer(buffers.totals, 0, new Int32Array(2));
+      const measure = encoder.beginComputePass();
+      measure.setPipeline(measurePipeline);
+      measure.setBindGroup(0, measureBindGroup);
+      measure.dispatchWorkgroups(Math.ceil(width / groupSide), Math.ceil(height / groupSide));
+      measure.end();
+      readback.copy(encoder);
+    }
+
+    const pass = gpu.beginRenderPass(encoder, context);
+    pass.setPipeline(showPipeline);
+    pass.setBindGroup(0, showBindGroup);
+    pass.setVertexBuffer(0, cornerBuffer);
+    pass.draw(6);
+    pass.end();
+    device.queue.submit([encoder.finish()]);
+
+    if (sample) {
+      const mine = epoch;
+      readback.read((buffer) => {
+        if (mine !== epoch) return; // from before a reset
+        const [spinSum, bondSum] = new Int32Array(buffer);
+        record(spinSum / sites, -bondSum / sites, T);
+      });
+    }
+
+    if (frameCount % 6 === 0 && latest) {
+      readout.textContent =
+        `${sweepCount.toLocaleString()} sweeps · m = ${latest.m.toFixed(3)} · ` +
+        `energy per spin ${latest.e.toFixed(3)}`;
+    }
+  }
+
+  gpu.run(invalidation, device, frame);
+
+  // The canvas with the controls laid over its corner
+  yield ui.stage(canvas, [temperatureInput, speedInput, gridInput, resetButton, readout]);
+}
+```
+
+```{ojs}
+//| echo: false
+//| column: page
+charts = {
+  // Two empty hosts; the simulation cell above draws into them as data arrives
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.chartHosts(["magnet", "trace"]);
+}
+```
+
+::: {.mf-series-bar}
+Moving Figures
+
+:::{#mf-series}
+:::
+:::
