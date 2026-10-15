@@ -52,8 +52,7 @@ goes:
     reads the same neighbour's position from slow memory, one atom at a time. A tiled
     loop has the 64 threads each fetch one position into fast `var<workgroup>` memory,
     wait at a barrier, and then all read the whole tile from there. It is the standard
-    trick for an N-body loop, and it is in the benchmark below. Whether it pays off is
-    something to measure rather than assume.
+    trick for an N-body loop, and it is in the benchmark below.
 
 Press **Benchmark** to time all three kernels on your GPU at several sizes (it pauses
 the simulation while it runs). Moving a slider does not restart anything.
