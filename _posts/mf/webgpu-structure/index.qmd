@@ -24,7 +24,7 @@ Each atom is coloured by how hexagonal its neighbourhood is. For every bond to a
 neighbour closer than 1.4 σ, take the bond's angle $\theta$ and average
 $e^{6i\theta}$ over the bonds. In a triangular crystal all six bonds line up and the
 magnitude, $|\psi_6|$, is close to 1; in a liquid the angles are scrambled and it
-falls towards 0. Atoms bright orange are crystalline, blue are not. (The same idea
+falls towards 0. Atoms bright yellow are crystalline, blue are not. (The same idea
 is behind the [hexatic phase](https://en.wikipedia.org/wiki/Hexatic_phase).) Switch
 the colouring to speed to see the same atoms the way the earlier posts drew them.
 
@@ -39,7 +39,7 @@ The right chart is the fraction of atoms with $|\psi_6| > 0.8$, over time.
 
 At the starting temperature the islands stay crystalline, with a thin vapour between
 them. Warm it and the islands melt into liquid droplets: the peaks wash out and the
-orange drains away. Cool it and the liquid freezes into crystallites, usually with
+yellow drains away. Cool it and the liquid freezes into crystallites, usually with
 defects and grain boundaries rather than a perfect lattice.
 
 Temperature alone does not tell the whole story, because the phase also depends on
