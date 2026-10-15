@@ -1,0 +1,823 @@
+---
+title: "016: Walkers on a Hill"
+date: "2026-10-15"
+categories: [mf]
+page-layout: article
+listing:
+  - id: mf-series
+    contents: "../*/index.qmd"
+    type: default
+    categories: false
+    include:
+      categories: "mf"
+    fields: [title]
+    sort: "title asc"
+---
+
+[Last time](../webgpu-darts-in-many-dimensions/) the darts ran out of room. In
+twenty dimensions the thing being measured was a billionth of the box, and nearly every
+dart missed. A dart knows nothing about where it landed, so it cannot do better.
+
+A walker can. It can feel whether the ground is higher or lower where it is about to
+step. This post is about the simplest use of that: a walker that spends its time on
+a landscape in proportion to how high it is.
+
+The map below is a landscape with two hills. The lines are contours. Each white
+dot is a walker, with the line behind it showing where it has been, and each step goes
+like this:
+
+1. Propose a small step in a random direction.
+2. If the new spot is _higher_, take it.
+3. If it is _lower_, take it with probability (new height) / (old height), like a
+    coin that is weighted by how much is lost. Otherwise stay where you are.
+
+A rejected step is the yellow dot. That is the whole algorithm. It is the _Metropolis_
+method, and the walker never needs to know what the landscape adds up to, only
+how its height compares between two nearby places.
+
+The grey is the landscape: the higher the ground, the lighter. The red builds up as
+walkers visit, and it is strongest where they have been most. When the rule works the
+red fills the hills and nothing else, and its shape matches the contours underneath.
+A small yellow dot is a step that was rejected: the walker stays where it was.
+
+Try these:
+
+- _Turn the rule off._ With **Always step** every proposal is accepted, so the walkers
+  diffuse everywhere and ignore the hills. The red smears flat across the
+  whole map, and each trail is a [Brownian path](../webgpu-brownian-motion/): a step
+  in a random direction, then another.
+- _Make the step very small_, then very large. A small step is nearly always accepted but
+  crawls, so the walkers take a long time to get anywhere. A large step often lands
+  somewhere low and is rejected, so the walkers sit. The acceptance rate in the
+  readout is what changes. Somewhere in between, a quarter to a half of steps
+  accepted, is the quickest way to cover the map.
+- _Look at the two hills._ The right-hand one is a third as high but a good deal wider.
+  Walkers spend more of their time there, because what counts is the whole hill and
+  not just its top.
+
+The left chart is for one number, as the π and the fractal were: the share of the time
+the walkers spend in the left half of the map. The left hill is tall and narrow and the
+right one is low and wide, and the right holds more, so the exact answer is below a
+half. The chart is the walkers' estimate as the steps pile up, with its uncertainty (the
+walkers differ from one another, and that spread is how far to trust it) and the exact
+value dashed.
+
+The right chart is the same thing in more detail: the share of the time in each vertical
+strip of the map, against what it ought to be (the dashed line). It is the two hills
+seen from the side.
+
+The first stretch of steps is the walkers finding the hills, so the estimate starts far
+off. At a small step a walker rarely crosses the gap between the hills, and its time
+is split by where it began and not by how high the ground is: more walkers, or a
+larger step, fixes that.
+
+It starts with three walkers so that each one can be followed. **Walkers** goes up to a
+hundred: more of them fill the map in faster and make the charts smooth, but they all
+do the same thing. **Step size** is how far a proposal can go, **Steps/s** is the
+speed, and **Rule** switches between Metropolis and always stepping. **Restart** puts
+the walkers back at random places.
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof walkerCount = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.slider({
+    label: "Walkers",
+    min: 0,
+    max: 2,
+    step: 0.5,
+    value: 0.5,
+    format: (v) => String(Math.round(10 ** v)),
+  });
+}
+```
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof stepSize = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.slider({
+    label: "Step size",
+    min: 0.05,
+    max: 1,
+    step: 0.05,
+    value: 0.1,
+    format: (v) => v.toFixed(2),
+  });
+}
+```
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof rule = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.segmented({
+    label: "Rule",
+    options: [
+      [1, "Metropolis"],
+      [0, "Always step"],
+    ],
+    value: 1,
+  });
+}
+```
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof rate = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.slider({
+    label: "Steps/s",
+    min: 0,
+    max: 2,
+    step: 0.5,
+    value: 1,
+    format: (v) => String(Math.round(10 ** v)),
+  });
+}
+```
+
+```{ojs}
+//| column: screen-inset
+//| code-fold: true
+//| code-summary: "Show code"
+{
+  // Shared WebGPU boilerplate: setup, buffers and the animation loop (lib/gpu.js)
+  const gpu = await import(new URL("../lib/gpu.js", document.baseURI).href);
+  const random = await import(new URL("../lib/random.js", document.baseURI).href);
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+
+  // Controls are read live from their elements, so moving them does not restart
+  // this cell.
+  const walkersInput = viewof walkerCount; // log10 of the number of walkers
+  const stepInput = viewof stepSize;
+  const ruleInput = viewof rule;
+  const rateInput = viewof rate; // log10 of steps a second
+
+  const { canvas, device, context, format } = await gpu.setup({
+    width: 640,
+    height: 360,
+    resolution: "auto",
+  });
+
+  // The map is 16:9, wrapping round its edges
+  const halfHeight = 2.0;
+  const halfWidth = (halfHeight * 16) / 9;
+  const binsX = 640;
+  const binsY = 360;
+  const bins = binsX * binsY;
+  const maxWalkers = 100;
+  let walkers = Math.round(10 ** walkersInput.value);
+  const groupSize = 64;
+  const trail = 300; // steps of history kept for each walker's trail
+
+  // The landscape: a tall narrow hill and a much lower, wider one. The same function is
+  // used on the GPU to walk and in JavaScript for the exact answer.
+  const hills = [
+    { x: -1.6, y: 0.3, height: 1.0, spread: 0.35 },
+    { x: 1.6, y: -0.3, height: 0.35, spread: 0.9 },
+  ];
+  const heightAt = (x, y) =>
+    hills.reduce(
+      (h, c) =>
+        h + c.height * Math.exp(-((x - c.x) ** 2 + (y - c.y) ** 2) / (2 * c.spread ** 2)),
+      0,
+    ) + 1e-9;
+  const landscapeWGSL = `
+      fn height(p: vec2f) -> f32 {
+        var h = 1e-9;
+        ${hills
+          .map(
+            (c) => `{
+          let d = p - vec2f(${c.x}, ${c.y});
+          h += ${c.height} * exp(-dot(d, d) / ${2 * c.spread ** 2});
+        }`,
+          )
+          .join("\n")}
+        return h;
+      }`;
+
+  // The exact answer on the same grid of bins the walkers are counted in
+  const exact = new Float64Array(bins);
+  let exactTotal = 0;
+  let peak = 0;
+  for (let j = 0; j < binsY; j++) {
+    for (let i = 0; i < binsX; i++) {
+      const x = ((i + 0.5) / binsX) * 2 * halfWidth - halfWidth;
+      const y = halfHeight - ((j + 0.5) / binsY) * 2 * halfHeight;
+      const h = heightAt(x, y);
+      exact[j * binsX + i] = h;
+      exactTotal += h;
+      peak = Math.max(peak, h);
+    }
+  }
+
+  // ------------------------------------------------------------------ the shaders
+  const module = device.createShaderModule({
+    code: `
+      struct Params {
+        stepSize: f32,
+        steps: u32,       // steps every walker takes this frame
+        walkers: u32,
+        metropolis: u32,  // 1: the rule, 0: always step
+        heatScale: f32,   // a bin's count to a brightness
+        head: u32,        // steps taken in all, including this frame's
+        pad1: u32,
+        pad2: u32,
+      }
+
+      @group(0) @binding(0) var<uniform> params: Params;
+      @group(0) @binding(1) var<storage, read_write> positions: array<vec2f>;
+      // Each walker's last proposal: x, y, 1 if it was rejected
+      @group(0) @binding(2) var<storage, read_write> proposals: array<vec4f>;
+      @group(0) @binding(3) var<storage, read_write> rng: array<u32>;
+      // Visits to each bin of the map
+      @group(0) @binding(4) var<storage, read_write> counts: array<atomic<u32>, ${bins}>;
+      // Steps proposed, steps accepted
+      @group(0) @binding(5) var<storage, read_write> stats: array<atomic<u32>, 2>;
+      // The last ${trail} positions of every walker, a ring of ${trail} rows
+      @group(0) @binding(6) var<storage, read_write> history: array<vec2f>;
+      // Steps each walker has spent in the left half of the map
+      @group(0) @binding(7) var<storage, read_write> leftSteps: array<u32>;
+
+      ${random.rngWGSL}
+      ${landscapeWGSL}
+
+      const halfSize = vec2f(${halfWidth}, ${halfHeight});
+
+      // Wrap a point round the edges of the map
+      fn wrap(p: vec2f) -> vec2f {
+        return p - 2.0 * halfSize * floor((p + halfSize) / (2.0 * halfSize));
+      }
+
+      @compute @workgroup_size(${groupSize})
+      fn walk(@builtin(global_invocation_id) id: vec3u) {
+        if (id.x >= params.walkers) { return; }
+        var p = positions[id.x];
+        var state = rng[id.x];
+        var accepted = 0u;
+        var left = 0u;
+
+        for (var k = 0u; k < params.steps; k++) {
+          let q = wrap(p + gaussian2(&state) * params.stepSize);
+          var accept = true;
+          if (params.metropolis == 1u) {
+            // Take a higher spot; take a lower one with probability new / old
+            accept = rand(&state) * height(p) < height(q);
+          }
+          proposals[id.x] = vec4f(q, select(1.0, 0.0, accept), 0.0);
+          if (accept) {
+            p = q;
+            accepted += 1u;
+          }
+          if (p.x < 0.0) { left += 1u; }
+          let row = (params.head + ${2 * trail}u - params.steps + k) % ${trail}u;
+          history[row * ${maxWalkers}u + id.x] = p;
+          let cell = vec2u((p / halfSize * 0.5 + 0.5) * vec2f(${binsX}.0, ${binsY}.0));
+          let binRow = ${binsY - 1}u - min(cell.y, ${binsY - 1}u);
+          atomicAdd(&counts[binRow * ${binsX}u + min(cell.x, ${binsX - 1}u)], 1u);
+        }
+
+        positions[id.x] = p;
+        rng[id.x] = state;
+        leftSteps[id.x] += left;
+        atomicAdd(&stats[0], params.steps);
+        atomicAdd(&stats[1], accepted);
+      }
+    `,
+  });
+  const walkPipeline = device.createComputePipeline({
+    layout: "auto",
+    compute: { module, entryPoint: "walk" },
+  });
+
+  // --------------------------------------------------------------------- buffers
+  const startPositions = () => {
+    const out = new Float32Array(walkers * 2);
+    for (let k = 0; k < walkers; k++) {
+      out[2 * k] = (Math.random() * 2 - 1) * halfWidth;
+      out[2 * k + 1] = (Math.random() * 2 - 1) * halfHeight;
+    }
+    return out;
+  };
+  const buffers = {
+    positions: gpu.storageBuffer(device, new Float32Array(maxWalkers * 2)),
+    proposals: gpu.storageBuffer(device, new Float32Array(maxWalkers * 4)),
+    rng: gpu.storageBuffer(device, random.seeds(maxWalkers)),
+    counts: gpu.storageBuffer(device, new Uint32Array(bins)),
+    stats: gpu.storageBuffer(device, new Uint32Array(2)),
+    history: gpu.storageBuffer(device, new Float32Array(trail * maxWalkers * 2)),
+    leftSteps: gpu.storageBuffer(device, new Uint32Array(maxWalkers)),
+    params: device.createBuffer({
+      size: 32,
+      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+    }),
+  };
+  const paramBytes = new ArrayBuffer(32);
+  const paramView = new DataView(paramBytes);
+
+  const walkBindGroup = device.createBindGroup({
+    layout: walkPipeline.getBindGroupLayout(0),
+    entries: [
+      { binding: 0, resource: { buffer: buffers.params } },
+      { binding: 1, resource: { buffer: buffers.positions } },
+      { binding: 2, resource: { buffer: buffers.proposals } },
+      { binding: 3, resource: { buffer: buffers.rng } },
+      { binding: 4, resource: { buffer: buffers.counts } },
+      { binding: 5, resource: { buffer: buffers.stats } },
+      { binding: 6, resource: { buffer: buffers.history } },
+      { binding: 7, resource: { buffer: buffers.leftSteps } },
+    ],
+  });
+
+  // --------------------------------------------------------------------- drawing
+  const cornerBuffer = gpu.unitSquare(device);
+  const drawModule = device.createShaderModule({
+    code: `
+      struct Params {
+        stepSize: f32,
+        steps: u32,
+        walkers: u32,
+        metropolis: u32,
+        heatScale: f32,
+        head: u32,
+        shown: u32,       // steps of trail to show
+        pad2: u32,
+      }
+      @group(0) @binding(0) var<uniform> params: Params;
+      @group(0) @binding(1) var<storage, read> positions: array<vec2f>;
+      @group(0) @binding(2) var<storage, read> proposals: array<vec4f>;
+      @group(0) @binding(3) var<storage, read> counts: array<u32>;
+      @group(0) @binding(4) var<storage, read> history: array<vec2f>;
+
+      ${landscapeWGSL}
+
+      const halfSize = vec2f(${halfWidth}, ${halfHeight});
+
+      struct Out {
+        @builtin(position) position: vec4f,
+        @location(0) uv: vec2f,
+      }
+
+      // The map: how often walkers have been in each place, with contour lines of the
+      // landscape over it
+      @vertex
+      fn mapVertex(@location(0) corner: vec2f) -> Out {
+        return Out(
+          vec4f(corner, 0.0, 1.0),
+          vec2f(corner.x * 0.5 + 0.5, 0.5 - corner.y * 0.5),
+        );
+      }
+
+      @fragment
+      fn mapFragment(in: Out) -> @location(0) vec4f {
+        // The mean count over the bin and its eight neighbours, so a few visits
+        // read as a soft patch and not as single specks
+        let cell = vec2i(in.uv * vec2f(${binsX}.0, ${binsY}.0));
+        var total = 0u;
+        for (var dy = -1; dy <= 1; dy++) {
+          for (var dx = -1; dx <= 1; dx++) {
+            let x = clamp(cell.x + dx, 0, ${binsX - 1});
+            let y = clamp(cell.y + dy, 0, ${binsY - 1});
+            total += counts[u32(y) * ${binsX}u + u32(x)];
+          }
+        }
+        let density = clamp(f32(total) / 9.0 * params.heatScale, 0.0, 1.0);
+
+        // The landscape's height as a grey tint, and over it, in the brand red, how
+        // often walkers have been there: the more visits the less you see through it
+        let p = vec2f((in.uv.x - 0.5) * 2.0 * ${halfWidth}, (0.5 - in.uv.y) * 2.0 * ${halfHeight});
+        let h = height(p);
+        let ground = mix(vec3f(0.102), vec3f(0.24, 0.235, 0.23), pow(clamp(h, 0.0, 1.0), 0.8));
+        // #FF4834
+        var colour = mix(ground, vec3f(1.0, 0.282, 0.204), 0.9 * pow(density, 0.8));
+
+        // Contour lines at fixed heights, as thin as a pixel or two
+        let e = 0.01;
+        let gx = height(p + vec2f(e, 0.0)) - h;
+        let gy = height(p + vec2f(0.0, e)) - h;
+        let slope = max(length(vec2f(gx, gy)) / e, 1e-4);
+        var line = 0.0;
+        for (var level = 0.1; level < 1.0; level += 0.2) {
+          line = max(line, 1.0 - smoothstep(0.004, 0.012, abs(h - level) / slope));
+        }
+        colour = mix(colour, vec3f(0.91, 0.886, 0.878), line * 0.55);
+        return vec4f(colour, 1.0);
+      }
+
+      struct DotOut {
+        @builtin(position) position: vec4f,
+        @location(0) colour: vec4f,
+      }
+
+      fn dotAt(centre: vec2f, corner: vec2f, colour: vec4f) -> DotOut {
+        // About 4 pixels across
+        let size = vec2f(0.011 * 0.5625, 0.011) * 1.0;
+        let clip = vec2f(centre.x / ${halfWidth}, centre.y / ${halfHeight});
+        return DotOut(vec4f(clip + corner * size, 0.0, 1.0), colour);
+      }
+
+      @vertex
+      fn walkerVertex(
+        @location(0) corner: vec2f,
+        @builtin(instance_index) i: u32,
+      ) -> DotOut {
+        return dotAt(positions[i], corner, vec4f(0.91, 0.886, 0.878, 0.95));
+      }
+
+      // Rejected proposals only: an accepted one is where the walker now is
+      @vertex
+      fn rejectedVertex(
+        @location(0) corner: vec2f,
+        @builtin(instance_index) i: u32,
+      ) -> DotOut {
+        let r = proposals[i];
+        let place = select(vec2f(10.0, 10.0), r.xy, r.z > 0.5);
+        return dotAt(place, corner, vec4f(1.0, 0.82, 0.12, 1.0)); // bright yellow
+      }
+
+      // A walker's trail: one segment per instance, between where it was s steps ago
+      // and s + 1 steps ago, fading with age
+      @vertex
+      fn trailVertex(
+        @location(0) corner: vec2f,
+        @builtin(instance_index) i: u32,
+      ) -> DotOut {
+        let w = i % params.walkers;
+        let s = i / params.walkers;
+        let a = history[((params.head + ${2 * trail}u - 1u - s) % ${trail}u) * ${maxWalkers}u + w];
+        let b = history[((params.head + ${2 * trail}u - 2u - s) % ${trail}u) * ${maxWalkers}u + w];
+        let ca = vec2f(a.x / ${halfWidth}, a.y / ${halfHeight});
+        let cb = vec2f(b.x / ${halfWidth}, b.y / ${halfHeight});
+        // Work in square units so the line has the same width in every direction
+        let squash = vec2f(${16 / 9}, 1.0);
+        let pa = ca * squash;
+        let pb = cb * squash;
+        let along = pb - pa;
+        let length = max(sqrt(dot(along, along)), 1e-6);
+        let normal = vec2f(-along.y, along.x) / length;
+        let point = mix(pa, pb, corner.x * 0.5 + 0.5) + normal * corner.y * 0.0035;
+        // Hide zero-length segments (a rejected step) and jumps across the map's edge
+        let jump = any(abs(a - b) > halfSize);
+        let hidden = jump || length < 1e-5;
+        let fade = 0.6 * (1.0 - f32(s) / f32(params.shown));
+        return DotOut(
+          vec4f(select(point / squash, vec2f(10.0, 10.0), hidden), 0.0, 1.0),
+          vec4f(0.91, 0.886, 0.878, fade),
+        );
+      }
+
+      @fragment
+      fn dotFragment(in: DotOut) -> @location(0) vec4f {
+        return in.colour;
+      }
+    `,
+  });
+  const mapPipeline = device.createRenderPipeline({
+    layout: "auto",
+    vertex: { module: drawModule, entryPoint: "mapVertex", buffers: [gpu.squareLayout] },
+    fragment: { module: drawModule, entryPoint: "mapFragment", targets: [{ format }] },
+    primitive: { topology: "triangle-list" },
+  });
+  const dotPipelines = ["trailVertex", "rejectedVertex", "walkerVertex"].map((entryPoint) =>
+    device.createRenderPipeline({
+      layout: "auto",
+      vertex: { module: drawModule, entryPoint, buffers: [gpu.squareLayout] },
+      fragment: {
+        module: drawModule,
+        entryPoint: "dotFragment",
+        targets: [{ format, blend: gpu.alphaBlend }],
+      },
+      primitive: { topology: "triangle-list" },
+    }),
+  );
+  const drawEntries = [
+    { binding: 0, resource: { buffer: buffers.params } },
+    { binding: 1, resource: { buffer: buffers.positions } },
+    { binding: 2, resource: { buffer: buffers.proposals } },
+    { binding: 3, resource: { buffer: buffers.counts } },
+    { binding: 4, resource: { buffer: buffers.history } },
+  ];
+  // Each pipeline's auto layout holds only the bindings its entry point uses
+  const bindGroupFor = (pipeline, keep) =>
+    device.createBindGroup({
+      layout: pipeline.getBindGroupLayout(0),
+      entries: drawEntries.filter((e) => keep.includes(e.binding)),
+    });
+  const mapBindGroup = bindGroupFor(mapPipeline, [0, 3]);
+  const trailBindGroup = bindGroupFor(dotPipelines[0], [0, 4]);
+  const rejectedBindGroup = bindGroupFor(dotPipelines[1], [2]);
+  const walkerBindGroup = bindGroupFor(dotPipelines[2], [1]);
+
+  // ------------------------------------------------------------------- the state
+  const readback = gpu.readback(device, [
+    { buffer: buffers.counts, bytes: bins * 4 },
+    { buffer: buffers.stats, bytes: 8 },
+    { buffer: buffers.leftSteps, bytes: maxWalkers * 4 },
+  ]);
+  const sampleEvery = 12; // frames between reads
+  let frameCount = 0;
+  let epoch = 0; // bumped on reset, so a read in flight from before is dropped
+  let stepsTaken = 0; // steps each walker has taken
+  let head = 0; // steps taken in all since the walkers were last placed
+  let owed = 0; // steps due but not yet taken
+  let lastTime = null;
+  let acceptance = null;
+  let busiest = { count: 0, taken: 0 }; // the highest bin at the last read
+  const series = []; // {steps, estimate, sigma}: the estimate as the steps pile up
+
+  const [estimateHost, stripsHost] = charts.children;
+  const draw = ui.plotter(Plot);
+
+  // The exact answer: the share of the time in the left half of the map
+  let exactLeft = 0;
+  for (let j = 0; j < binsY; j++) {
+    for (let i = 0; i < binsX / 2; i++) exactLeft += exact[j * binsX + i] / exactTotal;
+  }
+
+  // The exact share of the time in each of 80 vertical strips of the map
+  const strips = 80;
+  const perStrip = binsX / strips;
+  const exactStrips = new Float64Array(strips);
+  for (let j = 0; j < binsY; j++) {
+    for (let i = 0; i < binsX; i++) {
+      exactStrips[Math.floor(i / perStrip)] += exact[j * binsX + i] / exactTotal;
+    }
+  }
+  const stripX = (k) => ((k + 0.5) / strips) * 2 * halfWidth - halfWidth;
+  let visited = null; // the same, as the walkers have it, from the last read
+
+  // The estimate with its standard error, to the digits that error justifies
+  function currentText() {
+    const last = series[series.length - 1];
+    if (!last) return null;
+    if (last.sigma === null) return `left half ≈ ${last.estimate.toFixed(2)}`;
+    const rounded = Number(last.sigma.toPrecision(1));
+    if (rounded === 0) return `left half ≈ ${last.estimate.toFixed(3)}`;
+    const decimals = Math.max(0, -Math.floor(Math.log10(rounded)));
+    return `left half ≈ ${last.estimate.toFixed(decimals)} ± ${rounded.toFixed(decimals)}`;
+  }
+
+  function drawCharts() {
+    const xAxis = { label: "steps each walker has taken", type: "log", grid: true, domain: [1, 1e5] };
+    const band = series.filter((r) => r.sigma !== null);
+    const text = currentText();
+
+    draw(estimateHost, {
+      x: xAxis,
+      y: { label: "share of the time in the left half", grid: true, domain: [0, 1] },
+      marks: [
+        Plot.areaY(band, {
+          x: "steps",
+          y1: (r) => r.estimate - r.sigma,
+          y2: (r) => r.estimate + r.sigma,
+          fill: "#FF4834",
+          fillOpacity: 0.15,
+          clip: true,
+        }),
+        Plot.ruleY([exactLeft], {
+          stroke: "currentColor",
+          strokeOpacity: 0.6,
+          strokeDasharray: "4 3",
+        }),
+        Plot.line(series, { x: "steps", y: "estimate", stroke: "#FF4834", clip: true }),
+        ...(text
+          ? [
+              Plot.text([text], {
+                frameAnchor: "top-left",
+                dx: 10,
+                dy: 8,
+                fontSize: 20,
+                fontWeight: 600,
+                fill: "currentColor",
+              }),
+            ]
+          : []),
+      ],
+    });
+
+    draw(stripsHost, {
+      x: { label: "position across the map", domain: [-halfWidth, halfWidth], grid: true },
+      y: {
+        label: "share of the time in the strip",
+        grid: true,
+        domain: [0, Math.max(0.07, ...(visited ?? [])) * 1.05],
+      },
+      marks: [
+        Plot.line(
+          Array.from(exactStrips, (v, k) => ({ x: stripX(k), v })),
+          { x: "x", y: "v", stroke: "currentColor", strokeOpacity: 0.7, strokeDasharray: "4 3" },
+        ),
+        ...(visited
+          ? [
+              Plot.line(
+                Array.from(visited, (v, k) => ({ x: stripX(k), v })),
+                { x: "x", y: "v", stroke: "#FF4834" },
+              ),
+            ]
+          : []),
+      ],
+    });
+  }
+
+  function receive(buffer, taken) {
+    const view = new Uint32Array(buffer);
+    if (taken === 0) return;
+
+    // Each walker's own share of its time in the left half. Their average is the
+    // estimate, and their spread, over the square root of how many there are, is
+    // how far it can be trusted: the steps of one walker are not independent, but
+    // the walkers are.
+    const base = bins + 2;
+    let sum = 0;
+    let sumSquares = 0;
+    for (let k = 0; k < walkers; k++) {
+      const share = view[base + k] / taken;
+      sum += share;
+      sumSquares += share * share;
+    }
+    const estimate = sum / walkers;
+    const sigma =
+      walkers > 1
+        ? Math.sqrt(Math.max(0, (sumSquares - walkers * estimate * estimate) / (walkers - 1)) / walkers)
+        : null;
+
+    // The share of the time in each strip, from the counts of every bin
+    const mine = new Float64Array(strips);
+    const total = taken * walkers;
+    for (let j = 0; j < binsY; j++) {
+      for (let i = 0; i < binsX; i++) {
+        mine[Math.floor(i / perStrip)] += view[j * binsX + i] / total;
+      }
+    }
+    visited = mine;
+
+    // The busiest place on the map, by the same 3 x 3 mean the picture shows
+    let best = 0;
+    for (let j = 1; j < binsY - 1; j++) {
+      for (let i = 1; i < binsX - 1; i++) {
+        const at = j * binsX + i;
+        const around =
+          view[at - binsX - 1] + view[at - binsX] + view[at - binsX + 1] +
+          view[at - 1] + view[at] + view[at + 1] +
+          view[at + binsX - 1] + view[at + binsX] + view[at + binsX + 1];
+        if (around > best) best = around;
+      }
+    }
+    busiest = { count: best / 9, taken };
+    const proposed = view[bins];
+    acceptance = proposed > 0 ? view[bins + 1] / proposed : null;
+
+    const last = series[series.length - 1];
+    if (!last || taken >= 1.15 * last.steps) series.push({ steps: taken, estimate, sigma });
+    drawCharts();
+  }
+
+  // Start counting again, with the walkers where they are
+  function recount() {
+    epoch++;
+    stepsTaken = 0;
+    owed = 0;
+    acceptance = null;
+    visited = null;
+    busiest = { count: 0, taken: 0 };
+    series.length = 0;
+    device.queue.writeBuffer(buffers.proposals, 0, new Float32Array(maxWalkers * 4));
+    device.queue.writeBuffer(buffers.counts, 0, new Uint32Array(bins));
+    device.queue.writeBuffer(buffers.stats, 0, new Uint32Array(2));
+    device.queue.writeBuffer(buffers.leftSteps, 0, new Uint32Array(maxWalkers));
+    drawCharts();
+  }
+  // Place the walkers, with every row of their history at the start so no trail shows
+  function place() {
+    const start = startPositions();
+    const rows = new Float32Array(trail * maxWalkers * 2);
+    for (let row = 0; row < trail; row++) rows.set(start, row * maxWalkers * 2);
+    device.queue.writeBuffer(buffers.positions, 0, start);
+    device.queue.writeBuffer(buffers.history, 0, rows);
+    head = 0;
+  }
+  // Start again, with the walkers back at random places
+  function reset() {
+    walkers = Math.round(10 ** walkersInput.value);
+    place();
+    recount();
+  }
+  // A new rule or step size changes where the walkers settle, so what was counted
+  // under the old one no longer applies
+  walkersInput.addEventListener("input", reset);
+  invalidation.then(() => walkersInput.removeEventListener("input", reset));
+  for (const input of [stepInput, ruleInput]) {
+    input.addEventListener("input", recount);
+    invalidation.then(() => input.removeEventListener("input", recount));
+  }
+  const resetButton = ui.button({ label: "Restart", onClick: reset });
+  const readout = ui.readout();
+  place();
+  drawCharts();
+
+  function frame(ms) {
+    // Seconds since the last frame, capped so a pause does not become a flood
+    const dt = lastTime === null ? 0 : Math.min((ms - lastTime) / 1000, 0.1);
+    lastTime = ms;
+    owed += 10 ** rateInput.value * dt;
+    const steps = Math.floor(owed);
+    owed -= steps;
+    stepsTaken += steps;
+    head += steps;
+
+    // A count to a brightness: the busiest bin at the last read, grown in proportion
+    // to the steps since, is full. Before the first read, the tallest hill's top.
+    const heatScale =
+      stepsTaken === 0
+        ? 0
+        : busiest.count > 0
+          ? busiest.taken / (busiest.count * stepsTaken)
+          : exactTotal / (stepsTaken * walkers * peak);
+
+    paramView.setFloat32(0, stepInput.value, true);
+    paramView.setUint32(4, steps, true);
+    paramView.setUint32(8, walkers, true);
+    paramView.setUint32(12, ruleInput.value, true);
+    paramView.setFloat32(16, heatScale, true);
+    paramView.setUint32(20, head, true);
+    // A shorter trail the faster it goes, so it stays readable: 120 steps at a few
+    // steps a second, 30 at a hundred
+    const shown = Math.round(
+      Math.min(120, Math.max(30, 400 / Math.sqrt(10 ** rateInput.value))),
+    );
+    paramView.setUint32(24, shown, true);
+    device.queue.writeBuffer(buffers.params, 0, paramBytes);
+
+    const encoder = device.createCommandEncoder();
+    if (steps > 0) {
+      const compute = encoder.beginComputePass();
+      compute.setPipeline(walkPipeline);
+      compute.setBindGroup(0, walkBindGroup);
+      compute.dispatchWorkgroups(Math.ceil(walkers / groupSize));
+      compute.end();
+    }
+
+    const pass = gpu.beginRenderPass(encoder, context);
+    pass.setVertexBuffer(0, cornerBuffer);
+    pass.setPipeline(mapPipeline);
+    pass.setBindGroup(0, mapBindGroup);
+    pass.draw(6);
+    pass.setPipeline(dotPipelines[0]);
+    pass.setBindGroup(0, trailBindGroup);
+    pass.draw(6, walkers * (shown - 1));
+    pass.setPipeline(dotPipelines[1]);
+    pass.setBindGroup(0, rejectedBindGroup);
+    pass.draw(6, walkers);
+    pass.setPipeline(dotPipelines[2]);
+    pass.setBindGroup(0, walkerBindGroup);
+    pass.draw(6, walkers);
+    pass.end();
+
+    const sample = !readback.pending && ++frameCount % sampleEvery === 0 && stepsTaken > 0;
+    if (sample) readback.copy(encoder);
+    device.queue.submit([encoder.finish()]);
+    if (sample) {
+      const mine = epoch;
+      const taken = stepsTaken;
+      readback.read((buffer) => {
+        if (mine !== epoch) return; // from before a reset
+        receive(buffer, taken);
+      });
+    }
+
+    if (frameCount % 6 === 0) {
+      readout.textContent =
+        `${stepsTaken.toLocaleString()} steps each · ` +
+        (acceptance === null ? "accepted –" : `${(100 * acceptance).toFixed(0)}% accepted`) +
+        (currentText() ? ` · ${currentText()} (exact ${exactLeft.toFixed(3)})` : "");
+    }
+  }
+
+  gpu.run(invalidation, device, frame);
+
+  // The canvas with the controls laid over its corner
+  yield ui.stage(canvas, [walkersInput, stepInput, ruleInput, rateInput, resetButton, readout]);
+}
+```
+
+```{ojs}
+//| echo: false
+//| column: page
+charts = {
+  // Two empty hosts; the simulation cell above draws into them as data arrives
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.chartHosts(["estimate", "strips"]);
+}
+```
+
+::: {.mf-series-bar}
+Moving Figures
+
+:::{#mf-series}
+:::
+:::
