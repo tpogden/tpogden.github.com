@@ -39,16 +39,13 @@ darts should settle. It sits at about 1.7309 for 20 steps, 1.5465 for 100 and 1.
 for 1,000: still some way above 1.5066.
 
 **The error.** Random darts give an error that falls as $1/\sqrt{N}$, as it did for
-the sticks. The other set of darts, in blue, are not random: they are
-[Halton points](https://en.wikipedia.org/wiki/Halton_sequence), which are spread as
-evenly as they can be, so they never clump or leave gaps the way random ones do.
-They are thrown at the same rate, and the right chart shows how far each has got
-from the reference. The sloping dashed line there is the size of error the random
-darts are expected to have. The reference is itself only so exact: making its grid four times
-coarser or finer moves it by up to about $5 \times 10^{-5}$ (at 100 steps, less at the
-others), so that is as low as the chart can meaningfully go.
+the sticks: a hundred times more darts for one more digit. The right chart shows how
+far the estimate is from the reference, against the sloping dashed line that size of
+error is expected to follow. The reference is itself only so exact: making its grid
+four times coarser or finer moves it by up to about $5 \times 10^{-5}$ (at 100 steps,
+less at the others), so that is as low as the chart can meaningfully go.
 
-The slider is the number of darts a second of each kind. **Iterations** is $n$, and
+The slider is the number of darts a second. **Iterations** is $n$, and
 changing it, like **Start over**, begins again.
 
 ```{ojs}
@@ -127,10 +124,9 @@ viewof iterations = {
         origin: vec2f,
         size: vec2f,
         maxIter: u32,    // iterations before a point counts as inside
-        perThread: u32,  // darts of each kind every thread throws this frame
+        perThread: u32,  // darts every thread throws this frame
         threads: u32,    // threads that throw at all
         drawn: u32,      // threads that record their first dart for drawing
-        start: u32,      // Halton index of the first dart this frame
         refRow: u32,     // first row of the reference grid slice to test
         refRows: u32,    // rows in that slice
         pad: u32,
@@ -138,9 +134,8 @@ viewof iterations = {
 
       @group(0) @binding(0) var<uniform> params: Params;
       @group(0) @binding(1) var<storage, read_write> rng: array<u32>;
-      // Counters: darts thrown, random darts inside, Halton darts inside, and the
-      // reference grid's points inside
-      @group(0) @binding(2) var<storage, read_write> totals: array<atomic<u32>, 4>;
+      // Counters: darts thrown, darts inside, and the reference grid's points inside
+      @group(0) @binding(2) var<storage, read_write> totals: array<atomic<u32>, 3>;
       // This frame's drawn darts: x, y, 1 if inside
       @group(0) @binding(3) var<storage, read_write> darts: array<vec4f>;
 
@@ -164,26 +159,8 @@ viewof iterations = {
         return true;
       }
 
-      // Halton points: the base-2 and base-3 radical inverses of the index
-      fn halton2(i: u32) -> f32 {
-        return f32(reverseBits(i) >> 8u) * (1.0 / 16777216.0);
-      }
-      fn halton3(i: u32) -> f32 {
-        var f = 1.0 / 3.0;
-        var r = 0.0;
-        var n = i;
-        for (var d = 0u; d < 21u; d++) {
-          if (n == 0u) { break; }
-          r += f * f32(n % 3u);
-          n /= 3u;
-          f /= 3.0;
-        }
-        return r;
-      }
-
       var<workgroup> thrown: array<u32, ${groupSize}>;
-      var<workgroup> byRandom: array<u32, ${groupSize}>;
-      var<workgroup> byHalton: array<u32, ${groupSize}>;
+      var<workgroup> landed: array<u32, ${groupSize}>;
 
       @compute @workgroup_size(${groupSize})
       fn drop(
@@ -191,27 +168,19 @@ viewof iterations = {
         @builtin(local_invocation_index) local: u32,
       ) {
         var nThrown = 0u;
-        var nRandom = 0u;
-        var nHalton = 0u;
+        var nInside = 0u;
 
         if (id.x < params.threads) {
           var state = rng[id.x];
           for (var k = 0u; k < params.perThread; k++) {
-            // The Halton dart: the whole frame's darts are consecutive indices
-            let index = params.start + 1u + k * params.threads + id.x;
-            let h = vec2f(halton2(index), halton3(index));
-            let r = vec2f(rand(&state), rand(&state));
-
-            let randomInside = inside(params.origin + r * params.size);
-            let haltonInside = inside(params.origin + h * params.size);
+            let p = params.origin + vec2f(rand(&state), rand(&state)) * params.size;
+            let isInside = inside(p);
             nThrown += 1u;
-            if (randomInside) { nRandom += 1u; }
-            if (haltonInside) { nHalton += 1u; }
+            if (isInside) { nInside += 1u; }
 
-            // Only the random darts are drawn, one per thread each frame
+            // One dart per thread each frame is kept for drawing
             if (k == 0u && id.x < params.drawn) {
-              let p = params.origin + r * params.size;
-              darts[id.x] = vec4f(p.x, p.y, select(0.0, 1.0, randomInside), 0.0);
+              darts[id.x] = vec4f(p.x, p.y, select(0.0, 1.0, isInside), 0.0);
             }
           }
           rng[id.x] = state;
@@ -219,21 +188,18 @@ viewof iterations = {
 
         // Add up the group's darts in shared memory, then one atomic each
         thrown[local] = nThrown;
-        byRandom[local] = nRandom;
-        byHalton[local] = nHalton;
+        landed[local] = nInside;
         workgroupBarrier();
         for (var stride = ${groupSize / 2}u; stride > 0u; stride >>= 1u) {
           if (local < stride) {
             thrown[local] += thrown[local + stride];
-            byRandom[local] += byRandom[local + stride];
-            byHalton[local] += byHalton[local + stride];
+            landed[local] += landed[local + stride];
           }
           workgroupBarrier();
         }
         if (local == 0u) {
           atomicAdd(&totals[0], thrown[0]);
-          atomicAdd(&totals[1], byRandom[0]);
-          atomicAdd(&totals[2], byHalton[0]);
+          atomicAdd(&totals[1], landed[0]);
         }
       }
 
@@ -257,7 +223,7 @@ viewof iterations = {
           if (local < stride) { gridCount[local] += gridCount[local + stride]; }
           workgroupBarrier();
         }
-        if (local == 0u) { atomicAdd(&totals[3], gridCount[0]); }
+        if (local == 0u) { atomicAdd(&totals[2], gridCount[0]); }
       }
     `,
   });
@@ -273,7 +239,7 @@ viewof iterations = {
   // --------------------------------------------------------------------- buffers
   const buffers = {
     rng: gpu.storageBuffer(device, random.seeds(maxThreads)),
-    totals: gpu.storageBuffer(device, new Uint32Array(4)),
+    totals: gpu.storageBuffer(device, new Uint32Array(3)),
     darts: gpu.storageBuffer(device, new Float32Array(maxDrawnPerFrame * 4)),
     params: device.createBuffer({
       size: 48,
@@ -321,7 +287,6 @@ viewof iterations = {
         perThread: u32,
         threads: u32,
         drawn: u32,
-        start: u32,
         refRow: u32,
         refRows: u32,
         pad: u32,
@@ -345,7 +310,7 @@ viewof iterations = {
         let half = vec2f(1.25 / ${textureSize[0]}.0, 1.25 / ${textureSize[1]}.0) * 2.0;
         let centre = vec2f(uv.x * 2.0 - 1.0, 1.0 - uv.y * 2.0);
         // Dark grey: the brand's text colour #e8e2e0, a third of the way up from
-        // the #1a1a1a background. Blue is left for the Halton darts in the charts.
+        // the #1a1a1a background.
         let cold = vec4f(0.38, 0.37, 0.365, 0.9);
         let hot = vec4f(1.0, 0.282, 0.204, 0.95); // #FF4834
         return Out(
@@ -419,15 +384,14 @@ viewof iterations = {
   });
 
   // ------------------------------------------------------------------- the state
-  const readback = gpu.readback(device, [{ buffer: buffers.totals, bytes: 16 }]);
+  const readback = gpu.readback(device, [{ buffer: buffers.totals, bytes: 12 }]);
   const sampleEvery = 6; // frames between reads of the counters
   let frameCount = 0;
   let epoch = 0; // bumped on reset, so a read in flight from before is dropped
-  let previous = [0, 0, 0, 0]; // the GPU's (wrapping, 32-bit) counters at the last read
-  const total = [0, 0, 0, 0]; // darts, random inside, Halton inside, grid inside
-  const series = []; // {N, random, halton}: area estimates
+  let previous = [0, 0, 0]; // the GPU's (wrapping, 32-bit) counters at the last read
+  const total = [0, 0, 0]; // darts, darts inside, reference grid points inside
+  const series = []; // {N, area}: the estimate as the darts pile up
   let owed = 0; // darts due but not yet thrown
-  let haltonStart = 0; // index of the next Halton dart
   let chunk = 0; // reference grid slices tested so far
   let clearPicture = true; // clear the picture on the next frame
   let lastTime = null;
@@ -436,7 +400,7 @@ viewof iterations = {
   const draw = ui.plotter(Plot);
 
   const reference = () =>
-    chunk >= gridChunks && total[3] > 0 ? (boxArea * total[3]) / (gridColumns * gridRows) : null;
+    chunk >= gridChunks && total[2] > 0 ? (boxArea * total[2]) / (gridColumns * gridRows) : null;
 
   // The spread of the random estimate after N darts: n inside is binomial
   const spread = (N, p) => boxArea * Math.sqrt((p * (1 - p)) / N);
@@ -461,7 +425,7 @@ viewof iterations = {
   function drawCharts() {
     const now = current();
     const ref = reference();
-    const xAxis = { label: "darts of each kind", type: "log", grid: true, domain: [10, 1e10] };
+    const xAxis = { label: "darts thrown", type: "log", grid: true, domain: [10, 1e10] };
     const pRef = ref === null ? 0.13 : ref / boxArea;
     const band =
       ref === null
@@ -473,17 +437,8 @@ viewof iterations = {
             sigma: spread(N, pRef),
           }));
 
-    // One row per method and sample, so colour can say which is which
-    const methods = ["random", "Halton"];
-    const colours = { domain: methods, range: ["#FF4834", "#5980CC"], legend: true };
-    const estimates = series.flatMap((p) => [
-      { N: p.N, method: "random", area: p.random },
-      { N: p.N, method: "Halton", area: p.halton },
-    ]);
-
     draw(areaHost, {
       x: xAxis,
-      color: colours,
       y: { label: "estimate of the area", grid: true, domain: [1.2, 1.9] },
       marks: [
         Plot.areaY(band, { x: "N", y1: "low", y2: "high", fillOpacity: 0.15, clip: true }),
@@ -496,7 +451,7 @@ viewof iterations = {
                 strokeDasharray: "4 3",
               }),
             ]),
-        Plot.line(estimates, { x: "N", y: "area", stroke: "method", clip: true }),
+        Plot.line(series, { x: "N", y: "area", stroke: "#FF4834", clip: true }),
         ...(now
           ? [
               Plot.text([now.text], {
@@ -516,14 +471,10 @@ viewof iterations = {
       ref === null
         ? []
         : series
-            .flatMap((p) => [
-              { N: p.N, method: "random", error: Math.abs(p.random - ref) },
-              { N: p.N, method: "Halton", error: Math.abs(p.halton - ref) },
-            ])
+            .map((p) => ({ N: p.N, error: Math.abs(p.area - ref) }))
             .filter((p) => p.error > 0);
     draw(errorHost, {
       x: xAxis,
-      color: colours,
       y: { label: "error: distance from the reference", type: "log", grid: true, domain: [1e-6, 3] },
       marks: [
         Plot.line(band, {
@@ -532,18 +483,16 @@ viewof iterations = {
           stroke: "currentColor",
           strokeDasharray: "4 3",
         }),
-        Plot.dot(errors, { x: "N", y: "error", r: 2, fill: "method" }),
+        Plot.dot(errors, { x: "N", y: "error", r: 2, fill: "#FF4834" }),
       ],
     });
   }
 
   function record() {
-    const [N, byRandom, byHalton] = total;
-    if (byRandom === 0 || byHalton === 0) return;
+    const [N, inside] = total;
+    if (inside === 0) return;
     const last = series[series.length - 1];
-    if (!last || N >= 1.15 * last.N) {
-      series.push({ N, random: (boxArea * byRandom) / N, halton: (boxArea * byHalton) / N });
-    }
+    if (!last || N >= 1.15 * last.N) series.push({ N, area: (boxArea * inside) / N });
     drawCharts();
   }
 
@@ -551,13 +500,12 @@ viewof iterations = {
   function reset() {
     epoch++;
     total.fill(0);
-    previous = [0, 0, 0, 0];
+    previous = [0, 0, 0];
     series.length = 0;
     owed = 0;
-    haltonStart = 0;
     chunk = 0;
     clearPicture = true;
-    device.queue.writeBuffer(buffers.totals, 0, new Uint32Array(4));
+    device.queue.writeBuffer(buffers.totals, 0, new Uint32Array(3));
     drawCharts();
   }
   iterationsInput.addEventListener("input", reset);
@@ -575,7 +523,7 @@ viewof iterations = {
     const due = Math.floor(owed);
     const encoder = device.createCommandEncoder();
 
-    // Spread the darts over threads, at most 64 of each kind a thread
+    // Spread the darts over threads, at most 64 a thread
     let threads = 0;
     let perThread = 0;
     let drawn = 0;
@@ -584,7 +532,6 @@ viewof iterations = {
       perThread = Math.ceil(due / threads);
       owed -= threads * perThread;
       drawn = Math.min(threads, maxDrawnPerFrame);
-      if (haltonStart + threads * perThread >= 2 ** 32 - 2) reset(); // keep indices distinct
     }
 
     paramView.setFloat32(0, origin[0], true);
@@ -595,10 +542,9 @@ viewof iterations = {
     paramView.setUint32(20, perThread, true);
     paramView.setUint32(24, threads, true);
     paramView.setUint32(28, drawn, true);
-    paramView.setUint32(32, haltonStart, true);
     const doGrid = chunk < gridChunks;
-    paramView.setUint32(36, chunk * rowsPerChunk, true);
-    paramView.setUint32(40, rowsPerChunk, true);
+    paramView.setUint32(32, chunk * rowsPerChunk, true);
+    paramView.setUint32(36, rowsPerChunk, true);
     device.queue.writeBuffer(buffers.params, 0, paramBytes);
 
     const compute = encoder.beginComputePass();
@@ -612,7 +558,6 @@ viewof iterations = {
       compute.setPipeline(dropPipeline);
       compute.setBindGroup(0, dropBindGroup);
       compute.dispatchWorkgroups(Math.ceil(threads / groupSize));
-      haltonStart += threads * perThread;
     }
     compute.end();
 
@@ -654,7 +599,7 @@ viewof iterations = {
         if (mine !== epoch) return; // from before a reset
         const counters = new Uint32Array(buffer);
         // The GPU counters wrap at 2^32: take the difference modulo 2^32
-        for (let k = 0; k < 4; k++) {
+        for (let k = 0; k < 3; k++) {
           total[k] += (counters[k] - previous[k]) >>> 0;
           previous[k] = counters[k];
         }
@@ -666,7 +611,7 @@ viewof iterations = {
       const now = current();
       const ref = reference();
       readout.textContent =
-        `${total[0].toLocaleString()} darts of each kind · ` +
+        `${total[0].toLocaleString()} darts · ` +
         (now ? now.text : "area –") +
         (ref === null ? " · measuring the reference…" : ` · reference ${ref.toFixed(4)}`);
     }
