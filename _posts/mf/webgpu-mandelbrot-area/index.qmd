@@ -26,7 +26,7 @@ they are about 1.5066.
 
 Each dart picks a random $c$ in the box, repeats that step up to a fixed number of
 times, and is **inside** if $z$ never gets further than 2 from the origin. The
-picture develops as the darts land: red ones are inside, blue ones ran away.
+picture develops as the darts land: red ones are inside, grey ones ran away.
 
 Two things stand in the way of a clean answer.
 
@@ -34,8 +34,8 @@ Two things stand in the way of a clean answer.
 steps is counted as inside, even though some of them would run away later. So what
 is measured is the area of a slightly bigger shape, which shrinks towards the true
 one as $n$ grows. The flat dashed line on the left chart, the reference, is the area of that
-$n$-step shape, found by testing a fixed grid of 150 million points. It is where the
-darts should settle. It sits at about 1.73 for 20 steps, 1.5465 for 100 and 1.5103
+$n$-step shape, found by testing a fixed grid of 600 million points. It is where the
+darts should settle. It sits at about 1.7309 for 20 steps, 1.5465 for 100 and 1.5103
 for 1,000: still some way above 1.5066.
 
 **The error.** Random darts give an error that falls as $1/\sqrt{N}$, as it did for
@@ -44,8 +44,9 @@ the sticks. The other set of darts, in blue, are not random: they are
 evenly as they can be, so they never clump or leave gaps the way random ones do.
 They are thrown at the same rate, and the right chart shows how far each has got
 from the reference. The sloping dashed line there is the size of error the random
-darts are expected to have. The reference is itself only as good as its grid, about $10^{-5}$,
-so that is as low as the chart can go.
+darts are expected to have. The reference is itself only so exact: making its grid four times
+coarser or finer moves it by up to about $5 \times 10^{-5}$ (at 100 steps, less at the
+others), so that is as low as the chart can meaningfully go.
 
 The slider is the number of darts a second of each kind. **Iterations** is $n$, and
 changing it, like **Start over**, begins again.
@@ -114,9 +115,9 @@ viewof iterations = {
   const maxDrawnPerFrame = 4096;
 
   // The reference: every point of a fixed grid, tested a slice at a time
-  const gridColumns = 16384;
-  const gridRows = 9216;
-  const gridChunks = 64;
+  const gridColumns = 32768;
+  const gridRows = 18432;
+  const gridChunks = 128;
   const rowsPerChunk = gridRows / gridChunks;
 
   // ------------------------------------------------------------------ the shaders
@@ -343,7 +344,9 @@ viewof iterations = {
         // About 2.5 pixels across, in the texture
         let half = vec2f(1.25 / ${textureSize[0]}.0, 1.25 / ${textureSize[1]}.0) * 2.0;
         let centre = vec2f(uv.x * 2.0 - 1.0, 1.0 - uv.y * 2.0);
-        let cold = vec4f(0.35, 0.5, 0.8, 0.8);
+        // Dark grey: the brand's text colour #e8e2e0, a third of the way up from
+        // the #1a1a1a background. Blue is left for the Halton darts in the charts.
+        let cold = vec4f(0.38, 0.37, 0.365, 0.9);
         let hot = vec4f(1.0, 0.282, 0.204, 0.95); // #FF4834
         return Out(
           vec4f(centre + corner * half, 0.0, 1.0),
