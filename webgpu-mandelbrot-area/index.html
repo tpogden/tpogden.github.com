@@ -1,0 +1,1615 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.19">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2026-10-14">
+
+<title>014: Throwing Darts at a Fractal – Thomas Ogden</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../otimes.svg" rel="icon" type="image/svg+xml">
+<script src="../site_libs/quarto-listing/list.min.js"></script>
+<script src="../site_libs/quarto-listing/quarto-listing.js"></script>
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b626d73c4c936ccc3cb08be7d45d1df6.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-ae12646499768ee9aff036bf6bf22a42.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-dad894837b6b22e130eeb0494863fa72.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-ae12646499768ee9aff036bf6bf22a42.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script>
+
+  window.document.addEventListener("DOMContentLoaded", function (_event) {
+    const listingTargetEl = window.document.querySelector('#listing-mf-series .list');
+    if (!listingTargetEl) {
+      // No listing discovered, do not attach.
+      return; 
+    }
+
+    const options = {
+      valueNames: ['listing-title',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      
+      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description"],
+    };
+
+    window['quarto-listings'] = window['quarto-listings'] || {};
+    window['quarto-listings']['listing-mf-series'] = new List('listing-mf-series', options);
+
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  });
+
+  window.addEventListener('hashchange',() => {
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  })
+  </script>
+<script type="module" src="../site_libs/quarto-ojs/quarto-ojs-runtime.js"></script>
+<link href="../site_libs/quarto-ojs/quarto-ojs.css" rel="stylesheet">
+<script data-goatcounter="https://ogden.goatcounter.com/count" async="" src="//gc.zgo.at/count.js"></script>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-fixed fullcontent quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const queryPrefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+    const darkModeDefault = queryPrefersDark.matches;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    queryPrefersDark.addEventListener("change", e => {
+      if(window.localStorage.getItem("quarto-color-scheme") !== null)
+        return;
+      const alternate = e.matches
+      toggleColorMode(alternate);
+      localAlternateSentinel = e.matches ? 'alternate' : 'default'; // this is used alongside local storage!
+      toggleGiscusIfUsed(alternate, darkModeDefault);
+    });
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Thomas Ogden</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-end">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content page-columns page-full" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><h1 class="title display-7">014: Throwing Darts at a Fractal</h1></header>
+
+
+<header id="title-block-header">
+
+
+<p class="date">2026-10-14</p>
+</header>
+
+
+<p><a href="../webgpu-buffons-needle/">Dropping sticks</a> found π by counting how many random sticks crossed a line. The same idea measures any area you cannot work out with a formula: throw darts at a box at random, and the fraction that land inside the shape is the shape’s fraction of the box.</p>
+<p>The shape here is the <a href="https://en.wikipedia.org/wiki/Mandelbrot_set">Mandelbrot set</a>: the points <span class="math inline">c</span> in the plane for which repeating <span class="math inline">z \to z^2 + c</span> from <span class="math inline">z = 0</span> never runs away. It has no known formula for its area. The best values are numerical, and they are about 1.5066.</p>
+<p>Each dart picks a random <span class="math inline">c</span> in the box, repeats that step up to a fixed number of times, and is <em>inside</em> if <span class="math inline">z</span> never gets further than 2 from the origin. The picture develops as the darts land: red ones are inside, grey ones ran away.</p>
+<p>Two things stand in the way of a clean answer:</p>
+<ol type="1">
+<li><p><em>The iterations.</em> You cannot repeat for ever. A dart that is still going after <span class="math inline">n</span> steps is counted as inside, even though some of them would run away later. So what is measured is the area of a slightly bigger shape, which shrinks towards the true one as <span class="math inline">n</span> grows. The flat dashed line on the left chart, the reference, is the area of that <span class="math inline">n</span>-step shape, found by testing a fixed grid of 600 million points. It is where the darts should settle. It sits at about 1.7309 for 20 steps, 1.5465 for 100 and 1.5103 for 1,000: still some way above 1.5066.</p></li>
+<li><p><em>The error.</em> Random darts give an error that falls as <span class="math inline">1/\sqrt{N}</span>, as it did for the sticks: a hundred times more darts for one more digit. The right chart shows how far the estimate is from the reference, against the sloping dashed line that size of error is expected to follow. The reference is itself only so exact: making its grid four times coarser or finer moves it by up to about <span class="math inline">5 \times 10^{-5}</span> (at 100 steps, less at the others), so that is as low as the chart can meaningfully go.</p></li>
+</ol>
+<p>The slider is the number of darts a second. <strong>Iterations</strong> is <span class="math inline">n</span>, and changing it, like <strong>Restart</strong>, begins the run again.</p>
+<div class="cell hidden">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb1" data-startfrom="53" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 52;"><span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>viewof rate <span class="op">=</span> {</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> ui <span class="op">=</span> <span class="cf">await</span> <span class="im">import</span>(<span class="kw">new</span> <span class="fu">URL</span>(<span class="st">"../lib/ui.js"</span><span class="op">,</span> <span class="bu">document</span><span class="op">.</span><span class="at">baseURI</span>)<span class="op">.</span><span class="at">href</span>)<span class="op">;</span></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> ui<span class="op">.</span><span class="fu">slider</span>({</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>    <span class="dt">label</span><span class="op">:</span> <span class="st">"Darts/s"</span><span class="op">,</span></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>    <span class="dt">min</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>    <span class="dt">max</span><span class="op">:</span> <span class="dv">7</span><span class="op">,</span></span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>    <span class="dt">step</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>    <span class="dt">value</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span></span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>    <span class="dt">format</span><span class="op">:</span> (v) <span class="kw">=&gt;</span> <span class="vs">`10^</span><span class="sc">${</span>v<span class="sc">}</span><span class="vs">`</span><span class="op">,</span></span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display hidden">
+<div id="ojs-cell-1" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell hidden">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb2" data-startfrom="69" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 68;"><span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>viewof iterations <span class="op">=</span> {</span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> ui <span class="op">=</span> <span class="cf">await</span> <span class="im">import</span>(<span class="kw">new</span> <span class="fu">URL</span>(<span class="st">"../lib/ui.js"</span><span class="op">,</span> <span class="bu">document</span><span class="op">.</span><span class="at">baseURI</span>)<span class="op">.</span><span class="at">href</span>)<span class="op">;</span></span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> ui<span class="op">.</span><span class="fu">segmented</span>({</span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>    <span class="dt">label</span><span class="op">:</span> <span class="st">"Iterations"</span><span class="op">,</span></span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>    <span class="dt">options</span><span class="op">:</span> [</span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>      [<span class="dv">20</span><span class="op">,</span> <span class="st">"20"</span>]<span class="op">,</span></span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>      [<span class="dv">100</span><span class="op">,</span> <span class="st">"100"</span>]<span class="op">,</span></span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>      [<span class="dv">1000</span><span class="op">,</span> <span class="st">"1000"</span>]<span class="op">,</span></span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>    ]<span class="op">,</span></span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>    <span class="dt">value</span><span class="op">:</span> <span class="dv">100</span><span class="op">,</span></span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display hidden">
+<div id="ojs-cell-2" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell page-columns page-full">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" data-startfrom="87" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 86;"><span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Shared WebGPU boilerplate: setup, buffers and the animation loop (lib/gpu.js)</span></span>
+<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> gpu <span class="op">=</span> <span class="cf">await</span> <span class="im">import</span>(<span class="kw">new</span> <span class="fu">URL</span>(<span class="st">"../lib/gpu.js"</span><span class="op">,</span> <span class="bu">document</span><span class="op">.</span><span class="at">baseURI</span>)<span class="op">.</span><span class="at">href</span>)<span class="op">;</span></span>
+<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> random <span class="op">=</span> <span class="cf">await</span> <span class="im">import</span>(<span class="kw">new</span> <span class="fu">URL</span>(<span class="st">"../lib/random.js"</span><span class="op">,</span> <span class="bu">document</span><span class="op">.</span><span class="at">baseURI</span>)<span class="op">.</span><span class="at">href</span>)<span class="op">;</span></span>
+<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> ui <span class="op">=</span> <span class="cf">await</span> <span class="im">import</span>(<span class="kw">new</span> <span class="fu">URL</span>(<span class="st">"../lib/ui.js"</span><span class="op">,</span> <span class="bu">document</span><span class="op">.</span><span class="at">baseURI</span>)<span class="op">.</span><span class="at">href</span>)<span class="op">;</span></span>
+<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Controls are read live from their elements (referencing `viewof x` gives the</span></span>
+<span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a>  <span class="co">// element, not the value), so moving them does not restart this cell.</span></span>
+<span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> rateInput <span class="op">=</span> viewof rate<span class="op">;</span> <span class="co">// log10 of darts per second</span></span>
+<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> iterationsInput <span class="op">=</span> viewof iterations<span class="op">;</span></span>
+<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> { canvas<span class="op">,</span> device<span class="op">,</span> context<span class="op">,</span> format } <span class="op">=</span> <span class="cf">await</span> gpu<span class="op">.</span><span class="fu">setup</span>({</span>
+<span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a>    <span class="dt">width</span><span class="op">:</span> <span class="dv">640</span><span class="op">,</span></span>
+<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a>    <span class="dt">height</span><span class="op">:</span> <span class="dv">360</span><span class="op">,</span></span>
+<span id="cb3-101"><a href="#cb3-101" aria-hidden="true" tabindex="-1"></a>    <span class="dt">resolution</span><span class="op">:</span> <span class="st">"auto"</span><span class="op">,</span></span>
+<span id="cb3-102"><a href="#cb3-102" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb3-103"><a href="#cb3-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-104"><a href="#cb3-104" aria-hidden="true" tabindex="-1"></a>  <span class="co">// The box the darts are thrown into, 16:9 like the canvas. The set lies inside it:</span></span>
+<span id="cb3-105"><a href="#cb3-105" aria-hidden="true" tabindex="-1"></a>  <span class="co">// it reaches x from -2 to 0.47 and y out to about 1.12.</span></span>
+<span id="cb3-106"><a href="#cb3-106" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> origin <span class="op">=</span> [<span class="op">-</span><span class="fl">2.9</span><span class="op">,</span> <span class="op">-</span><span class="fl">1.265625</span>]<span class="op">;</span></span>
+<span id="cb3-107"><a href="#cb3-107" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> size <span class="op">=</span> [<span class="fl">4.5</span><span class="op">,</span> <span class="fl">2.53125</span>]<span class="op">;</span></span>
+<span id="cb3-108"><a href="#cb3-108" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> boxArea <span class="op">=</span> size[<span class="dv">0</span>] <span class="op">*</span> size[<span class="dv">1</span>]<span class="op">;</span></span>
+<span id="cb3-109"><a href="#cb3-109" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> groupSize <span class="op">=</span> <span class="dv">256</span><span class="op">;</span></span>
+<span id="cb3-110"><a href="#cb3-110" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> maxThreads <span class="op">=</span> <span class="dv">1</span> <span class="op">&lt;&lt;</span> <span class="dv">20</span><span class="op">;</span></span>
+<span id="cb3-111"><a href="#cb3-111" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> maxDrawnPerFrame <span class="op">=</span> <span class="dv">4096</span><span class="op">;</span></span>
+<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-113"><a href="#cb3-113" aria-hidden="true" tabindex="-1"></a>  <span class="co">// The reference: every point of a fixed grid, tested a slice at a time</span></span>
+<span id="cb3-114"><a href="#cb3-114" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> gridColumns <span class="op">=</span> <span class="dv">32768</span><span class="op">;</span></span>
+<span id="cb3-115"><a href="#cb3-115" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> gridRows <span class="op">=</span> <span class="dv">18432</span><span class="op">;</span></span>
+<span id="cb3-116"><a href="#cb3-116" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> gridChunks <span class="op">=</span> <span class="dv">128</span><span class="op">;</span></span>
+<span id="cb3-117"><a href="#cb3-117" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> rowsPerChunk <span class="op">=</span> gridRows <span class="op">/</span> gridChunks<span class="op">;</span></span>
+<span id="cb3-118"><a href="#cb3-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-119"><a href="#cb3-119" aria-hidden="true" tabindex="-1"></a>  <span class="co">// ------------------------------------------------------------------ the shaders</span></span>
+<span id="cb3-120"><a href="#cb3-120" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> module <span class="op">=</span> device<span class="op">.</span><span class="fu">createShaderModule</span>({</span>
+<span id="cb3-121"><a href="#cb3-121" aria-hidden="true" tabindex="-1"></a>    <span class="dt">code</span><span class="op">:</span> <span class="vs">`</span></span>
+<span id="cb3-122"><a href="#cb3-122" aria-hidden="true" tabindex="-1"></a><span class="vs">      struct Params {</span></span>
+<span id="cb3-123"><a href="#cb3-123" aria-hidden="true" tabindex="-1"></a><span class="vs">        origin: vec2f,</span></span>
+<span id="cb3-124"><a href="#cb3-124" aria-hidden="true" tabindex="-1"></a><span class="vs">        size: vec2f,</span></span>
+<span id="cb3-125"><a href="#cb3-125" aria-hidden="true" tabindex="-1"></a><span class="vs">        maxIter: u32,    // iterations before a point counts as inside</span></span>
+<span id="cb3-126"><a href="#cb3-126" aria-hidden="true" tabindex="-1"></a><span class="vs">        perThread: u32,  // darts every thread throws this frame</span></span>
+<span id="cb3-127"><a href="#cb3-127" aria-hidden="true" tabindex="-1"></a><span class="vs">        threads: u32,    // threads that throw at all</span></span>
+<span id="cb3-128"><a href="#cb3-128" aria-hidden="true" tabindex="-1"></a><span class="vs">        drawn: u32,      // threads that record their first dart for drawing</span></span>
+<span id="cb3-129"><a href="#cb3-129" aria-hidden="true" tabindex="-1"></a><span class="vs">        refRow: u32,     // first row of the reference grid slice to test</span></span>
+<span id="cb3-130"><a href="#cb3-130" aria-hidden="true" tabindex="-1"></a><span class="vs">        refRows: u32,    // rows in that slice</span></span>
+<span id="cb3-131"><a href="#cb3-131" aria-hidden="true" tabindex="-1"></a><span class="vs">        pad: u32,</span></span>
+<span id="cb3-132"><a href="#cb3-132" aria-hidden="true" tabindex="-1"></a><span class="vs">      }</span></span>
+<span id="cb3-133"><a href="#cb3-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-134"><a href="#cb3-134" aria-hidden="true" tabindex="-1"></a><span class="vs">      @group(0) @binding(0) var&lt;uniform&gt; params: Params;</span></span>
+<span id="cb3-135"><a href="#cb3-135" aria-hidden="true" tabindex="-1"></a><span class="vs">      @group(0) @binding(1) var&lt;storage, read_write&gt; rng: array&lt;u32&gt;;</span></span>
+<span id="cb3-136"><a href="#cb3-136" aria-hidden="true" tabindex="-1"></a><span class="vs">      // Counters: darts thrown, darts inside, and the reference grid's points inside</span></span>
+<span id="cb3-137"><a href="#cb3-137" aria-hidden="true" tabindex="-1"></a><span class="vs">      @group(0) @binding(2) var&lt;storage, read_write&gt; totals: array&lt;atomic&lt;u32&gt;, 3&gt;;</span></span>
+<span id="cb3-138"><a href="#cb3-138" aria-hidden="true" tabindex="-1"></a><span class="vs">      // This frame's drawn darts: x, y, 1 if inside</span></span>
+<span id="cb3-139"><a href="#cb3-139" aria-hidden="true" tabindex="-1"></a><span class="vs">      @group(0) @binding(3) var&lt;storage, read_write&gt; darts: array&lt;vec4f&gt;;</span></span>
+<span id="cb3-140"><a href="#cb3-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-141"><a href="#cb3-141" aria-hidden="true" tabindex="-1"></a><span class="vs">      </span><span class="sc">${</span>random<span class="op">.</span><span class="at">rngWGSL</span><span class="sc">}</span></span>
+<span id="cb3-142"><a href="#cb3-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-143"><a href="#cb3-143" aria-hidden="true" tabindex="-1"></a><span class="vs">      // Is c in the set (or, past maxIter steps, not yet seen to run away)?</span></span>
+<span id="cb3-144"><a href="#cb3-144" aria-hidden="true" tabindex="-1"></a><span class="vs">      fn inside(c: vec2f) -&gt; bool {</span></span>
+<span id="cb3-145"><a href="#cb3-145" aria-hidden="true" tabindex="-1"></a><span class="vs">        // The big cardioid and the circle to its left are known to be inside: skip</span></span>
+<span id="cb3-146"><a href="#cb3-146" aria-hidden="true" tabindex="-1"></a><span class="vs">        // them, which is most of the set's area and all of its slow points</span></span>
+<span id="cb3-147"><a href="#cb3-147" aria-hidden="true" tabindex="-1"></a><span class="vs">        let xq = c.x - 0.25;</span></span>
+<span id="cb3-148"><a href="#cb3-148" aria-hidden="true" tabindex="-1"></a><span class="vs">        let q = xq * xq + c.y * c.y;</span></span>
+<span id="cb3-149"><a href="#cb3-149" aria-hidden="true" tabindex="-1"></a><span class="vs">        if (q * (q + xq) &lt;= 0.25 * c.y * c.y) { return true; }</span></span>
+<span id="cb3-150"><a href="#cb3-150" aria-hidden="true" tabindex="-1"></a><span class="vs">        let xp = c.x + 1.0;</span></span>
+<span id="cb3-151"><a href="#cb3-151" aria-hidden="true" tabindex="-1"></a><span class="vs">        if (xp * xp + c.y * c.y &lt;= 0.0625) { return true; }</span></span>
+<span id="cb3-152"><a href="#cb3-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-153"><a href="#cb3-153" aria-hidden="true" tabindex="-1"></a><span class="vs">        var z = vec2f(0.0);</span></span>
+<span id="cb3-154"><a href="#cb3-154" aria-hidden="true" tabindex="-1"></a><span class="vs">        for (var i = 0u; i &lt; params.maxIter; i++) {</span></span>
+<span id="cb3-155"><a href="#cb3-155" aria-hidden="true" tabindex="-1"></a><span class="vs">          z = vec2f(z.x * z.x - z.y * z.y + c.x, 2.0 * z.x * z.y + c.y);</span></span>
+<span id="cb3-156"><a href="#cb3-156" aria-hidden="true" tabindex="-1"></a><span class="vs">          if (dot(z, z) &gt; 4.0) { return false; }</span></span>
+<span id="cb3-157"><a href="#cb3-157" aria-hidden="true" tabindex="-1"></a><span class="vs">        }</span></span>
+<span id="cb3-158"><a href="#cb3-158" aria-hidden="true" tabindex="-1"></a><span class="vs">        return true;</span></span>
+<span id="cb3-159"><a href="#cb3-159" aria-hidden="true" tabindex="-1"></a><span class="vs">      }</span></span>
+<span id="cb3-160"><a href="#cb3-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-161"><a href="#cb3-161" aria-hidden="true" tabindex="-1"></a><span class="vs">      var&lt;workgroup&gt; thrown: array&lt;u32, </span><span class="sc">${</span>groupSize<span class="sc">}</span><span class="vs">&gt;;</span></span>
+<span id="cb3-162"><a href="#cb3-162" aria-hidden="true" tabindex="-1"></a><span class="vs">      var&lt;workgroup&gt; landed: array&lt;u32, </span><span class="sc">${</span>groupSize<span class="sc">}</span><span class="vs">&gt;;</span></span>
+<span id="cb3-163"><a href="#cb3-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-164"><a href="#cb3-164" aria-hidden="true" tabindex="-1"></a><span class="vs">      @compute @workgroup_size(</span><span class="sc">${</span>groupSize<span class="sc">}</span><span class="vs">)</span></span>
+<span id="cb3-165"><a href="#cb3-165" aria-hidden="true" tabindex="-1"></a><span class="vs">      fn drop(</span></span>
+<span id="cb3-166"><a href="#cb3-166" aria-hidden="true" tabindex="-1"></a><span class="vs">        @builtin(global_invocation_id) id: vec3u,</span></span>
+<span id="cb3-167"><a href="#cb3-167" aria-hidden="true" tabindex="-1"></a><span class="vs">        @builtin(local_invocation_index) local: u32,</span></span>
+<span id="cb3-168"><a href="#cb3-168" aria-hidden="true" tabindex="-1"></a><span class="vs">      ) {</span></span>
+<span id="cb3-169"><a href="#cb3-169" aria-hidden="true" tabindex="-1"></a><span class="vs">        var nThrown = 0u;</span></span>
+<span id="cb3-170"><a href="#cb3-170" aria-hidden="true" tabindex="-1"></a><span class="vs">        var nInside = 0u;</span></span>
+<span id="cb3-171"><a href="#cb3-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-172"><a href="#cb3-172" aria-hidden="true" tabindex="-1"></a><span class="vs">        if (id.x &lt; params.threads) {</span></span>
+<span id="cb3-173"><a href="#cb3-173" aria-hidden="true" tabindex="-1"></a><span class="vs">          var state = rng[id.x];</span></span>
+<span id="cb3-174"><a href="#cb3-174" aria-hidden="true" tabindex="-1"></a><span class="vs">          for (var k = 0u; k &lt; params.perThread; k++) {</span></span>
+<span id="cb3-175"><a href="#cb3-175" aria-hidden="true" tabindex="-1"></a><span class="vs">            let p = params.origin + vec2f(rand(&amp;state), rand(&amp;state)) * params.size;</span></span>
+<span id="cb3-176"><a href="#cb3-176" aria-hidden="true" tabindex="-1"></a><span class="vs">            let isInside = inside(p);</span></span>
+<span id="cb3-177"><a href="#cb3-177" aria-hidden="true" tabindex="-1"></a><span class="vs">            nThrown += 1u;</span></span>
+<span id="cb3-178"><a href="#cb3-178" aria-hidden="true" tabindex="-1"></a><span class="vs">            if (isInside) { nInside += 1u; }</span></span>
+<span id="cb3-179"><a href="#cb3-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-180"><a href="#cb3-180" aria-hidden="true" tabindex="-1"></a><span class="vs">            // One dart per thread each frame is kept for drawing</span></span>
+<span id="cb3-181"><a href="#cb3-181" aria-hidden="true" tabindex="-1"></a><span class="vs">            if (k == 0u &amp;&amp; id.x &lt; params.drawn) {</span></span>
+<span id="cb3-182"><a href="#cb3-182" aria-hidden="true" tabindex="-1"></a><span class="vs">              darts[id.x] = vec4f(p.x, p.y, select(0.0, 1.0, isInside), 0.0);</span></span>
+<span id="cb3-183"><a href="#cb3-183" aria-hidden="true" tabindex="-1"></a><span class="vs">            }</span></span>
+<span id="cb3-184"><a href="#cb3-184" aria-hidden="true" tabindex="-1"></a><span class="vs">          }</span></span>
+<span id="cb3-185"><a href="#cb3-185" aria-hidden="true" tabindex="-1"></a><span class="vs">          rng[id.x] = state;</span></span>
+<span id="cb3-186"><a href="#cb3-186" aria-hidden="true" tabindex="-1"></a><span class="vs">        }</span></span>
+<span id="cb3-187"><a href="#cb3-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-188"><a href="#cb3-188" aria-hidden="true" tabindex="-1"></a><span class="vs">        // Add up the group's darts in shared memory, then one atomic each</span></span>
+<span id="cb3-189"><a href="#cb3-189" aria-hidden="true" tabindex="-1"></a><span class="vs">        thrown[local] = nThrown;</span></span>
+<span id="cb3-190"><a href="#cb3-190" aria-hidden="true" tabindex="-1"></a><span class="vs">        landed[local] = nInside;</span></span>
+<span id="cb3-191"><a href="#cb3-191" aria-hidden="true" tabindex="-1"></a><span class="vs">        workgroupBarrier();</span></span>
+<span id="cb3-192"><a href="#cb3-192" aria-hidden="true" tabindex="-1"></a><span class="vs">        for (var stride = </span><span class="sc">${</span>groupSize <span class="op">/</span> <span class="dv">2</span><span class="sc">}</span><span class="vs">u; stride &gt; 0u; stride &gt;&gt;= 1u) {</span></span>
+<span id="cb3-193"><a href="#cb3-193" aria-hidden="true" tabindex="-1"></a><span class="vs">          if (local &lt; stride) {</span></span>
+<span id="cb3-194"><a href="#cb3-194" aria-hidden="true" tabindex="-1"></a><span class="vs">            thrown[local] += thrown[local + stride];</span></span>
+<span id="cb3-195"><a href="#cb3-195" aria-hidden="true" tabindex="-1"></a><span class="vs">            landed[local] += landed[local + stride];</span></span>
+<span id="cb3-196"><a href="#cb3-196" aria-hidden="true" tabindex="-1"></a><span class="vs">          }</span></span>
+<span id="cb3-197"><a href="#cb3-197" aria-hidden="true" tabindex="-1"></a><span class="vs">          workgroupBarrier();</span></span>
+<span id="cb3-198"><a href="#cb3-198" aria-hidden="true" tabindex="-1"></a><span class="vs">        }</span></span>
+<span id="cb3-199"><a href="#cb3-199" aria-hidden="true" tabindex="-1"></a><span class="vs">        if (local == 0u) {</span></span>
+<span id="cb3-200"><a href="#cb3-200" aria-hidden="true" tabindex="-1"></a><span class="vs">          atomicAdd(&amp;totals[0], thrown[0]);</span></span>
+<span id="cb3-201"><a href="#cb3-201" aria-hidden="true" tabindex="-1"></a><span class="vs">          atomicAdd(&amp;totals[1], landed[0]);</span></span>
+<span id="cb3-202"><a href="#cb3-202" aria-hidden="true" tabindex="-1"></a><span class="vs">        }</span></span>
+<span id="cb3-203"><a href="#cb3-203" aria-hidden="true" tabindex="-1"></a><span class="vs">      }</span></span>
+<span id="cb3-204"><a href="#cb3-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-205"><a href="#cb3-205" aria-hidden="true" tabindex="-1"></a><span class="vs">      // The reference: test a slice of rows of a fixed grid, at the cell centres</span></span>
+<span id="cb3-206"><a href="#cb3-206" aria-hidden="true" tabindex="-1"></a><span class="vs">      var&lt;workgroup&gt; gridCount: array&lt;u32, 256&gt;;</span></span>
+<span id="cb3-207"><a href="#cb3-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-208"><a href="#cb3-208" aria-hidden="true" tabindex="-1"></a><span class="vs">      @compute @workgroup_size(16, 16)</span></span>
+<span id="cb3-209"><a href="#cb3-209" aria-hidden="true" tabindex="-1"></a><span class="vs">      fn grid(</span></span>
+<span id="cb3-210"><a href="#cb3-210" aria-hidden="true" tabindex="-1"></a><span class="vs">        @builtin(global_invocation_id) id: vec3u,</span></span>
+<span id="cb3-211"><a href="#cb3-211" aria-hidden="true" tabindex="-1"></a><span class="vs">        @builtin(local_invocation_index) local: u32,</span></span>
+<span id="cb3-212"><a href="#cb3-212" aria-hidden="true" tabindex="-1"></a><span class="vs">      ) {</span></span>
+<span id="cb3-213"><a href="#cb3-213" aria-hidden="true" tabindex="-1"></a><span class="vs">        var n = 0u;</span></span>
+<span id="cb3-214"><a href="#cb3-214" aria-hidden="true" tabindex="-1"></a><span class="vs">        if (id.y &lt; params.refRows) {</span></span>
+<span id="cb3-215"><a href="#cb3-215" aria-hidden="true" tabindex="-1"></a><span class="vs">          let cell = vec2f(f32(id.x) + 0.5, f32(params.refRow + id.y) + 0.5);</span></span>
+<span id="cb3-216"><a href="#cb3-216" aria-hidden="true" tabindex="-1"></a><span class="vs">          let c = params.origin + cell / vec2f(</span><span class="sc">${</span>gridColumns<span class="sc">}</span><span class="vs">.0, </span><span class="sc">${</span>gridRows<span class="sc">}</span><span class="vs">.0) * params.size;</span></span>
+<span id="cb3-217"><a href="#cb3-217" aria-hidden="true" tabindex="-1"></a><span class="vs">          if (inside(c)) { n = 1u; }</span></span>
+<span id="cb3-218"><a href="#cb3-218" aria-hidden="true" tabindex="-1"></a><span class="vs">        }</span></span>
+<span id="cb3-219"><a href="#cb3-219" aria-hidden="true" tabindex="-1"></a><span class="vs">        gridCount[local] = n;</span></span>
+<span id="cb3-220"><a href="#cb3-220" aria-hidden="true" tabindex="-1"></a><span class="vs">        workgroupBarrier();</span></span>
+<span id="cb3-221"><a href="#cb3-221" aria-hidden="true" tabindex="-1"></a><span class="vs">        for (var stride = 128u; stride &gt; 0u; stride &gt;&gt;= 1u) {</span></span>
+<span id="cb3-222"><a href="#cb3-222" aria-hidden="true" tabindex="-1"></a><span class="vs">          if (local &lt; stride) { gridCount[local] += gridCount[local + stride]; }</span></span>
+<span id="cb3-223"><a href="#cb3-223" aria-hidden="true" tabindex="-1"></a><span class="vs">          workgroupBarrier();</span></span>
+<span id="cb3-224"><a href="#cb3-224" aria-hidden="true" tabindex="-1"></a><span class="vs">        }</span></span>
+<span id="cb3-225"><a href="#cb3-225" aria-hidden="true" tabindex="-1"></a><span class="vs">        if (local == 0u) { atomicAdd(&amp;totals[2], gridCount[0]); }</span></span>
+<span id="cb3-226"><a href="#cb3-226" aria-hidden="true" tabindex="-1"></a><span class="vs">      }</span></span>
+<span id="cb3-227"><a href="#cb3-227" aria-hidden="true" tabindex="-1"></a><span class="vs">    `</span><span class="op">,</span></span>
+<span id="cb3-228"><a href="#cb3-228" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb3-229"><a href="#cb3-229" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> dropPipeline <span class="op">=</span> device<span class="op">.</span><span class="fu">createComputePipeline</span>({</span>
+<span id="cb3-230"><a href="#cb3-230" aria-hidden="true" tabindex="-1"></a>    <span class="dt">layout</span><span class="op">:</span> <span class="st">"auto"</span><span class="op">,</span></span>
+<span id="cb3-231"><a href="#cb3-231" aria-hidden="true" tabindex="-1"></a>    <span class="dt">compute</span><span class="op">:</span> { module<span class="op">,</span> <span class="dt">entryPoint</span><span class="op">:</span> <span class="st">"drop"</span> }<span class="op">,</span></span>
+<span id="cb3-232"><a href="#cb3-232" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb3-233"><a href="#cb3-233" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> gridPipeline <span class="op">=</span> device<span class="op">.</span><span class="fu">createComputePipeline</span>({</span>
+<span id="cb3-234"><a href="#cb3-234" aria-hidden="true" tabindex="-1"></a>    <span class="dt">layout</span><span class="op">:</span> <span class="st">"auto"</span><span class="op">,</span></span>
+<span id="cb3-235"><a href="#cb3-235" aria-hidden="true" tabindex="-1"></a>    <span class="dt">compute</span><span class="op">:</span> { module<span class="op">,</span> <span class="dt">entryPoint</span><span class="op">:</span> <span class="st">"grid"</span> }<span class="op">,</span></span>
+<span id="cb3-236"><a href="#cb3-236" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb3-237"><a href="#cb3-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-238"><a href="#cb3-238" aria-hidden="true" tabindex="-1"></a>  <span class="co">// --------------------------------------------------------------------- buffers</span></span>
+<span id="cb3-239"><a href="#cb3-239" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> buffers <span class="op">=</span> {</span>
+<span id="cb3-240"><a href="#cb3-240" aria-hidden="true" tabindex="-1"></a>    <span class="dt">rng</span><span class="op">:</span> gpu<span class="op">.</span><span class="fu">storageBuffer</span>(device<span class="op">,</span> random<span class="op">.</span><span class="fu">seeds</span>(maxThreads))<span class="op">,</span></span>
+<span id="cb3-241"><a href="#cb3-241" aria-hidden="true" tabindex="-1"></a>    <span class="dt">totals</span><span class="op">:</span> gpu<span class="op">.</span><span class="fu">storageBuffer</span>(device<span class="op">,</span> <span class="kw">new</span> <span class="bu">Uint32Array</span>(<span class="dv">3</span>))<span class="op">,</span></span>
+<span id="cb3-242"><a href="#cb3-242" aria-hidden="true" tabindex="-1"></a>    <span class="dt">darts</span><span class="op">:</span> gpu<span class="op">.</span><span class="fu">storageBuffer</span>(device<span class="op">,</span> <span class="kw">new</span> <span class="bu">Float32Array</span>(maxDrawnPerFrame <span class="op">*</span> <span class="dv">4</span>))<span class="op">,</span></span>
+<span id="cb3-243"><a href="#cb3-243" aria-hidden="true" tabindex="-1"></a>    <span class="dt">params</span><span class="op">:</span> device<span class="op">.</span><span class="fu">createBuffer</span>({</span>
+<span id="cb3-244"><a href="#cb3-244" aria-hidden="true" tabindex="-1"></a>      <span class="dt">size</span><span class="op">:</span> <span class="dv">48</span><span class="op">,</span></span>
+<span id="cb3-245"><a href="#cb3-245" aria-hidden="true" tabindex="-1"></a>      <span class="dt">usage</span><span class="op">:</span> GPUBufferUsage<span class="op">.</span><span class="at">UNIFORM</span> <span class="op">|</span> GPUBufferUsage<span class="op">.</span><span class="at">COPY_DST</span><span class="op">,</span></span>
+<span id="cb3-246"><a href="#cb3-246" aria-hidden="true" tabindex="-1"></a>    })<span class="op">,</span></span>
+<span id="cb3-247"><a href="#cb3-247" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb3-248"><a href="#cb3-248" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> paramBytes <span class="op">=</span> <span class="kw">new</span> <span class="bu">ArrayBuffer</span>(<span class="dv">48</span>)<span class="op">;</span></span>
+<span id="cb3-249"><a href="#cb3-249" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> paramView <span class="op">=</span> <span class="kw">new</span> <span class="bu">DataView</span>(paramBytes)<span class="op">;</span></span>
+<span id="cb3-250"><a href="#cb3-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-251"><a href="#cb3-251" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> dropBindGroup <span class="op">=</span> device<span class="op">.</span><span class="fu">createBindGroup</span>({</span>
+<span id="cb3-252"><a href="#cb3-252" aria-hidden="true" tabindex="-1"></a>    <span class="dt">layout</span><span class="op">:</span> dropPipeline<span class="op">.</span><span class="fu">getBindGroupLayout</span>(<span class="dv">0</span>)<span class="op">,</span></span>
+<span id="cb3-253"><a href="#cb3-253" aria-hidden="true" tabindex="-1"></a>    <span class="dt">entries</span><span class="op">:</span> [</span>
+<span id="cb3-254"><a href="#cb3-254" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">binding</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span> <span class="dt">resource</span><span class="op">:</span> { <span class="dt">buffer</span><span class="op">:</span> buffers<span class="op">.</span><span class="at">params</span> } }<span class="op">,</span></span>
+<span id="cb3-255"><a href="#cb3-255" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">binding</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">resource</span><span class="op">:</span> { <span class="dt">buffer</span><span class="op">:</span> buffers<span class="op">.</span><span class="at">rng</span> } }<span class="op">,</span></span>
+<span id="cb3-256"><a href="#cb3-256" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">binding</span><span class="op">:</span> <span class="dv">2</span><span class="op">,</span> <span class="dt">resource</span><span class="op">:</span> { <span class="dt">buffer</span><span class="op">:</span> buffers<span class="op">.</span><span class="at">totals</span> } }<span class="op">,</span></span>
+<span id="cb3-257"><a href="#cb3-257" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">binding</span><span class="op">:</span> <span class="dv">3</span><span class="op">,</span> <span class="dt">resource</span><span class="op">:</span> { <span class="dt">buffer</span><span class="op">:</span> buffers<span class="op">.</span><span class="at">darts</span> } }<span class="op">,</span></span>
+<span id="cb3-258"><a href="#cb3-258" aria-hidden="true" tabindex="-1"></a>    ]<span class="op">,</span></span>
+<span id="cb3-259"><a href="#cb3-259" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb3-260"><a href="#cb3-260" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> gridBindGroup <span class="op">=</span> device<span class="op">.</span><span class="fu">createBindGroup</span>({</span>
+<span id="cb3-261"><a href="#cb3-261" aria-hidden="true" tabindex="-1"></a>    <span class="dt">layout</span><span class="op">:</span> gridPipeline<span class="op">.</span><span class="fu">getBindGroupLayout</span>(<span class="dv">0</span>)<span class="op">,</span></span>
+<span id="cb3-262"><a href="#cb3-262" aria-hidden="true" tabindex="-1"></a>    <span class="dt">entries</span><span class="op">:</span> [</span>
+<span id="cb3-263"><a href="#cb3-263" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">binding</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span> <span class="dt">resource</span><span class="op">:</span> { <span class="dt">buffer</span><span class="op">:</span> buffers<span class="op">.</span><span class="at">params</span> } }<span class="op">,</span></span>
+<span id="cb3-264"><a href="#cb3-264" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">binding</span><span class="op">:</span> <span class="dv">2</span><span class="op">,</span> <span class="dt">resource</span><span class="op">:</span> { <span class="dt">buffer</span><span class="op">:</span> buffers<span class="op">.</span><span class="at">totals</span> } }<span class="op">,</span></span>
+<span id="cb3-265"><a href="#cb3-265" aria-hidden="true" tabindex="-1"></a>    ]<span class="op">,</span></span>
+<span id="cb3-266"><a href="#cb3-266" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb3-267"><a href="#cb3-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-268"><a href="#cb3-268" aria-hidden="true" tabindex="-1"></a>  <span class="co">// --------------------------------------------------------------------- drawing</span></span>
+<span id="cb3-269"><a href="#cb3-269" aria-hidden="true" tabindex="-1"></a>  <span class="co">// The darts are drawn into a texture that keeps them, so the picture builds up;</span></span>
+<span id="cb3-270"><a href="#cb3-270" aria-hidden="true" tabindex="-1"></a>  <span class="co">// that texture is then drawn to the canvas.</span></span>
+<span id="cb3-271"><a href="#cb3-271" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> textureSize <span class="op">=</span> [<span class="dv">1280</span><span class="op">,</span> <span class="dv">720</span>]<span class="op">;</span></span>
+<span id="cb3-272"><a href="#cb3-272" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> picture <span class="op">=</span> device<span class="op">.</span><span class="fu">createTexture</span>({</span>
+<span id="cb3-273"><a href="#cb3-273" aria-hidden="true" tabindex="-1"></a>    <span class="dt">size</span><span class="op">:</span> textureSize<span class="op">,</span></span>
+<span id="cb3-274"><a href="#cb3-274" aria-hidden="true" tabindex="-1"></a>    <span class="dt">format</span><span class="op">:</span> <span class="st">"rgba8unorm"</span><span class="op">,</span></span>
+<span id="cb3-275"><a href="#cb3-275" aria-hidden="true" tabindex="-1"></a>    <span class="dt">usage</span><span class="op">:</span> GPUTextureUsage<span class="op">.</span><span class="at">RENDER_ATTACHMENT</span> <span class="op">|</span> GPUTextureUsage<span class="op">.</span><span class="at">TEXTURE_BINDING</span><span class="op">,</span></span>
+<span id="cb3-276"><a href="#cb3-276" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb3-277"><a href="#cb3-277" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> background <span class="op">=</span> { <span class="dt">r</span><span class="op">:</span> <span class="fl">0.102</span><span class="op">,</span> <span class="dt">g</span><span class="op">:</span> <span class="fl">0.102</span><span class="op">,</span> <span class="dt">b</span><span class="op">:</span> <span class="fl">0.102</span><span class="op">,</span> <span class="dt">a</span><span class="op">:</span> <span class="dv">1</span> }<span class="op">;</span></span>
+<span id="cb3-278"><a href="#cb3-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-279"><a href="#cb3-279" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> cornerBuffer <span class="op">=</span> gpu<span class="op">.</span><span class="fu">unitSquare</span>(device)<span class="op">;</span></span>
+<span id="cb3-280"><a href="#cb3-280" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> drawModule <span class="op">=</span> device<span class="op">.</span><span class="fu">createShaderModule</span>({</span>
+<span id="cb3-281"><a href="#cb3-281" aria-hidden="true" tabindex="-1"></a>    <span class="dt">code</span><span class="op">:</span> <span class="vs">`</span></span>
+<span id="cb3-282"><a href="#cb3-282" aria-hidden="true" tabindex="-1"></a><span class="vs">      struct Params {</span></span>
+<span id="cb3-283"><a href="#cb3-283" aria-hidden="true" tabindex="-1"></a><span class="vs">        origin: vec2f,</span></span>
+<span id="cb3-284"><a href="#cb3-284" aria-hidden="true" tabindex="-1"></a><span class="vs">        size: vec2f,</span></span>
+<span id="cb3-285"><a href="#cb3-285" aria-hidden="true" tabindex="-1"></a><span class="vs">        maxIter: u32,</span></span>
+<span id="cb3-286"><a href="#cb3-286" aria-hidden="true" tabindex="-1"></a><span class="vs">        perThread: u32,</span></span>
+<span id="cb3-287"><a href="#cb3-287" aria-hidden="true" tabindex="-1"></a><span class="vs">        threads: u32,</span></span>
+<span id="cb3-288"><a href="#cb3-288" aria-hidden="true" tabindex="-1"></a><span class="vs">        drawn: u32,</span></span>
+<span id="cb3-289"><a href="#cb3-289" aria-hidden="true" tabindex="-1"></a><span class="vs">        refRow: u32,</span></span>
+<span id="cb3-290"><a href="#cb3-290" aria-hidden="true" tabindex="-1"></a><span class="vs">        refRows: u32,</span></span>
+<span id="cb3-291"><a href="#cb3-291" aria-hidden="true" tabindex="-1"></a><span class="vs">        pad: u32,</span></span>
+<span id="cb3-292"><a href="#cb3-292" aria-hidden="true" tabindex="-1"></a><span class="vs">      }</span></span>
+<span id="cb3-293"><a href="#cb3-293" aria-hidden="true" tabindex="-1"></a><span class="vs">      @group(0) @binding(0) var&lt;uniform&gt; params: Params;</span></span>
+<span id="cb3-294"><a href="#cb3-294" aria-hidden="true" tabindex="-1"></a><span class="vs">      @group(0) @binding(1) var&lt;storage, read&gt; darts: array&lt;vec4f&gt;;</span></span>
+<span id="cb3-295"><a href="#cb3-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-296"><a href="#cb3-296" aria-hidden="true" tabindex="-1"></a><span class="vs">      struct Out {</span></span>
+<span id="cb3-297"><a href="#cb3-297" aria-hidden="true" tabindex="-1"></a><span class="vs">        @builtin(position) position: vec4f,</span></span>
+<span id="cb3-298"><a href="#cb3-298" aria-hidden="true" tabindex="-1"></a><span class="vs">        @location(0) colour: vec4f,</span></span>
+<span id="cb3-299"><a href="#cb3-299" aria-hidden="true" tabindex="-1"></a><span class="vs">      }</span></span>
+<span id="cb3-300"><a href="#cb3-300" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-301"><a href="#cb3-301" aria-hidden="true" tabindex="-1"></a><span class="vs">      @vertex</span></span>
+<span id="cb3-302"><a href="#cb3-302" aria-hidden="true" tabindex="-1"></a><span class="vs">      fn dartVertex(</span></span>
+<span id="cb3-303"><a href="#cb3-303" aria-hidden="true" tabindex="-1"></a><span class="vs">        @location(0) corner: vec2f,</span></span>
+<span id="cb3-304"><a href="#cb3-304" aria-hidden="true" tabindex="-1"></a><span class="vs">        @builtin(instance_index) i: u32,</span></span>
+<span id="cb3-305"><a href="#cb3-305" aria-hidden="true" tabindex="-1"></a><span class="vs">      ) -&gt; Out {</span></span>
+<span id="cb3-306"><a href="#cb3-306" aria-hidden="true" tabindex="-1"></a><span class="vs">        let d = darts[i];</span></span>
+<span id="cb3-307"><a href="#cb3-307" aria-hidden="true" tabindex="-1"></a><span class="vs">        let uv = (d.xy - params.origin) / params.size; // 0 to 1 across the box</span></span>
+<span id="cb3-308"><a href="#cb3-308" aria-hidden="true" tabindex="-1"></a><span class="vs">        // About 2.5 pixels across, in the texture</span></span>
+<span id="cb3-309"><a href="#cb3-309" aria-hidden="true" tabindex="-1"></a><span class="vs">        let half = vec2f(1.25 / </span><span class="sc">${</span>textureSize[<span class="dv">0</span>]<span class="sc">}</span><span class="vs">.0, 1.25 / </span><span class="sc">${</span>textureSize[<span class="dv">1</span>]<span class="sc">}</span><span class="vs">.0) * 2.0;</span></span>
+<span id="cb3-310"><a href="#cb3-310" aria-hidden="true" tabindex="-1"></a><span class="vs">        let centre = vec2f(uv.x * 2.0 - 1.0, 1.0 - uv.y * 2.0);</span></span>
+<span id="cb3-311"><a href="#cb3-311" aria-hidden="true" tabindex="-1"></a><span class="vs">        // Dark grey: the brand's text colour #e8e2e0, a third of the way up from</span></span>
+<span id="cb3-312"><a href="#cb3-312" aria-hidden="true" tabindex="-1"></a><span class="vs">        // the #1a1a1a background.</span></span>
+<span id="cb3-313"><a href="#cb3-313" aria-hidden="true" tabindex="-1"></a><span class="vs">        let cold = vec4f(0.38, 0.37, 0.365, 0.9);</span></span>
+<span id="cb3-314"><a href="#cb3-314" aria-hidden="true" tabindex="-1"></a><span class="vs">        let hot = vec4f(1.0, 0.282, 0.204, 0.95); // #FF4834</span></span>
+<span id="cb3-315"><a href="#cb3-315" aria-hidden="true" tabindex="-1"></a><span class="vs">        return Out(</span></span>
+<span id="cb3-316"><a href="#cb3-316" aria-hidden="true" tabindex="-1"></a><span class="vs">          vec4f(centre + corner * half, 0.0, 1.0),</span></span>
+<span id="cb3-317"><a href="#cb3-317" aria-hidden="true" tabindex="-1"></a><span class="vs">          select(cold, hot, d.z &gt; 0.5),</span></span>
+<span id="cb3-318"><a href="#cb3-318" aria-hidden="true" tabindex="-1"></a><span class="vs">        );</span></span>
+<span id="cb3-319"><a href="#cb3-319" aria-hidden="true" tabindex="-1"></a><span class="vs">      }</span></span>
+<span id="cb3-320"><a href="#cb3-320" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-321"><a href="#cb3-321" aria-hidden="true" tabindex="-1"></a><span class="vs">      @fragment</span></span>
+<span id="cb3-322"><a href="#cb3-322" aria-hidden="true" tabindex="-1"></a><span class="vs">      fn dartFragment(in: Out) -&gt; @location(0) vec4f {</span></span>
+<span id="cb3-323"><a href="#cb3-323" aria-hidden="true" tabindex="-1"></a><span class="vs">        return in.colour;</span></span>
+<span id="cb3-324"><a href="#cb3-324" aria-hidden="true" tabindex="-1"></a><span class="vs">      }</span></span>
+<span id="cb3-325"><a href="#cb3-325" aria-hidden="true" tabindex="-1"></a><span class="vs">    `</span><span class="op">,</span></span>
+<span id="cb3-326"><a href="#cb3-326" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb3-327"><a href="#cb3-327" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> dartPipeline <span class="op">=</span> device<span class="op">.</span><span class="fu">createRenderPipeline</span>({</span>
+<span id="cb3-328"><a href="#cb3-328" aria-hidden="true" tabindex="-1"></a>    <span class="dt">layout</span><span class="op">:</span> <span class="st">"auto"</span><span class="op">,</span></span>
+<span id="cb3-329"><a href="#cb3-329" aria-hidden="true" tabindex="-1"></a>    <span class="dt">vertex</span><span class="op">:</span> { <span class="dt">module</span><span class="op">:</span> drawModule<span class="op">,</span> <span class="dt">entryPoint</span><span class="op">:</span> <span class="st">"dartVertex"</span><span class="op">,</span> <span class="dt">buffers</span><span class="op">:</span> [gpu<span class="op">.</span><span class="at">squareLayout</span>] }<span class="op">,</span></span>
+<span id="cb3-330"><a href="#cb3-330" aria-hidden="true" tabindex="-1"></a>    <span class="dt">fragment</span><span class="op">:</span> {</span>
+<span id="cb3-331"><a href="#cb3-331" aria-hidden="true" tabindex="-1"></a>      <span class="dt">module</span><span class="op">:</span> drawModule<span class="op">,</span></span>
+<span id="cb3-332"><a href="#cb3-332" aria-hidden="true" tabindex="-1"></a>      <span class="dt">entryPoint</span><span class="op">:</span> <span class="st">"dartFragment"</span><span class="op">,</span></span>
+<span id="cb3-333"><a href="#cb3-333" aria-hidden="true" tabindex="-1"></a>      <span class="dt">targets</span><span class="op">:</span> [{ <span class="dt">format</span><span class="op">:</span> <span class="st">"rgba8unorm"</span><span class="op">,</span> <span class="dt">blend</span><span class="op">:</span> gpu<span class="op">.</span><span class="at">alphaBlend</span> }]<span class="op">,</span></span>
+<span id="cb3-334"><a href="#cb3-334" aria-hidden="true" tabindex="-1"></a>    }<span class="op">,</span></span>
+<span id="cb3-335"><a href="#cb3-335" aria-hidden="true" tabindex="-1"></a>    <span class="dt">primitive</span><span class="op">:</span> { <span class="dt">topology</span><span class="op">:</span> <span class="st">"triangle-list"</span> }<span class="op">,</span></span>
+<span id="cb3-336"><a href="#cb3-336" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb3-337"><a href="#cb3-337" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> dartBindGroup <span class="op">=</span> device<span class="op">.</span><span class="fu">createBindGroup</span>({</span>
+<span id="cb3-338"><a href="#cb3-338" aria-hidden="true" tabindex="-1"></a>    <span class="dt">layout</span><span class="op">:</span> dartPipeline<span class="op">.</span><span class="fu">getBindGroupLayout</span>(<span class="dv">0</span>)<span class="op">,</span></span>
+<span id="cb3-339"><a href="#cb3-339" aria-hidden="true" tabindex="-1"></a>    <span class="dt">entries</span><span class="op">:</span> [</span>
+<span id="cb3-340"><a href="#cb3-340" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">binding</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span> <span class="dt">resource</span><span class="op">:</span> { <span class="dt">buffer</span><span class="op">:</span> buffers<span class="op">.</span><span class="at">params</span> } }<span class="op">,</span></span>
+<span id="cb3-341"><a href="#cb3-341" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">binding</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">resource</span><span class="op">:</span> { <span class="dt">buffer</span><span class="op">:</span> buffers<span class="op">.</span><span class="at">darts</span> } }<span class="op">,</span></span>
+<span id="cb3-342"><a href="#cb3-342" aria-hidden="true" tabindex="-1"></a>    ]<span class="op">,</span></span>
+<span id="cb3-343"><a href="#cb3-343" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb3-344"><a href="#cb3-344" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-345"><a href="#cb3-345" aria-hidden="true" tabindex="-1"></a>  <span class="co">// The texture onto the canvas</span></span>
+<span id="cb3-346"><a href="#cb3-346" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> sampler <span class="op">=</span> device<span class="op">.</span><span class="fu">createSampler</span>({ <span class="dt">magFilter</span><span class="op">:</span> <span class="st">"linear"</span><span class="op">,</span> <span class="dt">minFilter</span><span class="op">:</span> <span class="st">"linear"</span> })<span class="op">;</span></span>
+<span id="cb3-347"><a href="#cb3-347" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> showModule <span class="op">=</span> device<span class="op">.</span><span class="fu">createShaderModule</span>({</span>
+<span id="cb3-348"><a href="#cb3-348" aria-hidden="true" tabindex="-1"></a>    <span class="dt">code</span><span class="op">:</span> <span class="vs">`</span></span>
+<span id="cb3-349"><a href="#cb3-349" aria-hidden="true" tabindex="-1"></a><span class="vs">      @group(0) @binding(0) var picture: texture_2d&lt;f32&gt;;</span></span>
+<span id="cb3-350"><a href="#cb3-350" aria-hidden="true" tabindex="-1"></a><span class="vs">      @group(0) @binding(1) var smp: sampler;</span></span>
+<span id="cb3-351"><a href="#cb3-351" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-352"><a href="#cb3-352" aria-hidden="true" tabindex="-1"></a><span class="vs">      struct Out {</span></span>
+<span id="cb3-353"><a href="#cb3-353" aria-hidden="true" tabindex="-1"></a><span class="vs">        @builtin(position) position: vec4f,</span></span>
+<span id="cb3-354"><a href="#cb3-354" aria-hidden="true" tabindex="-1"></a><span class="vs">        @location(0) uv: vec2f,</span></span>
+<span id="cb3-355"><a href="#cb3-355" aria-hidden="true" tabindex="-1"></a><span class="vs">      }</span></span>
+<span id="cb3-356"><a href="#cb3-356" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-357"><a href="#cb3-357" aria-hidden="true" tabindex="-1"></a><span class="vs">      @vertex</span></span>
+<span id="cb3-358"><a href="#cb3-358" aria-hidden="true" tabindex="-1"></a><span class="vs">      fn showVertex(@location(0) corner: vec2f) -&gt; Out {</span></span>
+<span id="cb3-359"><a href="#cb3-359" aria-hidden="true" tabindex="-1"></a><span class="vs">        return Out(</span></span>
+<span id="cb3-360"><a href="#cb3-360" aria-hidden="true" tabindex="-1"></a><span class="vs">          vec4f(corner, 0.0, 1.0),</span></span>
+<span id="cb3-361"><a href="#cb3-361" aria-hidden="true" tabindex="-1"></a><span class="vs">          vec2f(corner.x * 0.5 + 0.5, 0.5 - corner.y * 0.5),</span></span>
+<span id="cb3-362"><a href="#cb3-362" aria-hidden="true" tabindex="-1"></a><span class="vs">        );</span></span>
+<span id="cb3-363"><a href="#cb3-363" aria-hidden="true" tabindex="-1"></a><span class="vs">      }</span></span>
+<span id="cb3-364"><a href="#cb3-364" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-365"><a href="#cb3-365" aria-hidden="true" tabindex="-1"></a><span class="vs">      @fragment</span></span>
+<span id="cb3-366"><a href="#cb3-366" aria-hidden="true" tabindex="-1"></a><span class="vs">      fn showFragment(in: Out) -&gt; @location(0) vec4f {</span></span>
+<span id="cb3-367"><a href="#cb3-367" aria-hidden="true" tabindex="-1"></a><span class="vs">        return textureSample(picture, smp, in.uv);</span></span>
+<span id="cb3-368"><a href="#cb3-368" aria-hidden="true" tabindex="-1"></a><span class="vs">      }</span></span>
+<span id="cb3-369"><a href="#cb3-369" aria-hidden="true" tabindex="-1"></a><span class="vs">    `</span><span class="op">,</span></span>
+<span id="cb3-370"><a href="#cb3-370" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb3-371"><a href="#cb3-371" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> showPipeline <span class="op">=</span> device<span class="op">.</span><span class="fu">createRenderPipeline</span>({</span>
+<span id="cb3-372"><a href="#cb3-372" aria-hidden="true" tabindex="-1"></a>    <span class="dt">layout</span><span class="op">:</span> <span class="st">"auto"</span><span class="op">,</span></span>
+<span id="cb3-373"><a href="#cb3-373" aria-hidden="true" tabindex="-1"></a>    <span class="dt">vertex</span><span class="op">:</span> { <span class="dt">module</span><span class="op">:</span> showModule<span class="op">,</span> <span class="dt">entryPoint</span><span class="op">:</span> <span class="st">"showVertex"</span><span class="op">,</span> <span class="dt">buffers</span><span class="op">:</span> [gpu<span class="op">.</span><span class="at">squareLayout</span>] }<span class="op">,</span></span>
+<span id="cb3-374"><a href="#cb3-374" aria-hidden="true" tabindex="-1"></a>    <span class="dt">fragment</span><span class="op">:</span> { <span class="dt">module</span><span class="op">:</span> showModule<span class="op">,</span> <span class="dt">entryPoint</span><span class="op">:</span> <span class="st">"showFragment"</span><span class="op">,</span> <span class="dt">targets</span><span class="op">:</span> [{ format }] }<span class="op">,</span></span>
+<span id="cb3-375"><a href="#cb3-375" aria-hidden="true" tabindex="-1"></a>    <span class="dt">primitive</span><span class="op">:</span> { <span class="dt">topology</span><span class="op">:</span> <span class="st">"triangle-list"</span> }<span class="op">,</span></span>
+<span id="cb3-376"><a href="#cb3-376" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb3-377"><a href="#cb3-377" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> showBindGroup <span class="op">=</span> device<span class="op">.</span><span class="fu">createBindGroup</span>({</span>
+<span id="cb3-378"><a href="#cb3-378" aria-hidden="true" tabindex="-1"></a>    <span class="dt">layout</span><span class="op">:</span> showPipeline<span class="op">.</span><span class="fu">getBindGroupLayout</span>(<span class="dv">0</span>)<span class="op">,</span></span>
+<span id="cb3-379"><a href="#cb3-379" aria-hidden="true" tabindex="-1"></a>    <span class="dt">entries</span><span class="op">:</span> [</span>
+<span id="cb3-380"><a href="#cb3-380" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">binding</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span> <span class="dt">resource</span><span class="op">:</span> picture<span class="op">.</span><span class="fu">createView</span>() }<span class="op">,</span></span>
+<span id="cb3-381"><a href="#cb3-381" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">binding</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">resource</span><span class="op">:</span> sampler }<span class="op">,</span></span>
+<span id="cb3-382"><a href="#cb3-382" aria-hidden="true" tabindex="-1"></a>    ]<span class="op">,</span></span>
+<span id="cb3-383"><a href="#cb3-383" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb3-384"><a href="#cb3-384" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-385"><a href="#cb3-385" aria-hidden="true" tabindex="-1"></a>  <span class="co">// ------------------------------------------------------------------- the state</span></span>
+<span id="cb3-386"><a href="#cb3-386" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> readback <span class="op">=</span> gpu<span class="op">.</span><span class="fu">readback</span>(device<span class="op">,</span> [{ <span class="dt">buffer</span><span class="op">:</span> buffers<span class="op">.</span><span class="at">totals</span><span class="op">,</span> <span class="dt">bytes</span><span class="op">:</span> <span class="dv">12</span> }])<span class="op">;</span></span>
+<span id="cb3-387"><a href="#cb3-387" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> sampleEvery <span class="op">=</span> <span class="dv">6</span><span class="op">;</span> <span class="co">// frames between reads of the counters</span></span>
+<span id="cb3-388"><a href="#cb3-388" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> frameCount <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb3-389"><a href="#cb3-389" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> epoch <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> <span class="co">// bumped on reset, so a read in flight from before is dropped</span></span>
+<span id="cb3-390"><a href="#cb3-390" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> previous <span class="op">=</span> [<span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">0</span>]<span class="op">;</span> <span class="co">// the GPU's (wrapping, 32-bit) counters at the last read</span></span>
+<span id="cb3-391"><a href="#cb3-391" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> total <span class="op">=</span> [<span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">0</span>]<span class="op">;</span> <span class="co">// darts, darts inside, reference grid points inside</span></span>
+<span id="cb3-392"><a href="#cb3-392" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> series <span class="op">=</span> []<span class="op">;</span> <span class="co">// {N, area}: the estimate as the darts pile up</span></span>
+<span id="cb3-393"><a href="#cb3-393" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> owed <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> <span class="co">// darts due but not yet thrown</span></span>
+<span id="cb3-394"><a href="#cb3-394" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> chunk <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> <span class="co">// reference grid slices tested so far</span></span>
+<span id="cb3-395"><a href="#cb3-395" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> clearPicture <span class="op">=</span> <span class="kw">true</span><span class="op">;</span> <span class="co">// clear the picture on the next frame</span></span>
+<span id="cb3-396"><a href="#cb3-396" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> lastTime <span class="op">=</span> <span class="kw">null</span><span class="op">;</span></span>
+<span id="cb3-397"><a href="#cb3-397" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-398"><a href="#cb3-398" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> [areaHost<span class="op">,</span> errorHost] <span class="op">=</span> charts<span class="op">.</span><span class="at">children</span><span class="op">;</span></span>
+<span id="cb3-399"><a href="#cb3-399" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> draw <span class="op">=</span> ui<span class="op">.</span><span class="fu">plotter</span>(Plot)<span class="op">;</span></span>
+<span id="cb3-400"><a href="#cb3-400" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-401"><a href="#cb3-401" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> reference <span class="op">=</span> () <span class="kw">=&gt;</span></span>
+<span id="cb3-402"><a href="#cb3-402" aria-hidden="true" tabindex="-1"></a>    chunk <span class="op">&gt;=</span> gridChunks <span class="op">&amp;&amp;</span> total[<span class="dv">2</span>] <span class="op">&gt;</span> <span class="dv">0</span> <span class="op">?</span> (boxArea <span class="op">*</span> total[<span class="dv">2</span>]) <span class="op">/</span> (gridColumns <span class="op">*</span> gridRows) <span class="op">:</span> <span class="kw">null</span><span class="op">;</span></span>
+<span id="cb3-403"><a href="#cb3-403" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-404"><a href="#cb3-404" aria-hidden="true" tabindex="-1"></a>  <span class="co">// The spread of the random estimate after N darts: n inside is binomial</span></span>
+<span id="cb3-405"><a href="#cb3-405" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> spread <span class="op">=</span> (N<span class="op">,</span> p) <span class="kw">=&gt;</span> boxArea <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">sqrt</span>((p <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> p)) <span class="op">/</span> N)<span class="op">;</span></span>
+<span id="cb3-406"><a href="#cb3-406" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-407"><a href="#cb3-407" aria-hidden="true" tabindex="-1"></a>  <span class="co">// The area estimate with its standard error, to the digits that error justifies</span></span>
+<span id="cb3-408"><a href="#cb3-408" aria-hidden="true" tabindex="-1"></a>  <span class="kw">function</span> <span class="fu">current</span>() {</span>
+<span id="cb3-409"><a href="#cb3-409" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> [N<span class="op">,</span> inside] <span class="op">=</span> total<span class="op">;</span></span>
+<span id="cb3-410"><a href="#cb3-410" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (inside <span class="op">===</span> <span class="dv">0</span> <span class="op">||</span> inside <span class="op">===</span> N) <span class="cf">return</span> <span class="kw">null</span><span class="op">;</span></span>
+<span id="cb3-411"><a href="#cb3-411" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> p <span class="op">=</span> inside <span class="op">/</span> N<span class="op">;</span></span>
+<span id="cb3-412"><a href="#cb3-412" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> estimate <span class="op">=</span> boxArea <span class="op">*</span> p<span class="op">;</span></span>
+<span id="cb3-413"><a href="#cb3-413" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> sigma <span class="op">=</span> <span class="fu">spread</span>(N<span class="op">,</span> p)<span class="op">;</span></span>
+<span id="cb3-414"><a href="#cb3-414" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> rounded <span class="op">=</span> <span class="bu">Number</span>(sigma<span class="op">.</span><span class="fu">toPrecision</span>(<span class="dv">1</span>))<span class="op">;</span></span>
+<span id="cb3-415"><a href="#cb3-415" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> decimals <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">max</span>(<span class="dv">0</span><span class="op">,</span> <span class="op">-</span><span class="bu">Math</span><span class="op">.</span><span class="fu">floor</span>(<span class="bu">Math</span><span class="op">.</span><span class="fu">log10</span>(rounded)))<span class="op">;</span></span>
+<span id="cb3-416"><a href="#cb3-416" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {</span>
+<span id="cb3-417"><a href="#cb3-417" aria-hidden="true" tabindex="-1"></a>      N<span class="op">,</span></span>
+<span id="cb3-418"><a href="#cb3-418" aria-hidden="true" tabindex="-1"></a>      estimate<span class="op">,</span></span>
+<span id="cb3-419"><a href="#cb3-419" aria-hidden="true" tabindex="-1"></a>      sigma<span class="op">,</span></span>
+<span id="cb3-420"><a href="#cb3-420" aria-hidden="true" tabindex="-1"></a>      <span class="dt">text</span><span class="op">:</span> <span class="vs">`area ≈ </span><span class="sc">${</span>estimate<span class="op">.</span><span class="fu">toFixed</span>(decimals)<span class="sc">}</span><span class="vs"> ± </span><span class="sc">${</span>rounded<span class="op">.</span><span class="fu">toFixed</span>(decimals)<span class="sc">}</span><span class="vs">`</span><span class="op">,</span></span>
+<span id="cb3-421"><a href="#cb3-421" aria-hidden="true" tabindex="-1"></a>    }<span class="op">;</span></span>
+<span id="cb3-422"><a href="#cb3-422" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-423"><a href="#cb3-423" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-424"><a href="#cb3-424" aria-hidden="true" tabindex="-1"></a>  <span class="kw">function</span> <span class="fu">drawCharts</span>() {</span>
+<span id="cb3-425"><a href="#cb3-425" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> now <span class="op">=</span> <span class="fu">current</span>()<span class="op">;</span></span>
+<span id="cb3-426"><a href="#cb3-426" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> ref <span class="op">=</span> <span class="fu">reference</span>()<span class="op">;</span></span>
+<span id="cb3-427"><a href="#cb3-427" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> xAxis <span class="op">=</span> { <span class="dt">label</span><span class="op">:</span> <span class="st">"darts thrown"</span><span class="op">,</span> <span class="dt">type</span><span class="op">:</span> <span class="st">"log"</span><span class="op">,</span> <span class="dt">grid</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span> <span class="dt">domain</span><span class="op">:</span> [<span class="dv">10</span><span class="op">,</span> <span class="fl">1e10</span>] }<span class="op">;</span></span>
+<span id="cb3-428"><a href="#cb3-428" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> pRef <span class="op">=</span> ref <span class="op">===</span> <span class="kw">null</span> <span class="op">?</span> <span class="fl">0.13</span> <span class="op">:</span> ref <span class="op">/</span> boxArea<span class="op">;</span></span>
+<span id="cb3-429"><a href="#cb3-429" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> band <span class="op">=</span></span>
+<span id="cb3-430"><a href="#cb3-430" aria-hidden="true" tabindex="-1"></a>      ref <span class="op">===</span> <span class="kw">null</span></span>
+<span id="cb3-431"><a href="#cb3-431" aria-hidden="true" tabindex="-1"></a>        <span class="op">?</span> []</span>
+<span id="cb3-432"><a href="#cb3-432" aria-hidden="true" tabindex="-1"></a>        <span class="op">:</span> <span class="bu">Array</span><span class="op">.</span><span class="fu">from</span>({ <span class="dt">length</span><span class="op">:</span> <span class="dv">60</span> }<span class="op">,</span> (_<span class="op">,</span> k) <span class="kw">=&gt;</span> <span class="dv">10</span> <span class="op">**</span> (<span class="dv">1</span> <span class="op">+</span> (<span class="dv">9</span> <span class="op">*</span> k) <span class="op">/</span> <span class="dv">59</span>))<span class="op">.</span><span class="fu">map</span>((N) <span class="kw">=&gt;</span> ({</span>
+<span id="cb3-433"><a href="#cb3-433" aria-hidden="true" tabindex="-1"></a>            N<span class="op">,</span></span>
+<span id="cb3-434"><a href="#cb3-434" aria-hidden="true" tabindex="-1"></a>            <span class="dt">low</span><span class="op">:</span> ref <span class="op">-</span> <span class="fu">spread</span>(N<span class="op">,</span> pRef)<span class="op">,</span></span>
+<span id="cb3-435"><a href="#cb3-435" aria-hidden="true" tabindex="-1"></a>            <span class="dt">high</span><span class="op">:</span> ref <span class="op">+</span> <span class="fu">spread</span>(N<span class="op">,</span> pRef)<span class="op">,</span></span>
+<span id="cb3-436"><a href="#cb3-436" aria-hidden="true" tabindex="-1"></a>            <span class="dt">sigma</span><span class="op">:</span> <span class="fu">spread</span>(N<span class="op">,</span> pRef)<span class="op">,</span></span>
+<span id="cb3-437"><a href="#cb3-437" aria-hidden="true" tabindex="-1"></a>          }))<span class="op">;</span></span>
+<span id="cb3-438"><a href="#cb3-438" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-439"><a href="#cb3-439" aria-hidden="true" tabindex="-1"></a>    <span class="fu">draw</span>(areaHost<span class="op">,</span> {</span>
+<span id="cb3-440"><a href="#cb3-440" aria-hidden="true" tabindex="-1"></a>      <span class="dt">x</span><span class="op">:</span> xAxis<span class="op">,</span></span>
+<span id="cb3-441"><a href="#cb3-441" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y</span><span class="op">:</span> { <span class="dt">label</span><span class="op">:</span> <span class="st">"estimate of the area"</span><span class="op">,</span> <span class="dt">grid</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span> <span class="dt">domain</span><span class="op">:</span> [<span class="fl">1.2</span><span class="op">,</span> <span class="fl">1.9</span>] }<span class="op">,</span></span>
+<span id="cb3-442"><a href="#cb3-442" aria-hidden="true" tabindex="-1"></a>      <span class="dt">marks</span><span class="op">:</span> [</span>
+<span id="cb3-443"><a href="#cb3-443" aria-hidden="true" tabindex="-1"></a>        Plot<span class="op">.</span><span class="fu">areaY</span>(band<span class="op">,</span> { <span class="dt">x</span><span class="op">:</span> <span class="st">"N"</span><span class="op">,</span> <span class="dt">y1</span><span class="op">:</span> <span class="st">"low"</span><span class="op">,</span> <span class="dt">y2</span><span class="op">:</span> <span class="st">"high"</span><span class="op">,</span> <span class="dt">fillOpacity</span><span class="op">:</span> <span class="fl">0.15</span><span class="op">,</span> <span class="dt">clip</span><span class="op">:</span> <span class="kw">true</span> })<span class="op">,</span></span>
+<span id="cb3-444"><a href="#cb3-444" aria-hidden="true" tabindex="-1"></a>        <span class="op">...</span>(ref <span class="op">===</span> <span class="kw">null</span></span>
+<span id="cb3-445"><a href="#cb3-445" aria-hidden="true" tabindex="-1"></a>          <span class="op">?</span> []</span>
+<span id="cb3-446"><a href="#cb3-446" aria-hidden="true" tabindex="-1"></a>          <span class="op">:</span> [</span>
+<span id="cb3-447"><a href="#cb3-447" aria-hidden="true" tabindex="-1"></a>              Plot<span class="op">.</span><span class="fu">ruleY</span>([ref]<span class="op">,</span> {</span>
+<span id="cb3-448"><a href="#cb3-448" aria-hidden="true" tabindex="-1"></a>                <span class="dt">stroke</span><span class="op">:</span> <span class="st">"currentColor"</span><span class="op">,</span></span>
+<span id="cb3-449"><a href="#cb3-449" aria-hidden="true" tabindex="-1"></a>                <span class="dt">strokeOpacity</span><span class="op">:</span> <span class="fl">0.6</span><span class="op">,</span></span>
+<span id="cb3-450"><a href="#cb3-450" aria-hidden="true" tabindex="-1"></a>                <span class="dt">strokeDasharray</span><span class="op">:</span> <span class="st">"4 3"</span><span class="op">,</span></span>
+<span id="cb3-451"><a href="#cb3-451" aria-hidden="true" tabindex="-1"></a>              })<span class="op">,</span></span>
+<span id="cb3-452"><a href="#cb3-452" aria-hidden="true" tabindex="-1"></a>            ])<span class="op">,</span></span>
+<span id="cb3-453"><a href="#cb3-453" aria-hidden="true" tabindex="-1"></a>        Plot<span class="op">.</span><span class="fu">line</span>(series<span class="op">,</span> { <span class="dt">x</span><span class="op">:</span> <span class="st">"N"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"area"</span><span class="op">,</span> <span class="dt">stroke</span><span class="op">:</span> <span class="st">"#FF4834"</span><span class="op">,</span> <span class="dt">clip</span><span class="op">:</span> <span class="kw">true</span> })<span class="op">,</span></span>
+<span id="cb3-454"><a href="#cb3-454" aria-hidden="true" tabindex="-1"></a>        <span class="op">...</span>(now</span>
+<span id="cb3-455"><a href="#cb3-455" aria-hidden="true" tabindex="-1"></a>          <span class="op">?</span> [</span>
+<span id="cb3-456"><a href="#cb3-456" aria-hidden="true" tabindex="-1"></a>              Plot<span class="op">.</span><span class="fu">text</span>([now<span class="op">.</span><span class="at">text</span>]<span class="op">,</span> {</span>
+<span id="cb3-457"><a href="#cb3-457" aria-hidden="true" tabindex="-1"></a>                <span class="dt">frameAnchor</span><span class="op">:</span> <span class="st">"top-left"</span><span class="op">,</span></span>
+<span id="cb3-458"><a href="#cb3-458" aria-hidden="true" tabindex="-1"></a>                <span class="dt">dx</span><span class="op">:</span> <span class="dv">10</span><span class="op">,</span></span>
+<span id="cb3-459"><a href="#cb3-459" aria-hidden="true" tabindex="-1"></a>                <span class="dt">dy</span><span class="op">:</span> <span class="dv">8</span><span class="op">,</span></span>
+<span id="cb3-460"><a href="#cb3-460" aria-hidden="true" tabindex="-1"></a>                <span class="dt">fontSize</span><span class="op">:</span> <span class="dv">20</span><span class="op">,</span></span>
+<span id="cb3-461"><a href="#cb3-461" aria-hidden="true" tabindex="-1"></a>                <span class="dt">fontWeight</span><span class="op">:</span> <span class="dv">600</span><span class="op">,</span></span>
+<span id="cb3-462"><a href="#cb3-462" aria-hidden="true" tabindex="-1"></a>                <span class="dt">fill</span><span class="op">:</span> <span class="st">"currentColor"</span><span class="op">,</span></span>
+<span id="cb3-463"><a href="#cb3-463" aria-hidden="true" tabindex="-1"></a>              })<span class="op">,</span></span>
+<span id="cb3-464"><a href="#cb3-464" aria-hidden="true" tabindex="-1"></a>            ]</span>
+<span id="cb3-465"><a href="#cb3-465" aria-hidden="true" tabindex="-1"></a>          <span class="op">:</span> [])<span class="op">,</span></span>
+<span id="cb3-466"><a href="#cb3-466" aria-hidden="true" tabindex="-1"></a>      ]<span class="op">,</span></span>
+<span id="cb3-467"><a href="#cb3-467" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb3-468"><a href="#cb3-468" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-469"><a href="#cb3-469" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> errors <span class="op">=</span></span>
+<span id="cb3-470"><a href="#cb3-470" aria-hidden="true" tabindex="-1"></a>      ref <span class="op">===</span> <span class="kw">null</span></span>
+<span id="cb3-471"><a href="#cb3-471" aria-hidden="true" tabindex="-1"></a>        <span class="op">?</span> []</span>
+<span id="cb3-472"><a href="#cb3-472" aria-hidden="true" tabindex="-1"></a>        <span class="op">:</span> series</span>
+<span id="cb3-473"><a href="#cb3-473" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">map</span>((p) <span class="kw">=&gt;</span> ({ <span class="dt">N</span><span class="op">:</span> p<span class="op">.</span><span class="at">N</span><span class="op">,</span> <span class="dt">error</span><span class="op">:</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">abs</span>(p<span class="op">.</span><span class="at">area</span> <span class="op">-</span> ref) }))</span>
+<span id="cb3-474"><a href="#cb3-474" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">filter</span>((p) <span class="kw">=&gt;</span> p<span class="op">.</span><span class="at">error</span> <span class="op">&gt;</span> <span class="dv">0</span>)<span class="op">;</span></span>
+<span id="cb3-475"><a href="#cb3-475" aria-hidden="true" tabindex="-1"></a>    <span class="fu">draw</span>(errorHost<span class="op">,</span> {</span>
+<span id="cb3-476"><a href="#cb3-476" aria-hidden="true" tabindex="-1"></a>      <span class="dt">x</span><span class="op">:</span> xAxis<span class="op">,</span></span>
+<span id="cb3-477"><a href="#cb3-477" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y</span><span class="op">:</span> { <span class="dt">label</span><span class="op">:</span> <span class="st">"error: distance from the reference"</span><span class="op">,</span> <span class="dt">type</span><span class="op">:</span> <span class="st">"log"</span><span class="op">,</span> <span class="dt">grid</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span> <span class="dt">domain</span><span class="op">:</span> [<span class="fl">1e-6</span><span class="op">,</span> <span class="dv">3</span>] }<span class="op">,</span></span>
+<span id="cb3-478"><a href="#cb3-478" aria-hidden="true" tabindex="-1"></a>      <span class="dt">marks</span><span class="op">:</span> [</span>
+<span id="cb3-479"><a href="#cb3-479" aria-hidden="true" tabindex="-1"></a>        Plot<span class="op">.</span><span class="fu">line</span>(band<span class="op">,</span> {</span>
+<span id="cb3-480"><a href="#cb3-480" aria-hidden="true" tabindex="-1"></a>          <span class="dt">x</span><span class="op">:</span> <span class="st">"N"</span><span class="op">,</span></span>
+<span id="cb3-481"><a href="#cb3-481" aria-hidden="true" tabindex="-1"></a>          <span class="dt">y</span><span class="op">:</span> <span class="st">"sigma"</span><span class="op">,</span></span>
+<span id="cb3-482"><a href="#cb3-482" aria-hidden="true" tabindex="-1"></a>          <span class="dt">stroke</span><span class="op">:</span> <span class="st">"currentColor"</span><span class="op">,</span></span>
+<span id="cb3-483"><a href="#cb3-483" aria-hidden="true" tabindex="-1"></a>          <span class="dt">strokeDasharray</span><span class="op">:</span> <span class="st">"4 3"</span><span class="op">,</span></span>
+<span id="cb3-484"><a href="#cb3-484" aria-hidden="true" tabindex="-1"></a>        })<span class="op">,</span></span>
+<span id="cb3-485"><a href="#cb3-485" aria-hidden="true" tabindex="-1"></a>        Plot<span class="op">.</span><span class="fu">dot</span>(errors<span class="op">,</span> { <span class="dt">x</span><span class="op">:</span> <span class="st">"N"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"error"</span><span class="op">,</span> <span class="dt">r</span><span class="op">:</span> <span class="dv">2</span><span class="op">,</span> <span class="dt">fill</span><span class="op">:</span> <span class="st">"#FF4834"</span> })<span class="op">,</span></span>
+<span id="cb3-486"><a href="#cb3-486" aria-hidden="true" tabindex="-1"></a>      ]<span class="op">,</span></span>
+<span id="cb3-487"><a href="#cb3-487" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb3-488"><a href="#cb3-488" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-489"><a href="#cb3-489" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-490"><a href="#cb3-490" aria-hidden="true" tabindex="-1"></a>  <span class="kw">function</span> <span class="fu">record</span>() {</span>
+<span id="cb3-491"><a href="#cb3-491" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> [N<span class="op">,</span> inside] <span class="op">=</span> total<span class="op">;</span></span>
+<span id="cb3-492"><a href="#cb3-492" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (inside <span class="op">===</span> <span class="dv">0</span>) <span class="cf">return</span><span class="op">;</span></span>
+<span id="cb3-493"><a href="#cb3-493" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> last <span class="op">=</span> series[series<span class="op">.</span><span class="at">length</span> <span class="op">-</span> <span class="dv">1</span>]<span class="op">;</span></span>
+<span id="cb3-494"><a href="#cb3-494" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="op">!</span>last <span class="op">||</span> N <span class="op">&gt;=</span> <span class="fl">1.15</span> <span class="op">*</span> last<span class="op">.</span><span class="at">N</span>) series<span class="op">.</span><span class="fu">push</span>({ N<span class="op">,</span> <span class="dt">area</span><span class="op">:</span> (boxArea <span class="op">*</span> inside) <span class="op">/</span> N })<span class="op">;</span></span>
+<span id="cb3-495"><a href="#cb3-495" aria-hidden="true" tabindex="-1"></a>    <span class="fu">drawCharts</span>()<span class="op">;</span></span>
+<span id="cb3-496"><a href="#cb3-496" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-497"><a href="#cb3-497" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-498"><a href="#cb3-498" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Start again, including the reference for the current number of iterations</span></span>
+<span id="cb3-499"><a href="#cb3-499" aria-hidden="true" tabindex="-1"></a>  <span class="kw">function</span> <span class="fu">reset</span>() {</span>
+<span id="cb3-500"><a href="#cb3-500" aria-hidden="true" tabindex="-1"></a>    epoch<span class="op">++;</span></span>
+<span id="cb3-501"><a href="#cb3-501" aria-hidden="true" tabindex="-1"></a>    total<span class="op">.</span><span class="fu">fill</span>(<span class="dv">0</span>)<span class="op">;</span></span>
+<span id="cb3-502"><a href="#cb3-502" aria-hidden="true" tabindex="-1"></a>    previous <span class="op">=</span> [<span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">0</span>]<span class="op">;</span></span>
+<span id="cb3-503"><a href="#cb3-503" aria-hidden="true" tabindex="-1"></a>    series<span class="op">.</span><span class="at">length</span> <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb3-504"><a href="#cb3-504" aria-hidden="true" tabindex="-1"></a>    owed <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb3-505"><a href="#cb3-505" aria-hidden="true" tabindex="-1"></a>    chunk <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb3-506"><a href="#cb3-506" aria-hidden="true" tabindex="-1"></a>    clearPicture <span class="op">=</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb3-507"><a href="#cb3-507" aria-hidden="true" tabindex="-1"></a>    device<span class="op">.</span><span class="at">queue</span><span class="op">.</span><span class="fu">writeBuffer</span>(buffers<span class="op">.</span><span class="at">totals</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="kw">new</span> <span class="bu">Uint32Array</span>(<span class="dv">3</span>))<span class="op">;</span></span>
+<span id="cb3-508"><a href="#cb3-508" aria-hidden="true" tabindex="-1"></a>    <span class="fu">drawCharts</span>()<span class="op">;</span></span>
+<span id="cb3-509"><a href="#cb3-509" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-510"><a href="#cb3-510" aria-hidden="true" tabindex="-1"></a>  iterationsInput<span class="op">.</span><span class="fu">addEventListener</span>(<span class="st">"input"</span><span class="op">,</span> reset)<span class="op">;</span></span>
+<span id="cb3-511"><a href="#cb3-511" aria-hidden="true" tabindex="-1"></a>  invalidation<span class="op">.</span><span class="fu">then</span>(() <span class="kw">=&gt;</span> iterationsInput<span class="op">.</span><span class="fu">removeEventListener</span>(<span class="st">"input"</span><span class="op">,</span> reset))<span class="op">;</span></span>
+<span id="cb3-512"><a href="#cb3-512" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-513"><a href="#cb3-513" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> resetButton <span class="op">=</span> ui<span class="op">.</span><span class="fu">button</span>({ <span class="dt">label</span><span class="op">:</span> <span class="st">"Restart"</span><span class="op">,</span> <span class="dt">onClick</span><span class="op">:</span> reset })<span class="op">;</span></span>
+<span id="cb3-514"><a href="#cb3-514" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> readout <span class="op">=</span> ui<span class="op">.</span><span class="fu">readout</span>()<span class="op">;</span></span>
+<span id="cb3-515"><a href="#cb3-515" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drawCharts</span>()<span class="op">;</span></span>
+<span id="cb3-516"><a href="#cb3-516" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-517"><a href="#cb3-517" aria-hidden="true" tabindex="-1"></a>  <span class="kw">function</span> <span class="fu">frame</span>(ms) {</span>
+<span id="cb3-518"><a href="#cb3-518" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Seconds since the last frame, capped so a pause does not become a flood</span></span>
+<span id="cb3-519"><a href="#cb3-519" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> dt <span class="op">=</span> lastTime <span class="op">===</span> <span class="kw">null</span> <span class="op">?</span> <span class="dv">0</span> <span class="op">:</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">min</span>((ms <span class="op">-</span> lastTime) <span class="op">/</span> <span class="dv">1000</span><span class="op">,</span> <span class="fl">0.1</span>)<span class="op">;</span></span>
+<span id="cb3-520"><a href="#cb3-520" aria-hidden="true" tabindex="-1"></a>    lastTime <span class="op">=</span> ms<span class="op">;</span></span>
+<span id="cb3-521"><a href="#cb3-521" aria-hidden="true" tabindex="-1"></a>    owed <span class="op">+=</span> <span class="dv">10</span> <span class="op">**</span> rateInput<span class="op">.</span><span class="at">value</span> <span class="op">*</span> dt<span class="op">;</span></span>
+<span id="cb3-522"><a href="#cb3-522" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> due <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">floor</span>(owed)<span class="op">;</span></span>
+<span id="cb3-523"><a href="#cb3-523" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> encoder <span class="op">=</span> device<span class="op">.</span><span class="fu">createCommandEncoder</span>()<span class="op">;</span></span>
+<span id="cb3-524"><a href="#cb3-524" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-525"><a href="#cb3-525" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Spread the darts over threads, at most 64 a thread</span></span>
+<span id="cb3-526"><a href="#cb3-526" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> threads <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb3-527"><a href="#cb3-527" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> perThread <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb3-528"><a href="#cb3-528" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> drawn <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb3-529"><a href="#cb3-529" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (due <span class="op">&gt;=</span> <span class="dv">1</span>) {</span>
+<span id="cb3-530"><a href="#cb3-530" aria-hidden="true" tabindex="-1"></a>      threads <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">min</span>(maxThreads<span class="op">,</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">ceil</span>(due <span class="op">/</span> <span class="dv">64</span>))<span class="op">;</span></span>
+<span id="cb3-531"><a href="#cb3-531" aria-hidden="true" tabindex="-1"></a>      perThread <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">ceil</span>(due <span class="op">/</span> threads)<span class="op">;</span></span>
+<span id="cb3-532"><a href="#cb3-532" aria-hidden="true" tabindex="-1"></a>      owed <span class="op">-=</span> threads <span class="op">*</span> perThread<span class="op">;</span></span>
+<span id="cb3-533"><a href="#cb3-533" aria-hidden="true" tabindex="-1"></a>      drawn <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">min</span>(threads<span class="op">,</span> maxDrawnPerFrame)<span class="op">;</span></span>
+<span id="cb3-534"><a href="#cb3-534" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-535"><a href="#cb3-535" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-536"><a href="#cb3-536" aria-hidden="true" tabindex="-1"></a>    paramView<span class="op">.</span><span class="fu">setFloat32</span>(<span class="dv">0</span><span class="op">,</span> origin[<span class="dv">0</span>]<span class="op">,</span> <span class="kw">true</span>)<span class="op">;</span></span>
+<span id="cb3-537"><a href="#cb3-537" aria-hidden="true" tabindex="-1"></a>    paramView<span class="op">.</span><span class="fu">setFloat32</span>(<span class="dv">4</span><span class="op">,</span> origin[<span class="dv">1</span>]<span class="op">,</span> <span class="kw">true</span>)<span class="op">;</span></span>
+<span id="cb3-538"><a href="#cb3-538" aria-hidden="true" tabindex="-1"></a>    paramView<span class="op">.</span><span class="fu">setFloat32</span>(<span class="dv">8</span><span class="op">,</span> size[<span class="dv">0</span>]<span class="op">,</span> <span class="kw">true</span>)<span class="op">;</span></span>
+<span id="cb3-539"><a href="#cb3-539" aria-hidden="true" tabindex="-1"></a>    paramView<span class="op">.</span><span class="fu">setFloat32</span>(<span class="dv">12</span><span class="op">,</span> size[<span class="dv">1</span>]<span class="op">,</span> <span class="kw">true</span>)<span class="op">;</span></span>
+<span id="cb3-540"><a href="#cb3-540" aria-hidden="true" tabindex="-1"></a>    paramView<span class="op">.</span><span class="fu">setUint32</span>(<span class="dv">16</span><span class="op">,</span> iterationsInput<span class="op">.</span><span class="at">value</span><span class="op">,</span> <span class="kw">true</span>)<span class="op">;</span></span>
+<span id="cb3-541"><a href="#cb3-541" aria-hidden="true" tabindex="-1"></a>    paramView<span class="op">.</span><span class="fu">setUint32</span>(<span class="dv">20</span><span class="op">,</span> perThread<span class="op">,</span> <span class="kw">true</span>)<span class="op">;</span></span>
+<span id="cb3-542"><a href="#cb3-542" aria-hidden="true" tabindex="-1"></a>    paramView<span class="op">.</span><span class="fu">setUint32</span>(<span class="dv">24</span><span class="op">,</span> threads<span class="op">,</span> <span class="kw">true</span>)<span class="op">;</span></span>
+<span id="cb3-543"><a href="#cb3-543" aria-hidden="true" tabindex="-1"></a>    paramView<span class="op">.</span><span class="fu">setUint32</span>(<span class="dv">28</span><span class="op">,</span> drawn<span class="op">,</span> <span class="kw">true</span>)<span class="op">;</span></span>
+<span id="cb3-544"><a href="#cb3-544" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> doGrid <span class="op">=</span> chunk <span class="op">&lt;</span> gridChunks<span class="op">;</span></span>
+<span id="cb3-545"><a href="#cb3-545" aria-hidden="true" tabindex="-1"></a>    paramView<span class="op">.</span><span class="fu">setUint32</span>(<span class="dv">32</span><span class="op">,</span> chunk <span class="op">*</span> rowsPerChunk<span class="op">,</span> <span class="kw">true</span>)<span class="op">;</span></span>
+<span id="cb3-546"><a href="#cb3-546" aria-hidden="true" tabindex="-1"></a>    paramView<span class="op">.</span><span class="fu">setUint32</span>(<span class="dv">36</span><span class="op">,</span> rowsPerChunk<span class="op">,</span> <span class="kw">true</span>)<span class="op">;</span></span>
+<span id="cb3-547"><a href="#cb3-547" aria-hidden="true" tabindex="-1"></a>    device<span class="op">.</span><span class="at">queue</span><span class="op">.</span><span class="fu">writeBuffer</span>(buffers<span class="op">.</span><span class="at">params</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> paramBytes)<span class="op">;</span></span>
+<span id="cb3-548"><a href="#cb3-548" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-549"><a href="#cb3-549" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> compute <span class="op">=</span> encoder<span class="op">.</span><span class="fu">beginComputePass</span>()<span class="op">;</span></span>
+<span id="cb3-550"><a href="#cb3-550" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (doGrid) {</span>
+<span id="cb3-551"><a href="#cb3-551" aria-hidden="true" tabindex="-1"></a>      compute<span class="op">.</span><span class="fu">setPipeline</span>(gridPipeline)<span class="op">;</span></span>
+<span id="cb3-552"><a href="#cb3-552" aria-hidden="true" tabindex="-1"></a>      compute<span class="op">.</span><span class="fu">setBindGroup</span>(<span class="dv">0</span><span class="op">,</span> gridBindGroup)<span class="op">;</span></span>
+<span id="cb3-553"><a href="#cb3-553" aria-hidden="true" tabindex="-1"></a>      compute<span class="op">.</span><span class="fu">dispatchWorkgroups</span>(gridColumns <span class="op">/</span> <span class="dv">16</span><span class="op">,</span> rowsPerChunk <span class="op">/</span> <span class="dv">16</span>)<span class="op">;</span></span>
+<span id="cb3-554"><a href="#cb3-554" aria-hidden="true" tabindex="-1"></a>      chunk<span class="op">++;</span></span>
+<span id="cb3-555"><a href="#cb3-555" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-556"><a href="#cb3-556" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (threads <span class="op">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb3-557"><a href="#cb3-557" aria-hidden="true" tabindex="-1"></a>      compute<span class="op">.</span><span class="fu">setPipeline</span>(dropPipeline)<span class="op">;</span></span>
+<span id="cb3-558"><a href="#cb3-558" aria-hidden="true" tabindex="-1"></a>      compute<span class="op">.</span><span class="fu">setBindGroup</span>(<span class="dv">0</span><span class="op">,</span> dropBindGroup)<span class="op">;</span></span>
+<span id="cb3-559"><a href="#cb3-559" aria-hidden="true" tabindex="-1"></a>      compute<span class="op">.</span><span class="fu">dispatchWorkgroups</span>(<span class="bu">Math</span><span class="op">.</span><span class="fu">ceil</span>(threads <span class="op">/</span> groupSize))<span class="op">;</span></span>
+<span id="cb3-560"><a href="#cb3-560" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-561"><a href="#cb3-561" aria-hidden="true" tabindex="-1"></a>    compute<span class="op">.</span><span class="fu">end</span>()<span class="op">;</span></span>
+<span id="cb3-562"><a href="#cb3-562" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-563"><a href="#cb3-563" aria-hidden="true" tabindex="-1"></a>    <span class="co">// New darts into the picture (cleared after a reset), then the picture to the</span></span>
+<span id="cb3-564"><a href="#cb3-564" aria-hidden="true" tabindex="-1"></a>    <span class="co">// canvas</span></span>
+<span id="cb3-565"><a href="#cb3-565" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (clearPicture <span class="op">||</span> drawn <span class="op">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb3-566"><a href="#cb3-566" aria-hidden="true" tabindex="-1"></a>      <span class="kw">const</span> picturePass <span class="op">=</span> encoder<span class="op">.</span><span class="fu">beginRenderPass</span>({</span>
+<span id="cb3-567"><a href="#cb3-567" aria-hidden="true" tabindex="-1"></a>        <span class="dt">colorAttachments</span><span class="op">:</span> [</span>
+<span id="cb3-568"><a href="#cb3-568" aria-hidden="true" tabindex="-1"></a>          {</span>
+<span id="cb3-569"><a href="#cb3-569" aria-hidden="true" tabindex="-1"></a>            <span class="dt">view</span><span class="op">:</span> picture<span class="op">.</span><span class="fu">createView</span>()<span class="op">,</span></span>
+<span id="cb3-570"><a href="#cb3-570" aria-hidden="true" tabindex="-1"></a>            <span class="dt">clearValue</span><span class="op">:</span> background<span class="op">,</span></span>
+<span id="cb3-571"><a href="#cb3-571" aria-hidden="true" tabindex="-1"></a>            <span class="dt">loadOp</span><span class="op">:</span> clearPicture <span class="op">?</span> <span class="st">"clear"</span> <span class="op">:</span> <span class="st">"load"</span><span class="op">,</span></span>
+<span id="cb3-572"><a href="#cb3-572" aria-hidden="true" tabindex="-1"></a>            <span class="dt">storeOp</span><span class="op">:</span> <span class="st">"store"</span><span class="op">,</span></span>
+<span id="cb3-573"><a href="#cb3-573" aria-hidden="true" tabindex="-1"></a>          }<span class="op">,</span></span>
+<span id="cb3-574"><a href="#cb3-574" aria-hidden="true" tabindex="-1"></a>        ]<span class="op">,</span></span>
+<span id="cb3-575"><a href="#cb3-575" aria-hidden="true" tabindex="-1"></a>      })<span class="op">;</span></span>
+<span id="cb3-576"><a href="#cb3-576" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (drawn <span class="op">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb3-577"><a href="#cb3-577" aria-hidden="true" tabindex="-1"></a>        picturePass<span class="op">.</span><span class="fu">setPipeline</span>(dartPipeline)<span class="op">;</span></span>
+<span id="cb3-578"><a href="#cb3-578" aria-hidden="true" tabindex="-1"></a>        picturePass<span class="op">.</span><span class="fu">setBindGroup</span>(<span class="dv">0</span><span class="op">,</span> dartBindGroup)<span class="op">;</span></span>
+<span id="cb3-579"><a href="#cb3-579" aria-hidden="true" tabindex="-1"></a>        picturePass<span class="op">.</span><span class="fu">setVertexBuffer</span>(<span class="dv">0</span><span class="op">,</span> cornerBuffer)<span class="op">;</span></span>
+<span id="cb3-580"><a href="#cb3-580" aria-hidden="true" tabindex="-1"></a>        picturePass<span class="op">.</span><span class="fu">draw</span>(<span class="dv">6</span><span class="op">,</span> drawn)<span class="op">;</span></span>
+<span id="cb3-581"><a href="#cb3-581" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb3-582"><a href="#cb3-582" aria-hidden="true" tabindex="-1"></a>      picturePass<span class="op">.</span><span class="fu">end</span>()<span class="op">;</span></span>
+<span id="cb3-583"><a href="#cb3-583" aria-hidden="true" tabindex="-1"></a>      clearPicture <span class="op">=</span> <span class="kw">false</span><span class="op">;</span></span>
+<span id="cb3-584"><a href="#cb3-584" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-585"><a href="#cb3-585" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> pass <span class="op">=</span> gpu<span class="op">.</span><span class="fu">beginRenderPass</span>(encoder<span class="op">,</span> context)<span class="op">;</span></span>
+<span id="cb3-586"><a href="#cb3-586" aria-hidden="true" tabindex="-1"></a>    pass<span class="op">.</span><span class="fu">setPipeline</span>(showPipeline)<span class="op">;</span></span>
+<span id="cb3-587"><a href="#cb3-587" aria-hidden="true" tabindex="-1"></a>    pass<span class="op">.</span><span class="fu">setBindGroup</span>(<span class="dv">0</span><span class="op">,</span> showBindGroup)<span class="op">;</span></span>
+<span id="cb3-588"><a href="#cb3-588" aria-hidden="true" tabindex="-1"></a>    pass<span class="op">.</span><span class="fu">setVertexBuffer</span>(<span class="dv">0</span><span class="op">,</span> cornerBuffer)<span class="op">;</span></span>
+<span id="cb3-589"><a href="#cb3-589" aria-hidden="true" tabindex="-1"></a>    pass<span class="op">.</span><span class="fu">draw</span>(<span class="dv">6</span>)<span class="op">;</span></span>
+<span id="cb3-590"><a href="#cb3-590" aria-hidden="true" tabindex="-1"></a>    pass<span class="op">.</span><span class="fu">end</span>()<span class="op">;</span></span>
+<span id="cb3-591"><a href="#cb3-591" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-592"><a href="#cb3-592" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> sample <span class="op">=</span> <span class="op">!</span>readback<span class="op">.</span><span class="at">pending</span> <span class="op">&amp;&amp;</span> <span class="op">++</span>frameCount <span class="op">%</span> sampleEvery <span class="op">===</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb3-593"><a href="#cb3-593" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (sample) readback<span class="op">.</span><span class="fu">copy</span>(encoder)<span class="op">;</span></span>
+<span id="cb3-594"><a href="#cb3-594" aria-hidden="true" tabindex="-1"></a>    device<span class="op">.</span><span class="at">queue</span><span class="op">.</span><span class="fu">submit</span>([encoder<span class="op">.</span><span class="fu">finish</span>()])<span class="op">;</span></span>
+<span id="cb3-595"><a href="#cb3-595" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (sample) {</span>
+<span id="cb3-596"><a href="#cb3-596" aria-hidden="true" tabindex="-1"></a>      <span class="kw">const</span> mine <span class="op">=</span> epoch<span class="op">;</span></span>
+<span id="cb3-597"><a href="#cb3-597" aria-hidden="true" tabindex="-1"></a>      readback<span class="op">.</span><span class="fu">read</span>((buffer) <span class="kw">=&gt;</span> {</span>
+<span id="cb3-598"><a href="#cb3-598" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (mine <span class="op">!==</span> epoch) <span class="cf">return</span><span class="op">;</span> <span class="co">// from before a reset</span></span>
+<span id="cb3-599"><a href="#cb3-599" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> counters <span class="op">=</span> <span class="kw">new</span> <span class="bu">Uint32Array</span>(buffer)<span class="op">;</span></span>
+<span id="cb3-600"><a href="#cb3-600" aria-hidden="true" tabindex="-1"></a>        <span class="co">// The GPU counters wrap at 2^32: take the difference modulo 2^32</span></span>
+<span id="cb3-601"><a href="#cb3-601" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> (<span class="kw">let</span> k <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> k <span class="op">&lt;</span> <span class="dv">3</span><span class="op">;</span> k<span class="op">++</span>) {</span>
+<span id="cb3-602"><a href="#cb3-602" aria-hidden="true" tabindex="-1"></a>          total[k] <span class="op">+=</span> (counters[k] <span class="op">-</span> previous[k]) <span class="op">&gt;&gt;&gt;</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb3-603"><a href="#cb3-603" aria-hidden="true" tabindex="-1"></a>          previous[k] <span class="op">=</span> counters[k]<span class="op">;</span></span>
+<span id="cb3-604"><a href="#cb3-604" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb3-605"><a href="#cb3-605" aria-hidden="true" tabindex="-1"></a>        <span class="fu">record</span>()<span class="op">;</span></span>
+<span id="cb3-606"><a href="#cb3-606" aria-hidden="true" tabindex="-1"></a>      })<span class="op">;</span></span>
+<span id="cb3-607"><a href="#cb3-607" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-608"><a href="#cb3-608" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-609"><a href="#cb3-609" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (frameCount <span class="op">%</span> <span class="dv">6</span> <span class="op">===</span> <span class="dv">0</span>) {</span>
+<span id="cb3-610"><a href="#cb3-610" aria-hidden="true" tabindex="-1"></a>      <span class="kw">const</span> now <span class="op">=</span> <span class="fu">current</span>()<span class="op">;</span></span>
+<span id="cb3-611"><a href="#cb3-611" aria-hidden="true" tabindex="-1"></a>      <span class="kw">const</span> ref <span class="op">=</span> <span class="fu">reference</span>()<span class="op">;</span></span>
+<span id="cb3-612"><a href="#cb3-612" aria-hidden="true" tabindex="-1"></a>      readout<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span></span>
+<span id="cb3-613"><a href="#cb3-613" aria-hidden="true" tabindex="-1"></a>        <span class="vs">`</span><span class="sc">${</span>total[<span class="dv">0</span>]<span class="op">.</span><span class="fu">toLocaleString</span>()<span class="sc">}</span><span class="vs"> darts · `</span> <span class="op">+</span></span>
+<span id="cb3-614"><a href="#cb3-614" aria-hidden="true" tabindex="-1"></a>        (now <span class="op">?</span> now<span class="op">.</span><span class="at">text</span> <span class="op">:</span> <span class="st">"area –"</span>) <span class="op">+</span></span>
+<span id="cb3-615"><a href="#cb3-615" aria-hidden="true" tabindex="-1"></a>        (ref <span class="op">===</span> <span class="kw">null</span> <span class="op">?</span> <span class="st">" · measuring the reference…"</span> <span class="op">:</span> <span class="vs">` · reference </span><span class="sc">${</span>ref<span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">4</span>)<span class="sc">}</span><span class="vs">`</span>)<span class="op">;</span></span>
+<span id="cb3-616"><a href="#cb3-616" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-617"><a href="#cb3-617" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-618"><a href="#cb3-618" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-619"><a href="#cb3-619" aria-hidden="true" tabindex="-1"></a>  gpu<span class="op">.</span><span class="fu">run</span>(invalidation<span class="op">,</span> device<span class="op">,</span> frame)<span class="op">;</span></span>
+<span id="cb3-620"><a href="#cb3-620" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-621"><a href="#cb3-621" aria-hidden="true" tabindex="-1"></a>  <span class="co">// The canvas with the controls laid over its corner</span></span>
+<span id="cb3-622"><a href="#cb3-622" aria-hidden="true" tabindex="-1"></a>  <span class="kw">yield</span> ui<span class="op">.</span><span class="fu">stage</span>(canvas<span class="op">,</span> [rateInput<span class="op">,</span> iterationsInput<span class="op">,</span> resetButton<span class="op">,</span> readout])<span class="op">;</span></span>
+<span id="cb3-623"><a href="#cb3-623" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display column-screen-inset">
+<div id="ojs-cell-3" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+<div class="cell page-columns page-full">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb4" data-startfrom="629" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 628;"><span id="cb4-629"><a href="#cb4-629" aria-hidden="true" tabindex="-1"></a>charts <span class="op">=</span> {</span>
+<span id="cb4-630"><a href="#cb4-630" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Two empty hosts; the simulation cell above draws into them as data arrives</span></span>
+<span id="cb4-631"><a href="#cb4-631" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> ui <span class="op">=</span> <span class="cf">await</span> <span class="im">import</span>(<span class="kw">new</span> <span class="fu">URL</span>(<span class="st">"../lib/ui.js"</span><span class="op">,</span> <span class="bu">document</span><span class="op">.</span><span class="at">baseURI</span>)<span class="op">.</span><span class="at">href</span>)<span class="op">;</span></span>
+<span id="cb4-632"><a href="#cb4-632" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> ui<span class="op">.</span><span class="fu">chartHosts</span>([<span class="st">"area"</span><span class="op">,</span> <span class="st">"error"</span>])<span class="op">;</span></span>
+<span id="cb4-633"><a href="#cb4-633" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display column-page">
+<div id="ojs-cell-4" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="mf-series-bar">
+<p>Moving Figures</p>
+<div id="listing-mf-series" class="quarto-listing quarto-listing-container-default">
+<div class="list quarto-listing-default">
+<div class="quarto-post image-right" data-index="0" data-categories="bWY=" data-listing-date-sort="1791676800000" data-listing-file-modified-sort="1792066284462" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="268">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="../webgpu-hello-world/index.html" class="no-external">000: Hello GPU</a>
+</h3>
+</div>
+<div class="metadata">
+<a href="../webgpu-hello-world/index.html" class="no-external">
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="1" data-categories="bWY=" data-listing-date-sort="1791676800000" data-listing-file-modified-sort="1792066284462" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="681">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="../webgpu-three-particles/index.html" class="no-external">001: Three Particles</a>
+</h3>
+</div>
+<div class="metadata">
+<a href="../webgpu-three-particles/index.html" class="no-external">
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="2" data-categories="bWY=" data-listing-date-sort="1791676800000" data-listing-file-modified-sort="1792066284462" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1022">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="../webgpu-animation-loop/index.html" class="no-external">002: Animation Loop</a>
+</h3>
+</div>
+<div class="metadata">
+<a href="../webgpu-animation-loop/index.html" class="no-external">
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="3" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792066284462" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="998">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="../webgpu-bouncing-particles/index.html" class="no-external">003: Bouncing Particles</a>
+</h3>
+</div>
+<div class="metadata">
+<a href="../webgpu-bouncing-particles/index.html" class="no-external">
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="4" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792066284462" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1303">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="../webgpu-compute-shader/index.html" class="no-external">004: Compute Shader</a>
+</h3>
+</div>
+<div class="metadata">
+<a href="../webgpu-compute-shader/index.html" class="no-external">
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="5" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792066284462" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1814">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="../webgpu-lennard-jones/index.html" class="no-external">005: Jiggling Atoms</a>
+</h3>
+</div>
+<div class="metadata">
+<a href="../webgpu-lennard-jones/index.html" class="no-external">
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="6" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792066284462" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1938">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="../webgpu-gravity/index.html" class="no-external">006: Falling Atoms</a>
+</h3>
+</div>
+<div class="metadata">
+<a href="../webgpu-gravity/index.html" class="no-external">
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="7" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792066284462" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="17" data-listing-word-count-sort="3259">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="../webgpu-reading-back/index.html" class="no-external">007: Is Energy Conserved?</a>
+</h3>
+</div>
+<div class="metadata">
+<a href="../webgpu-reading-back/index.html" class="no-external">
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="8" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792066284462" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="18" data-listing-word-count-sort="3522">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="../webgpu-structure/index.html" class="no-external">008: Solid, Liquid, Gas</a>
+</h3>
+</div>
+<div class="metadata">
+<a href="../webgpu-structure/index.html" class="no-external">
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="9" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792066284462" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="20" data-listing-word-count-sort="3997">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="../webgpu-brownian-motion/index.html" class="no-external">009: Brownian Motion</a>
+</h3>
+</div>
+<div class="metadata">
+<a href="../webgpu-brownian-motion/index.html" class="no-external">
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="10" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792066284462" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="31" data-listing-word-count-sort="6007">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="../webgpu-twenty-thousand-atoms/index.html" class="no-external">010: Twenty Thousand Atoms</a>
+</h3>
+</div>
+<div class="metadata">
+<a href="../webgpu-twenty-thousand-atoms/index.html" class="no-external">
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="11" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792066284463" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="30" data-listing-word-count-sort="5801">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="../webgpu-weather-in-a-box/index.html" class="no-external">011: Weather in a Box</a>
+</h3>
+</div>
+<div class="metadata">
+<a href="../webgpu-weather-in-a-box/index.html" class="no-external">
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="12" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792066284462" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="22" data-listing-word-count-sort="4344">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="../webgpu-blast-wave/index.html" class="no-external">012: Blast Wave</a>
+</h3>
+</div>
+<div class="metadata">
+<a href="../webgpu-blast-wave/index.html" class="no-external">
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="13" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792066284462" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="25" data-listing-word-count-sort="4947">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="../webgpu-buffons-needle/index.html" class="no-external">013: Dropping Sticks Again</a>
+</h3>
+</div>
+<div class="metadata">
+<a href="../webgpu-buffons-needle/index.html" class="no-external">
+</a>
+</div>
+</div>
+</div>
+<div class="listing-no-matching d-none">No matching items</div>
+</div>
+</div>
+
+
+
+
+</main> <!-- /main -->
+<script type="ojs-module-contents">
+eyJjb250ZW50cyI6W3sibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMSIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6InZpZXdvZiByYXRlID0ge1xuICBjb25zdCB1aSA9IGF3YWl0IGltcG9ydChuZXcgVVJMKFwiLi4vbGliL3VpLmpzXCIsIGRvY3VtZW50LmJhc2VVUkkpLmhyZWYpO1xuICByZXR1cm4gdWkuc2xpZGVyKHtcbiAgICBsYWJlbDogXCJEYXJ0cy9zXCIsXG4gICAgbWluOiAxLFxuICAgIG1heDogNyxcbiAgICBzdGVwOiAxLFxuICAgIHZhbHVlOiAxLFxuICAgIGZvcm1hdDogKHYpID0+IGAxMF4ke3Z9YCxcbiAgfSk7XG59XG4ifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJjZWxsTmFtZSI6Im9qcy1jZWxsLTIiLCJpbmxpbmUiOmZhbHNlLCJzb3VyY2UiOiJ2aWV3b2YgaXRlcmF0aW9ucyA9IHtcbiAgY29uc3QgdWkgPSBhd2FpdCBpbXBvcnQobmV3IFVSTChcIi4uL2xpYi91aS5qc1wiLCBkb2N1bWVudC5iYXNlVVJJKS5ocmVmKTtcbiAgcmV0dXJuIHVpLnNlZ21lbnRlZCh7XG4gICAgbGFiZWw6IFwiSXRlcmF0aW9uc1wiLFxuICAgIG9wdGlvbnM6IFtcbiAgICAgIFsyMCwgXCIyMFwiXSxcbiAgICAgIFsxMDAsIFwiMTAwXCJdLFxuICAgICAgWzEwMDAsIFwiMTAwMFwiXSxcbiAgICBdLFxuICAgIHZhbHVlOiAxMDAsXG4gIH0pO1xufVxuIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0IiwiY2VsbE5hbWUiOiJvanMtY2VsbC0zIiwiaW5saW5lIjpmYWxzZSwic291cmNlIjoie1xuICAvLyBTaGFyZWQgV2ViR1BVIGJvaWxlcnBsYXRlOiBzZXR1cCwgYnVmZmVycyBhbmQgdGhlIGFuaW1hdGlvbiBsb29wIChsaWIvZ3B1LmpzKVxuICBjb25zdCBncHUgPSBhd2FpdCBpbXBvcnQobmV3IFVSTChcIi4uL2xpYi9ncHUuanNcIiwgZG9jdW1lbnQuYmFzZVVSSSkuaHJlZik7XG4gIGNvbnN0IHJhbmRvbSA9IGF3YWl0IGltcG9ydChuZXcgVVJMKFwiLi4vbGliL3JhbmRvbS5qc1wiLCBkb2N1bWVudC5iYXNlVVJJKS5ocmVmKTtcbiAgY29uc3QgdWkgPSBhd2FpdCBpbXBvcnQobmV3IFVSTChcIi4uL2xpYi91aS5qc1wiLCBkb2N1bWVudC5iYXNlVVJJKS5ocmVmKTtcblxuICAvLyBDb250cm9scyBhcmUgcmVhZCBsaXZlIGZyb20gdGhlaXIgZWxlbWVudHMgKHJlZmVyZW5jaW5nIGB2aWV3b2YgeGAgZ2l2ZXMgdGhlXG4gIC8vIGVsZW1lbnQsIG5vdCB0aGUgdmFsdWUpLCBzbyBtb3ZpbmcgdGhlbSBkb2VzIG5vdCByZXN0YXJ0IHRoaXMgY2VsbC5cbiAgY29uc3QgcmF0ZUlucHV0ID0gdmlld29mIHJhdGU7IC8vIGxvZzEwIG9mIGRhcnRzIHBlciBzZWNvbmRcbiAgY29uc3QgaXRlcmF0aW9uc0lucHV0ID0gdmlld29mIGl0ZXJhdGlvbnM7XG5cbiAgY29uc3QgeyBjYW52YXMsIGRldmljZSwgY29udGV4dCwgZm9ybWF0IH0gPSBhd2FpdCBncHUuc2V0dXAoe1xuICAgIHdpZHRoOiA2NDAsXG4gICAgaGVpZ2h0OiAzNjAsXG4gICAgcmVzb2x1dGlvbjogXCJhdXRvXCIsXG4gIH0pO1xuXG4gIC8vIFRoZSBib3ggdGhlIGRhcnRzIGFyZSB0aHJvd24gaW50bywgMTY6OSBsaWtlIHRoZSBjYW52YXMuIFRoZSBzZXQgbGllcyBpbnNpZGUgaXQ6XG4gIC8vIGl0IHJlYWNoZXMgeCBmcm9tIC0yIHRvIDAuNDcgYW5kIHkgb3V0IHRvIGFib3V0IDEuMTIuXG4gIGNvbnN0IG9yaWdpbiA9IFstMi45LCAtMS4yNjU2MjVdO1xuICBjb25zdCBzaXplID0gWzQuNSwgMi41MzEyNV07XG4gIGNvbnN0IGJveEFyZWEgPSBzaXplWzBdICogc2l6ZVsxXTtcbiAgY29uc3QgZ3JvdXBTaXplID0gMjU2O1xuICBjb25zdCBtYXhUaHJlYWRzID0gMSA8PCAyMDtcbiAgY29uc3QgbWF4RHJhd25QZXJGcmFtZSA9IDQwOTY7XG5cbiAgLy8gVGhlIHJlZmVyZW5jZTogZXZlcnkgcG9pbnQgb2YgYSBmaXhlZCBncmlkLCB0ZXN0ZWQgYSBzbGljZSBhdCBhIHRpbWVcbiAgY29uc3QgZ3JpZENvbHVtbnMgPSAzMjc2ODtcbiAgY29uc3QgZ3JpZFJvd3MgPSAxODQzMjtcbiAgY29uc3QgZ3JpZENodW5rcyA9IDEyODtcbiAgY29uc3Qgcm93c1BlckNodW5rID0gZ3JpZFJvd3MgLyBncmlkQ2h1bmtzO1xuXG4gIC8vIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSB0aGUgc2hhZGVyc1xuICBjb25zdCBtb2R1bGUgPSBkZXZpY2UuY3JlYXRlU2hhZGVyTW9kdWxlKHtcbiAgICBjb2RlOiBgXG4gICAgICBzdHJ1Y3QgUGFyYW1zIHtcbiAgICAgICAgb3JpZ2luOiB2ZWMyZixcbiAgICAgICAgc2l6ZTogdmVjMmYsXG4gICAgICAgIG1heEl0ZXI6IHUzMiwgICAgLy8gaXRlcmF0aW9ucyBiZWZvcmUgYSBwb2ludCBjb3VudHMgYXMgaW5zaWRlXG4gICAgICAgIHBlclRocmVhZDogdTMyLCAgLy8gZGFydHMgZXZlcnkgdGhyZWFkIHRocm93cyB0aGlzIGZyYW1lXG4gICAgICAgIHRocmVhZHM6IHUzMiwgICAgLy8gdGhyZWFkcyB0aGF0IHRocm93IGF0IGFsbFxuICAgICAgICBkcmF3bjogdTMyLCAgICAgIC8vIHRocmVhZHMgdGhhdCByZWNvcmQgdGhlaXIgZmlyc3QgZGFydCBmb3IgZHJhd2luZ1xuICAgICAgICByZWZSb3c6IHUzMiwgICAgIC8vIGZpcnN0IHJvdyBvZiB0aGUgcmVmZXJlbmNlIGdyaWQgc2xpY2UgdG8gdGVzdFxuICAgICAgICByZWZSb3dzOiB1MzIsICAgIC8vIHJvd3MgaW4gdGhhdCBzbGljZVxuICAgICAgICBwYWQ6IHUzMixcbiAgICAgIH1cblxuICAgICAgQGdyb3VwKDApIEBiaW5kaW5nKDApIHZhcjx1bmlmb3JtPiBwYXJhbXM6IFBhcmFtcztcbiAgICAgIEBncm91cCgwKSBAYmluZGluZygxKSB2YXI8c3RvcmFnZSwgcmVhZF93cml0ZT4gcm5nOiBhcnJheTx1MzI+O1xuICAgICAgLy8gQ291bnRlcnM6IGRhcnRzIHRocm93biwgZGFydHMgaW5zaWRlLCBhbmQgdGhlIHJlZmVyZW5jZSBncmlkJ3MgcG9pbnRzIGluc2lkZVxuICAgICAgQGdyb3VwKDApIEBiaW5kaW5nKDIpIHZhcjxzdG9yYWdlLCByZWFkX3dyaXRlPiB0b3RhbHM6IGFycmF5PGF0b21pYzx1MzI+LCAzPjtcbiAgICAgIC8vIFRoaXMgZnJhbWUncyBkcmF3biBkYXJ0czogeCwgeSwgMSBpZiBpbnNpZGVcbiAgICAgIEBncm91cCgwKSBAYmluZGluZygzKSB2YXI8c3RvcmFnZSwgcmVhZF93cml0ZT4gZGFydHM6IGFycmF5PHZlYzRmPjtcblxuICAgICAgJHtyYW5kb20ucm5nV0dTTH1cblxuICAgICAgLy8gSXMgYyBpbiB0aGUgc2V0IChvciwgcGFzdCBtYXhJdGVyIHN0ZXBzLCBub3QgeWV0IHNlZW4gdG8gcnVuIGF3YXkpP1xuICAgICAgZm4gaW5zaWRlKGM6IHZlYzJmKSAtPiBib29sIHtcbiAgICAgICAgLy8gVGhlIGJpZyBjYXJkaW9pZCBhbmQgdGhlIGNpcmNsZSB0byBpdHMgbGVmdCBhcmUga25vd24gdG8gYmUgaW5zaWRlOiBza2lwXG4gICAgICAgIC8vIHRoZW0sIHdoaWNoIGlzIG1vc3Qgb2YgdGhlIHNldCdzIGFyZWEgYW5kIGFsbCBvZiBpdHMgc2xvdyBwb2ludHNcbiAgICAgICAgbGV0IHhxID0gYy54IC0gMC4yNTtcbiAgICAgICAgbGV0IHEgPSB4cSAqIHhxICsgYy55ICogYy55O1xuICAgICAgICBpZiAocSAqIChxICsgeHEpIDw9IDAuMjUgKiBjLnkgKiBjLnkpIHsgcmV0dXJuIHRydWU7IH1cbiAgICAgICAgbGV0IHhwID0gYy54ICsgMS4wO1xuICAgICAgICBpZiAoeHAgKiB4cCArIGMueSAqIGMueSA8PSAwLjA2MjUpIHsgcmV0dXJuIHRydWU7IH1cblxuICAgICAgICB2YXIgeiA9IHZlYzJmKDAuMCk7XG4gICAgICAgIGZvciAodmFyIGkgPSAwdTsgaSA8IHBhcmFtcy5tYXhJdGVyOyBpKyspIHtcbiAgICAgICAgICB6ID0gdmVjMmYoei54ICogei54IC0gei55ICogei55ICsgYy54LCAyLjAgKiB6LnggKiB6LnkgKyBjLnkpO1xuICAgICAgICAgIGlmIChkb3QoeiwgeikgPiA0LjApIHsgcmV0dXJuIGZhbHNlOyB9XG4gICAgICAgIH1cbiAgICAgICAgcmV0dXJuIHRydWU7XG4gICAgICB9XG5cbiAgICAgIHZhcjx3b3JrZ3JvdXA+IHRocm93bjogYXJyYXk8dTMyLCAke2dyb3VwU2l6ZX0+O1xuICAgICAgdmFyPHdvcmtncm91cD4gbGFuZGVkOiBhcnJheTx1MzIsICR7Z3JvdXBTaXplfT47XG5cbiAgICAgIEBjb21wdXRlIEB3b3JrZ3JvdXBfc2l6ZSgke2dyb3VwU2l6ZX0pXG4gICAgICBmbiBkcm9wKFxuICAgICAgICBAYnVpbHRpbihnbG9iYWxfaW52b2NhdGlvbl9pZCkgaWQ6IHZlYzN1LFxuICAgICAgICBAYnVpbHRpbihsb2NhbF9pbnZvY2F0aW9uX2luZGV4KSBsb2NhbDogdTMyLFxuICAgICAgKSB7XG4gICAgICAgIHZhciBuVGhyb3duID0gMHU7XG4gICAgICAgIHZhciBuSW5zaWRlID0gMHU7XG5cbiAgICAgICAgaWYgKGlkLnggPCBwYXJhbXMudGhyZWFkcykge1xuICAgICAgICAgIHZhciBzdGF0ZSA9IHJuZ1tpZC54XTtcbiAgICAgICAgICBmb3IgKHZhciBrID0gMHU7IGsgPCBwYXJhbXMucGVyVGhyZWFkOyBrKyspIHtcbiAgICAgICAgICAgIGxldCBwID0gcGFyYW1zLm9yaWdpbiArIHZlYzJmKHJhbmQoJnN0YXRlKSwgcmFuZCgmc3RhdGUpKSAqIHBhcmFtcy5zaXplO1xuICAgICAgICAgICAgbGV0IGlzSW5zaWRlID0gaW5zaWRlKHApO1xuICAgICAgICAgICAgblRocm93biArPSAxdTtcbiAgICAgICAgICAgIGlmIChpc0luc2lkZSkgeyBuSW5zaWRlICs9IDF1OyB9XG5cbiAgICAgICAgICAgIC8vIE9uZSBkYXJ0IHBlciB0aHJlYWQgZWFjaCBmcmFtZSBpcyBrZXB0IGZvciBkcmF3aW5nXG4gICAgICAgICAgICBpZiAoayA9PSAwdSAmJiBpZC54IDwgcGFyYW1zLmRyYXduKSB7XG4gICAgICAgICAgICAgIGRhcnRzW2lkLnhdID0gdmVjNGYocC54LCBwLnksIHNlbGVjdCgwLjAsIDEuMCwgaXNJbnNpZGUpLCAwLjApO1xuICAgICAgICAgICAgfVxuICAgICAgICAgIH1cbiAgICAgICAgICBybmdbaWQueF0gPSBzdGF0ZTtcbiAgICAgICAgfVxuXG4gICAgICAgIC8vIEFkZCB1cCB0aGUgZ3JvdXAncyBkYXJ0cyBpbiBzaGFyZWQgbWVtb3J5LCB0aGVuIG9uZSBhdG9taWMgZWFjaFxuICAgICAgICB0aHJvd25bbG9jYWxdID0gblRocm93bjtcbiAgICAgICAgbGFuZGVkW2xvY2FsXSA9IG5JbnNpZGU7XG4gICAgICAgIHdvcmtncm91cEJhcnJpZXIoKTtcbiAgICAgICAgZm9yICh2YXIgc3RyaWRlID0gJHtncm91cFNpemUgLyAyfXU7IHN0cmlkZSA+IDB1OyBzdHJpZGUgPj49IDF1KSB7XG4gICAgICAgICAgaWYgKGxvY2FsIDwgc3RyaWRlKSB7XG4gICAgICAgICAgICB0aHJvd25bbG9jYWxdICs9IHRocm93bltsb2NhbCArIHN0cmlkZV07XG4gICAgICAgICAgICBsYW5kZWRbbG9jYWxdICs9IGxhbmRlZFtsb2NhbCArIHN0cmlkZV07XG4gICAgICAgICAgfVxuICAgICAgICAgIHdvcmtncm91cEJhcnJpZXIoKTtcbiAgICAgICAgfVxuICAgICAgICBpZiAobG9jYWwgPT0gMHUpIHtcbiAgICAgICAgICBhdG9taWNBZGQoJnRvdGFsc1swXSwgdGhyb3duWzBdKTtcbiAgICAgICAgICBhdG9taWNBZGQoJnRvdGFsc1sxXSwgbGFuZGVkWzBdKTtcbiAgICAgICAgfVxuICAgICAgfVxuXG4gICAgICAvLyBUaGUgcmVmZXJlbmNlOiB0ZXN0IGEgc2xpY2Ugb2Ygcm93cyBvZiBhIGZpeGVkIGdyaWQsIGF0IHRoZSBjZWxsIGNlbnRyZXNcbiAgICAgIHZhcjx3b3JrZ3JvdXA+IGdyaWRDb3VudDogYXJyYXk8dTMyLCAyNTY+O1xuXG4gICAgICBAY29tcHV0ZSBAd29ya2dyb3VwX3NpemUoMTYsIDE2KVxuICAgICAgZm4gZ3JpZChcbiAgICAgICAgQGJ1aWx0aW4oZ2xvYmFsX2ludm9jYXRpb25faWQpIGlkOiB2ZWMzdSxcbiAgICAgICAgQGJ1aWx0aW4obG9jYWxfaW52b2NhdGlvbl9pbmRleCkgbG9jYWw6IHUzMixcbiAgICAgICkge1xuICAgICAgICB2YXIgbiA9IDB1O1xuICAgICAgICBpZiAoaWQueSA8IHBhcmFtcy5yZWZSb3dzKSB7XG4gICAgICAgICAgbGV0IGNlbGwgPSB2ZWMyZihmMzIoaWQueCkgKyAwLjUsIGYzMihwYXJhbXMucmVmUm93ICsgaWQueSkgKyAwLjUpO1xuICAgICAgICAgIGxldCBjID0gcGFyYW1zLm9yaWdpbiArIGNlbGwgLyB2ZWMyZigke2dyaWRDb2x1bW5zfS4wLCAke2dyaWRSb3dzfS4wKSAqIHBhcmFtcy5zaXplO1xuICAgICAgICAgIGlmIChpbnNpZGUoYykpIHsgbiA9IDF1OyB9XG4gICAgICAgIH1cbiAgICAgICAgZ3JpZENvdW50W2xvY2FsXSA9IG47XG4gICAgICAgIHdvcmtncm91cEJhcnJpZXIoKTtcbiAgICAgICAgZm9yICh2YXIgc3RyaWRlID0gMTI4dTsgc3RyaWRlID4gMHU7IHN0cmlkZSA+Pj0gMXUpIHtcbiAgICAgICAgICBpZiAobG9jYWwgPCBzdHJpZGUpIHsgZ3JpZENvdW50W2xvY2FsXSArPSBncmlkQ291bnRbbG9jYWwgKyBzdHJpZGVdOyB9XG4gICAgICAgICAgd29ya2dyb3VwQmFycmllcigpO1xuICAgICAgICB9XG4gICAgICAgIGlmIChsb2NhbCA9PSAwdSkgeyBhdG9taWNBZGQoJnRvdGFsc1syXSwgZ3JpZENvdW50WzBdKTsgfVxuICAgICAgfVxuICAgIGAsXG4gIH0pO1xuICBjb25zdCBkcm9wUGlwZWxpbmUgPSBkZXZpY2UuY3JlYXRlQ29tcHV0ZVBpcGVsaW5lKHtcbiAgICBsYXlvdXQ6IFwiYXV0b1wiLFxuICAgIGNvbXB1dGU6IHsgbW9kdWxlLCBlbnRyeVBvaW50OiBcImRyb3BcIiB9LFxuICB9KTtcbiAgY29uc3QgZ3JpZFBpcGVsaW5lID0gZGV2aWNlLmNyZWF0ZUNvbXB1dGVQaXBlbGluZSh7XG4gICAgbGF5b3V0OiBcImF1dG9cIixcbiAgICBjb21wdXRlOiB7IG1vZHVsZSwgZW50cnlQb2ludDogXCJncmlkXCIgfSxcbiAgfSk7XG5cbiAgLy8gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tIGJ1ZmZlcnNcbiAgY29uc3QgYnVmZmVycyA9IHtcbiAgICBybmc6IGdwdS5zdG9yYWdlQnVmZmVyKGRldmljZSwgcmFuZG9tLnNlZWRzKG1heFRocmVhZHMpKSxcbiAgICB0b3RhbHM6IGdwdS5zdG9yYWdlQnVmZmVyKGRldmljZSwgbmV3IFVpbnQzMkFycmF5KDMpKSxcbiAgICBkYXJ0czogZ3B1LnN0b3JhZ2VCdWZmZXIoZGV2aWNlLCBuZXcgRmxvYXQzMkFycmF5KG1heERyYXduUGVyRnJhbWUgKiA0KSksXG4gICAgcGFyYW1zOiBkZXZpY2UuY3JlYXRlQnVmZmVyKHtcbiAgICAgIHNpemU6IDQ4LFxuICAgICAgdXNhZ2U6IEdQVUJ1ZmZlclVzYWdlLlVOSUZPUk0gfCBHUFVCdWZmZXJVc2FnZS5DT1BZX0RTVCxcbiAgICB9KSxcbiAgfTtcbiAgY29uc3QgcGFyYW1CeXRlcyA9IG5ldyBBcnJheUJ1ZmZlcig0OCk7XG4gIGNvbnN0IHBhcmFtVmlldyA9IG5ldyBEYXRhVmlldyhwYXJhbUJ5dGVzKTtcblxuICBjb25zdCBkcm9wQmluZEdyb3VwID0gZGV2aWNlLmNyZWF0ZUJpbmRHcm91cCh7XG4gICAgbGF5b3V0OiBkcm9wUGlwZWxpbmUuZ2V0QmluZEdyb3VwTGF5b3V0KDApLFxuICAgIGVudHJpZXM6IFtcbiAgICAgIHsgYmluZGluZzogMCwgcmVzb3VyY2U6IHsgYnVmZmVyOiBidWZmZXJzLnBhcmFtcyB9IH0sXG4gICAgICB7IGJpbmRpbmc6IDEsIHJlc291cmNlOiB7IGJ1ZmZlcjogYnVmZmVycy5ybmcgfSB9LFxuICAgICAgeyBiaW5kaW5nOiAyLCByZXNvdXJjZTogeyBidWZmZXI6IGJ1ZmZlcnMudG90YWxzIH0gfSxcbiAgICAgIHsgYmluZGluZzogMywgcmVzb3VyY2U6IHsgYnVmZmVyOiBidWZmZXJzLmRhcnRzIH0gfSxcbiAgICBdLFxuICB9KTtcbiAgY29uc3QgZ3JpZEJpbmRHcm91cCA9IGRldmljZS5jcmVhdGVCaW5kR3JvdXAoe1xuICAgIGxheW91dDogZ3JpZFBpcGVsaW5lLmdldEJpbmRHcm91cExheW91dCgwKSxcbiAgICBlbnRyaWVzOiBbXG4gICAgICB7IGJpbmRpbmc6IDAsIHJlc291cmNlOiB7IGJ1ZmZlcjogYnVmZmVycy5wYXJhbXMgfSB9LFxuICAgICAgeyBiaW5kaW5nOiAyLCByZXNvdXJjZTogeyBidWZmZXI6IGJ1ZmZlcnMudG90YWxzIH0gfSxcbiAgICBdLFxuICB9KTtcblxuICAvLyAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0gZHJhd2luZ1xuICAvLyBUaGUgZGFydHMgYXJlIGRyYXduIGludG8gYSB0ZXh0dXJlIHRoYXQga2VlcHMgdGhlbSwgc28gdGhlIHBpY3R1cmUgYnVpbGRzIHVwO1xuICAvLyB0aGF0IHRleHR1cmUgaXMgdGhlbiBkcmF3biB0byB0aGUgY2FudmFzLlxuICBjb25zdCB0ZXh0dXJlU2l6ZSA9IFsxMjgwLCA3MjBdO1xuICBjb25zdCBwaWN0dXJlID0gZGV2aWNlLmNyZWF0ZVRleHR1cmUoe1xuICAgIHNpemU6IHRleHR1cmVTaXplLFxuICAgIGZvcm1hdDogXCJyZ2JhOHVub3JtXCIsXG4gICAgdXNhZ2U6IEdQVVRleHR1cmVVc2FnZS5SRU5ERVJfQVRUQUNITUVOVCB8IEdQVVRleHR1cmVVc2FnZS5URVhUVVJFX0JJTkRJTkcsXG4gIH0pO1xuICBjb25zdCBiYWNrZ3JvdW5kID0geyByOiAwLjEwMiwgZzogMC4xMDIsIGI6IDAuMTAyLCBhOiAxIH07XG5cbiAgY29uc3QgY29ybmVyQnVmZmVyID0gZ3B1LnVuaXRTcXVhcmUoZGV2aWNlKTtcbiAgY29uc3QgZHJhd01vZHVsZSA9IGRldmljZS5jcmVhdGVTaGFkZXJNb2R1bGUoe1xuICAgIGNvZGU6IGBcbiAgICAgIHN0cnVjdCBQYXJhbXMge1xuICAgICAgICBvcmlnaW46IHZlYzJmLFxuICAgICAgICBzaXplOiB2ZWMyZixcbiAgICAgICAgbWF4SXRlcjogdTMyLFxuICAgICAgICBwZXJUaHJlYWQ6IHUzMixcbiAgICAgICAgdGhyZWFkczogdTMyLFxuICAgICAgICBkcmF3bjogdTMyLFxuICAgICAgICByZWZSb3c6IHUzMixcbiAgICAgICAgcmVmUm93czogdTMyLFxuICAgICAgICBwYWQ6IHUzMixcbiAgICAgIH1cbiAgICAgIEBncm91cCgwKSBAYmluZGluZygwKSB2YXI8dW5pZm9ybT4gcGFyYW1zOiBQYXJhbXM7XG4gICAgICBAZ3JvdXAoMCkgQGJpbmRpbmcoMSkgdmFyPHN0b3JhZ2UsIHJlYWQ+IGRhcnRzOiBhcnJheTx2ZWM0Zj47XG5cbiAgICAgIHN0cnVjdCBPdXQge1xuICAgICAgICBAYnVpbHRpbihwb3NpdGlvbikgcG9zaXRpb246IHZlYzRmLFxuICAgICAgICBAbG9jYXRpb24oMCkgY29sb3VyOiB2ZWM0ZixcbiAgICAgIH1cblxuICAgICAgQHZlcnRleFxuICAgICAgZm4gZGFydFZlcnRleChcbiAgICAgICAgQGxvY2F0aW9uKDApIGNvcm5lcjogdmVjMmYsXG4gICAgICAgIEBidWlsdGluKGluc3RhbmNlX2luZGV4KSBpOiB1MzIsXG4gICAgICApIC0+IE91dCB7XG4gICAgICAgIGxldCBkID0gZGFydHNbaV07XG4gICAgICAgIGxldCB1diA9IChkLnh5IC0gcGFyYW1zLm9yaWdpbikgLyBwYXJhbXMuc2l6ZTsgLy8gMCB0byAxIGFjcm9zcyB0aGUgYm94XG4gICAgICAgIC8vIEFib3V0IDIuNSBwaXhlbHMgYWNyb3NzLCBpbiB0aGUgdGV4dHVyZVxuICAgICAgICBsZXQgaGFsZiA9IHZlYzJmKDEuMjUgLyAke3RleHR1cmVTaXplWzBdfS4wLCAxLjI1IC8gJHt0ZXh0dXJlU2l6ZVsxXX0uMCkgKiAyLjA7XG4gICAgICAgIGxldCBjZW50cmUgPSB2ZWMyZih1di54ICogMi4wIC0gMS4wLCAxLjAgLSB1di55ICogMi4wKTtcbiAgICAgICAgLy8gRGFyayBncmV5OiB0aGUgYnJhbmQncyB0ZXh0IGNvbG91ciAjZThlMmUwLCBhIHRoaXJkIG9mIHRoZSB3YXkgdXAgZnJvbVxuICAgICAgICAvLyB0aGUgIzFhMWExYSBiYWNrZ3JvdW5kLlxuICAgICAgICBsZXQgY29sZCA9IHZlYzRmKDAuMzgsIDAuMzcsIDAuMzY1LCAwLjkpO1xuICAgICAgICBsZXQgaG90ID0gdmVjNGYoMS4wLCAwLjI4MiwgMC4yMDQsIDAuOTUpOyAvLyAjRkY0ODM0XG4gICAgICAgIHJldHVybiBPdXQoXG4gICAgICAgICAgdmVjNGYoY2VudHJlICsgY29ybmVyICogaGFsZiwgMC4wLCAxLjApLFxuICAgICAgICAgIHNlbGVjdChjb2xkLCBob3QsIGQueiA+IDAuNSksXG4gICAgICAgICk7XG4gICAgICB9XG5cbiAgICAgIEBmcmFnbWVudFxuICAgICAgZm4gZGFydEZyYWdtZW50KGluOiBPdXQpIC0+IEBsb2NhdGlvbigwKSB2ZWM0ZiB7XG4gICAgICAgIHJldHVybiBpbi5jb2xvdXI7XG4gICAgICB9XG4gICAgYCxcbiAgfSk7XG4gIGNvbnN0IGRhcnRQaXBlbGluZSA9IGRldmljZS5jcmVhdGVSZW5kZXJQaXBlbGluZSh7XG4gICAgbGF5b3V0OiBcImF1dG9cIixcbiAgICB2ZXJ0ZXg6IHsgbW9kdWxlOiBkcmF3TW9kdWxlLCBlbnRyeVBvaW50OiBcImRhcnRWZXJ0ZXhcIiwgYnVmZmVyczogW2dwdS5zcXVhcmVMYXlvdXRdIH0sXG4gICAgZnJhZ21lbnQ6IHtcbiAgICAgIG1vZHVsZTogZHJhd01vZHVsZSxcbiAgICAgIGVudHJ5UG9pbnQ6IFwiZGFydEZyYWdtZW50XCIsXG4gICAgICB0YXJnZXRzOiBbeyBmb3JtYXQ6IFwicmdiYTh1bm9ybVwiLCBibGVuZDogZ3B1LmFscGhhQmxlbmQgfV0sXG4gICAgfSxcbiAgICBwcmltaXRpdmU6IHsgdG9wb2xvZ3k6IFwidHJpYW5nbGUtbGlzdFwiIH0sXG4gIH0pO1xuICBjb25zdCBkYXJ0QmluZEdyb3VwID0gZGV2aWNlLmNyZWF0ZUJpbmRHcm91cCh7XG4gICAgbGF5b3V0OiBkYXJ0UGlwZWxpbmUuZ2V0QmluZEdyb3VwTGF5b3V0KDApLFxuICAgIGVudHJpZXM6IFtcbiAgICAgIHsgYmluZGluZzogMCwgcmVzb3VyY2U6IHsgYnVmZmVyOiBidWZmZXJzLnBhcmFtcyB9IH0sXG4gICAgICB7IGJpbmRpbmc6IDEsIHJlc291cmNlOiB7IGJ1ZmZlcjogYnVmZmVycy5kYXJ0cyB9IH0sXG4gICAgXSxcbiAgfSk7XG5cbiAgLy8gVGhlIHRleHR1cmUgb250byB0aGUgY2FudmFzXG4gIGNvbnN0IHNhbXBsZXIgPSBkZXZpY2UuY3JlYXRlU2FtcGxlcih7IG1hZ0ZpbHRlcjogXCJsaW5lYXJcIiwgbWluRmlsdGVyOiBcImxpbmVhclwiIH0pO1xuICBjb25zdCBzaG93TW9kdWxlID0gZGV2aWNlLmNyZWF0ZVNoYWRlck1vZHVsZSh7XG4gICAgY29kZTogYFxuICAgICAgQGdyb3VwKDApIEBiaW5kaW5nKDApIHZhciBwaWN0dXJlOiB0ZXh0dXJlXzJkPGYzMj47XG4gICAgICBAZ3JvdXAoMCkgQGJpbmRpbmcoMSkgdmFyIHNtcDogc2FtcGxlcjtcblxuICAgICAgc3RydWN0IE91dCB7XG4gICAgICAgIEBidWlsdGluKHBvc2l0aW9uKSBwb3NpdGlvbjogdmVjNGYsXG4gICAgICAgIEBsb2NhdGlvbigwKSB1djogdmVjMmYsXG4gICAgICB9XG5cbiAgICAgIEB2ZXJ0ZXhcbiAgICAgIGZuIHNob3dWZXJ0ZXgoQGxvY2F0aW9uKDApIGNvcm5lcjogdmVjMmYpIC0+IE91dCB7XG4gICAgICAgIHJldHVybiBPdXQoXG4gICAgICAgICAgdmVjNGYoY29ybmVyLCAwLjAsIDEuMCksXG4gICAgICAgICAgdmVjMmYoY29ybmVyLnggKiAwLjUgKyAwLjUsIDAuNSAtIGNvcm5lci55ICogMC41KSxcbiAgICAgICAgKTtcbiAgICAgIH1cblxuICAgICAgQGZyYWdtZW50XG4gICAgICBmbiBzaG93RnJhZ21lbnQoaW46IE91dCkgLT4gQGxvY2F0aW9uKDApIHZlYzRmIHtcbiAgICAgICAgcmV0dXJuIHRleHR1cmVTYW1wbGUocGljdHVyZSwgc21wLCBpbi51dik7XG4gICAgICB9XG4gICAgYCxcbiAgfSk7XG4gIGNvbnN0IHNob3dQaXBlbGluZSA9IGRldmljZS5jcmVhdGVSZW5kZXJQaXBlbGluZSh7XG4gICAgbGF5b3V0OiBcImF1dG9cIixcbiAgICB2ZXJ0ZXg6IHsgbW9kdWxlOiBzaG93TW9kdWxlLCBlbnRyeVBvaW50OiBcInNob3dWZXJ0ZXhcIiwgYnVmZmVyczogW2dwdS5zcXVhcmVMYXlvdXRdIH0sXG4gICAgZnJhZ21lbnQ6IHsgbW9kdWxlOiBzaG93TW9kdWxlLCBlbnRyeVBvaW50OiBcInNob3dGcmFnbWVudFwiLCB0YXJnZXRzOiBbeyBmb3JtYXQgfV0gfSxcbiAgICBwcmltaXRpdmU6IHsgdG9wb2xvZ3k6IFwidHJpYW5nbGUtbGlzdFwiIH0sXG4gIH0pO1xuICBjb25zdCBzaG93QmluZEdyb3VwID0gZGV2aWNlLmNyZWF0ZUJpbmRHcm91cCh7XG4gICAgbGF5b3V0OiBzaG93UGlwZWxpbmUuZ2V0QmluZEdyb3VwTGF5b3V0KDApLFxuICAgIGVudHJpZXM6IFtcbiAgICAgIHsgYmluZGluZzogMCwgcmVzb3VyY2U6IHBpY3R1cmUuY3JlYXRlVmlldygpIH0sXG4gICAgICB7IGJpbmRpbmc6IDEsIHJlc291cmNlOiBzYW1wbGVyIH0sXG4gICAgXSxcbiAgfSk7XG5cbiAgLy8gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSB0aGUgc3RhdGVcbiAgY29uc3QgcmVhZGJhY2sgPSBncHUucmVhZGJhY2soZGV2aWNlLCBbeyBidWZmZXI6IGJ1ZmZlcnMudG90YWxzLCBieXRlczogMTIgfV0pO1xuICBjb25zdCBzYW1wbGVFdmVyeSA9IDY7IC8vIGZyYW1lcyBiZXR3ZWVuIHJlYWRzIG9mIHRoZSBjb3VudGVyc1xuICBsZXQgZnJhbWVDb3VudCA9IDA7XG4gIGxldCBlcG9jaCA9IDA7IC8vIGJ1bXBlZCBvbiByZXNldCwgc28gYSByZWFkIGluIGZsaWdodCBmcm9tIGJlZm9yZSBpcyBkcm9wcGVkXG4gIGxldCBwcmV2aW91cyA9IFswLCAwLCAwXTsgLy8gdGhlIEdQVSdzICh3cmFwcGluZywgMzItYml0KSBjb3VudGVycyBhdCB0aGUgbGFzdCByZWFkXG4gIGNvbnN0IHRvdGFsID0gWzAsIDAsIDBdOyAvLyBkYXJ0cywgZGFydHMgaW5zaWRlLCByZWZlcmVuY2UgZ3JpZCBwb2ludHMgaW5zaWRlXG4gIGNvbnN0IHNlcmllcyA9IFtdOyAvLyB7TiwgYXJlYX06IHRoZSBlc3RpbWF0ZSBhcyB0aGUgZGFydHMgcGlsZSB1cFxuICBsZXQgb3dlZCA9IDA7IC8vIGRhcnRzIGR1ZSBidXQgbm90IHlldCB0aHJvd25cbiAgbGV0IGNodW5rID0gMDsgLy8gcmVmZXJlbmNlIGdyaWQgc2xpY2VzIHRlc3RlZCBzbyBmYXJcbiAgbGV0IGNsZWFyUGljdHVyZSA9IHRydWU7IC8vIGNsZWFyIHRoZSBwaWN0dXJlIG9uIHRoZSBuZXh0IGZyYW1lXG4gIGxldCBsYXN0VGltZSA9IG51bGw7XG5cbiAgY29uc3QgW2FyZWFIb3N0LCBlcnJvckhvc3RdID0gY2hhcnRzLmNoaWxkcmVuO1xuICBjb25zdCBkcmF3ID0gdWkucGxvdHRlcihQbG90KTtcblxuICBjb25zdCByZWZlcmVuY2UgPSAoKSA9PlxuICAgIGNodW5rID49IGdyaWRDaHVua3MgJiYgdG90YWxbMl0gPiAwID8gKGJveEFyZWEgKiB0b3RhbFsyXSkgLyAoZ3JpZENvbHVtbnMgKiBncmlkUm93cykgOiBudWxsO1xuXG4gIC8vIFRoZSBzcHJlYWQgb2YgdGhlIHJhbmRvbSBlc3RpbWF0ZSBhZnRlciBOIGRhcnRzOiBuIGluc2lkZSBpcyBiaW5vbWlhbFxuICBjb25zdCBzcHJlYWQgPSAoTiwgcCkgPT4gYm94QXJlYSAqIE1hdGguc3FydCgocCAqICgxIC0gcCkpIC8gTik7XG5cbiAgLy8gVGhlIGFyZWEgZXN0aW1hdGUgd2l0aCBpdHMgc3RhbmRhcmQgZXJyb3IsIHRvIHRoZSBkaWdpdHMgdGhhdCBlcnJvciBqdXN0aWZpZXNcbiAgZnVuY3Rpb24gY3VycmVudCgpIHtcbiAgICBjb25zdCBbTiwgaW5zaWRlXSA9IHRvdGFsO1xuICAgIGlmIChpbnNpZGUgPT09IDAgfHwgaW5zaWRlID09PSBOKSByZXR1cm4gbnVsbDtcbiAgICBjb25zdCBwID0gaW5zaWRlIC8gTjtcbiAgICBjb25zdCBlc3RpbWF0ZSA9IGJveEFyZWEgKiBwO1xuICAgIGNvbnN0IHNpZ21hID0gc3ByZWFkKE4sIHApO1xuICAgIGNvbnN0IHJvdW5kZWQgPSBOdW1iZXIoc2lnbWEudG9QcmVjaXNpb24oMSkpO1xuICAgIGNvbnN0IGRlY2ltYWxzID0gTWF0aC5tYXgoMCwgLU1hdGguZmxvb3IoTWF0aC5sb2cxMChyb3VuZGVkKSkpO1xuICAgIHJldHVybiB7XG4gICAgICBOLFxuICAgICAgZXN0aW1hdGUsXG4gICAgICBzaWdtYSxcbiAgICAgIHRleHQ6IGBhcmVhIOKJiCAke2VzdGltYXRlLnRvRml4ZWQoZGVjaW1hbHMpfSDCsSAke3JvdW5kZWQudG9GaXhlZChkZWNpbWFscyl9YCxcbiAgICB9O1xuICB9XG5cbiAgZnVuY3Rpb24gZHJhd0NoYXJ0cygpIHtcbiAgICBjb25zdCBub3cgPSBjdXJyZW50KCk7XG4gICAgY29uc3QgcmVmID0gcmVmZXJlbmNlKCk7XG4gICAgY29uc3QgeEF4aXMgPSB7IGxhYmVsOiBcImRhcnRzIHRocm93blwiLCB0eXBlOiBcImxvZ1wiLCBncmlkOiB0cnVlLCBkb21haW46IFsxMCwgMWUxMF0gfTtcbiAgICBjb25zdCBwUmVmID0gcmVmID09PSBudWxsID8gMC4xMyA6IHJlZiAvIGJveEFyZWE7XG4gICAgY29uc3QgYmFuZCA9XG4gICAgICByZWYgPT09IG51bGxcbiAgICAgICAgPyBbXVxuICAgICAgICA6IEFycmF5LmZyb20oeyBsZW5ndGg6IDYwIH0sIChfLCBrKSA9PiAxMCAqKiAoMSArICg5ICogaykgLyA1OSkpLm1hcCgoTikgPT4gKHtcbiAgICAgICAgICAgIE4sXG4gICAgICAgICAgICBsb3c6IHJlZiAtIHNwcmVhZChOLCBwUmVmKSxcbiAgICAgICAgICAgIGhpZ2g6IHJlZiArIHNwcmVhZChOLCBwUmVmKSxcbiAgICAgICAgICAgIHNpZ21hOiBzcHJlYWQoTiwgcFJlZiksXG4gICAgICAgICAgfSkpO1xuXG4gICAgZHJhdyhhcmVhSG9zdCwge1xuICAgICAgeDogeEF4aXMsXG4gICAgICB5OiB7IGxhYmVsOiBcImVzdGltYXRlIG9mIHRoZSBhcmVhXCIsIGdyaWQ6IHRydWUsIGRvbWFpbjogWzEuMiwgMS45XSB9LFxuICAgICAgbWFya3M6IFtcbiAgICAgICAgUGxvdC5hcmVhWShiYW5kLCB7IHg6IFwiTlwiLCB5MTogXCJsb3dcIiwgeTI6IFwiaGlnaFwiLCBmaWxsT3BhY2l0eTogMC4xNSwgY2xpcDogdHJ1ZSB9KSxcbiAgICAgICAgLi4uKHJlZiA9PT0gbnVsbFxuICAgICAgICAgID8gW11cbiAgICAgICAgICA6IFtcbiAgICAgICAgICAgICAgUGxvdC5ydWxlWShbcmVmXSwge1xuICAgICAgICAgICAgICAgIHN0cm9rZTogXCJjdXJyZW50Q29sb3JcIixcbiAgICAgICAgICAgICAgICBzdHJva2VPcGFjaXR5OiAwLjYsXG4gICAgICAgICAgICAgICAgc3Ryb2tlRGFzaGFycmF5OiBcIjQgM1wiLFxuICAgICAgICAgICAgICB9KSxcbiAgICAgICAgICAgIF0pLFxuICAgICAgICBQbG90LmxpbmUoc2VyaWVzLCB7IHg6IFwiTlwiLCB5OiBcImFyZWFcIiwgc3Ryb2tlOiBcIiNGRjQ4MzRcIiwgY2xpcDogdHJ1ZSB9KSxcbiAgICAgICAgLi4uKG5vd1xuICAgICAgICAgID8gW1xuICAgICAgICAgICAgICBQbG90LnRleHQoW25vdy50ZXh0XSwge1xuICAgICAgICAgICAgICAgIGZyYW1lQW5jaG9yOiBcInRvcC1sZWZ0XCIsXG4gICAgICAgICAgICAgICAgZHg6IDEwLFxuICAgICAgICAgICAgICAgIGR5OiA4LFxuICAgICAgICAgICAgICAgIGZvbnRTaXplOiAyMCxcbiAgICAgICAgICAgICAgICBmb250V2VpZ2h0OiA2MDAsXG4gICAgICAgICAgICAgICAgZmlsbDogXCJjdXJyZW50Q29sb3JcIixcbiAgICAgICAgICAgICAgfSksXG4gICAgICAgICAgICBdXG4gICAgICAgICAgOiBbXSksXG4gICAgICBdLFxuICAgIH0pO1xuXG4gICAgY29uc3QgZXJyb3JzID1cbiAgICAgIHJlZiA9PT0gbnVsbFxuICAgICAgICA/IFtdXG4gICAgICAgIDogc2VyaWVzXG4gICAgICAgICAgICAubWFwKChwKSA9PiAoeyBOOiBwLk4sIGVycm9yOiBNYXRoLmFicyhwLmFyZWEgLSByZWYpIH0pKVxuICAgICAgICAgICAgLmZpbHRlcigocCkgPT4gcC5lcnJvciA+IDApO1xuICAgIGRyYXcoZXJyb3JIb3N0LCB7XG4gICAgICB4OiB4QXhpcyxcbiAgICAgIHk6IHsgbGFiZWw6IFwiZXJyb3I6IGRpc3RhbmNlIGZyb20gdGhlIHJlZmVyZW5jZVwiLCB0eXBlOiBcImxvZ1wiLCBncmlkOiB0cnVlLCBkb21haW46IFsxZS02LCAzXSB9LFxuICAgICAgbWFya3M6IFtcbiAgICAgICAgUGxvdC5saW5lKGJhbmQsIHtcbiAgICAgICAgICB4OiBcIk5cIixcbiAgICAgICAgICB5OiBcInNpZ21hXCIsXG4gICAgICAgICAgc3Ryb2tlOiBcImN1cnJlbnRDb2xvclwiLFxuICAgICAgICAgIHN0cm9rZURhc2hhcnJheTogXCI0IDNcIixcbiAgICAgICAgfSksXG4gICAgICAgIFBsb3QuZG90KGVycm9ycywgeyB4OiBcIk5cIiwgeTogXCJlcnJvclwiLCByOiAyLCBmaWxsOiBcIiNGRjQ4MzRcIiB9KSxcbiAgICAgIF0sXG4gICAgfSk7XG4gIH1cblxuICBmdW5jdGlvbiByZWNvcmQoKSB7XG4gICAgY29uc3QgW04sIGluc2lkZV0gPSB0b3RhbDtcbiAgICBpZiAoaW5zaWRlID09PSAwKSByZXR1cm47XG4gICAgY29uc3QgbGFzdCA9IHNlcmllc1tzZXJpZXMubGVuZ3RoIC0gMV07XG4gICAgaWYgKCFsYXN0IHx8IE4gPj0gMS4xNSAqIGxhc3QuTikgc2VyaWVzLnB1c2goeyBOLCBhcmVhOiAoYm94QXJlYSAqIGluc2lkZSkgLyBOIH0pO1xuICAgIGRyYXdDaGFydHMoKTtcbiAgfVxuXG4gIC8vIFN0YXJ0IGFnYWluLCBpbmNsdWRpbmcgdGhlIHJlZmVyZW5jZSBmb3IgdGhlIGN1cnJlbnQgbnVtYmVyIG9mIGl0ZXJhdGlvbnNcbiAgZnVuY3Rpb24gcmVzZXQoKSB7XG4gICAgZXBvY2grKztcbiAgICB0b3RhbC5maWxsKDApO1xuICAgIHByZXZpb3VzID0gWzAsIDAsIDBdO1xuICAgIHNlcmllcy5sZW5ndGggPSAwO1xuICAgIG93ZWQgPSAwO1xuICAgIGNodW5rID0gMDtcbiAgICBjbGVhclBpY3R1cmUgPSB0cnVlO1xuICAgIGRldmljZS5xdWV1ZS53cml0ZUJ1ZmZlcihidWZmZXJzLnRvdGFscywgMCwgbmV3IFVpbnQzMkFycmF5KDMpKTtcbiAgICBkcmF3Q2hhcnRzKCk7XG4gIH1cbiAgaXRlcmF0aW9uc0lucHV0LmFkZEV2ZW50TGlzdGVuZXIoXCJpbnB1dFwiLCByZXNldCk7XG4gIGludmFsaWRhdGlvbi50aGVuKCgpID0+IGl0ZXJhdGlvbnNJbnB1dC5yZW1vdmVFdmVudExpc3RlbmVyKFwiaW5wdXRcIiwgcmVzZXQpKTtcblxuICBjb25zdCByZXNldEJ1dHRvbiA9IHVpLmJ1dHRvbih7IGxhYmVsOiBcIlJlc3RhcnRcIiwgb25DbGljazogcmVzZXQgfSk7XG4gIGNvbnN0IHJlYWRvdXQgPSB1aS5yZWFkb3V0KCk7XG4gIGRyYXdDaGFydHMoKTtcblxuICBmdW5jdGlvbiBmcmFtZShtcykge1xuICAgIC8vIFNlY29uZHMgc2luY2UgdGhlIGxhc3QgZnJhbWUsIGNhcHBlZCBzbyBhIHBhdXNlIGRvZXMgbm90IGJlY29tZSBhIGZsb29kXG4gICAgY29uc3QgZHQgPSBsYXN0VGltZSA9PT0gbnVsbCA/IDAgOiBNYXRoLm1pbigobXMgLSBsYXN0VGltZSkgLyAxMDAwLCAwLjEpO1xuICAgIGxhc3RUaW1lID0gbXM7XG4gICAgb3dlZCArPSAxMCAqKiByYXRlSW5wdXQudmFsdWUgKiBkdDtcbiAgICBjb25zdCBkdWUgPSBNYXRoLmZsb29yKG93ZWQpO1xuICAgIGNvbnN0IGVuY29kZXIgPSBkZXZpY2UuY3JlYXRlQ29tbWFuZEVuY29kZXIoKTtcblxuICAgIC8vIFNwcmVhZCB0aGUgZGFydHMgb3ZlciB0aHJlYWRzLCBhdCBtb3N0IDY0IGEgdGhyZWFkXG4gICAgbGV0IHRocmVhZHMgPSAwO1xuICAgIGxldCBwZXJUaHJlYWQgPSAwO1xuICAgIGxldCBkcmF3biA9IDA7XG4gICAgaWYgKGR1ZSA+PSAxKSB7XG4gICAgICB0aHJlYWRzID0gTWF0aC5taW4obWF4VGhyZWFkcywgTWF0aC5jZWlsKGR1ZSAvIDY0KSk7XG4gICAgICBwZXJUaHJlYWQgPSBNYXRoLmNlaWwoZHVlIC8gdGhyZWFkcyk7XG4gICAgICBvd2VkIC09IHRocmVhZHMgKiBwZXJUaHJlYWQ7XG4gICAgICBkcmF3biA9IE1hdGgubWluKHRocmVhZHMsIG1heERyYXduUGVyRnJhbWUpO1xuICAgIH1cblxuICAgIHBhcmFtVmlldy5zZXRGbG9hdDMyKDAsIG9yaWdpblswXSwgdHJ1ZSk7XG4gICAgcGFyYW1WaWV3LnNldEZsb2F0MzIoNCwgb3JpZ2luWzFdLCB0cnVlKTtcbiAgICBwYXJhbVZpZXcuc2V0RmxvYXQzMig4LCBzaXplWzBdLCB0cnVlKTtcbiAgICBwYXJhbVZpZXcuc2V0RmxvYXQzMigxMiwgc2l6ZVsxXSwgdHJ1ZSk7XG4gICAgcGFyYW1WaWV3LnNldFVpbnQzMigxNiwgaXRlcmF0aW9uc0lucHV0LnZhbHVlLCB0cnVlKTtcbiAgICBwYXJhbVZpZXcuc2V0VWludDMyKDIwLCBwZXJUaHJlYWQsIHRydWUpO1xuICAgIHBhcmFtVmlldy5zZXRVaW50MzIoMjQsIHRocmVhZHMsIHRydWUpO1xuICAgIHBhcmFtVmlldy5zZXRVaW50MzIoMjgsIGRyYXduLCB0cnVlKTtcbiAgICBjb25zdCBkb0dyaWQgPSBjaHVuayA8IGdyaWRDaHVua3M7XG4gICAgcGFyYW1WaWV3LnNldFVpbnQzMigzMiwgY2h1bmsgKiByb3dzUGVyQ2h1bmssIHRydWUpO1xuICAgIHBhcmFtVmlldy5zZXRVaW50MzIoMzYsIHJvd3NQZXJDaHVuaywgdHJ1ZSk7XG4gICAgZGV2aWNlLnF1ZXVlLndyaXRlQnVmZmVyKGJ1ZmZlcnMucGFyYW1zLCAwLCBwYXJhbUJ5dGVzKTtcblxuICAgIGNvbnN0IGNvbXB1dGUgPSBlbmNvZGVyLmJlZ2luQ29tcHV0ZVBhc3MoKTtcbiAgICBpZiAoZG9HcmlkKSB7XG4gICAgICBjb21wdXRlLnNldFBpcGVsaW5lKGdyaWRQaXBlbGluZSk7XG4gICAgICBjb21wdXRlLnNldEJpbmRHcm91cCgwLCBncmlkQmluZEdyb3VwKTtcbiAgICAgIGNvbXB1dGUuZGlzcGF0Y2hXb3JrZ3JvdXBzKGdyaWRDb2x1bW5zIC8gMTYsIHJvd3NQZXJDaHVuayAvIDE2KTtcbiAgICAgIGNodW5rKys7XG4gICAgfVxuICAgIGlmICh0aHJlYWRzID4gMCkge1xuICAgICAgY29tcHV0ZS5zZXRQaXBlbGluZShkcm9wUGlwZWxpbmUpO1xuICAgICAgY29tcHV0ZS5zZXRCaW5kR3JvdXAoMCwgZHJvcEJpbmRHcm91cCk7XG4gICAgICBjb21wdXRlLmRpc3BhdGNoV29ya2dyb3VwcyhNYXRoLmNlaWwodGhyZWFkcyAvIGdyb3VwU2l6ZSkpO1xuICAgIH1cbiAgICBjb21wdXRlLmVuZCgpO1xuXG4gICAgLy8gTmV3IGRhcnRzIGludG8gdGhlIHBpY3R1cmUgKGNsZWFyZWQgYWZ0ZXIgYSByZXNldCksIHRoZW4gdGhlIHBpY3R1cmUgdG8gdGhlXG4gICAgLy8gY2FudmFzXG4gICAgaWYgKGNsZWFyUGljdHVyZSB8fCBkcmF3biA+IDApIHtcbiAgICAgIGNvbnN0IHBpY3R1cmVQYXNzID0gZW5jb2Rlci5iZWdpblJlbmRlclBhc3Moe1xuICAgICAgICBjb2xvckF0dGFjaG1lbnRzOiBbXG4gICAgICAgICAge1xuICAgICAgICAgICAgdmlldzogcGljdHVyZS5jcmVhdGVWaWV3KCksXG4gICAgICAgICAgICBjbGVhclZhbHVlOiBiYWNrZ3JvdW5kLFxuICAgICAgICAgICAgbG9hZE9wOiBjbGVhclBpY3R1cmUgPyBcImNsZWFyXCIgOiBcImxvYWRcIixcbiAgICAgICAgICAgIHN0b3JlT3A6IFwic3RvcmVcIixcbiAgICAgICAgICB9LFxuICAgICAgICBdLFxuICAgICAgfSk7XG4gICAgICBpZiAoZHJhd24gPiAwKSB7XG4gICAgICAgIHBpY3R1cmVQYXNzLnNldFBpcGVsaW5lKGRhcnRQaXBlbGluZSk7XG4gICAgICAgIHBpY3R1cmVQYXNzLnNldEJpbmRHcm91cCgwLCBkYXJ0QmluZEdyb3VwKTtcbiAgICAgICAgcGljdHVyZVBhc3Muc2V0VmVydGV4QnVmZmVyKDAsIGNvcm5lckJ1ZmZlcik7XG4gICAgICAgIHBpY3R1cmVQYXNzLmRyYXcoNiwgZHJhd24pO1xuICAgICAgfVxuICAgICAgcGljdHVyZVBhc3MuZW5kKCk7XG4gICAgICBjbGVhclBpY3R1cmUgPSBmYWxzZTtcbiAgICB9XG4gICAgY29uc3QgcGFzcyA9IGdwdS5iZWdpblJlbmRlclBhc3MoZW5jb2RlciwgY29udGV4dCk7XG4gICAgcGFzcy5zZXRQaXBlbGluZShzaG93UGlwZWxpbmUpO1xuICAgIHBhc3Muc2V0QmluZEdyb3VwKDAsIHNob3dCaW5kR3JvdXApO1xuICAgIHBhc3Muc2V0VmVydGV4QnVmZmVyKDAsIGNvcm5lckJ1ZmZlcik7XG4gICAgcGFzcy5kcmF3KDYpO1xuICAgIHBhc3MuZW5kKCk7XG5cbiAgICBjb25zdCBzYW1wbGUgPSAhcmVhZGJhY2sucGVuZGluZyAmJiArK2ZyYW1lQ291bnQgJSBzYW1wbGVFdmVyeSA9PT0gMDtcbiAgICBpZiAoc2FtcGxlKSByZWFkYmFjay5jb3B5KGVuY29kZXIpO1xuICAgIGRldmljZS5xdWV1ZS5zdWJtaXQoW2VuY29kZXIuZmluaXNoKCldKTtcbiAgICBpZiAoc2FtcGxlKSB7XG4gICAgICBjb25zdCBtaW5lID0gZXBvY2g7XG4gICAgICByZWFkYmFjay5yZWFkKChidWZmZXIpID0+IHtcbiAgICAgICAgaWYgKG1pbmUgIT09IGVwb2NoKSByZXR1cm47IC8vIGZyb20gYmVmb3JlIGEgcmVzZXRcbiAgICAgICAgY29uc3QgY291bnRlcnMgPSBuZXcgVWludDMyQXJyYXkoYnVmZmVyKTtcbiAgICAgICAgLy8gVGhlIEdQVSBjb3VudGVycyB3cmFwIGF0IDJeMzI6IHRha2UgdGhlIGRpZmZlcmVuY2UgbW9kdWxvIDJeMzJcbiAgICAgICAgZm9yIChsZXQgayA9IDA7IGsgPCAzOyBrKyspIHtcbiAgICAgICAgICB0b3RhbFtrXSArPSAoY291bnRlcnNba10gLSBwcmV2aW91c1trXSkgPj4+IDA7XG4gICAgICAgICAgcHJldmlvdXNba10gPSBjb3VudGVyc1trXTtcbiAgICAgICAgfVxuICAgICAgICByZWNvcmQoKTtcbiAgICAgIH0pO1xuICAgIH1cblxuICAgIGlmIChmcmFtZUNvdW50ICUgNiA9PT0gMCkge1xuICAgICAgY29uc3Qgbm93ID0gY3VycmVudCgpO1xuICAgICAgY29uc3QgcmVmID0gcmVmZXJlbmNlKCk7XG4gICAgICByZWFkb3V0LnRleHRDb250ZW50ID1cbiAgICAgICAgYCR7dG90YWxbMF0udG9Mb2NhbGVTdHJpbmcoKX0gZGFydHMgwrcgYCArXG4gICAgICAgIChub3cgPyBub3cudGV4dCA6IFwiYXJlYSDigJNcIikgK1xuICAgICAgICAocmVmID09PSBudWxsID8gXCIgwrcgbWVhc3VyaW5nIHRoZSByZWZlcmVuY2XigKZcIiA6IGAgwrcgcmVmZXJlbmNlICR7cmVmLnRvRml4ZWQoNCl9YCk7XG4gICAgfVxuICB9XG5cbiAgZ3B1LnJ1bihpbnZhbGlkYXRpb24sIGRldmljZSwgZnJhbWUpO1xuXG4gIC8vIFRoZSBjYW52YXMgd2l0aCB0aGUgY29udHJvbHMgbGFpZCBvdmVyIGl0cyBjb3JuZXJcbiAgeWllbGQgdWkuc3RhZ2UoY2FudmFzLCBbcmF0ZUlucHV0LCBpdGVyYXRpb25zSW5wdXQsIHJlc2V0QnV0dG9uLCByZWFkb3V0XSk7XG59XG4ifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJjZWxsTmFtZSI6Im9qcy1jZWxsLTQiLCJpbmxpbmUiOmZhbHNlLCJzb3VyY2UiOiJjaGFydHMgPSB7XG4gIC8vIFR3byBlbXB0eSBob3N0czsgdGhlIHNpbXVsYXRpb24gY2VsbCBhYm92ZSBkcmF3cyBpbnRvIHRoZW0gYXMgZGF0YSBhcnJpdmVzXG4gIGNvbnN0IHVpID0gYXdhaXQgaW1wb3J0KG5ldyBVUkwoXCIuLi9saWIvdWkuanNcIiwgZG9jdW1lbnQuYmFzZVVSSSkuaHJlZik7XG4gIHJldHVybiB1aS5jaGFydEhvc3RzKFtcImFyZWFcIiwgXCJlcnJvclwiXSk7XG59XG4ifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6InNoaW55SW5wdXQoJ3JhdGUnKSJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoic2hpbnlJbnB1dCgnaXRlcmF0aW9ucycpIn1dfQ==
+</script>
+<script type="module">
+if (window.location.protocol === "file:") { alert("The OJS runtime does not work with file:// URLs. Please use a web server to view this document."); }
+window._ojs.paths.runtimeToDoc = "../../webgpu-mandelbrot-area";
+window._ojs.paths.runtimeToRoot = "../..";
+window._ojs.paths.docToRoot = "..";
+window._ojs.selfContained = false;
+window._ojs.runtime.interpretFromScriptTags();
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/ogden\.eu");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p><em>‘Think deeply of simple things.’</em></p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
