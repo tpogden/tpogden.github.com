@@ -235,15 +235,27 @@ viewof colouring = {
         cellInfo[i] = vec2u(c, atomicAdd(&cellStart[c], 1u));
       }
 
-      @compute @workgroup_size(1)
-      fn scan() {
+      // One workgroup: each thread sums a chunk of cells, the chunk totals give each
+      // thread its offset, then each thread turns its own chunk into running starts.
+      var<workgroup> partial: array<u32, 256>;
+
+      @compute @workgroup_size(256)
+      fn scan(@builtin(local_invocation_id) lid: vec3u) {
+        let chunk = (sim.cells + 255u) / 256u;
+        let begin = min(lid.x * chunk, sim.cells);
+        let end = min(begin + chunk, sim.cells);
         var sum = 0u;
-        for (var c = 0u; c < sim.cells; c++) {
+        for (var c = begin; c < end; c++) { sum += atomicLoad(&cellStart[c]); }
+        partial[lid.x] = sum;
+        workgroupBarrier();
+        var run = 0u;
+        for (var t = 0u; t < lid.x; t++) { run += partial[t]; }
+        for (var c = begin; c < end; c++) {
           let n = atomicLoad(&cellStart[c]);
-          atomicStore(&cellStart[c], sum);
-          sum += n;
+          atomicStore(&cellStart[c], run);
+          run += n;
         }
-        atomicStore(&cellStart[sim.cells], sum);
+        if (lid.x == 255u) { atomicStore(&cellStart[sim.cells], run); }
       }
 
       @compute @workgroup_size(64)
@@ -265,8 +277,6 @@ viewof colouring = {
         let gy = i32(sim.grid.y);
 
         var a = vec2f(0.0);
-        var near = 0.0;
-        var bond = vec2f(0.0); // sum of e^(6 i theta) over the first shell
         for (var oy = -1; oy <= 1; oy++) {
           // The box is not periodic vertically: no cell above the ceiling or
           // below the floor
@@ -287,7 +297,40 @@ viewof colouring = {
                 let s6 = s2 * s2 * s2;
                 a += d * (24.0 * s2 * s6 * (2.0 * s6 - 1.0));
               }
-              if (r2 < SHELL2) {
+            }
+          }
+        }
+        accelerations[i] = a;
+      }
+
+      // The colouring fields. Only the picture needs them, so this runs once a frame,
+      // not every step: the trigonometry is too costly to pay thirty times a frame.
+      @compute @workgroup_size(64)
+      fn measure(@builtin(global_invocation_id) id: vec3u) {
+        let i = id.x;
+        if (i >= sim.count) { return; }
+        let here = positions[i];
+        let cell = cellInfo[i].x;
+        let cx = i32(cell % sim.grid.x);
+        let cy = i32(cell / sim.grid.x);
+        let gx = i32(sim.grid.x);
+        let gy = i32(sim.grid.y);
+
+        var near = 0.0;
+        var bond = vec2f(0.0); // sum of e^(6 i theta) over the first shell
+        for (var oy = -1; oy <= 1; oy++) {
+          let ny = cy + oy;
+          if (ny < 0 || ny >= gy) { continue; }
+          for (var ox = -1; ox <= 1; ox++) {
+            let nx = (cx + ox + gx) % gx;
+            let c = u32(ny) * sim.grid.x + u32(nx);
+            let end = atomicLoad(&cellStart[c + 1u]);
+            for (var k = atomicLoad(&cellStart[c]); k < end; k++) {
+              let j = sorted[k];
+              if (j == i) { continue; }
+              var d = here - positions[j];
+              d.x -= sim.box.x * round(d.x / sim.box.x);
+              if (dot(d, d) < SHELL2) {
                 near += 1.0;
                 let theta = atan2(d.y, d.x);
                 bond += vec2f(cos(6.0 * theta), sin(6.0 * theta));
@@ -295,7 +338,6 @@ viewof colouring = {
             }
           }
         }
-        accelerations[i] = a;
         // An atom needs a real neighbourhood to count as ordered
         var order = 0.0;
         var angle = 0.5;
@@ -352,7 +394,7 @@ viewof colouring = {
   const bindGroupLayout = device.createBindGroupLayout({ entries: layoutEntries });
   const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
   const pipelines = Object.fromEntries(
-    ["clearCells", "assign", "scan", "scatter", "forces", "integrate"].map((entryPoint) => [
+    ["clearCells", "assign", "scan", "scatter", "forces", "measure", "integrate"].map((entryPoint) => [
       entryPoint,
       device.createComputePipeline({ layout: pipelineLayout, compute: { module, entryPoint } }),
     ])
@@ -666,6 +708,9 @@ viewof colouring = {
       compute.setPipeline(pipelines.integrate);
       compute.dispatchWorkgroups(atomGroups);
     }
+    // The colouring fields, from the cell lists of the last step
+    compute.setPipeline(pipelines.measure);
+    compute.dispatchWorkgroups(atomGroups);
     compute.end();
 
     const pass = gpu.beginRenderPass(encoder, context);
