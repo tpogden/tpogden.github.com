@@ -28,7 +28,7 @@ Cold, the neighbours win and the whole sheet is one colour: a magnet. Hot, the s
 wins and it is static: no magnet at all. This is the
 [Ising model](https://en.wikipedia.org/wiki/Ising_model).
 
-It runs slowly on purpose, a few sweeps a second, so the flips can be followed; **Sweeps/s**
+It runs slowly on purpose, ten sweeps a second, so the flips can be followed; **Sweeps/s**
 speeds it up. **Drag Temperature upwards** from the start. The sheet is solid red at first, with a
 few specks of dark that the heat has flipped. Somewhere near 2.27 it falls apart.
 Then press **Quench**, which drops the temperature straight back to 1.5: it does not
@@ -94,7 +94,7 @@ viewof speed = {
     min: 0,
     max: 3,
     step: 0.5,
-    value: 0.5,
+    value: 1,
     format: (v) => String(Math.round(10 ** v)),
   });
 }
