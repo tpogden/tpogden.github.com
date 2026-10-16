@@ -37,27 +37,6 @@ dimension chosen with the slider, and the circle is the ball's edge in that slic
 two dimensions the red darts fill the circle. In higher ones a dart can land inside the
 circle and still be a miss, because some other coordinate carried it out of the ball.
 
-Three things to watch:
-
-1. _The error doesn't care about the dimension._ The right chart follows the estimate
-    of the chosen dimension. It is the same $1/\sqrt{N}$ as the sticks and the fractal,
-    with a hundred times more darts for one more digit.
-
-2. _The cost does._ What the darts have to measure is a fraction, and the ball takes up
-    a smaller and smaller part of its cube: about 0.8 in two dimensions, 0.16 in five,
-    0.0025 in ten and $2.5 \times 10^{-8}$ in twenty. The relative error after $N$
-    darts is $\sqrt{(1-p)/(pN)}$, so a rare hit costs a lot of darts. The grey lines on
-    the right chart are that for every dimension: the same slope, each one higher than
-    the last.
-
-3. _The volume peaks and falls._ The ball's volume grows to a maximum of about 5.26
-    in five dimensions and then shrinks towards nothing, while the cube's is $2^d$.
-    Almost all of a high-dimensional cube is in its corners, far from any ball.
-
-When no dart has hit yet, the left chart shows a hollow triangle at $3/N$, the most the
-fraction could be and still not have been seen (the "rule of three"). Bars on the
-estimates are one standard error.
-
 The slider is the number of darts a second, and **Dimension** is the one the picture
 and the right chart follow; it does not restart the run, **Restart** does. At the
 top speed the twenty-dimensional ball gets a few hits a second.
@@ -595,6 +574,33 @@ viewof dimension = {
   yield ui.stage(canvas, [rateInput, dimensionInput, resetButton, readout]);
 }
 ```
+
+## Analysis
+
+The left chart is the share of the cube inside the ball in every dimension: the darts'
+estimate in red, and the exact value dashed. The right chart follows the dimension
+chosen with the slider.
+
+Three things to look for:
+
+1. _The error doesn't care about the dimension._ The right chart follows the estimate
+    of the chosen dimension. It is the same $1/\sqrt{N}$ as the sticks and the fractal,
+    with a hundred times more darts for one more digit.
+
+2. _The cost does._ What the darts have to measure is a fraction, and the ball takes up
+    a smaller and smaller part of its cube: about 0.8 in two dimensions, 0.16 in five,
+    0.0025 in ten and $2.5 \times 10^{-8}$ in twenty. The relative error after $N$
+    darts is $\sqrt{(1-p)/(pN)}$, so a rare hit costs a lot of darts. The grey lines on
+    the right chart are that for every dimension: the same slope, each one higher than
+    the last.
+
+3. _The volume peaks and falls._ The ball's volume grows to a maximum of about 5.26
+    in five dimensions and then shrinks towards nothing, while the cube's is $2^d$.
+    Almost all of a high-dimensional cube is in its corners, far from any ball.
+
+When no dart has hit yet, the left chart shows a hollow triangle at $3/N$, the most the
+fraction could be and still not have been seen (the "rule of three"). Bars on the
+estimates are one standard error.
 
 ```{ojs}
 //| echo: false
