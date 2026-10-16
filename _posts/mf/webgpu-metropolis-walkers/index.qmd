@@ -1,5 +1,5 @@
 ---
-title: "016: Running Up That Hill (with Metropolis)"
+title: "016: Running Up That Hill (A Deal With Metropolis)"
 date: "2026-10-15"
 categories: [mf]
 page-layout: article
