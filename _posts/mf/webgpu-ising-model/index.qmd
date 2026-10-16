@@ -28,19 +28,22 @@ Cold, the neighbours win and the whole sheet is one colour: a magnet. Hot, the s
 wins and it is static: no magnet at all. This is the
 [Ising model](https://en.wikipedia.org/wiki/Ising_model).
 
-It runs slowly on purpose, ten sweeps a second, so the flips can be followed; **Sweeps/s**
-speeds it up. **Drag Temperature upwards** from the start. The sheet is solid red at first, with a
-few specks of dark that the heat has flipped. Somewhere near 2.27 it falls apart.
-Then press **Quench**, which drops the temperature straight back to 1.5: it does not
-always return to one colour, but freezes into patches of red and dark that slowly eat
-each other, like the grains in [twenty thousand atoms](../webgpu-twenty-thousand-atoms/).
+The sheet starts hot, at a temperature of 3, so it is static: no magnet. Press
+**Quench**, which drops the temperature straight to 1.5, and it freezes into patches of
+red and dark that slowly eat each other, like the grains in
+[twenty thousand atoms](../webgpu-twenty-thousand-atoms/). On a small sheet one colour
+usually wins in the end. Then **drag Temperature upwards**: somewhere near 2.27 the order
+falls apart.
+
+It runs slowly on purpose, ten sweeps a second, so the flips can be followed;
+**Sweeps/s** speeds it up.
 
 ## How the computer shakes the needles
 
 This is the walker's rule from [the last post](../webgpu-metropolis-walkers/), with a
 different map. There the walker's position was a point on a landscape. Here it is
 the whole sheet: one arrangement of needles out of far too many to count, even
-for this small sheet, $2^{14{,}400}$ of them. Nobody can throw darts at "a magnet at
+for this small sheet, $2^{2{,}304}$ of them. Nobody can throw darts at "a magnet at
 temperature $T$", but a walker can feel whether a change makes things better or worse.
 Change one needle, and the same rule decides:
 
@@ -78,7 +81,7 @@ viewof temperature = {
     min: 1,
     max: 4,
     step: 0.01,
-    value: 1.5,
+    value: 3,
     format: (v) => v.toFixed(2),
   });
 }
@@ -109,10 +112,10 @@ viewof gridSize = {
     label: "Grid",
     options: [
       [64, "64×36"],
-      [160, "160×90"],
       [640, "640×360"],
+      [1280, "1280×720"],
     ],
-    value: 160,
+    value: 64,
   });
 }
 ```
@@ -142,7 +145,7 @@ viewof gridSize = {
   // The grid is 16:9 and wraps round its edges; both sides are even so the two
   // chessboard colours tile it. Buffers are made for the largest grid and the
   // chosen one uses the start of them.
-  const maxWidth = 640;
+  const maxWidth = 1280;
   const maxSites = maxWidth * ((maxWidth * 9) / 16);
   let width = gridInput.value;
   let height = (width * 9) / 16;
@@ -239,7 +242,14 @@ viewof gridSize = {
   });
 
   // --------------------------------------------------------------------- buffers
-  const startSpins = () => new Int32Array(sites).fill(1); // a cold magnet: every needle up
+  // A hot sheet: every needle up or down at random
+  const startSpins = () => {
+    const bytes = new Uint8Array(sites);
+    for (let k = 0; k < sites; k += 65536) {
+      crypto.getRandomValues(bytes.subarray(k, Math.min(sites, k + 65536)));
+    }
+    return Int32Array.from(bytes, (b) => (b & 1 ? 1 : -1));
+  };
 
   const buffers = {
     spins: gpu.storageBuffer(device, new Int32Array(maxSites)),
