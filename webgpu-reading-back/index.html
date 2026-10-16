@@ -399,19 +399,18 @@ window.Quarto = {
 
 
 <p>Building on <a href="../webgpu-gravity/">Falling Atoms</a>, the same box, but now we ask it questions. Everything so far has been one-way: JavaScript uploads buffers, the GPU simulates and draws, and the numbers never come back. To plot anything we need them back. WebGPU makes that deliberately awkward. A buffer the shaders write cannot be read directly: you copy it into a <em>staging buffer</em>, ask for it to be mapped with <a href="https://developer.mozilla.org/en-US/docs/Web/API/GPUBuffer/mapAsync"><code>mapAsync</code></a>, and wait, because the copy only happens once the GPU has finished the work queued before it. So we do it every few frames, never every frame, and the charts lag the picture a little.</p>
-<p>Two charts are drawn with <a href="https://observablehq.com/plot/">Observable Plot</a>. The left one is the energy per atom: kinetic, potential and total. Turn the thermostat off and the box is an isolated system, so the total should stay flat apart from small wiggles. That is the test of the integrator. The right one is the density of atoms against height. The dashed line is the barometric profile of an ideal gas, started at the top of the liquid pool: the vapour above follows it, while the pool below does not, because a liquid is nearly incompressible.</p>
 <div class="cell hidden">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb1" data-startfrom="37" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 36;"><span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>viewof temperature <span class="op">=</span> {</span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> ui <span class="op">=</span> <span class="cf">await</span> <span class="im">import</span>(<span class="kw">new</span> <span class="fu">URL</span>(<span class="st">"../lib/ui.js"</span><span class="op">,</span> <span class="bu">document</span><span class="op">.</span><span class="at">baseURI</span>)<span class="op">.</span><span class="at">href</span>)<span class="op">;</span></span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> ui<span class="op">.</span><span class="fu">slider</span>({</span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    <span class="dt">label</span><span class="op">:</span> <span class="st">"Temperature"</span><span class="op">,</span></span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>    <span class="dt">min</span><span class="op">:</span> <span class="fl">0.1</span><span class="op">,</span></span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>    <span class="dt">max</span><span class="op">:</span> <span class="fl">1.5</span><span class="op">,</span></span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>    <span class="dt">step</span><span class="op">:</span> <span class="fl">0.05</span><span class="op">,</span></span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>    <span class="dt">value</span><span class="op">:</span> <span class="fl">0.45</span><span class="op">,</span></span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>    <span class="dt">format</span><span class="op">:</span> (v) <span class="kw">=&gt;</span> v<span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">2</span>)<span class="op">,</span></span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb1" data-startfrom="29" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 28;"><span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>viewof temperature <span class="op">=</span> {</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> ui <span class="op">=</span> <span class="cf">await</span> <span class="im">import</span>(<span class="kw">new</span> <span class="fu">URL</span>(<span class="st">"../lib/ui.js"</span><span class="op">,</span> <span class="bu">document</span><span class="op">.</span><span class="at">baseURI</span>)<span class="op">.</span><span class="at">href</span>)<span class="op">;</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> ui<span class="op">.</span><span class="fu">slider</span>({</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    <span class="dt">label</span><span class="op">:</span> <span class="st">"Temperature"</span><span class="op">,</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    <span class="dt">min</span><span class="op">:</span> <span class="fl">0.1</span><span class="op">,</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    <span class="dt">max</span><span class="op">:</span> <span class="fl">1.5</span><span class="op">,</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    <span class="dt">step</span><span class="op">:</span> <span class="fl">0.05</span><span class="op">,</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    <span class="dt">value</span><span class="op">:</span> <span class="fl">0.45</span><span class="op">,</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>    <span class="dt">format</span><span class="op">:</span> (v) <span class="kw">=&gt;</span> v<span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">2</span>)<span class="op">,</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display hidden">
 <div id="ojs-cell-1" data-nodetype="declaration">
 
@@ -419,10 +418,10 @@ window.Quarto = {
 </div>
 </div>
 <div class="cell hidden">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb2" data-startfrom="53" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 52;"><span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>viewof thermostat <span class="op">=</span> {</span>
-<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> ui <span class="op">=</span> <span class="cf">await</span> <span class="im">import</span>(<span class="kw">new</span> <span class="fu">URL</span>(<span class="st">"../lib/ui.js"</span><span class="op">,</span> <span class="bu">document</span><span class="op">.</span><span class="at">baseURI</span>)<span class="op">.</span><span class="at">href</span>)<span class="op">;</span></span>
-<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> ui<span class="op">.</span><span class="fu">toggle</span>({ <span class="dt">label</span><span class="op">:</span> <span class="st">"Thermostat"</span><span class="op">,</span> <span class="dt">value</span><span class="op">:</span> <span class="kw">true</span> })<span class="op">;</span></span>
-<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb2" data-startfrom="45" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 44;"><span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>viewof thermostat <span class="op">=</span> {</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> ui <span class="op">=</span> <span class="cf">await</span> <span class="im">import</span>(<span class="kw">new</span> <span class="fu">URL</span>(<span class="st">"../lib/ui.js"</span><span class="op">,</span> <span class="bu">document</span><span class="op">.</span><span class="at">baseURI</span>)<span class="op">.</span><span class="at">href</span>)<span class="op">;</span></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> ui<span class="op">.</span><span class="fu">toggle</span>({ <span class="dt">label</span><span class="op">:</span> <span class="st">"Thermostat"</span><span class="op">,</span> <span class="dt">value</span><span class="op">:</span> <span class="kw">true</span> })<span class="op">;</span></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display hidden">
 <div id="ojs-cell-2" data-nodetype="declaration">
 
@@ -430,17 +429,17 @@ window.Quarto = {
 </div>
 </div>
 <div class="cell hidden">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb3" data-startfrom="62" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 61;"><span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>viewof gravity <span class="op">=</span> {</span>
-<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> ui <span class="op">=</span> <span class="cf">await</span> <span class="im">import</span>(<span class="kw">new</span> <span class="fu">URL</span>(<span class="st">"../lib/ui.js"</span><span class="op">,</span> <span class="bu">document</span><span class="op">.</span><span class="at">baseURI</span>)<span class="op">.</span><span class="at">href</span>)<span class="op">;</span></span>
-<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> ui<span class="op">.</span><span class="fu">slider</span>({</span>
-<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>    <span class="dt">label</span><span class="op">:</span> <span class="st">"Gravity"</span><span class="op">,</span></span>
-<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>    <span class="dt">min</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span></span>
-<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>    <span class="dt">max</span><span class="op">:</span> <span class="fl">0.3</span><span class="op">,</span></span>
-<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>    <span class="dt">step</span><span class="op">:</span> <span class="fl">0.01</span><span class="op">,</span></span>
-<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>    <span class="dt">value</span><span class="op">:</span> <span class="fl">0.1</span><span class="op">,</span></span>
-<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>    <span class="dt">format</span><span class="op">:</span> (v) <span class="kw">=&gt;</span> v<span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">2</span>)<span class="op">,</span></span>
-<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
-<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb3" data-startfrom="54" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 53;"><span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>viewof gravity <span class="op">=</span> {</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> ui <span class="op">=</span> <span class="cf">await</span> <span class="im">import</span>(<span class="kw">new</span> <span class="fu">URL</span>(<span class="st">"../lib/ui.js"</span><span class="op">,</span> <span class="bu">document</span><span class="op">.</span><span class="at">baseURI</span>)<span class="op">.</span><span class="at">href</span>)<span class="op">;</span></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> ui<span class="op">.</span><span class="fu">slider</span>({</span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>    <span class="dt">label</span><span class="op">:</span> <span class="st">"Gravity"</span><span class="op">,</span></span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>    <span class="dt">min</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span></span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>    <span class="dt">max</span><span class="op">:</span> <span class="fl">0.3</span><span class="op">,</span></span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>    <span class="dt">step</span><span class="op">:</span> <span class="fl">0.01</span><span class="op">,</span></span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>    <span class="dt">value</span><span class="op">:</span> <span class="fl">0.1</span><span class="op">,</span></span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>    <span class="dt">format</span><span class="op">:</span> (v) <span class="kw">=&gt;</span> v<span class="op">.</span><span class="fu">toFixed</span>(<span class="dv">2</span>)<span class="op">,</span></span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display hidden">
 <div id="ojs-cell-3" data-nodetype="declaration">
 
@@ -450,324 +449,324 @@ window.Quarto = {
 <div class="cell page-columns page-full">
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" data-startfrom="80" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 79;"><span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Shared WebGPU boilerplate: setup, buffers and the animation loop (lib/gpu.js)</span></span>
-<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> gpu <span class="op">=</span> <span class="cf">await</span> <span class="im">import</span>(<span class="kw">new</span> <span class="fu">URL</span>(<span class="st">"../lib/gpu.js"</span><span class="op">,</span> <span class="bu">document</span><span class="op">.</span><span class="at">baseURI</span>)<span class="op">.</span><span class="at">href</span>)<span class="op">;</span></span>
-<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> md <span class="op">=</span> <span class="cf">await</span> <span class="im">import</span>(<span class="kw">new</span> <span class="fu">URL</span>(<span class="st">"../lib/md.js"</span><span class="op">,</span> <span class="bu">document</span><span class="op">.</span><span class="at">baseURI</span>)<span class="op">.</span><span class="at">href</span>)<span class="op">;</span></span>
-<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> ui <span class="op">=</span> <span class="cf">await</span> <span class="im">import</span>(<span class="kw">new</span> <span class="fu">URL</span>(<span class="st">"../lib/ui.js"</span><span class="op">,</span> <span class="bu">document</span><span class="op">.</span><span class="at">baseURI</span>)<span class="op">.</span><span class="at">href</span>)<span class="op">;</span></span>
-<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a>  <span class="co">// The sliders are read live from their input elements (referencing `viewof x`</span></span>
-<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a>  <span class="co">// gives the element, not the value), so moving them does not restart the</span></span>
-<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a>  <span class="co">// simulation.</span></span>
-<span id="cb4-89"><a href="#cb4-89" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> temperatureInput <span class="op">=</span> viewof temperature<span class="op">;</span></span>
-<span id="cb4-90"><a href="#cb4-90" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> gravityInput <span class="op">=</span> viewof gravity<span class="op">;</span></span>
-<span id="cb4-91"><a href="#cb4-91" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> thermostatInput <span class="op">=</span> viewof thermostat<span class="op">;</span></span>
-<span id="cb4-92"><a href="#cb4-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-93"><a href="#cb4-93" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Setup, as before: the canvas is 16:9 and full width, and the drawing buffer</span></span>
-<span id="cb4-94"><a href="#cb4-94" aria-hidden="true" tabindex="-1"></a>  <span class="co">// follows its displayed size</span></span>
-<span id="cb4-95"><a href="#cb4-95" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> { canvas<span class="op">,</span> device<span class="op">,</span> context<span class="op">,</span> format } <span class="op">=</span> <span class="cf">await</span> gpu<span class="op">.</span><span class="fu">setup</span>({</span>
-<span id="cb4-96"><a href="#cb4-96" aria-hidden="true" tabindex="-1"></a>    <span class="dt">width</span><span class="op">:</span> <span class="dv">640</span><span class="op">,</span></span>
-<span id="cb4-97"><a href="#cb4-97" aria-hidden="true" tabindex="-1"></a>    <span class="dt">height</span><span class="op">:</span> <span class="dv">360</span><span class="op">,</span></span>
-<span id="cb4-98"><a href="#cb4-98" aria-hidden="true" tabindex="-1"></a>    <span class="dt">resolution</span><span class="op">:</span> <span class="st">"auto"</span><span class="op">,</span></span>
-<span id="cb4-99"><a href="#cb4-99" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
-<span id="cb4-100"><a href="#cb4-100" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-101"><a href="#cb4-101" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Reduced units: sigma = epsilon = mass = k_B = 1. The box is 16:9 so it fills</span></span>
-<span id="cb4-102"><a href="#cb4-102" aria-hidden="true" tabindex="-1"></a>  <span class="co">// the canvas, and a particle (diameter sigma) is roughly 10 pixels across. At</span></span>
-<span id="cb4-103"><a href="#cb4-103" aria-hidden="true" tabindex="-1"></a>  <span class="co">// this density (about 0.34) the gas and the liquid can coexist.</span></span>
-<span id="cb4-104"><a href="#cb4-104" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> Lx <span class="op">=</span> <span class="dv">112</span><span class="op">;</span></span>
-<span id="cb4-105"><a href="#cb4-105" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> Ly <span class="op">=</span> <span class="dv">63</span><span class="op">;</span></span>
-<span id="cb4-106"><a href="#cb4-106" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> count <span class="op">=</span> <span class="dv">2400</span><span class="op">;</span></span>
-<span id="cb4-107"><a href="#cb4-107" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> dt <span class="op">=</span> <span class="fl">0.005</span><span class="op">;</span> <span class="co">// the timestep, fixed</span></span>
-<span id="cb4-108"><a href="#cb4-108" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> stepsPerFrame <span class="op">=</span> <span class="dv">5</span><span class="op">;</span></span>
-<span id="cb4-109"><a href="#cb4-109" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> friction <span class="op">=</span> <span class="fl">0.5</span><span class="op">;</span> <span class="co">// thermostat coupling: how fast velocities are refreshed</span></span>
-<span id="cb4-110"><a href="#cb4-110" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> sampleEvery <span class="op">=</span> <span class="dv">6</span><span class="op">;</span> <span class="co">// read back every this many frames</span></span>
-<span id="cb4-111"><a href="#cb4-111" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> keep <span class="op">=</span> <span class="dv">300</span><span class="op">;</span> <span class="co">// samples kept in the energy chart</span></span>
-<span id="cb4-112"><a href="#cb4-112" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-113"><a href="#cb4-113" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Potential energy is shifted so it is zero at the 2.5 sigma cutoff; otherwise</span></span>
-<span id="cb4-114"><a href="#cb4-114" aria-hidden="true" tabindex="-1"></a>  <span class="co">// energy would jump every time a pair crossed it.</span></span>
-<span id="cb4-115"><a href="#cb4-115" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> cutoff <span class="op">=</span> <span class="fl">2.5</span><span class="op">;</span></span>
-<span id="cb4-116"><a href="#cb4-116" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> shift <span class="op">=</span> <span class="op">-</span><span class="dv">4</span> <span class="op">*</span> (<span class="bu">Math</span><span class="op">.</span><span class="fu">pow</span>(<span class="dv">1</span> <span class="op">/</span> cutoff<span class="op">,</span> <span class="dv">12</span>) <span class="op">-</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">pow</span>(<span class="dv">1</span> <span class="op">/</span> cutoff<span class="op">,</span> <span class="dv">6</span>))<span class="op">;</span></span>
-<span id="cb4-117"><a href="#cb4-117" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-118"><a href="#cb4-118" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Initial state: a gas of random, non-overlapping positions, with Gaussian</span></span>
-<span id="cb4-119"><a href="#cb4-119" aria-hidden="true" tabindex="-1"></a>  <span class="co">// velocities at the starting temperature (see lib/md.js)</span></span>
-<span id="cb4-120"><a href="#cb4-120" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> { positions<span class="op">,</span> velocities } <span class="op">=</span> md<span class="op">.</span><span class="fu">randomGas</span>({</span>
-<span id="cb4-121"><a href="#cb4-121" aria-hidden="true" tabindex="-1"></a>    count<span class="op">,</span></span>
-<span id="cb4-122"><a href="#cb4-122" aria-hidden="true" tabindex="-1"></a>    <span class="dt">box</span><span class="op">:</span> [Lx<span class="op">,</span> Ly]<span class="op">,</span></span>
-<span id="cb4-123"><a href="#cb4-123" aria-hidden="true" tabindex="-1"></a>    <span class="dt">temperature</span><span class="op">:</span> temperatureInput<span class="op">.</span><span class="at">value</span><span class="op">,</span></span>
-<span id="cb4-124"><a href="#cb4-124" aria-hidden="true" tabindex="-1"></a>    <span class="dt">periodic</span><span class="op">:</span> [<span class="kw">true</span><span class="op">,</span> <span class="kw">false</span>]<span class="op">,</span></span>
-<span id="cb4-125"><a href="#cb4-125" aria-hidden="true" tabindex="-1"></a>    <span class="dt">margin</span><span class="op">:</span> <span class="fl">0.5</span><span class="op">,</span> <span class="co">// centres stay half a particle off the walls</span></span>
-<span id="cb4-126"><a href="#cb4-126" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
-<span id="cb4-127"><a href="#cb4-127" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-128"><a href="#cb4-128" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Storage buffers: positions, velocities and the accelerations between passes</span></span>
-<span id="cb4-129"><a href="#cb4-129" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> positionBuffer <span class="op">=</span> gpu<span class="op">.</span><span class="fu">storageBuffer</span>(device<span class="op">,</span> positions)<span class="op">;</span></span>
-<span id="cb4-130"><a href="#cb4-130" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> velocityBuffer <span class="op">=</span> gpu<span class="op">.</span><span class="fu">storageBuffer</span>(device<span class="op">,</span> velocities)<span class="op">;</span></span>
-<span id="cb4-131"><a href="#cb4-131" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> accelerationBuffer <span class="op">=</span> gpu<span class="op">.</span><span class="fu">storageBuffer</span>(device<span class="op">,</span> <span class="kw">new</span> <span class="bu">Float32Array</span>(count <span class="op">*</span> <span class="dv">2</span>))<span class="op">;</span></span>
-<span id="cb4-132"><a href="#cb4-132" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-133"><a href="#cb4-133" aria-hidden="true" tabindex="-1"></a>  <span class="co">// One random-number-generator state (a u32) per particle, seeded from the CPU</span></span>
-<span id="cb4-134"><a href="#cb4-134" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> rngBuffer <span class="op">=</span> gpu<span class="op">.</span><span class="fu">storageBuffer</span>(device<span class="op">,</span> crypto<span class="op">.</span><span class="fu">getRandomValues</span>(<span class="kw">new</span> <span class="bu">Uint32Array</span>(count)))<span class="op">;</span></span>
-<span id="cb4-135"><a href="#cb4-135" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-136"><a href="#cb4-136" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Per-particle potential energy, written by the force pass and read back</span></span>
-<span id="cb4-137"><a href="#cb4-137" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> potentialBuffer <span class="op">=</span> gpu<span class="op">.</span><span class="fu">storageBuffer</span>(device<span class="op">,</span> <span class="kw">new</span> <span class="bu">Float32Array</span>(count))<span class="op">;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" data-startfrom="71" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 70;"><span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Shared WebGPU boilerplate: setup, buffers and the animation loop (lib/gpu.js)</span></span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> gpu <span class="op">=</span> <span class="cf">await</span> <span class="im">import</span>(<span class="kw">new</span> <span class="fu">URL</span>(<span class="st">"../lib/gpu.js"</span><span class="op">,</span> <span class="bu">document</span><span class="op">.</span><span class="at">baseURI</span>)<span class="op">.</span><span class="at">href</span>)<span class="op">;</span></span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> md <span class="op">=</span> <span class="cf">await</span> <span class="im">import</span>(<span class="kw">new</span> <span class="fu">URL</span>(<span class="st">"../lib/md.js"</span><span class="op">,</span> <span class="bu">document</span><span class="op">.</span><span class="at">baseURI</span>)<span class="op">.</span><span class="at">href</span>)<span class="op">;</span></span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> ui <span class="op">=</span> <span class="cf">await</span> <span class="im">import</span>(<span class="kw">new</span> <span class="fu">URL</span>(<span class="st">"../lib/ui.js"</span><span class="op">,</span> <span class="bu">document</span><span class="op">.</span><span class="at">baseURI</span>)<span class="op">.</span><span class="at">href</span>)<span class="op">;</span></span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a>  <span class="co">// The sliders are read live from their input elements (referencing `viewof x`</span></span>
+<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a>  <span class="co">// gives the element, not the value), so moving them does not restart the</span></span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a>  <span class="co">// simulation.</span></span>
+<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> temperatureInput <span class="op">=</span> viewof temperature<span class="op">;</span></span>
+<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> gravityInput <span class="op">=</span> viewof gravity<span class="op">;</span></span>
+<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> thermostatInput <span class="op">=</span> viewof thermostat<span class="op">;</span></span>
+<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Setup, as before: the canvas is 16:9 and full width, and the drawing buffer</span></span>
+<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a>  <span class="co">// follows its displayed size</span></span>
+<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> { canvas<span class="op">,</span> device<span class="op">,</span> context<span class="op">,</span> format } <span class="op">=</span> <span class="cf">await</span> gpu<span class="op">.</span><span class="fu">setup</span>({</span>
+<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a>    <span class="dt">width</span><span class="op">:</span> <span class="dv">640</span><span class="op">,</span></span>
+<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a>    <span class="dt">height</span><span class="op">:</span> <span class="dv">360</span><span class="op">,</span></span>
+<span id="cb4-89"><a href="#cb4-89" aria-hidden="true" tabindex="-1"></a>    <span class="dt">resolution</span><span class="op">:</span> <span class="st">"auto"</span><span class="op">,</span></span>
+<span id="cb4-90"><a href="#cb4-90" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb4-91"><a href="#cb4-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-92"><a href="#cb4-92" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Reduced units: sigma = epsilon = mass = k_B = 1. The box is 16:9 so it fills</span></span>
+<span id="cb4-93"><a href="#cb4-93" aria-hidden="true" tabindex="-1"></a>  <span class="co">// the canvas, and a particle (diameter sigma) is roughly 10 pixels across. At</span></span>
+<span id="cb4-94"><a href="#cb4-94" aria-hidden="true" tabindex="-1"></a>  <span class="co">// this density (about 0.34) the gas and the liquid can coexist.</span></span>
+<span id="cb4-95"><a href="#cb4-95" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> Lx <span class="op">=</span> <span class="dv">112</span><span class="op">;</span></span>
+<span id="cb4-96"><a href="#cb4-96" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> Ly <span class="op">=</span> <span class="dv">63</span><span class="op">;</span></span>
+<span id="cb4-97"><a href="#cb4-97" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> count <span class="op">=</span> <span class="dv">2400</span><span class="op">;</span></span>
+<span id="cb4-98"><a href="#cb4-98" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> dt <span class="op">=</span> <span class="fl">0.005</span><span class="op">;</span> <span class="co">// the timestep, fixed</span></span>
+<span id="cb4-99"><a href="#cb4-99" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> stepsPerFrame <span class="op">=</span> <span class="dv">5</span><span class="op">;</span></span>
+<span id="cb4-100"><a href="#cb4-100" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> friction <span class="op">=</span> <span class="fl">0.5</span><span class="op">;</span> <span class="co">// thermostat coupling: how fast velocities are refreshed</span></span>
+<span id="cb4-101"><a href="#cb4-101" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> sampleEvery <span class="op">=</span> <span class="dv">6</span><span class="op">;</span> <span class="co">// read back every this many frames</span></span>
+<span id="cb4-102"><a href="#cb4-102" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> keep <span class="op">=</span> <span class="dv">300</span><span class="op">;</span> <span class="co">// samples kept in the energy chart</span></span>
+<span id="cb4-103"><a href="#cb4-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-104"><a href="#cb4-104" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Potential energy is shifted so it is zero at the 2.5 sigma cutoff; otherwise</span></span>
+<span id="cb4-105"><a href="#cb4-105" aria-hidden="true" tabindex="-1"></a>  <span class="co">// energy would jump every time a pair crossed it.</span></span>
+<span id="cb4-106"><a href="#cb4-106" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> cutoff <span class="op">=</span> <span class="fl">2.5</span><span class="op">;</span></span>
+<span id="cb4-107"><a href="#cb4-107" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> shift <span class="op">=</span> <span class="op">-</span><span class="dv">4</span> <span class="op">*</span> (<span class="bu">Math</span><span class="op">.</span><span class="fu">pow</span>(<span class="dv">1</span> <span class="op">/</span> cutoff<span class="op">,</span> <span class="dv">12</span>) <span class="op">-</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">pow</span>(<span class="dv">1</span> <span class="op">/</span> cutoff<span class="op">,</span> <span class="dv">6</span>))<span class="op">;</span></span>
+<span id="cb4-108"><a href="#cb4-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-109"><a href="#cb4-109" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Initial state: a gas of random, non-overlapping positions, with Gaussian</span></span>
+<span id="cb4-110"><a href="#cb4-110" aria-hidden="true" tabindex="-1"></a>  <span class="co">// velocities at the starting temperature (see lib/md.js)</span></span>
+<span id="cb4-111"><a href="#cb4-111" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> { positions<span class="op">,</span> velocities } <span class="op">=</span> md<span class="op">.</span><span class="fu">randomGas</span>({</span>
+<span id="cb4-112"><a href="#cb4-112" aria-hidden="true" tabindex="-1"></a>    count<span class="op">,</span></span>
+<span id="cb4-113"><a href="#cb4-113" aria-hidden="true" tabindex="-1"></a>    <span class="dt">box</span><span class="op">:</span> [Lx<span class="op">,</span> Ly]<span class="op">,</span></span>
+<span id="cb4-114"><a href="#cb4-114" aria-hidden="true" tabindex="-1"></a>    <span class="dt">temperature</span><span class="op">:</span> temperatureInput<span class="op">.</span><span class="at">value</span><span class="op">,</span></span>
+<span id="cb4-115"><a href="#cb4-115" aria-hidden="true" tabindex="-1"></a>    <span class="dt">periodic</span><span class="op">:</span> [<span class="kw">true</span><span class="op">,</span> <span class="kw">false</span>]<span class="op">,</span></span>
+<span id="cb4-116"><a href="#cb4-116" aria-hidden="true" tabindex="-1"></a>    <span class="dt">margin</span><span class="op">:</span> <span class="fl">0.5</span><span class="op">,</span> <span class="co">// centres stay half a particle off the walls</span></span>
+<span id="cb4-117"><a href="#cb4-117" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb4-118"><a href="#cb4-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-119"><a href="#cb4-119" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Storage buffers: positions, velocities and the accelerations between passes</span></span>
+<span id="cb4-120"><a href="#cb4-120" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> positionBuffer <span class="op">=</span> gpu<span class="op">.</span><span class="fu">storageBuffer</span>(device<span class="op">,</span> positions)<span class="op">;</span></span>
+<span id="cb4-121"><a href="#cb4-121" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> velocityBuffer <span class="op">=</span> gpu<span class="op">.</span><span class="fu">storageBuffer</span>(device<span class="op">,</span> velocities)<span class="op">;</span></span>
+<span id="cb4-122"><a href="#cb4-122" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> accelerationBuffer <span class="op">=</span> gpu<span class="op">.</span><span class="fu">storageBuffer</span>(device<span class="op">,</span> <span class="kw">new</span> <span class="bu">Float32Array</span>(count <span class="op">*</span> <span class="dv">2</span>))<span class="op">;</span></span>
+<span id="cb4-123"><a href="#cb4-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-124"><a href="#cb4-124" aria-hidden="true" tabindex="-1"></a>  <span class="co">// One random-number-generator state (a u32) per particle, seeded from the CPU</span></span>
+<span id="cb4-125"><a href="#cb4-125" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> rngBuffer <span class="op">=</span> gpu<span class="op">.</span><span class="fu">storageBuffer</span>(device<span class="op">,</span> crypto<span class="op">.</span><span class="fu">getRandomValues</span>(<span class="kw">new</span> <span class="bu">Uint32Array</span>(count)))<span class="op">;</span></span>
+<span id="cb4-126"><a href="#cb4-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-127"><a href="#cb4-127" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Per-particle potential energy, written by the force pass and read back</span></span>
+<span id="cb4-128"><a href="#cb4-128" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> potentialBuffer <span class="op">=</span> gpu<span class="op">.</span><span class="fu">storageBuffer</span>(device<span class="op">,</span> <span class="kw">new</span> <span class="bu">Float32Array</span>(count))<span class="op">;</span></span>
+<span id="cb4-129"><a href="#cb4-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-130"><a href="#cb4-130" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Readback: positions, velocities and potentials are copied back to back into a</span></span>
+<span id="cb4-131"><a href="#cb4-131" aria-hidden="true" tabindex="-1"></a>  <span class="co">// staging buffer (see gpu.readback in lib/gpu.js). A buffer that can be mapped</span></span>
+<span id="cb4-132"><a href="#cb4-132" aria-hidden="true" tabindex="-1"></a>  <span class="co">// for reading cannot also be a storage buffer, so the data is copied there first.</span></span>
+<span id="cb4-133"><a href="#cb4-133" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> readback <span class="op">=</span> gpu<span class="op">.</span><span class="fu">readback</span>(device<span class="op">,</span> [</span>
+<span id="cb4-134"><a href="#cb4-134" aria-hidden="true" tabindex="-1"></a>    { <span class="dt">buffer</span><span class="op">:</span> positionBuffer<span class="op">,</span> <span class="dt">bytes</span><span class="op">:</span> count <span class="op">*</span> <span class="dv">2</span> <span class="op">*</span> <span class="dv">4</span> }<span class="op">,</span></span>
+<span id="cb4-135"><a href="#cb4-135" aria-hidden="true" tabindex="-1"></a>    { <span class="dt">buffer</span><span class="op">:</span> velocityBuffer<span class="op">,</span> <span class="dt">bytes</span><span class="op">:</span> count <span class="op">*</span> <span class="dv">2</span> <span class="op">*</span> <span class="dv">4</span> }<span class="op">,</span></span>
+<span id="cb4-136"><a href="#cb4-136" aria-hidden="true" tabindex="-1"></a>    { <span class="dt">buffer</span><span class="op">:</span> potentialBuffer<span class="op">,</span> <span class="dt">bytes</span><span class="op">:</span> count <span class="op">*</span> <span class="dv">4</span> }<span class="op">,</span></span>
+<span id="cb4-137"><a href="#cb4-137" aria-hidden="true" tabindex="-1"></a>  ])<span class="op">;</span></span>
 <span id="cb4-138"><a href="#cb4-138" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-139"><a href="#cb4-139" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Readback: positions, velocities and potentials are copied back to back into a</span></span>
-<span id="cb4-140"><a href="#cb4-140" aria-hidden="true" tabindex="-1"></a>  <span class="co">// staging buffer (see gpu.readback in lib/gpu.js). A buffer that can be mapped</span></span>
-<span id="cb4-141"><a href="#cb4-141" aria-hidden="true" tabindex="-1"></a>  <span class="co">// for reading cannot also be a storage buffer, so the data is copied there first.</span></span>
-<span id="cb4-142"><a href="#cb4-142" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> readback <span class="op">=</span> gpu<span class="op">.</span><span class="fu">readback</span>(device<span class="op">,</span> [</span>
-<span id="cb4-143"><a href="#cb4-143" aria-hidden="true" tabindex="-1"></a>    { <span class="dt">buffer</span><span class="op">:</span> positionBuffer<span class="op">,</span> <span class="dt">bytes</span><span class="op">:</span> count <span class="op">*</span> <span class="dv">2</span> <span class="op">*</span> <span class="dv">4</span> }<span class="op">,</span></span>
-<span id="cb4-144"><a href="#cb4-144" aria-hidden="true" tabindex="-1"></a>    { <span class="dt">buffer</span><span class="op">:</span> velocityBuffer<span class="op">,</span> <span class="dt">bytes</span><span class="op">:</span> count <span class="op">*</span> <span class="dv">2</span> <span class="op">*</span> <span class="dv">4</span> }<span class="op">,</span></span>
-<span id="cb4-145"><a href="#cb4-145" aria-hidden="true" tabindex="-1"></a>    { <span class="dt">buffer</span><span class="op">:</span> potentialBuffer<span class="op">,</span> <span class="dt">bytes</span><span class="op">:</span> count <span class="op">*</span> <span class="dv">4</span> }<span class="op">,</span></span>
-<span id="cb4-146"><a href="#cb4-146" aria-hidden="true" tabindex="-1"></a>  ])<span class="op">;</span></span>
-<span id="cb4-147"><a href="#cb4-147" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-148"><a href="#cb4-148" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Uniform buffer: the thermostat, gravity and timestep (fixed here), which are</span></span>
-<span id="cb4-149"><a href="#cb4-149" aria-hidden="true" tabindex="-1"></a>  <span class="co">// rewritten every frame with the current controls</span></span>
-<span id="cb4-150"><a href="#cb4-150" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> paramBuffer <span class="op">=</span> device<span class="op">.</span><span class="fu">createBuffer</span>({</span>
-<span id="cb4-151"><a href="#cb4-151" aria-hidden="true" tabindex="-1"></a>    <span class="dt">size</span><span class="op">:</span> <span class="dv">16</span><span class="op">,</span> <span class="co">// uniform buffers are happiest in multiples of 16 bytes</span></span>
-<span id="cb4-152"><a href="#cb4-152" aria-hidden="true" tabindex="-1"></a>    <span class="dt">usage</span><span class="op">:</span> GPUBufferUsage<span class="op">.</span><span class="at">UNIFORM</span> <span class="op">|</span> GPUBufferUsage<span class="op">.</span><span class="at">COPY_DST</span><span class="op">,</span></span>
-<span id="cb4-153"><a href="#cb4-153" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
-<span id="cb4-154"><a href="#cb4-154" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-155"><a href="#cb4-155" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Compute shaders. Two entry points, so each pass only touches what it owns:</span></span>
-<span id="cb4-156"><a href="#cb4-156" aria-hidden="true" tabindex="-1"></a>  <span class="co">// `forces` reads every position but writes only its own acceleration, and</span></span>
-<span id="cb4-157"><a href="#cb4-157" aria-hidden="true" tabindex="-1"></a>  <span class="co">// `integrate` reads and writes only its own particle. No thread ever reads</span></span>
-<span id="cb4-158"><a href="#cb4-158" aria-hidden="true" tabindex="-1"></a>  <span class="co">// something another thread is writing in the same dispatch.</span></span>
-<span id="cb4-159"><a href="#cb4-159" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> computeModule <span class="op">=</span> device<span class="op">.</span><span class="fu">createShaderModule</span>({</span>
-<span id="cb4-160"><a href="#cb4-160" aria-hidden="true" tabindex="-1"></a>    <span class="dt">code</span><span class="op">:</span> <span class="vs">`</span></span>
-<span id="cb4-161"><a href="#cb4-161" aria-hidden="true" tabindex="-1"></a><span class="vs">      const L = vec2f(</span><span class="sc">${</span>Lx<span class="sc">}</span><span class="vs">, </span><span class="sc">${</span>Ly<span class="sc">}</span><span class="vs">);   // box size</span></span>
-<span id="cb4-162"><a href="#cb4-162" aria-hidden="true" tabindex="-1"></a><span class="vs">      const RC2 = 6.25;                // cutoff radius 2.5 sigma, squared</span></span>
-<span id="cb4-163"><a href="#cb4-163" aria-hidden="true" tabindex="-1"></a><span class="vs">      const WALL = 0.5;                // floor and ceiling: half a particle from the edge</span></span>
-<span id="cb4-164"><a href="#cb4-164" aria-hidden="true" tabindex="-1"></a><span class="vs">      const VSHIFT = </span><span class="sc">${</span>shift<span class="sc">}</span><span class="vs">;         // potential energy shift at the cutoff</span></span>
-<span id="cb4-165"><a href="#cb4-165" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-166"><a href="#cb4-166" aria-hidden="true" tabindex="-1"></a><span class="vs">      // noise: thermostat kick size; gravity: acceleration down; decay: velocity</span></span>
-<span id="cb4-167"><a href="#cb4-167" aria-hidden="true" tabindex="-1"></a><span class="vs">      // kept each step by the thermostat (1 when it is off); dt: the timestep</span></span>
-<span id="cb4-168"><a href="#cb4-168" aria-hidden="true" tabindex="-1"></a><span class="vs">      struct Params { noise: f32, gravity: f32, decay: f32, dt: f32 }</span></span>
-<span id="cb4-169"><a href="#cb4-169" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-170"><a href="#cb4-170" aria-hidden="true" tabindex="-1"></a><span class="vs">      @group(0) @binding(0) var&lt;storage, read_write&gt; positions: array&lt;vec2f&gt;;</span></span>
-<span id="cb4-171"><a href="#cb4-171" aria-hidden="true" tabindex="-1"></a><span class="vs">      @group(0) @binding(1) var&lt;storage, read_write&gt; velocities: array&lt;vec2f&gt;;</span></span>
-<span id="cb4-172"><a href="#cb4-172" aria-hidden="true" tabindex="-1"></a><span class="vs">      @group(0) @binding(2) var&lt;storage, read_write&gt; accelerations: array&lt;vec2f&gt;;</span></span>
-<span id="cb4-173"><a href="#cb4-173" aria-hidden="true" tabindex="-1"></a><span class="vs">      @group(0) @binding(3) var&lt;storage, read_write&gt; rng: array&lt;u32&gt;;</span></span>
-<span id="cb4-174"><a href="#cb4-174" aria-hidden="true" tabindex="-1"></a><span class="vs">      @group(0) @binding(4) var&lt;uniform&gt; params: Params;</span></span>
-<span id="cb4-175"><a href="#cb4-175" aria-hidden="true" tabindex="-1"></a><span class="vs">      @group(0) @binding(5) var&lt;storage, read_write&gt; potentials: array&lt;f32&gt;;</span></span>
-<span id="cb4-176"><a href="#cb4-176" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-177"><a href="#cb4-177" aria-hidden="true" tabindex="-1"></a><span class="vs">      </span><span class="sc">${</span>md<span class="op">.</span><span class="at">rngWGSL</span><span class="sc">}</span></span>
-<span id="cb4-178"><a href="#cb4-178" aria-hidden="true" tabindex="-1"></a><span class="vs">      @compute @workgroup_size(64)</span></span>
-<span id="cb4-179"><a href="#cb4-179" aria-hidden="true" tabindex="-1"></a><span class="vs">      fn forces(@builtin(global_invocation_id) id: vec3u) {</span></span>
-<span id="cb4-180"><a href="#cb4-180" aria-hidden="true" tabindex="-1"></a><span class="vs">        let i = id.x;</span></span>
-<span id="cb4-181"><a href="#cb4-181" aria-hidden="true" tabindex="-1"></a><span class="vs">        if (i &gt;= arrayLength(&amp;positions)) { return; }</span></span>
-<span id="cb4-182"><a href="#cb4-182" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-183"><a href="#cb4-183" aria-hidden="true" tabindex="-1"></a><span class="vs">        let here = positions[i];</span></span>
-<span id="cb4-184"><a href="#cb4-184" aria-hidden="true" tabindex="-1"></a><span class="vs">        var a = vec2f(0.0);</span></span>
-<span id="cb4-185"><a href="#cb4-185" aria-hidden="true" tabindex="-1"></a><span class="vs">        var energy = 0.0;</span></span>
-<span id="cb4-186"><a href="#cb4-186" aria-hidden="true" tabindex="-1"></a><span class="vs">        for (var j = 0u; j &lt; arrayLength(&amp;positions); j++) {</span></span>
-<span id="cb4-187"><a href="#cb4-187" aria-hidden="true" tabindex="-1"></a><span class="vs">          if (j == i) { continue; }</span></span>
-<span id="cb4-188"><a href="#cb4-188" aria-hidden="true" tabindex="-1"></a><span class="vs">          var d = here - positions[j];</span></span>
-<span id="cb4-189"><a href="#cb4-189" aria-hidden="true" tabindex="-1"></a><span class="vs">          // Minimum image in x only: the box is periodic sideways, not vertically</span></span>
-<span id="cb4-190"><a href="#cb4-190" aria-hidden="true" tabindex="-1"></a><span class="vs">          d.x -= L.x * round(d.x / L.x);</span></span>
-<span id="cb4-191"><a href="#cb4-191" aria-hidden="true" tabindex="-1"></a><span class="vs">          let r2 = dot(d, d);</span></span>
-<span id="cb4-192"><a href="#cb4-192" aria-hidden="true" tabindex="-1"></a><span class="vs">          if (r2 &lt; RC2) {</span></span>
-<span id="cb4-193"><a href="#cb4-193" aria-hidden="true" tabindex="-1"></a><span class="vs">            let s2 = 1.0 / r2;   // (sigma / r)^2</span></span>
-<span id="cb4-194"><a href="#cb4-194" aria-hidden="true" tabindex="-1"></a><span class="vs">            let s6 = s2 * s2 * s2;</span></span>
-<span id="cb4-195"><a href="#cb4-195" aria-hidden="true" tabindex="-1"></a><span class="vs">            // force / r = 24 (2 s^12 - s^6) / r^2</span></span>
-<span id="cb4-196"><a href="#cb4-196" aria-hidden="true" tabindex="-1"></a><span class="vs">            a += d * (24.0 * s2 * s6 * (2.0 * s6 - 1.0));</span></span>
-<span id="cb4-197"><a href="#cb4-197" aria-hidden="true" tabindex="-1"></a><span class="vs">            // Pair energy, shared between the two particles</span></span>
-<span id="cb4-198"><a href="#cb4-198" aria-hidden="true" tabindex="-1"></a><span class="vs">            energy += 0.5 * (4.0 * (s6 * s6 - s6) + VSHIFT);</span></span>
-<span id="cb4-199"><a href="#cb4-199" aria-hidden="true" tabindex="-1"></a><span class="vs">          }</span></span>
-<span id="cb4-200"><a href="#cb4-200" aria-hidden="true" tabindex="-1"></a><span class="vs">        }</span></span>
-<span id="cb4-201"><a href="#cb4-201" aria-hidden="true" tabindex="-1"></a><span class="vs">        accelerations[i] = a;</span></span>
-<span id="cb4-202"><a href="#cb4-202" aria-hidden="true" tabindex="-1"></a><span class="vs">        potentials[i] = energy;</span></span>
-<span id="cb4-203"><a href="#cb4-203" aria-hidden="true" tabindex="-1"></a><span class="vs">      }</span></span>
+<span id="cb4-139"><a href="#cb4-139" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Uniform buffer: the thermostat, gravity and timestep (fixed here), which are</span></span>
+<span id="cb4-140"><a href="#cb4-140" aria-hidden="true" tabindex="-1"></a>  <span class="co">// rewritten every frame with the current controls</span></span>
+<span id="cb4-141"><a href="#cb4-141" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> paramBuffer <span class="op">=</span> device<span class="op">.</span><span class="fu">createBuffer</span>({</span>
+<span id="cb4-142"><a href="#cb4-142" aria-hidden="true" tabindex="-1"></a>    <span class="dt">size</span><span class="op">:</span> <span class="dv">16</span><span class="op">,</span> <span class="co">// uniform buffers are happiest in multiples of 16 bytes</span></span>
+<span id="cb4-143"><a href="#cb4-143" aria-hidden="true" tabindex="-1"></a>    <span class="dt">usage</span><span class="op">:</span> GPUBufferUsage<span class="op">.</span><span class="at">UNIFORM</span> <span class="op">|</span> GPUBufferUsage<span class="op">.</span><span class="at">COPY_DST</span><span class="op">,</span></span>
+<span id="cb4-144"><a href="#cb4-144" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb4-145"><a href="#cb4-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-146"><a href="#cb4-146" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Compute shaders. Two entry points, so each pass only touches what it owns:</span></span>
+<span id="cb4-147"><a href="#cb4-147" aria-hidden="true" tabindex="-1"></a>  <span class="co">// `forces` reads every position but writes only its own acceleration, and</span></span>
+<span id="cb4-148"><a href="#cb4-148" aria-hidden="true" tabindex="-1"></a>  <span class="co">// `integrate` reads and writes only its own particle. No thread ever reads</span></span>
+<span id="cb4-149"><a href="#cb4-149" aria-hidden="true" tabindex="-1"></a>  <span class="co">// something another thread is writing in the same dispatch.</span></span>
+<span id="cb4-150"><a href="#cb4-150" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> computeModule <span class="op">=</span> device<span class="op">.</span><span class="fu">createShaderModule</span>({</span>
+<span id="cb4-151"><a href="#cb4-151" aria-hidden="true" tabindex="-1"></a>    <span class="dt">code</span><span class="op">:</span> <span class="vs">`</span></span>
+<span id="cb4-152"><a href="#cb4-152" aria-hidden="true" tabindex="-1"></a><span class="vs">      const L = vec2f(</span><span class="sc">${</span>Lx<span class="sc">}</span><span class="vs">, </span><span class="sc">${</span>Ly<span class="sc">}</span><span class="vs">);   // box size</span></span>
+<span id="cb4-153"><a href="#cb4-153" aria-hidden="true" tabindex="-1"></a><span class="vs">      const RC2 = 6.25;                // cutoff radius 2.5 sigma, squared</span></span>
+<span id="cb4-154"><a href="#cb4-154" aria-hidden="true" tabindex="-1"></a><span class="vs">      const WALL = 0.5;                // floor and ceiling: half a particle from the edge</span></span>
+<span id="cb4-155"><a href="#cb4-155" aria-hidden="true" tabindex="-1"></a><span class="vs">      const VSHIFT = </span><span class="sc">${</span>shift<span class="sc">}</span><span class="vs">;         // potential energy shift at the cutoff</span></span>
+<span id="cb4-156"><a href="#cb4-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-157"><a href="#cb4-157" aria-hidden="true" tabindex="-1"></a><span class="vs">      // noise: thermostat kick size; gravity: acceleration down; decay: velocity</span></span>
+<span id="cb4-158"><a href="#cb4-158" aria-hidden="true" tabindex="-1"></a><span class="vs">      // kept each step by the thermostat (1 when it is off); dt: the timestep</span></span>
+<span id="cb4-159"><a href="#cb4-159" aria-hidden="true" tabindex="-1"></a><span class="vs">      struct Params { noise: f32, gravity: f32, decay: f32, dt: f32 }</span></span>
+<span id="cb4-160"><a href="#cb4-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-161"><a href="#cb4-161" aria-hidden="true" tabindex="-1"></a><span class="vs">      @group(0) @binding(0) var&lt;storage, read_write&gt; positions: array&lt;vec2f&gt;;</span></span>
+<span id="cb4-162"><a href="#cb4-162" aria-hidden="true" tabindex="-1"></a><span class="vs">      @group(0) @binding(1) var&lt;storage, read_write&gt; velocities: array&lt;vec2f&gt;;</span></span>
+<span id="cb4-163"><a href="#cb4-163" aria-hidden="true" tabindex="-1"></a><span class="vs">      @group(0) @binding(2) var&lt;storage, read_write&gt; accelerations: array&lt;vec2f&gt;;</span></span>
+<span id="cb4-164"><a href="#cb4-164" aria-hidden="true" tabindex="-1"></a><span class="vs">      @group(0) @binding(3) var&lt;storage, read_write&gt; rng: array&lt;u32&gt;;</span></span>
+<span id="cb4-165"><a href="#cb4-165" aria-hidden="true" tabindex="-1"></a><span class="vs">      @group(0) @binding(4) var&lt;uniform&gt; params: Params;</span></span>
+<span id="cb4-166"><a href="#cb4-166" aria-hidden="true" tabindex="-1"></a><span class="vs">      @group(0) @binding(5) var&lt;storage, read_write&gt; potentials: array&lt;f32&gt;;</span></span>
+<span id="cb4-167"><a href="#cb4-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-168"><a href="#cb4-168" aria-hidden="true" tabindex="-1"></a><span class="vs">      </span><span class="sc">${</span>md<span class="op">.</span><span class="at">rngWGSL</span><span class="sc">}</span></span>
+<span id="cb4-169"><a href="#cb4-169" aria-hidden="true" tabindex="-1"></a><span class="vs">      @compute @workgroup_size(64)</span></span>
+<span id="cb4-170"><a href="#cb4-170" aria-hidden="true" tabindex="-1"></a><span class="vs">      fn forces(@builtin(global_invocation_id) id: vec3u) {</span></span>
+<span id="cb4-171"><a href="#cb4-171" aria-hidden="true" tabindex="-1"></a><span class="vs">        let i = id.x;</span></span>
+<span id="cb4-172"><a href="#cb4-172" aria-hidden="true" tabindex="-1"></a><span class="vs">        if (i &gt;= arrayLength(&amp;positions)) { return; }</span></span>
+<span id="cb4-173"><a href="#cb4-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-174"><a href="#cb4-174" aria-hidden="true" tabindex="-1"></a><span class="vs">        let here = positions[i];</span></span>
+<span id="cb4-175"><a href="#cb4-175" aria-hidden="true" tabindex="-1"></a><span class="vs">        var a = vec2f(0.0);</span></span>
+<span id="cb4-176"><a href="#cb4-176" aria-hidden="true" tabindex="-1"></a><span class="vs">        var energy = 0.0;</span></span>
+<span id="cb4-177"><a href="#cb4-177" aria-hidden="true" tabindex="-1"></a><span class="vs">        for (var j = 0u; j &lt; arrayLength(&amp;positions); j++) {</span></span>
+<span id="cb4-178"><a href="#cb4-178" aria-hidden="true" tabindex="-1"></a><span class="vs">          if (j == i) { continue; }</span></span>
+<span id="cb4-179"><a href="#cb4-179" aria-hidden="true" tabindex="-1"></a><span class="vs">          var d = here - positions[j];</span></span>
+<span id="cb4-180"><a href="#cb4-180" aria-hidden="true" tabindex="-1"></a><span class="vs">          // Minimum image in x only: the box is periodic sideways, not vertically</span></span>
+<span id="cb4-181"><a href="#cb4-181" aria-hidden="true" tabindex="-1"></a><span class="vs">          d.x -= L.x * round(d.x / L.x);</span></span>
+<span id="cb4-182"><a href="#cb4-182" aria-hidden="true" tabindex="-1"></a><span class="vs">          let r2 = dot(d, d);</span></span>
+<span id="cb4-183"><a href="#cb4-183" aria-hidden="true" tabindex="-1"></a><span class="vs">          if (r2 &lt; RC2) {</span></span>
+<span id="cb4-184"><a href="#cb4-184" aria-hidden="true" tabindex="-1"></a><span class="vs">            let s2 = 1.0 / r2;   // (sigma / r)^2</span></span>
+<span id="cb4-185"><a href="#cb4-185" aria-hidden="true" tabindex="-1"></a><span class="vs">            let s6 = s2 * s2 * s2;</span></span>
+<span id="cb4-186"><a href="#cb4-186" aria-hidden="true" tabindex="-1"></a><span class="vs">            // force / r = 24 (2 s^12 - s^6) / r^2</span></span>
+<span id="cb4-187"><a href="#cb4-187" aria-hidden="true" tabindex="-1"></a><span class="vs">            a += d * (24.0 * s2 * s6 * (2.0 * s6 - 1.0));</span></span>
+<span id="cb4-188"><a href="#cb4-188" aria-hidden="true" tabindex="-1"></a><span class="vs">            // Pair energy, shared between the two particles</span></span>
+<span id="cb4-189"><a href="#cb4-189" aria-hidden="true" tabindex="-1"></a><span class="vs">            energy += 0.5 * (4.0 * (s6 * s6 - s6) + VSHIFT);</span></span>
+<span id="cb4-190"><a href="#cb4-190" aria-hidden="true" tabindex="-1"></a><span class="vs">          }</span></span>
+<span id="cb4-191"><a href="#cb4-191" aria-hidden="true" tabindex="-1"></a><span class="vs">        }</span></span>
+<span id="cb4-192"><a href="#cb4-192" aria-hidden="true" tabindex="-1"></a><span class="vs">        accelerations[i] = a;</span></span>
+<span id="cb4-193"><a href="#cb4-193" aria-hidden="true" tabindex="-1"></a><span class="vs">        potentials[i] = energy;</span></span>
+<span id="cb4-194"><a href="#cb4-194" aria-hidden="true" tabindex="-1"></a><span class="vs">      }</span></span>
+<span id="cb4-195"><a href="#cb4-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-196"><a href="#cb4-196" aria-hidden="true" tabindex="-1"></a><span class="vs">      @compute @workgroup_size(64)</span></span>
+<span id="cb4-197"><a href="#cb4-197" aria-hidden="true" tabindex="-1"></a><span class="vs">      fn integrate(@builtin(global_invocation_id) id: vec3u) {</span></span>
+<span id="cb4-198"><a href="#cb4-198" aria-hidden="true" tabindex="-1"></a><span class="vs">        let i = id.x;</span></span>
+<span id="cb4-199"><a href="#cb4-199" aria-hidden="true" tabindex="-1"></a><span class="vs">        if (i &gt;= arrayLength(&amp;positions)) { return; }</span></span>
+<span id="cb4-200"><a href="#cb4-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-201"><a href="#cb4-201" aria-hidden="true" tabindex="-1"></a><span class="vs">        // Leapfrog: kick the velocity, with gravity added to the pair forces...</span></span>
+<span id="cb4-202"><a href="#cb4-202" aria-hidden="true" tabindex="-1"></a><span class="vs">        let a = accelerations[i] + vec2f(0.0, -params.gravity);</span></span>
+<span id="cb4-203"><a href="#cb4-203" aria-hidden="true" tabindex="-1"></a><span class="vs">        var v = velocities[i] + a * params.dt;</span></span>
 <span id="cb4-204"><a href="#cb4-204" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-205"><a href="#cb4-205" aria-hidden="true" tabindex="-1"></a><span class="vs">      @compute @workgroup_size(64)</span></span>
-<span id="cb4-206"><a href="#cb4-206" aria-hidden="true" tabindex="-1"></a><span class="vs">      fn integrate(@builtin(global_invocation_id) id: vec3u) {</span></span>
-<span id="cb4-207"><a href="#cb4-207" aria-hidden="true" tabindex="-1"></a><span class="vs">        let i = id.x;</span></span>
-<span id="cb4-208"><a href="#cb4-208" aria-hidden="true" tabindex="-1"></a><span class="vs">        if (i &gt;= arrayLength(&amp;positions)) { return; }</span></span>
-<span id="cb4-209"><a href="#cb4-209" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-210"><a href="#cb4-210" aria-hidden="true" tabindex="-1"></a><span class="vs">        // Leapfrog: kick the velocity, with gravity added to the pair forces...</span></span>
-<span id="cb4-211"><a href="#cb4-211" aria-hidden="true" tabindex="-1"></a><span class="vs">        let a = accelerations[i] + vec2f(0.0, -params.gravity);</span></span>
-<span id="cb4-212"><a href="#cb4-212" aria-hidden="true" tabindex="-1"></a><span class="vs">        var v = velocities[i] + a * params.dt;</span></span>
-<span id="cb4-213"><a href="#cb4-213" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-214"><a href="#cb4-214" aria-hidden="true" tabindex="-1"></a><span class="vs">        // ...thermostat: slow it a little and add a random kick, which holds the</span></span>
-<span id="cb4-215"><a href="#cb4-215" aria-hidden="true" tabindex="-1"></a><span class="vs">        // mean kinetic energy at the target temperature...</span></span>
-<span id="cb4-216"><a href="#cb4-216" aria-hidden="true" tabindex="-1"></a><span class="vs">        var state = rng[i];</span></span>
-<span id="cb4-217"><a href="#cb4-217" aria-hidden="true" tabindex="-1"></a><span class="vs">        v = v * params.decay + params.noise * gaussian2(&amp;state);</span></span>
-<span id="cb4-218"><a href="#cb4-218" aria-hidden="true" tabindex="-1"></a><span class="vs">        rng[i] = state;</span></span>
-<span id="cb4-219"><a href="#cb4-219" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-220"><a href="#cb4-220" aria-hidden="true" tabindex="-1"></a><span class="vs">        // ...then drift the position</span></span>
-<span id="cb4-221"><a href="#cb4-221" aria-hidden="true" tabindex="-1"></a><span class="vs">        var p = positions[i] + v * params.dt;</span></span>
-<span id="cb4-222"><a href="#cb4-222" aria-hidden="true" tabindex="-1"></a><span class="vs">        p.x -= L.x * floor(p.x / L.x); // wrap sideways</span></span>
-<span id="cb4-223"><a href="#cb4-223" aria-hidden="true" tabindex="-1"></a><span class="vs">        // Floor and ceiling: reflect the position and flip the velocity</span></span>
-<span id="cb4-224"><a href="#cb4-224" aria-hidden="true" tabindex="-1"></a><span class="vs">        if (p.y &lt; WALL) { p.y = 2.0 * WALL - p.y; v.y = -v.y; }</span></span>
-<span id="cb4-225"><a href="#cb4-225" aria-hidden="true" tabindex="-1"></a><span class="vs">        if (p.y &gt; L.y - WALL) { p.y = 2.0 * (L.y - WALL) - p.y; v.y = -v.y; }</span></span>
-<span id="cb4-226"><a href="#cb4-226" aria-hidden="true" tabindex="-1"></a><span class="vs">        p.y = clamp(p.y, WALL, L.y - WALL); // and never let an atom out of the box</span></span>
-<span id="cb4-227"><a href="#cb4-227" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-228"><a href="#cb4-228" aria-hidden="true" tabindex="-1"></a><span class="vs">        velocities[i] = v;</span></span>
-<span id="cb4-229"><a href="#cb4-229" aria-hidden="true" tabindex="-1"></a><span class="vs">        positions[i] = p;</span></span>
-<span id="cb4-230"><a href="#cb4-230" aria-hidden="true" tabindex="-1"></a><span class="vs">      }</span></span>
-<span id="cb4-231"><a href="#cb4-231" aria-hidden="true" tabindex="-1"></a><span class="vs">    `</span><span class="op">,</span></span>
-<span id="cb4-232"><a href="#cb4-232" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
-<span id="cb4-233"><a href="#cb4-233" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-234"><a href="#cb4-234" aria-hidden="true" tabindex="-1"></a>  <span class="co">// With layout "auto" each pipeline only gets the bindings its entry point uses,</span></span>
-<span id="cb4-235"><a href="#cb4-235" aria-hidden="true" tabindex="-1"></a>  <span class="co">// so each needs its own bind group.</span></span>
-<span id="cb4-236"><a href="#cb4-236" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> forcePipeline <span class="op">=</span> device<span class="op">.</span><span class="fu">createComputePipeline</span>({</span>
-<span id="cb4-237"><a href="#cb4-237" aria-hidden="true" tabindex="-1"></a>    <span class="dt">layout</span><span class="op">:</span> <span class="st">"auto"</span><span class="op">,</span></span>
-<span id="cb4-238"><a href="#cb4-238" aria-hidden="true" tabindex="-1"></a>    <span class="dt">compute</span><span class="op">:</span> { <span class="dt">module</span><span class="op">:</span> computeModule<span class="op">,</span> <span class="dt">entryPoint</span><span class="op">:</span> <span class="st">"forces"</span> }<span class="op">,</span></span>
-<span id="cb4-239"><a href="#cb4-239" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
-<span id="cb4-240"><a href="#cb4-240" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> integratePipeline <span class="op">=</span> device<span class="op">.</span><span class="fu">createComputePipeline</span>({</span>
-<span id="cb4-241"><a href="#cb4-241" aria-hidden="true" tabindex="-1"></a>    <span class="dt">layout</span><span class="op">:</span> <span class="st">"auto"</span><span class="op">,</span></span>
-<span id="cb4-242"><a href="#cb4-242" aria-hidden="true" tabindex="-1"></a>    <span class="dt">compute</span><span class="op">:</span> { <span class="dt">module</span><span class="op">:</span> computeModule<span class="op">,</span> <span class="dt">entryPoint</span><span class="op">:</span> <span class="st">"integrate"</span> }<span class="op">,</span></span>
-<span id="cb4-243"><a href="#cb4-243" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
-<span id="cb4-244"><a href="#cb4-244" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> forceBindGroup <span class="op">=</span> device<span class="op">.</span><span class="fu">createBindGroup</span>({</span>
-<span id="cb4-245"><a href="#cb4-245" aria-hidden="true" tabindex="-1"></a>    <span class="dt">layout</span><span class="op">:</span> forcePipeline<span class="op">.</span><span class="fu">getBindGroupLayout</span>(<span class="dv">0</span>)<span class="op">,</span></span>
-<span id="cb4-246"><a href="#cb4-246" aria-hidden="true" tabindex="-1"></a>    <span class="dt">entries</span><span class="op">:</span> [</span>
-<span id="cb4-247"><a href="#cb4-247" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">binding</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span> <span class="dt">resource</span><span class="op">:</span> { <span class="dt">buffer</span><span class="op">:</span> positionBuffer } }<span class="op">,</span></span>
+<span id="cb4-205"><a href="#cb4-205" aria-hidden="true" tabindex="-1"></a><span class="vs">        // ...thermostat: slow it a little and add a random kick, which holds the</span></span>
+<span id="cb4-206"><a href="#cb4-206" aria-hidden="true" tabindex="-1"></a><span class="vs">        // mean kinetic energy at the target temperature...</span></span>
+<span id="cb4-207"><a href="#cb4-207" aria-hidden="true" tabindex="-1"></a><span class="vs">        var state = rng[i];</span></span>
+<span id="cb4-208"><a href="#cb4-208" aria-hidden="true" tabindex="-1"></a><span class="vs">        v = v * params.decay + params.noise * gaussian2(&amp;state);</span></span>
+<span id="cb4-209"><a href="#cb4-209" aria-hidden="true" tabindex="-1"></a><span class="vs">        rng[i] = state;</span></span>
+<span id="cb4-210"><a href="#cb4-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-211"><a href="#cb4-211" aria-hidden="true" tabindex="-1"></a><span class="vs">        // ...then drift the position</span></span>
+<span id="cb4-212"><a href="#cb4-212" aria-hidden="true" tabindex="-1"></a><span class="vs">        var p = positions[i] + v * params.dt;</span></span>
+<span id="cb4-213"><a href="#cb4-213" aria-hidden="true" tabindex="-1"></a><span class="vs">        p.x -= L.x * floor(p.x / L.x); // wrap sideways</span></span>
+<span id="cb4-214"><a href="#cb4-214" aria-hidden="true" tabindex="-1"></a><span class="vs">        // Floor and ceiling: reflect the position and flip the velocity</span></span>
+<span id="cb4-215"><a href="#cb4-215" aria-hidden="true" tabindex="-1"></a><span class="vs">        if (p.y &lt; WALL) { p.y = 2.0 * WALL - p.y; v.y = -v.y; }</span></span>
+<span id="cb4-216"><a href="#cb4-216" aria-hidden="true" tabindex="-1"></a><span class="vs">        if (p.y &gt; L.y - WALL) { p.y = 2.0 * (L.y - WALL) - p.y; v.y = -v.y; }</span></span>
+<span id="cb4-217"><a href="#cb4-217" aria-hidden="true" tabindex="-1"></a><span class="vs">        p.y = clamp(p.y, WALL, L.y - WALL); // and never let an atom out of the box</span></span>
+<span id="cb4-218"><a href="#cb4-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-219"><a href="#cb4-219" aria-hidden="true" tabindex="-1"></a><span class="vs">        velocities[i] = v;</span></span>
+<span id="cb4-220"><a href="#cb4-220" aria-hidden="true" tabindex="-1"></a><span class="vs">        positions[i] = p;</span></span>
+<span id="cb4-221"><a href="#cb4-221" aria-hidden="true" tabindex="-1"></a><span class="vs">      }</span></span>
+<span id="cb4-222"><a href="#cb4-222" aria-hidden="true" tabindex="-1"></a><span class="vs">    `</span><span class="op">,</span></span>
+<span id="cb4-223"><a href="#cb4-223" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb4-224"><a href="#cb4-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-225"><a href="#cb4-225" aria-hidden="true" tabindex="-1"></a>  <span class="co">// With layout "auto" each pipeline only gets the bindings its entry point uses,</span></span>
+<span id="cb4-226"><a href="#cb4-226" aria-hidden="true" tabindex="-1"></a>  <span class="co">// so each needs its own bind group.</span></span>
+<span id="cb4-227"><a href="#cb4-227" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> forcePipeline <span class="op">=</span> device<span class="op">.</span><span class="fu">createComputePipeline</span>({</span>
+<span id="cb4-228"><a href="#cb4-228" aria-hidden="true" tabindex="-1"></a>    <span class="dt">layout</span><span class="op">:</span> <span class="st">"auto"</span><span class="op">,</span></span>
+<span id="cb4-229"><a href="#cb4-229" aria-hidden="true" tabindex="-1"></a>    <span class="dt">compute</span><span class="op">:</span> { <span class="dt">module</span><span class="op">:</span> computeModule<span class="op">,</span> <span class="dt">entryPoint</span><span class="op">:</span> <span class="st">"forces"</span> }<span class="op">,</span></span>
+<span id="cb4-230"><a href="#cb4-230" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb4-231"><a href="#cb4-231" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> integratePipeline <span class="op">=</span> device<span class="op">.</span><span class="fu">createComputePipeline</span>({</span>
+<span id="cb4-232"><a href="#cb4-232" aria-hidden="true" tabindex="-1"></a>    <span class="dt">layout</span><span class="op">:</span> <span class="st">"auto"</span><span class="op">,</span></span>
+<span id="cb4-233"><a href="#cb4-233" aria-hidden="true" tabindex="-1"></a>    <span class="dt">compute</span><span class="op">:</span> { <span class="dt">module</span><span class="op">:</span> computeModule<span class="op">,</span> <span class="dt">entryPoint</span><span class="op">:</span> <span class="st">"integrate"</span> }<span class="op">,</span></span>
+<span id="cb4-234"><a href="#cb4-234" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb4-235"><a href="#cb4-235" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> forceBindGroup <span class="op">=</span> device<span class="op">.</span><span class="fu">createBindGroup</span>({</span>
+<span id="cb4-236"><a href="#cb4-236" aria-hidden="true" tabindex="-1"></a>    <span class="dt">layout</span><span class="op">:</span> forcePipeline<span class="op">.</span><span class="fu">getBindGroupLayout</span>(<span class="dv">0</span>)<span class="op">,</span></span>
+<span id="cb4-237"><a href="#cb4-237" aria-hidden="true" tabindex="-1"></a>    <span class="dt">entries</span><span class="op">:</span> [</span>
+<span id="cb4-238"><a href="#cb4-238" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">binding</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span> <span class="dt">resource</span><span class="op">:</span> { <span class="dt">buffer</span><span class="op">:</span> positionBuffer } }<span class="op">,</span></span>
+<span id="cb4-239"><a href="#cb4-239" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">binding</span><span class="op">:</span> <span class="dv">2</span><span class="op">,</span> <span class="dt">resource</span><span class="op">:</span> { <span class="dt">buffer</span><span class="op">:</span> accelerationBuffer } }<span class="op">,</span></span>
+<span id="cb4-240"><a href="#cb4-240" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">binding</span><span class="op">:</span> <span class="dv">5</span><span class="op">,</span> <span class="dt">resource</span><span class="op">:</span> { <span class="dt">buffer</span><span class="op">:</span> potentialBuffer } }<span class="op">,</span></span>
+<span id="cb4-241"><a href="#cb4-241" aria-hidden="true" tabindex="-1"></a>    ]<span class="op">,</span></span>
+<span id="cb4-242"><a href="#cb4-242" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb4-243"><a href="#cb4-243" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> integrateBindGroup <span class="op">=</span> device<span class="op">.</span><span class="fu">createBindGroup</span>({</span>
+<span id="cb4-244"><a href="#cb4-244" aria-hidden="true" tabindex="-1"></a>    <span class="dt">layout</span><span class="op">:</span> integratePipeline<span class="op">.</span><span class="fu">getBindGroupLayout</span>(<span class="dv">0</span>)<span class="op">,</span></span>
+<span id="cb4-245"><a href="#cb4-245" aria-hidden="true" tabindex="-1"></a>    <span class="dt">entries</span><span class="op">:</span> [</span>
+<span id="cb4-246"><a href="#cb4-246" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">binding</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span> <span class="dt">resource</span><span class="op">:</span> { <span class="dt">buffer</span><span class="op">:</span> positionBuffer } }<span class="op">,</span></span>
+<span id="cb4-247"><a href="#cb4-247" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">binding</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">resource</span><span class="op">:</span> { <span class="dt">buffer</span><span class="op">:</span> velocityBuffer } }<span class="op">,</span></span>
 <span id="cb4-248"><a href="#cb4-248" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">binding</span><span class="op">:</span> <span class="dv">2</span><span class="op">,</span> <span class="dt">resource</span><span class="op">:</span> { <span class="dt">buffer</span><span class="op">:</span> accelerationBuffer } }<span class="op">,</span></span>
-<span id="cb4-249"><a href="#cb4-249" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">binding</span><span class="op">:</span> <span class="dv">5</span><span class="op">,</span> <span class="dt">resource</span><span class="op">:</span> { <span class="dt">buffer</span><span class="op">:</span> potentialBuffer } }<span class="op">,</span></span>
-<span id="cb4-250"><a href="#cb4-250" aria-hidden="true" tabindex="-1"></a>    ]<span class="op">,</span></span>
-<span id="cb4-251"><a href="#cb4-251" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
-<span id="cb4-252"><a href="#cb4-252" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> integrateBindGroup <span class="op">=</span> device<span class="op">.</span><span class="fu">createBindGroup</span>({</span>
-<span id="cb4-253"><a href="#cb4-253" aria-hidden="true" tabindex="-1"></a>    <span class="dt">layout</span><span class="op">:</span> integratePipeline<span class="op">.</span><span class="fu">getBindGroupLayout</span>(<span class="dv">0</span>)<span class="op">,</span></span>
-<span id="cb4-254"><a href="#cb4-254" aria-hidden="true" tabindex="-1"></a>    <span class="dt">entries</span><span class="op">:</span> [</span>
-<span id="cb4-255"><a href="#cb4-255" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">binding</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span> <span class="dt">resource</span><span class="op">:</span> { <span class="dt">buffer</span><span class="op">:</span> positionBuffer } }<span class="op">,</span></span>
-<span id="cb4-256"><a href="#cb4-256" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">binding</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">resource</span><span class="op">:</span> { <span class="dt">buffer</span><span class="op">:</span> velocityBuffer } }<span class="op">,</span></span>
-<span id="cb4-257"><a href="#cb4-257" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">binding</span><span class="op">:</span> <span class="dv">2</span><span class="op">,</span> <span class="dt">resource</span><span class="op">:</span> { <span class="dt">buffer</span><span class="op">:</span> accelerationBuffer } }<span class="op">,</span></span>
-<span id="cb4-258"><a href="#cb4-258" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">binding</span><span class="op">:</span> <span class="dv">3</span><span class="op">,</span> <span class="dt">resource</span><span class="op">:</span> { <span class="dt">buffer</span><span class="op">:</span> rngBuffer } }<span class="op">,</span></span>
-<span id="cb4-259"><a href="#cb4-259" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">binding</span><span class="op">:</span> <span class="dv">4</span><span class="op">,</span> <span class="dt">resource</span><span class="op">:</span> { <span class="dt">buffer</span><span class="op">:</span> paramBuffer } }<span class="op">,</span></span>
-<span id="cb4-260"><a href="#cb4-260" aria-hidden="true" tabindex="-1"></a>    ]<span class="op">,</span></span>
-<span id="cb4-261"><a href="#cb4-261" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
-<span id="cb4-262"><a href="#cb4-262" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-263"><a href="#cb4-263" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Render: a disc per particle, coloured by its speed (see lib/md.js)</span></span>
-<span id="cb4-264"><a href="#cb4-264" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> discs <span class="op">=</span> md<span class="op">.</span><span class="fu">discs</span>(device<span class="op">,</span> { format<span class="op">,</span> positionBuffer<span class="op">,</span> velocityBuffer<span class="op">,</span> <span class="dt">box</span><span class="op">:</span> [Lx<span class="op">,</span> Ly] })<span class="op">;</span></span>
-<span id="cb4-265"><a href="#cb4-265" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-266"><a href="#cb4-266" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Charts: one Observable Plot per host, redrawn after every readback</span></span>
-<span id="cb4-267"><a href="#cb4-267" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> [energyHost<span class="op">,</span> densityHost] <span class="op">=</span> charts<span class="op">.</span><span class="at">children</span><span class="op">;</span></span>
-<span id="cb4-268"><a href="#cb4-268" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> draw <span class="op">=</span> ui<span class="op">.</span><span class="fu">plotter</span>(Plot)<span class="op">;</span></span>
-<span id="cb4-269"><a href="#cb4-269" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> hot <span class="op">=</span> <span class="st">"#FF4834"</span><span class="op">;</span></span>
-<span id="cb4-270"><a href="#cb4-270" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> cold <span class="op">=</span> <span class="st">"#5a80cc"</span><span class="op">;</span></span>
-<span id="cb4-271"><a href="#cb4-271" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> samples <span class="op">=</span> []<span class="op">;</span> <span class="co">// {t, kind, e}: energy per atom against simulated time</span></span>
-<span id="cb4-272"><a href="#cb4-272" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> bins <span class="op">=</span> <span class="dv">30</span><span class="op">;</span></span>
-<span id="cb4-273"><a href="#cb4-273" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> binHeight <span class="op">=</span> Ly <span class="op">/</span> bins<span class="op">;</span></span>
-<span id="cb4-274"><a href="#cb4-274" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> density <span class="op">=</span> <span class="kw">new</span> <span class="bu">Float32Array</span>(bins)<span class="op">;</span> <span class="co">// atoms per sigma^2, smoothed over samples</span></span>
-<span id="cb4-275"><a href="#cb4-275" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-276"><a href="#cb4-276" aria-hidden="true" tabindex="-1"></a>  <span class="kw">function</span> <span class="fu">drawCharts</span>(temperature<span class="op">,</span> g) {</span>
-<span id="cb4-277"><a href="#cb4-277" aria-hidden="true" tabindex="-1"></a>    <span class="fu">draw</span>(energyHost<span class="op">,</span> {</span>
-<span id="cb4-278"><a href="#cb4-278" aria-hidden="true" tabindex="-1"></a>      <span class="dt">x</span><span class="op">:</span> { <span class="dt">label</span><span class="op">:</span> <span class="st">"time (reduced units)"</span> }<span class="op">,</span></span>
-<span id="cb4-279"><a href="#cb4-279" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y</span><span class="op">:</span> { <span class="dt">label</span><span class="op">:</span> <span class="st">"energy per atom"</span><span class="op">,</span> <span class="dt">grid</span><span class="op">:</span> <span class="kw">true</span> }<span class="op">,</span></span>
-<span id="cb4-280"><a href="#cb4-280" aria-hidden="true" tabindex="-1"></a>      <span class="dt">color</span><span class="op">:</span> {</span>
-<span id="cb4-281"><a href="#cb4-281" aria-hidden="true" tabindex="-1"></a>        <span class="dt">domain</span><span class="op">:</span> [<span class="st">"kinetic"</span><span class="op">,</span> <span class="st">"potential"</span><span class="op">,</span> <span class="st">"total"</span>]<span class="op">,</span></span>
-<span id="cb4-282"><a href="#cb4-282" aria-hidden="true" tabindex="-1"></a>        <span class="dt">range</span><span class="op">:</span> [hot<span class="op">,</span> cold<span class="op">,</span> <span class="st">"currentColor"</span>]<span class="op">,</span></span>
-<span id="cb4-283"><a href="#cb4-283" aria-hidden="true" tabindex="-1"></a>        <span class="dt">legend</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
-<span id="cb4-284"><a href="#cb4-284" aria-hidden="true" tabindex="-1"></a>      }<span class="op">,</span></span>
-<span id="cb4-285"><a href="#cb4-285" aria-hidden="true" tabindex="-1"></a>      <span class="dt">marks</span><span class="op">:</span> [Plot<span class="op">.</span><span class="fu">lineY</span>(samples<span class="op">,</span> { <span class="dt">x</span><span class="op">:</span> <span class="st">"t"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"e"</span><span class="op">,</span> <span class="dt">stroke</span><span class="op">:</span> <span class="st">"kind"</span> })]<span class="op">,</span></span>
-<span id="cb4-286"><a href="#cb4-286" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
-<span id="cb4-287"><a href="#cb4-287" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-288"><a href="#cb4-288" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Barometric profile, n(y) = n_ref exp(-g (y - y_ref) / T), anchored at the</span></span>
-<span id="cb4-289"><a href="#cb4-289" aria-hidden="true" tabindex="-1"></a>    <span class="co">// surface of the pool: the lowest bin whose density is gas-like. Below that the</span></span>
-<span id="cb4-290"><a href="#cb4-290" aria-hidden="true" tabindex="-1"></a>    <span class="co">// liquid is nearly incompressible, so it does not follow the curve.</span></span>
-<span id="cb4-291"><a href="#cb4-291" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> surface <span class="op">=</span> density<span class="op">.</span><span class="fu">findIndex</span>((n) <span class="kw">=&gt;</span> n <span class="op">&gt;</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> n <span class="op">&lt;</span> <span class="fl">0.25</span>)<span class="op">;</span></span>
-<span id="cb4-292"><a href="#cb4-292" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> yRef <span class="op">=</span> (surface <span class="op">+</span> <span class="fl">0.5</span>) <span class="op">*</span> binHeight<span class="op">;</span></span>
-<span id="cb4-293"><a href="#cb4-293" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> curve <span class="op">=</span></span>
-<span id="cb4-294"><a href="#cb4-294" aria-hidden="true" tabindex="-1"></a>      surface <span class="op">&lt;</span> <span class="dv">0</span></span>
-<span id="cb4-295"><a href="#cb4-295" aria-hidden="true" tabindex="-1"></a>        <span class="op">?</span> []</span>
-<span id="cb4-296"><a href="#cb4-296" aria-hidden="true" tabindex="-1"></a>        <span class="op">:</span> <span class="bu">Array</span><span class="op">.</span><span class="fu">from</span>({ <span class="dt">length</span><span class="op">:</span> <span class="dv">61</span> }<span class="op">,</span> (_<span class="op">,</span> k) <span class="kw">=&gt;</span> {</span>
-<span id="cb4-297"><a href="#cb4-297" aria-hidden="true" tabindex="-1"></a>            <span class="kw">const</span> y <span class="op">=</span> yRef <span class="op">+</span> ((Ly <span class="op">-</span> <span class="fl">0.5</span> <span class="op">-</span> yRef) <span class="op">*</span> k) <span class="op">/</span> <span class="dv">60</span><span class="op">;</span></span>
-<span id="cb4-298"><a href="#cb4-298" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> { y<span class="op">,</span> <span class="dt">n</span><span class="op">:</span> density[surface] <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">exp</span>((<span class="op">-</span>g <span class="op">*</span> (y <span class="op">-</span> yRef)) <span class="op">/</span> temperature) }<span class="op">;</span></span>
-<span id="cb4-299"><a href="#cb4-299" aria-hidden="true" tabindex="-1"></a>          })<span class="op">;</span></span>
-<span id="cb4-300"><a href="#cb4-300" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> rows <span class="op">=</span> <span class="bu">Array</span><span class="op">.</span><span class="fu">from</span>(density<span class="op">,</span> (n<span class="op">,</span> k) <span class="kw">=&gt;</span> ({</span>
-<span id="cb4-301"><a href="#cb4-301" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y0</span><span class="op">:</span> k <span class="op">*</span> binHeight<span class="op">,</span></span>
-<span id="cb4-302"><a href="#cb4-302" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y1</span><span class="op">:</span> (k <span class="op">+</span> <span class="dv">1</span>) <span class="op">*</span> binHeight<span class="op">,</span></span>
-<span id="cb4-303"><a href="#cb4-303" aria-hidden="true" tabindex="-1"></a>      n<span class="op">,</span></span>
-<span id="cb4-304"><a href="#cb4-304" aria-hidden="true" tabindex="-1"></a>    }))<span class="op">;</span></span>
-<span id="cb4-305"><a href="#cb4-305" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-306"><a href="#cb4-306" aria-hidden="true" tabindex="-1"></a>    <span class="fu">draw</span>(densityHost<span class="op">,</span> {</span>
-<span id="cb4-307"><a href="#cb4-307" aria-hidden="true" tabindex="-1"></a>      <span class="dt">x</span><span class="op">:</span> { <span class="dt">label</span><span class="op">:</span> <span class="st">"density (atoms per area)"</span><span class="op">,</span> <span class="dt">grid</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span> <span class="dt">domain</span><span class="op">:</span> [<span class="dv">0</span><span class="op">,</span> <span class="dv">1</span>] }<span class="op">,</span></span>
-<span id="cb4-308"><a href="#cb4-308" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y</span><span class="op">:</span> { <span class="dt">label</span><span class="op">:</span> <span class="st">"height"</span><span class="op">,</span> <span class="dt">domain</span><span class="op">:</span> [<span class="dv">0</span><span class="op">,</span> Ly] }<span class="op">,</span></span>
-<span id="cb4-309"><a href="#cb4-309" aria-hidden="true" tabindex="-1"></a>      <span class="dt">marks</span><span class="op">:</span> [</span>
-<span id="cb4-310"><a href="#cb4-310" aria-hidden="true" tabindex="-1"></a>        Plot<span class="op">.</span><span class="fu">rectX</span>(rows<span class="op">,</span> { <span class="dt">y1</span><span class="op">:</span> <span class="st">"y0"</span><span class="op">,</span> <span class="dt">y2</span><span class="op">:</span> <span class="st">"y1"</span><span class="op">,</span> <span class="dt">x</span><span class="op">:</span> <span class="st">"n"</span><span class="op">,</span> <span class="dt">fill</span><span class="op">:</span> cold<span class="op">,</span> <span class="dt">fillOpacity</span><span class="op">:</span> <span class="fl">0.85</span> })<span class="op">,</span></span>
-<span id="cb4-311"><a href="#cb4-311" aria-hidden="true" tabindex="-1"></a>        Plot<span class="op">.</span><span class="fu">line</span>(curve<span class="op">,</span> { <span class="dt">x</span><span class="op">:</span> <span class="st">"n"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"y"</span><span class="op">,</span> <span class="dt">stroke</span><span class="op">:</span> <span class="st">"currentColor"</span><span class="op">,</span> <span class="dt">strokeDasharray</span><span class="op">:</span> <span class="st">"4 3"</span> })<span class="op">,</span></span>
-<span id="cb4-312"><a href="#cb4-312" aria-hidden="true" tabindex="-1"></a>      ]<span class="op">,</span></span>
-<span id="cb4-313"><a href="#cb4-313" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
-<span id="cb4-314"><a href="#cb4-314" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb4-315"><a href="#cb4-315" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-316"><a href="#cb4-316" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Turn one readback into chart data</span></span>
-<span id="cb4-317"><a href="#cb4-317" aria-hidden="true" tabindex="-1"></a>  <span class="kw">function</span> <span class="fu">record</span>(data<span class="op">,</span> time) {</span>
-<span id="cb4-318"><a href="#cb4-318" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> vel <span class="op">=</span> data<span class="op">.</span><span class="fu">subarray</span>(count <span class="op">*</span> <span class="dv">2</span><span class="op">,</span> count <span class="op">*</span> <span class="dv">4</span>)<span class="op">;</span></span>
-<span id="cb4-319"><a href="#cb4-319" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> pot <span class="op">=</span> data<span class="op">.</span><span class="fu">subarray</span>(count <span class="op">*</span> <span class="dv">4</span><span class="op">,</span> count <span class="op">*</span> <span class="dv">5</span>)<span class="op">;</span></span>
-<span id="cb4-320"><a href="#cb4-320" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> g <span class="op">=</span> gravityInput<span class="op">.</span><span class="at">value</span><span class="op">;</span></span>
-<span id="cb4-321"><a href="#cb4-321" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-322"><a href="#cb4-322" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> kinetic <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb4-323"><a href="#cb4-323" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> potential <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb4-324"><a href="#cb4-324" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> counts <span class="op">=</span> <span class="kw">new</span> <span class="bu">Float32Array</span>(bins)<span class="op">;</span></span>
-<span id="cb4-325"><a href="#cb4-325" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (<span class="kw">let</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> count<span class="op">;</span> i<span class="op">++</span>) {</span>
-<span id="cb4-326"><a href="#cb4-326" aria-hidden="true" tabindex="-1"></a>      kinetic <span class="op">+=</span> <span class="fl">0.5</span> <span class="op">*</span> (vel[<span class="dv">2</span> <span class="op">*</span> i] <span class="op">**</span> <span class="dv">2</span> <span class="op">+</span> vel[<span class="dv">2</span> <span class="op">*</span> i <span class="op">+</span> <span class="dv">1</span>] <span class="op">**</span> <span class="dv">2</span>)<span class="op">;</span></span>
-<span id="cb4-327"><a href="#cb4-327" aria-hidden="true" tabindex="-1"></a>      <span class="kw">const</span> y <span class="op">=</span> data[<span class="dv">2</span> <span class="op">*</span> i <span class="op">+</span> <span class="dv">1</span>]<span class="op">;</span></span>
-<span id="cb4-328"><a href="#cb4-328" aria-hidden="true" tabindex="-1"></a>      potential <span class="op">+=</span> pot[i] <span class="op">+</span> g <span class="op">*</span> (y <span class="op">-</span> <span class="fl">0.5</span>)<span class="op">;</span> <span class="co">// pair energy plus height</span></span>
-<span id="cb4-329"><a href="#cb4-329" aria-hidden="true" tabindex="-1"></a>      counts[<span class="bu">Math</span><span class="op">.</span><span class="fu">min</span>(bins <span class="op">-</span> <span class="dv">1</span><span class="op">,</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">floor</span>(y <span class="op">/</span> binHeight))]<span class="op">++;</span></span>
-<span id="cb4-330"><a href="#cb4-330" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb4-331"><a href="#cb4-331" aria-hidden="true" tabindex="-1"></a>    samples<span class="op">.</span><span class="fu">push</span>(</span>
-<span id="cb4-332"><a href="#cb4-332" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">t</span><span class="op">:</span> time<span class="op">,</span> <span class="dt">kind</span><span class="op">:</span> <span class="st">"kinetic"</span><span class="op">,</span> <span class="dt">e</span><span class="op">:</span> kinetic <span class="op">/</span> count }<span class="op">,</span></span>
-<span id="cb4-333"><a href="#cb4-333" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">t</span><span class="op">:</span> time<span class="op">,</span> <span class="dt">kind</span><span class="op">:</span> <span class="st">"potential"</span><span class="op">,</span> <span class="dt">e</span><span class="op">:</span> potential <span class="op">/</span> count }<span class="op">,</span></span>
-<span id="cb4-334"><a href="#cb4-334" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">t</span><span class="op">:</span> time<span class="op">,</span> <span class="dt">kind</span><span class="op">:</span> <span class="st">"total"</span><span class="op">,</span> <span class="dt">e</span><span class="op">:</span> (kinetic <span class="op">+</span> potential) <span class="op">/</span> count }</span>
-<span id="cb4-335"><a href="#cb4-335" aria-hidden="true" tabindex="-1"></a>    )<span class="op">;</span></span>
-<span id="cb4-336"><a href="#cb4-336" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (samples<span class="op">.</span><span class="at">length</span> <span class="op">&gt;</span> keep <span class="op">*</span> <span class="dv">3</span>) samples<span class="op">.</span><span class="fu">splice</span>(<span class="dv">0</span><span class="op">,</span> <span class="dv">3</span>)<span class="op">;</span></span>
-<span id="cb4-337"><a href="#cb4-337" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-338"><a href="#cb4-338" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (<span class="kw">let</span> k <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> k <span class="op">&lt;</span> bins<span class="op">;</span> k<span class="op">++</span>) {</span>
-<span id="cb4-339"><a href="#cb4-339" aria-hidden="true" tabindex="-1"></a>      <span class="kw">const</span> n <span class="op">=</span> counts[k] <span class="op">/</span> (Lx <span class="op">*</span> binHeight)<span class="op">;</span></span>
-<span id="cb4-340"><a href="#cb4-340" aria-hidden="true" tabindex="-1"></a>      density[k] <span class="op">=</span> density[k] <span class="op">===</span> <span class="dv">0</span> <span class="op">?</span> n <span class="op">:</span> <span class="fl">0.9</span> <span class="op">*</span> density[k] <span class="op">+</span> <span class="fl">0.1</span> <span class="op">*</span> n<span class="op">;</span></span>
-<span id="cb4-341"><a href="#cb4-341" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb4-342"><a href="#cb4-342" aria-hidden="true" tabindex="-1"></a>    <span class="co">// In 2D the mean kinetic energy per atom is k_B T, so this is the measured T</span></span>
-<span id="cb4-343"><a href="#cb4-343" aria-hidden="true" tabindex="-1"></a>    <span class="fu">drawCharts</span>(kinetic <span class="op">/</span> count<span class="op">,</span> g)<span class="op">;</span></span>
-<span id="cb4-344"><a href="#cb4-344" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb4-345"><a href="#cb4-345" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-346"><a href="#cb4-346" aria-hidden="true" tabindex="-1"></a>  <span class="co">// One frame: `stepsPerFrame` simulation steps in a single compute pass, then</span></span>
-<span id="cb4-347"><a href="#cb4-347" aria-hidden="true" tabindex="-1"></a>  <span class="co">// draw. Every `sampleEvery` frames the buffers are also copied for readback.</span></span>
-<span id="cb4-348"><a href="#cb4-348" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> workgroups <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">ceil</span>(count <span class="op">/</span> <span class="dv">64</span>)<span class="op">;</span></span>
-<span id="cb4-349"><a href="#cb4-349" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> simTime <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb4-350"><a href="#cb4-350" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> frameCount <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb4-351"><a href="#cb4-351" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-352"><a href="#cb4-352" aria-hidden="true" tabindex="-1"></a>  <span class="kw">function</span> <span class="fu">frame</span>() {</span>
-<span id="cb4-353"><a href="#cb4-353" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> on <span class="op">=</span> thermostatInput<span class="op">.</span><span class="at">value</span><span class="op">;</span></span>
-<span id="cb4-354"><a href="#cb4-354" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> decay <span class="op">=</span> on <span class="op">?</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">exp</span>(<span class="op">-</span>friction <span class="op">*</span> dt) <span class="op">:</span> <span class="dv">1</span><span class="op">;</span></span>
-<span id="cb4-355"><a href="#cb4-355" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> noise <span class="op">=</span> on <span class="op">?</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">sqrt</span>(temperatureInput<span class="op">.</span><span class="at">value</span> <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> decay <span class="op">*</span> decay)) <span class="op">:</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb4-356"><a href="#cb4-356" aria-hidden="true" tabindex="-1"></a>    device<span class="op">.</span><span class="at">queue</span><span class="op">.</span><span class="fu">writeBuffer</span>(</span>
-<span id="cb4-357"><a href="#cb4-357" aria-hidden="true" tabindex="-1"></a>      paramBuffer<span class="op">,</span></span>
-<span id="cb4-358"><a href="#cb4-358" aria-hidden="true" tabindex="-1"></a>      <span class="dv">0</span><span class="op">,</span></span>
-<span id="cb4-359"><a href="#cb4-359" aria-hidden="true" tabindex="-1"></a>      <span class="kw">new</span> <span class="bu">Float32Array</span>([noise<span class="op">,</span> gravityInput<span class="op">.</span><span class="at">value</span><span class="op">,</span> decay<span class="op">,</span> dt])</span>
-<span id="cb4-360"><a href="#cb4-360" aria-hidden="true" tabindex="-1"></a>    )<span class="op">;</span></span>
-<span id="cb4-361"><a href="#cb4-361" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-362"><a href="#cb4-362" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> encoder <span class="op">=</span> device<span class="op">.</span><span class="fu">createCommandEncoder</span>()<span class="op">;</span></span>
-<span id="cb4-363"><a href="#cb4-363" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-364"><a href="#cb4-364" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> compute <span class="op">=</span> encoder<span class="op">.</span><span class="fu">beginComputePass</span>()<span class="op">;</span></span>
-<span id="cb4-365"><a href="#cb4-365" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (<span class="kw">let</span> s <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> s <span class="op">&lt;</span> stepsPerFrame<span class="op">;</span> s<span class="op">++</span>) {</span>
-<span id="cb4-366"><a href="#cb4-366" aria-hidden="true" tabindex="-1"></a>      compute<span class="op">.</span><span class="fu">setPipeline</span>(forcePipeline)<span class="op">;</span></span>
-<span id="cb4-367"><a href="#cb4-367" aria-hidden="true" tabindex="-1"></a>      compute<span class="op">.</span><span class="fu">setBindGroup</span>(<span class="dv">0</span><span class="op">,</span> forceBindGroup)<span class="op">;</span></span>
-<span id="cb4-368"><a href="#cb4-368" aria-hidden="true" tabindex="-1"></a>      compute<span class="op">.</span><span class="fu">dispatchWorkgroups</span>(workgroups)<span class="op">;</span></span>
-<span id="cb4-369"><a href="#cb4-369" aria-hidden="true" tabindex="-1"></a>      compute<span class="op">.</span><span class="fu">setPipeline</span>(integratePipeline)<span class="op">;</span></span>
-<span id="cb4-370"><a href="#cb4-370" aria-hidden="true" tabindex="-1"></a>      compute<span class="op">.</span><span class="fu">setBindGroup</span>(<span class="dv">0</span><span class="op">,</span> integrateBindGroup)<span class="op">;</span></span>
-<span id="cb4-371"><a href="#cb4-371" aria-hidden="true" tabindex="-1"></a>      compute<span class="op">.</span><span class="fu">dispatchWorkgroups</span>(workgroups)<span class="op">;</span></span>
-<span id="cb4-372"><a href="#cb4-372" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb4-373"><a href="#cb4-373" aria-hidden="true" tabindex="-1"></a>    compute<span class="op">.</span><span class="fu">end</span>()<span class="op">;</span></span>
-<span id="cb4-374"><a href="#cb4-374" aria-hidden="true" tabindex="-1"></a>    simTime <span class="op">+=</span> stepsPerFrame <span class="op">*</span> dt<span class="op">;</span></span>
-<span id="cb4-375"><a href="#cb4-375" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-376"><a href="#cb4-376" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> pass <span class="op">=</span> gpu<span class="op">.</span><span class="fu">beginRenderPass</span>(encoder<span class="op">,</span> context)<span class="op">;</span></span>
-<span id="cb4-377"><a href="#cb4-377" aria-hidden="true" tabindex="-1"></a>    discs<span class="op">.</span><span class="fu">draw</span>(pass<span class="op">,</span> count)<span class="op">;</span></span>
-<span id="cb4-378"><a href="#cb4-378" aria-hidden="true" tabindex="-1"></a>    pass<span class="op">.</span><span class="fu">end</span>()<span class="op">;</span></span>
-<span id="cb4-379"><a href="#cb4-379" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-380"><a href="#cb4-380" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Readback, step 1: copy what we want into the staging buffer</span></span>
-<span id="cb4-381"><a href="#cb4-381" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> sample <span class="op">=</span> <span class="op">!</span>readback<span class="op">.</span><span class="at">pending</span> <span class="op">&amp;&amp;</span> <span class="op">++</span>frameCount <span class="op">%</span> sampleEvery <span class="op">===</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb4-382"><a href="#cb4-382" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (sample) readback<span class="op">.</span><span class="fu">copy</span>(encoder)<span class="op">;</span></span>
+<span id="cb4-249"><a href="#cb4-249" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">binding</span><span class="op">:</span> <span class="dv">3</span><span class="op">,</span> <span class="dt">resource</span><span class="op">:</span> { <span class="dt">buffer</span><span class="op">:</span> rngBuffer } }<span class="op">,</span></span>
+<span id="cb4-250"><a href="#cb4-250" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">binding</span><span class="op">:</span> <span class="dv">4</span><span class="op">,</span> <span class="dt">resource</span><span class="op">:</span> { <span class="dt">buffer</span><span class="op">:</span> paramBuffer } }<span class="op">,</span></span>
+<span id="cb4-251"><a href="#cb4-251" aria-hidden="true" tabindex="-1"></a>    ]<span class="op">,</span></span>
+<span id="cb4-252"><a href="#cb4-252" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb4-253"><a href="#cb4-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-254"><a href="#cb4-254" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Render: a disc per particle, coloured by its speed (see lib/md.js)</span></span>
+<span id="cb4-255"><a href="#cb4-255" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> discs <span class="op">=</span> md<span class="op">.</span><span class="fu">discs</span>(device<span class="op">,</span> { format<span class="op">,</span> positionBuffer<span class="op">,</span> velocityBuffer<span class="op">,</span> <span class="dt">box</span><span class="op">:</span> [Lx<span class="op">,</span> Ly] })<span class="op">;</span></span>
+<span id="cb4-256"><a href="#cb4-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-257"><a href="#cb4-257" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Charts: one Observable Plot per host, redrawn after every readback</span></span>
+<span id="cb4-258"><a href="#cb4-258" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> [energyHost<span class="op">,</span> densityHost] <span class="op">=</span> charts<span class="op">.</span><span class="at">children</span><span class="op">;</span></span>
+<span id="cb4-259"><a href="#cb4-259" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> draw <span class="op">=</span> ui<span class="op">.</span><span class="fu">plotter</span>(Plot)<span class="op">;</span></span>
+<span id="cb4-260"><a href="#cb4-260" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> hot <span class="op">=</span> <span class="st">"#FF4834"</span><span class="op">;</span></span>
+<span id="cb4-261"><a href="#cb4-261" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> cold <span class="op">=</span> <span class="st">"#5a80cc"</span><span class="op">;</span></span>
+<span id="cb4-262"><a href="#cb4-262" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> samples <span class="op">=</span> []<span class="op">;</span> <span class="co">// {t, kind, e}: energy per atom against simulated time</span></span>
+<span id="cb4-263"><a href="#cb4-263" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> bins <span class="op">=</span> <span class="dv">30</span><span class="op">;</span></span>
+<span id="cb4-264"><a href="#cb4-264" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> binHeight <span class="op">=</span> Ly <span class="op">/</span> bins<span class="op">;</span></span>
+<span id="cb4-265"><a href="#cb4-265" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> density <span class="op">=</span> <span class="kw">new</span> <span class="bu">Float32Array</span>(bins)<span class="op">;</span> <span class="co">// atoms per sigma^2, smoothed over samples</span></span>
+<span id="cb4-266"><a href="#cb4-266" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-267"><a href="#cb4-267" aria-hidden="true" tabindex="-1"></a>  <span class="kw">function</span> <span class="fu">drawCharts</span>(temperature<span class="op">,</span> g) {</span>
+<span id="cb4-268"><a href="#cb4-268" aria-hidden="true" tabindex="-1"></a>    <span class="fu">draw</span>(energyHost<span class="op">,</span> {</span>
+<span id="cb4-269"><a href="#cb4-269" aria-hidden="true" tabindex="-1"></a>      <span class="dt">x</span><span class="op">:</span> { <span class="dt">label</span><span class="op">:</span> <span class="st">"time (reduced units)"</span> }<span class="op">,</span></span>
+<span id="cb4-270"><a href="#cb4-270" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y</span><span class="op">:</span> { <span class="dt">label</span><span class="op">:</span> <span class="st">"energy per atom"</span><span class="op">,</span> <span class="dt">grid</span><span class="op">:</span> <span class="kw">true</span> }<span class="op">,</span></span>
+<span id="cb4-271"><a href="#cb4-271" aria-hidden="true" tabindex="-1"></a>      <span class="dt">color</span><span class="op">:</span> {</span>
+<span id="cb4-272"><a href="#cb4-272" aria-hidden="true" tabindex="-1"></a>        <span class="dt">domain</span><span class="op">:</span> [<span class="st">"kinetic"</span><span class="op">,</span> <span class="st">"potential"</span><span class="op">,</span> <span class="st">"total"</span>]<span class="op">,</span></span>
+<span id="cb4-273"><a href="#cb4-273" aria-hidden="true" tabindex="-1"></a>        <span class="dt">range</span><span class="op">:</span> [hot<span class="op">,</span> cold<span class="op">,</span> <span class="st">"currentColor"</span>]<span class="op">,</span></span>
+<span id="cb4-274"><a href="#cb4-274" aria-hidden="true" tabindex="-1"></a>        <span class="dt">legend</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
+<span id="cb4-275"><a href="#cb4-275" aria-hidden="true" tabindex="-1"></a>      }<span class="op">,</span></span>
+<span id="cb4-276"><a href="#cb4-276" aria-hidden="true" tabindex="-1"></a>      <span class="dt">marks</span><span class="op">:</span> [Plot<span class="op">.</span><span class="fu">lineY</span>(samples<span class="op">,</span> { <span class="dt">x</span><span class="op">:</span> <span class="st">"t"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"e"</span><span class="op">,</span> <span class="dt">stroke</span><span class="op">:</span> <span class="st">"kind"</span> })]<span class="op">,</span></span>
+<span id="cb4-277"><a href="#cb4-277" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb4-278"><a href="#cb4-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-279"><a href="#cb4-279" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Barometric profile, n(y) = n_ref exp(-g (y - y_ref) / T), anchored at the</span></span>
+<span id="cb4-280"><a href="#cb4-280" aria-hidden="true" tabindex="-1"></a>    <span class="co">// surface of the pool: the lowest bin whose density is gas-like. Below that the</span></span>
+<span id="cb4-281"><a href="#cb4-281" aria-hidden="true" tabindex="-1"></a>    <span class="co">// liquid is nearly incompressible, so it does not follow the curve.</span></span>
+<span id="cb4-282"><a href="#cb4-282" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> surface <span class="op">=</span> density<span class="op">.</span><span class="fu">findIndex</span>((n) <span class="kw">=&gt;</span> n <span class="op">&gt;</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> n <span class="op">&lt;</span> <span class="fl">0.25</span>)<span class="op">;</span></span>
+<span id="cb4-283"><a href="#cb4-283" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> yRef <span class="op">=</span> (surface <span class="op">+</span> <span class="fl">0.5</span>) <span class="op">*</span> binHeight<span class="op">;</span></span>
+<span id="cb4-284"><a href="#cb4-284" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> curve <span class="op">=</span></span>
+<span id="cb4-285"><a href="#cb4-285" aria-hidden="true" tabindex="-1"></a>      surface <span class="op">&lt;</span> <span class="dv">0</span></span>
+<span id="cb4-286"><a href="#cb4-286" aria-hidden="true" tabindex="-1"></a>        <span class="op">?</span> []</span>
+<span id="cb4-287"><a href="#cb4-287" aria-hidden="true" tabindex="-1"></a>        <span class="op">:</span> <span class="bu">Array</span><span class="op">.</span><span class="fu">from</span>({ <span class="dt">length</span><span class="op">:</span> <span class="dv">61</span> }<span class="op">,</span> (_<span class="op">,</span> k) <span class="kw">=&gt;</span> {</span>
+<span id="cb4-288"><a href="#cb4-288" aria-hidden="true" tabindex="-1"></a>            <span class="kw">const</span> y <span class="op">=</span> yRef <span class="op">+</span> ((Ly <span class="op">-</span> <span class="fl">0.5</span> <span class="op">-</span> yRef) <span class="op">*</span> k) <span class="op">/</span> <span class="dv">60</span><span class="op">;</span></span>
+<span id="cb4-289"><a href="#cb4-289" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> { y<span class="op">,</span> <span class="dt">n</span><span class="op">:</span> density[surface] <span class="op">*</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">exp</span>((<span class="op">-</span>g <span class="op">*</span> (y <span class="op">-</span> yRef)) <span class="op">/</span> temperature) }<span class="op">;</span></span>
+<span id="cb4-290"><a href="#cb4-290" aria-hidden="true" tabindex="-1"></a>          })<span class="op">;</span></span>
+<span id="cb4-291"><a href="#cb4-291" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> rows <span class="op">=</span> <span class="bu">Array</span><span class="op">.</span><span class="fu">from</span>(density<span class="op">,</span> (n<span class="op">,</span> k) <span class="kw">=&gt;</span> ({</span>
+<span id="cb4-292"><a href="#cb4-292" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y0</span><span class="op">:</span> k <span class="op">*</span> binHeight<span class="op">,</span></span>
+<span id="cb4-293"><a href="#cb4-293" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y1</span><span class="op">:</span> (k <span class="op">+</span> <span class="dv">1</span>) <span class="op">*</span> binHeight<span class="op">,</span></span>
+<span id="cb4-294"><a href="#cb4-294" aria-hidden="true" tabindex="-1"></a>      n<span class="op">,</span></span>
+<span id="cb4-295"><a href="#cb4-295" aria-hidden="true" tabindex="-1"></a>    }))<span class="op">;</span></span>
+<span id="cb4-296"><a href="#cb4-296" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-297"><a href="#cb4-297" aria-hidden="true" tabindex="-1"></a>    <span class="fu">draw</span>(densityHost<span class="op">,</span> {</span>
+<span id="cb4-298"><a href="#cb4-298" aria-hidden="true" tabindex="-1"></a>      <span class="dt">x</span><span class="op">:</span> { <span class="dt">label</span><span class="op">:</span> <span class="st">"density (atoms per area)"</span><span class="op">,</span> <span class="dt">grid</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span> <span class="dt">domain</span><span class="op">:</span> [<span class="dv">0</span><span class="op">,</span> <span class="dv">1</span>] }<span class="op">,</span></span>
+<span id="cb4-299"><a href="#cb4-299" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y</span><span class="op">:</span> { <span class="dt">label</span><span class="op">:</span> <span class="st">"height"</span><span class="op">,</span> <span class="dt">domain</span><span class="op">:</span> [<span class="dv">0</span><span class="op">,</span> Ly] }<span class="op">,</span></span>
+<span id="cb4-300"><a href="#cb4-300" aria-hidden="true" tabindex="-1"></a>      <span class="dt">marks</span><span class="op">:</span> [</span>
+<span id="cb4-301"><a href="#cb4-301" aria-hidden="true" tabindex="-1"></a>        Plot<span class="op">.</span><span class="fu">rectX</span>(rows<span class="op">,</span> { <span class="dt">y1</span><span class="op">:</span> <span class="st">"y0"</span><span class="op">,</span> <span class="dt">y2</span><span class="op">:</span> <span class="st">"y1"</span><span class="op">,</span> <span class="dt">x</span><span class="op">:</span> <span class="st">"n"</span><span class="op">,</span> <span class="dt">fill</span><span class="op">:</span> cold<span class="op">,</span> <span class="dt">fillOpacity</span><span class="op">:</span> <span class="fl">0.85</span> })<span class="op">,</span></span>
+<span id="cb4-302"><a href="#cb4-302" aria-hidden="true" tabindex="-1"></a>        Plot<span class="op">.</span><span class="fu">line</span>(curve<span class="op">,</span> { <span class="dt">x</span><span class="op">:</span> <span class="st">"n"</span><span class="op">,</span> <span class="dt">y</span><span class="op">:</span> <span class="st">"y"</span><span class="op">,</span> <span class="dt">stroke</span><span class="op">:</span> <span class="st">"currentColor"</span><span class="op">,</span> <span class="dt">strokeDasharray</span><span class="op">:</span> <span class="st">"4 3"</span> })<span class="op">,</span></span>
+<span id="cb4-303"><a href="#cb4-303" aria-hidden="true" tabindex="-1"></a>      ]<span class="op">,</span></span>
+<span id="cb4-304"><a href="#cb4-304" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb4-305"><a href="#cb4-305" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-306"><a href="#cb4-306" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-307"><a href="#cb4-307" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Turn one readback into chart data</span></span>
+<span id="cb4-308"><a href="#cb4-308" aria-hidden="true" tabindex="-1"></a>  <span class="kw">function</span> <span class="fu">record</span>(data<span class="op">,</span> time) {</span>
+<span id="cb4-309"><a href="#cb4-309" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> vel <span class="op">=</span> data<span class="op">.</span><span class="fu">subarray</span>(count <span class="op">*</span> <span class="dv">2</span><span class="op">,</span> count <span class="op">*</span> <span class="dv">4</span>)<span class="op">;</span></span>
+<span id="cb4-310"><a href="#cb4-310" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> pot <span class="op">=</span> data<span class="op">.</span><span class="fu">subarray</span>(count <span class="op">*</span> <span class="dv">4</span><span class="op">,</span> count <span class="op">*</span> <span class="dv">5</span>)<span class="op">;</span></span>
+<span id="cb4-311"><a href="#cb4-311" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> g <span class="op">=</span> gravityInput<span class="op">.</span><span class="at">value</span><span class="op">;</span></span>
+<span id="cb4-312"><a href="#cb4-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-313"><a href="#cb4-313" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> kinetic <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb4-314"><a href="#cb4-314" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> potential <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb4-315"><a href="#cb4-315" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> counts <span class="op">=</span> <span class="kw">new</span> <span class="bu">Float32Array</span>(bins)<span class="op">;</span></span>
+<span id="cb4-316"><a href="#cb4-316" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (<span class="kw">let</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> count<span class="op">;</span> i<span class="op">++</span>) {</span>
+<span id="cb4-317"><a href="#cb4-317" aria-hidden="true" tabindex="-1"></a>      kinetic <span class="op">+=</span> <span class="fl">0.5</span> <span class="op">*</span> (vel[<span class="dv">2</span> <span class="op">*</span> i] <span class="op">**</span> <span class="dv">2</span> <span class="op">+</span> vel[<span class="dv">2</span> <span class="op">*</span> i <span class="op">+</span> <span class="dv">1</span>] <span class="op">**</span> <span class="dv">2</span>)<span class="op">;</span></span>
+<span id="cb4-318"><a href="#cb4-318" aria-hidden="true" tabindex="-1"></a>      <span class="kw">const</span> y <span class="op">=</span> data[<span class="dv">2</span> <span class="op">*</span> i <span class="op">+</span> <span class="dv">1</span>]<span class="op">;</span></span>
+<span id="cb4-319"><a href="#cb4-319" aria-hidden="true" tabindex="-1"></a>      potential <span class="op">+=</span> pot[i] <span class="op">+</span> g <span class="op">*</span> (y <span class="op">-</span> <span class="fl">0.5</span>)<span class="op">;</span> <span class="co">// pair energy plus height</span></span>
+<span id="cb4-320"><a href="#cb4-320" aria-hidden="true" tabindex="-1"></a>      counts[<span class="bu">Math</span><span class="op">.</span><span class="fu">min</span>(bins <span class="op">-</span> <span class="dv">1</span><span class="op">,</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">floor</span>(y <span class="op">/</span> binHeight))]<span class="op">++;</span></span>
+<span id="cb4-321"><a href="#cb4-321" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-322"><a href="#cb4-322" aria-hidden="true" tabindex="-1"></a>    samples<span class="op">.</span><span class="fu">push</span>(</span>
+<span id="cb4-323"><a href="#cb4-323" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">t</span><span class="op">:</span> time<span class="op">,</span> <span class="dt">kind</span><span class="op">:</span> <span class="st">"kinetic"</span><span class="op">,</span> <span class="dt">e</span><span class="op">:</span> kinetic <span class="op">/</span> count }<span class="op">,</span></span>
+<span id="cb4-324"><a href="#cb4-324" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">t</span><span class="op">:</span> time<span class="op">,</span> <span class="dt">kind</span><span class="op">:</span> <span class="st">"potential"</span><span class="op">,</span> <span class="dt">e</span><span class="op">:</span> potential <span class="op">/</span> count }<span class="op">,</span></span>
+<span id="cb4-325"><a href="#cb4-325" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">t</span><span class="op">:</span> time<span class="op">,</span> <span class="dt">kind</span><span class="op">:</span> <span class="st">"total"</span><span class="op">,</span> <span class="dt">e</span><span class="op">:</span> (kinetic <span class="op">+</span> potential) <span class="op">/</span> count }</span>
+<span id="cb4-326"><a href="#cb4-326" aria-hidden="true" tabindex="-1"></a>    )<span class="op">;</span></span>
+<span id="cb4-327"><a href="#cb4-327" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (samples<span class="op">.</span><span class="at">length</span> <span class="op">&gt;</span> keep <span class="op">*</span> <span class="dv">3</span>) samples<span class="op">.</span><span class="fu">splice</span>(<span class="dv">0</span><span class="op">,</span> <span class="dv">3</span>)<span class="op">;</span></span>
+<span id="cb4-328"><a href="#cb4-328" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-329"><a href="#cb4-329" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (<span class="kw">let</span> k <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> k <span class="op">&lt;</span> bins<span class="op">;</span> k<span class="op">++</span>) {</span>
+<span id="cb4-330"><a href="#cb4-330" aria-hidden="true" tabindex="-1"></a>      <span class="kw">const</span> n <span class="op">=</span> counts[k] <span class="op">/</span> (Lx <span class="op">*</span> binHeight)<span class="op">;</span></span>
+<span id="cb4-331"><a href="#cb4-331" aria-hidden="true" tabindex="-1"></a>      density[k] <span class="op">=</span> density[k] <span class="op">===</span> <span class="dv">0</span> <span class="op">?</span> n <span class="op">:</span> <span class="fl">0.9</span> <span class="op">*</span> density[k] <span class="op">+</span> <span class="fl">0.1</span> <span class="op">*</span> n<span class="op">;</span></span>
+<span id="cb4-332"><a href="#cb4-332" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-333"><a href="#cb4-333" aria-hidden="true" tabindex="-1"></a>    <span class="co">// In 2D the mean kinetic energy per atom is k_B T, so this is the measured T</span></span>
+<span id="cb4-334"><a href="#cb4-334" aria-hidden="true" tabindex="-1"></a>    <span class="fu">drawCharts</span>(kinetic <span class="op">/</span> count<span class="op">,</span> g)<span class="op">;</span></span>
+<span id="cb4-335"><a href="#cb4-335" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-336"><a href="#cb4-336" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-337"><a href="#cb4-337" aria-hidden="true" tabindex="-1"></a>  <span class="co">// One frame: `stepsPerFrame` simulation steps in a single compute pass, then</span></span>
+<span id="cb4-338"><a href="#cb4-338" aria-hidden="true" tabindex="-1"></a>  <span class="co">// draw. Every `sampleEvery` frames the buffers are also copied for readback.</span></span>
+<span id="cb4-339"><a href="#cb4-339" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> workgroups <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">ceil</span>(count <span class="op">/</span> <span class="dv">64</span>)<span class="op">;</span></span>
+<span id="cb4-340"><a href="#cb4-340" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> simTime <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb4-341"><a href="#cb4-341" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> frameCount <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb4-342"><a href="#cb4-342" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-343"><a href="#cb4-343" aria-hidden="true" tabindex="-1"></a>  <span class="kw">function</span> <span class="fu">frame</span>() {</span>
+<span id="cb4-344"><a href="#cb4-344" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> on <span class="op">=</span> thermostatInput<span class="op">.</span><span class="at">value</span><span class="op">;</span></span>
+<span id="cb4-345"><a href="#cb4-345" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> decay <span class="op">=</span> on <span class="op">?</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">exp</span>(<span class="op">-</span>friction <span class="op">*</span> dt) <span class="op">:</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb4-346"><a href="#cb4-346" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> noise <span class="op">=</span> on <span class="op">?</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">sqrt</span>(temperatureInput<span class="op">.</span><span class="at">value</span> <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> decay <span class="op">*</span> decay)) <span class="op">:</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb4-347"><a href="#cb4-347" aria-hidden="true" tabindex="-1"></a>    device<span class="op">.</span><span class="at">queue</span><span class="op">.</span><span class="fu">writeBuffer</span>(</span>
+<span id="cb4-348"><a href="#cb4-348" aria-hidden="true" tabindex="-1"></a>      paramBuffer<span class="op">,</span></span>
+<span id="cb4-349"><a href="#cb4-349" aria-hidden="true" tabindex="-1"></a>      <span class="dv">0</span><span class="op">,</span></span>
+<span id="cb4-350"><a href="#cb4-350" aria-hidden="true" tabindex="-1"></a>      <span class="kw">new</span> <span class="bu">Float32Array</span>([noise<span class="op">,</span> gravityInput<span class="op">.</span><span class="at">value</span><span class="op">,</span> decay<span class="op">,</span> dt])</span>
+<span id="cb4-351"><a href="#cb4-351" aria-hidden="true" tabindex="-1"></a>    )<span class="op">;</span></span>
+<span id="cb4-352"><a href="#cb4-352" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-353"><a href="#cb4-353" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> encoder <span class="op">=</span> device<span class="op">.</span><span class="fu">createCommandEncoder</span>()<span class="op">;</span></span>
+<span id="cb4-354"><a href="#cb4-354" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-355"><a href="#cb4-355" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> compute <span class="op">=</span> encoder<span class="op">.</span><span class="fu">beginComputePass</span>()<span class="op">;</span></span>
+<span id="cb4-356"><a href="#cb4-356" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (<span class="kw">let</span> s <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> s <span class="op">&lt;</span> stepsPerFrame<span class="op">;</span> s<span class="op">++</span>) {</span>
+<span id="cb4-357"><a href="#cb4-357" aria-hidden="true" tabindex="-1"></a>      compute<span class="op">.</span><span class="fu">setPipeline</span>(forcePipeline)<span class="op">;</span></span>
+<span id="cb4-358"><a href="#cb4-358" aria-hidden="true" tabindex="-1"></a>      compute<span class="op">.</span><span class="fu">setBindGroup</span>(<span class="dv">0</span><span class="op">,</span> forceBindGroup)<span class="op">;</span></span>
+<span id="cb4-359"><a href="#cb4-359" aria-hidden="true" tabindex="-1"></a>      compute<span class="op">.</span><span class="fu">dispatchWorkgroups</span>(workgroups)<span class="op">;</span></span>
+<span id="cb4-360"><a href="#cb4-360" aria-hidden="true" tabindex="-1"></a>      compute<span class="op">.</span><span class="fu">setPipeline</span>(integratePipeline)<span class="op">;</span></span>
+<span id="cb4-361"><a href="#cb4-361" aria-hidden="true" tabindex="-1"></a>      compute<span class="op">.</span><span class="fu">setBindGroup</span>(<span class="dv">0</span><span class="op">,</span> integrateBindGroup)<span class="op">;</span></span>
+<span id="cb4-362"><a href="#cb4-362" aria-hidden="true" tabindex="-1"></a>      compute<span class="op">.</span><span class="fu">dispatchWorkgroups</span>(workgroups)<span class="op">;</span></span>
+<span id="cb4-363"><a href="#cb4-363" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-364"><a href="#cb4-364" aria-hidden="true" tabindex="-1"></a>    compute<span class="op">.</span><span class="fu">end</span>()<span class="op">;</span></span>
+<span id="cb4-365"><a href="#cb4-365" aria-hidden="true" tabindex="-1"></a>    simTime <span class="op">+=</span> stepsPerFrame <span class="op">*</span> dt<span class="op">;</span></span>
+<span id="cb4-366"><a href="#cb4-366" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-367"><a href="#cb4-367" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> pass <span class="op">=</span> gpu<span class="op">.</span><span class="fu">beginRenderPass</span>(encoder<span class="op">,</span> context)<span class="op">;</span></span>
+<span id="cb4-368"><a href="#cb4-368" aria-hidden="true" tabindex="-1"></a>    discs<span class="op">.</span><span class="fu">draw</span>(pass<span class="op">,</span> count)<span class="op">;</span></span>
+<span id="cb4-369"><a href="#cb4-369" aria-hidden="true" tabindex="-1"></a>    pass<span class="op">.</span><span class="fu">end</span>()<span class="op">;</span></span>
+<span id="cb4-370"><a href="#cb4-370" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-371"><a href="#cb4-371" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Readback, step 1: copy what we want into the staging buffer</span></span>
+<span id="cb4-372"><a href="#cb4-372" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> sample <span class="op">=</span> <span class="op">!</span>readback<span class="op">.</span><span class="at">pending</span> <span class="op">&amp;&amp;</span> <span class="op">++</span>frameCount <span class="op">%</span> sampleEvery <span class="op">===</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb4-373"><a href="#cb4-373" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (sample) readback<span class="op">.</span><span class="fu">copy</span>(encoder)<span class="op">;</span></span>
+<span id="cb4-374"><a href="#cb4-374" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-375"><a href="#cb4-375" aria-hidden="true" tabindex="-1"></a>    device<span class="op">.</span><span class="at">queue</span><span class="op">.</span><span class="fu">submit</span>([encoder<span class="op">.</span><span class="fu">finish</span>()])<span class="op">;</span></span>
+<span id="cb4-376"><a href="#cb4-376" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-377"><a href="#cb4-377" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Readback, step 2: map it (resolves once the GPU is done), copy out, unmap</span></span>
+<span id="cb4-378"><a href="#cb4-378" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (sample) {</span>
+<span id="cb4-379"><a href="#cb4-379" aria-hidden="true" tabindex="-1"></a>      <span class="kw">const</span> time <span class="op">=</span> simTime<span class="op">;</span></span>
+<span id="cb4-380"><a href="#cb4-380" aria-hidden="true" tabindex="-1"></a>      readback<span class="op">.</span><span class="fu">read</span>((buffer) <span class="kw">=&gt;</span> <span class="fu">record</span>(<span class="kw">new</span> <span class="bu">Float32Array</span>(buffer)<span class="op">,</span> time))<span class="op">;</span></span>
+<span id="cb4-381"><a href="#cb4-381" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-382"><a href="#cb4-382" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb4-383"><a href="#cb4-383" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-384"><a href="#cb4-384" aria-hidden="true" tabindex="-1"></a>    device<span class="op">.</span><span class="at">queue</span><span class="op">.</span><span class="fu">submit</span>([encoder<span class="op">.</span><span class="fu">finish</span>()])<span class="op">;</span></span>
+<span id="cb4-384"><a href="#cb4-384" aria-hidden="true" tabindex="-1"></a>  gpu<span class="op">.</span><span class="fu">run</span>(invalidation<span class="op">,</span> device<span class="op">,</span> frame)<span class="op">;</span></span>
 <span id="cb4-385"><a href="#cb4-385" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-386"><a href="#cb4-386" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Readback, step 2: map it (resolves once the GPU is done), copy out, unmap</span></span>
-<span id="cb4-387"><a href="#cb4-387" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (sample) {</span>
-<span id="cb4-388"><a href="#cb4-388" aria-hidden="true" tabindex="-1"></a>      <span class="kw">const</span> time <span class="op">=</span> simTime<span class="op">;</span></span>
-<span id="cb4-389"><a href="#cb4-389" aria-hidden="true" tabindex="-1"></a>      readback<span class="op">.</span><span class="fu">read</span>((buffer) <span class="kw">=&gt;</span> <span class="fu">record</span>(<span class="kw">new</span> <span class="bu">Float32Array</span>(buffer)<span class="op">,</span> time))<span class="op">;</span></span>
-<span id="cb4-390"><a href="#cb4-390" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb4-391"><a href="#cb4-391" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb4-392"><a href="#cb4-392" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-393"><a href="#cb4-393" aria-hidden="true" tabindex="-1"></a>  gpu<span class="op">.</span><span class="fu">run</span>(invalidation<span class="op">,</span> device<span class="op">,</span> frame)<span class="op">;</span></span>
-<span id="cb4-394"><a href="#cb4-394" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-395"><a href="#cb4-395" aria-hidden="true" tabindex="-1"></a>  <span class="co">// The canvas with the controls laid over its corner</span></span>
-<span id="cb4-396"><a href="#cb4-396" aria-hidden="true" tabindex="-1"></a>  <span class="kw">yield</span> ui<span class="op">.</span><span class="fu">stage</span>(canvas<span class="op">,</span> [temperatureInput<span class="op">,</span> thermostatInput<span class="op">,</span> gravityInput])<span class="op">;</span></span>
-<span id="cb4-397"><a href="#cb4-397" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb4-386"><a href="#cb4-386" aria-hidden="true" tabindex="-1"></a>  <span class="co">// The canvas with the controls laid over its corner</span></span>
+<span id="cb4-387"><a href="#cb4-387" aria-hidden="true" tabindex="-1"></a>  <span class="kw">yield</span> ui<span class="op">.</span><span class="fu">stage</span>(canvas<span class="op">,</span> [temperatureInput<span class="op">,</span> thermostatInput<span class="op">,</span> gravityInput])<span class="op">;</span></span>
+<span id="cb4-388"><a href="#cb4-388" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display column-screen-inset">
 <div id="ojs-cell-4" data-nodetype="expression">
@@ -775,12 +774,15 @@ window.Quarto = {
 </div>
 </div>
 </div>
+<section id="analysis" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="analysis">Analysis</h2>
+<p>Two charts are drawn with <a href="https://observablehq.com/plot/">Observable Plot</a>. The left one is the energy per atom: kinetic, potential and total. Turn the thermostat off and the box is an isolated system, so the total should stay flat apart from small wiggles. That is the test of the integrator. The right one is the density of atoms against height. The dashed line is the barometric profile of an ideal gas, started at the top of the liquid pool: the vapour above follows it, while the pool below does not, because a liquid is nearly incompressible.</p>
 <div class="cell page-columns page-full">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb5" data-startfrom="403" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 402;"><span id="cb5-403"><a href="#cb5-403" aria-hidden="true" tabindex="-1"></a>charts <span class="op">=</span> {</span>
-<span id="cb5-404"><a href="#cb5-404" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Two empty hosts; the simulation cell above draws into them as data arrives</span></span>
-<span id="cb5-405"><a href="#cb5-405" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> ui <span class="op">=</span> <span class="cf">await</span> <span class="im">import</span>(<span class="kw">new</span> <span class="fu">URL</span>(<span class="st">"../lib/ui.js"</span><span class="op">,</span> <span class="bu">document</span><span class="op">.</span><span class="at">baseURI</span>)<span class="op">.</span><span class="at">href</span>)<span class="op">;</span></span>
-<span id="cb5-406"><a href="#cb5-406" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> ui<span class="op">.</span><span class="fu">chartHosts</span>([<span class="st">"energy"</span><span class="op">,</span> <span class="st">"density"</span>])<span class="op">;</span></span>
-<span id="cb5-407"><a href="#cb5-407" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb5" data-startfrom="404" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 403;"><span id="cb5-404"><a href="#cb5-404" aria-hidden="true" tabindex="-1"></a>charts <span class="op">=</span> {</span>
+<span id="cb5-405"><a href="#cb5-405" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Two empty hosts; the simulation cell above draws into them as data arrives</span></span>
+<span id="cb5-406"><a href="#cb5-406" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> ui <span class="op">=</span> <span class="cf">await</span> <span class="im">import</span>(<span class="kw">new</span> <span class="fu">URL</span>(<span class="st">"../lib/ui.js"</span><span class="op">,</span> <span class="bu">document</span><span class="op">.</span><span class="at">baseURI</span>)<span class="op">.</span><span class="at">href</span>)<span class="op">;</span></span>
+<span id="cb5-407"><a href="#cb5-407" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> ui<span class="op">.</span><span class="fu">chartHosts</span>([<span class="st">"energy"</span><span class="op">,</span> <span class="st">"density"</span>])<span class="op">;</span></span>
+<span id="cb5-408"><a href="#cb5-408" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display column-page">
 <div id="ojs-cell-5" data-nodetype="declaration">
 
@@ -791,7 +793,7 @@ window.Quarto = {
 <p>Moving Figures</p>
 <div id="listing-mf-series" class="quarto-listing quarto-listing-container-default">
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="bWY=" data-listing-date-sort="1791676800000" data-listing-file-modified-sort="1792094688918" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="268">
+<div class="quarto-post image-right" data-index="0" data-categories="bWY=" data-listing-date-sort="1791676800000" data-listing-file-modified-sort="1792141759582" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="268">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-hello-world/index.html" class="no-external">000: Hello GPU</a>
@@ -802,7 +804,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="1" data-categories="bWY=" data-listing-date-sort="1791676800000" data-listing-file-modified-sort="1792094688918" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="681">
+<div class="quarto-post image-right" data-index="1" data-categories="bWY=" data-listing-date-sort="1791676800000" data-listing-file-modified-sort="1792141759582" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="681">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-three-particles/index.html" class="no-external">001: Three Particles</a>
@@ -813,7 +815,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="2" data-categories="bWY=" data-listing-date-sort="1791676800000" data-listing-file-modified-sort="1792094688918" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1022">
+<div class="quarto-post image-right" data-index="2" data-categories="bWY=" data-listing-date-sort="1791676800000" data-listing-file-modified-sort="1792141759582" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1022">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-animation-loop/index.html" class="no-external">002: Animation Loop</a>
@@ -824,7 +826,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="3" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792094688918" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="998">
+<div class="quarto-post image-right" data-index="3" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792141759582" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="998">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-bouncing-particles/index.html" class="no-external">003: Bouncing Particles</a>
@@ -835,7 +837,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="4" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792094688918" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1303">
+<div class="quarto-post image-right" data-index="4" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792141759582" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1303">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-compute-shader/index.html" class="no-external">004: Compute Shader</a>
@@ -846,7 +848,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="5" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792094688918" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1814">
+<div class="quarto-post image-right" data-index="5" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792141759582" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1814">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-lennard-jones/index.html" class="no-external">005: Jiggling Atoms</a>
@@ -857,7 +859,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="6" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792094688918" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1938">
+<div class="quarto-post image-right" data-index="6" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792141759582" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1938">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-gravity/index.html" class="no-external">006: Falling Atoms</a>
@@ -868,7 +870,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="7" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792094688918" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="18" data-listing-word-count-sort="3522">
+<div class="quarto-post image-right" data-index="7" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792141759582" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="18" data-listing-word-count-sort="3522">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-structure/index.html" class="no-external">008: Solid, Liquid, Gas</a>
@@ -879,7 +881,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="8" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792094688918" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="20" data-listing-word-count-sort="3997">
+<div class="quarto-post image-right" data-index="8" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792141759582" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="20" data-listing-word-count-sort="3998">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-brownian-motion/index.html" class="no-external">009: Brownian Motion</a>
@@ -890,7 +892,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="9" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792094688918" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="31" data-listing-word-count-sort="6039">
+<div class="quarto-post image-right" data-index="9" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792141759582" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="31" data-listing-word-count-sort="6039">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-twenty-thousand-atoms/index.html" class="no-external">010: Twenty Thousand Atoms</a>
@@ -901,7 +903,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="10" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792094688918" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="30" data-listing-word-count-sort="5801">
+<div class="quarto-post image-right" data-index="10" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792141759582" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="30" data-listing-word-count-sort="5802">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-weather-in-a-box/index.html" class="no-external">011: Weather in a Box</a>
@@ -912,7 +914,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="11" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792094688918" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="22" data-listing-word-count-sort="4344">
+<div class="quarto-post image-right" data-index="11" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792141759582" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="22" data-listing-word-count-sort="4348">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-blast-wave/index.html" class="no-external">012: Blast Wave</a>
@@ -923,7 +925,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="12" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792094688918" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="25" data-listing-word-count-sort="4945">
+<div class="quarto-post image-right" data-index="12" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792141759582" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="25" data-listing-word-count-sort="4944">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-buffons-needle/index.html" class="no-external">013: Dropping Sticks Again</a>
@@ -934,7 +936,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="13" data-categories="bWY=" data-listing-date-sort="1791936000000" data-listing-file-modified-sort="1792094688918" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="27" data-listing-word-count-sort="5249">
+<div class="quarto-post image-right" data-index="13" data-categories="bWY=" data-listing-date-sort="1791936000000" data-listing-file-modified-sort="1792141759582" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="27" data-listing-word-count-sort="5249">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-mandelbrot-area/index.html" class="no-external">014: Throwing Darts at a Fractal</a>
@@ -945,7 +947,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="14" data-categories="bWY=" data-listing-date-sort="1792022400000" data-listing-file-modified-sort="1792094688918" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="27" data-listing-word-count-sort="5204">
+<div class="quarto-post image-right" data-index="14" data-categories="bWY=" data-listing-date-sort="1792022400000" data-listing-file-modified-sort="1792141759582" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="27" data-listing-word-count-sort="5204">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-darts-in-many-dimensions/index.html" class="no-external">015: Lost in the Corners</a>
@@ -963,6 +965,7 @@ window.Quarto = {
 
 
 
+</section>
 
 </main> <!-- /main -->
 <script type="ojs-module-contents">
