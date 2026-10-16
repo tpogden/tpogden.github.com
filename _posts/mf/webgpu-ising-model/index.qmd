@@ -31,8 +31,9 @@ wins and it is static: no magnet at all. This is the
 It runs slowly on purpose, a few sweeps a second, so the flips can be followed; **Sweeps/s**
 speeds it up. **Drag Temperature upwards** from the start. The sheet is solid red at first, with a
 few specks of dark that the heat has flipped. Somewhere near 2.27 it falls apart.
-Then bring it back down: it does not always return to one colour, but freezes into
-patches of red and dark that slowly eat each other.
+Then press **Quench**, which drops the temperature straight back to 1.5: it does not
+always return to one colour, but freezes into patches of red and dark that slowly eat
+each other, like the grains in [twenty thousand atoms](../webgpu-twenty-thousand-atoms/).
 
 ## How the computer shakes the needles
 
@@ -405,6 +406,11 @@ viewof gridSize = {
   invalidation.then(() => gridInput.removeEventListener("input", reset));
 
   const resetButton = ui.button({ label: "Restart", onClick: reset });
+  // Cool at once, to well below the switch
+  const quench = ui.button({
+    label: "Quench",
+    onClick: () => (temperatureInput.value = 1.5),
+  });
   const readout = ui.readout();
   drawCharts();
 
@@ -482,7 +488,7 @@ viewof gridSize = {
   gpu.run(invalidation, device, frame);
 
   // The canvas with the controls laid over its corner
-  yield ui.stage(canvas, [temperatureInput, speedInput, gridInput, resetButton, readout]);
+  yield ui.stage(canvas, [temperatureInput, quench, speedInput, gridInput, resetButton, readout]);
 }
 ```
 
