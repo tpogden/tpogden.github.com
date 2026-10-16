@@ -55,22 +55,6 @@ Try these:
   Walkers spend more of their time there, because what counts is the whole hill and
   not just its top.
 
-The left chart is for one number, as the π and the fractal were: the share of the time
-the walkers spend in the left half of the map. The left hill is tall and narrow and the
-right one is low and wide, and the right holds more, so the exact answer is below a
-half. The chart is the walkers' estimate as the steps pile up, with its uncertainty (the
-walkers differ from one another, and that spread is how far to trust it) and the exact
-value dashed.
-
-The right chart is the same thing in more detail: the share of the time in each vertical
-strip of the map, against what it ought to be (the dashed line). It is the two hills
-seen from the side.
-
-The first stretch of steps is the walkers finding the hills, so the estimate starts far
-off. At a small step a walker rarely crosses the gap between the hills, and its time
-is split by where it began and not by how high the ground is: more walkers, or a
-larger step, fixes that.
-
 It starts with three walkers so that each one can be followed. **Walkers** goes up to a
 hundred: more of them fill the map in faster and make the charts smooth, but they all
 do the same thing. **Step size** is how far a proposal can go, **Steps/s** is the
@@ -804,6 +788,24 @@ viewof rate = {
   yield ui.stage(canvas, [walkersInput, stepInput, ruleInput, rateInput, resetButton, readout]);
 }
 ```
+
+## Analysis
+
+The left chart is for one number, as the π and the fractal were: the share of the time
+the walkers spend in the left half of the map. The left hill is tall and narrow and the
+right one is low and wide, and the right holds more, so the exact answer is below a
+half. The chart is the walkers' estimate as the steps pile up, with its uncertainty (the
+walkers differ from one another, and that spread is how far to trust it) and the exact
+value dashed.
+
+The right chart is the same thing in more detail: the share of the time in each vertical
+strip of the map, against what it ought to be (the dashed line). It is the two hills
+seen from the side.
+
+The first stretch of steps is the walkers finding the hills, so the estimate starts far
+off. At a small step a walker rarely crosses the gap between the hills, and its time
+is split by where it began and not by how high the ground is: more walkers, or a
+larger step, fixes that.
 
 ```{ojs}
 //| echo: false

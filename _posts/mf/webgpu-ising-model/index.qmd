@@ -34,17 +34,6 @@ few specks of dark that the heat has flipped. Somewhere near 2.27 it falls apart
 Then bring it back down: it does not always return to one colour, but freezes into
 patches of red and dark that slowly eat each other.
 
-Under the picture are two charts:
-
-- **Left.** How magnetised the sheet is, $|m|$, against the temperature it was at. $|m|$ is 1 when
-  every needle agrees and 0 when half point each way. The dots are what the sheet does, and
-  the dashed line is Onsager's exact answer from 1944. Near the switch the dots sit above
-  the line, because a sheet of finite size has a smeared switch rather than a sharp one:
-  try the smallest and largest **Grid**.
-- **Right.** The magnetisation as time goes on. Below the switch it is pinned, above it
-  is noise, and at the switch it wanders slowly, because needles that are close to
-  deciding drag one another about.
-
 ## How the computer shakes the needles
 
 This is the walker's rule from [the last post](../webgpu-metropolis-walkers/), with a
@@ -496,6 +485,19 @@ viewof gridSize = {
   yield ui.stage(canvas, [temperatureInput, speedInput, gridInput, resetButton, readout]);
 }
 ```
+
+## Analysis
+
+There are two charts:
+
+- **Left.** How magnetised the sheet is, $|m|$, against the temperature it was at. $|m|$ is 1 when
+  every needle agrees and 0 when half point each way. The dots are what the sheet does, and
+  the dashed line is Onsager's exact answer from 1944. Near the switch the dots sit above
+  the line, because a sheet of finite size has a smeared switch rather than a sharp one:
+  try the smallest and largest **Grid**.
+- **Right.** The magnetisation as time goes on. Below the switch it is pinned, above it
+  is noise, and at the switch it wanders slowly, because needles that are close to
+  deciding drag one another about.
 
 ```{ojs}
 //| echo: false
