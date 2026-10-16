@@ -55,9 +55,10 @@ Cold, a flip that costs energy is almost never accepted, as with a walker unwill
 go downhill. Hot, nearly every flip is, which is the walker with the rule turned off.
 Count the arrangements the walk visits and you have the average a magnet would show.
 
-The GPU does a sweep (one try per needle) in two halves, like a chessboard: all
-the black squares, then all the white. A needle's neighbours are all the other colour, so
-no two needles in the same half affect each other and they can all flip at once.
+The GPU does a sweep (one try per needle) in two halves, laid out like the squares of a
+chessboard: every other cell first, then the rest. A needle's four neighbours are all in
+the other half, so no two needles in the same half affect each other and they can all
+flip at once.
 
 ::: {.callout-note collapse="true"}
 ## The energy, and the exact switch
