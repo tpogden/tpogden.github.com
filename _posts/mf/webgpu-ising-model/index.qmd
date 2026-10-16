@@ -110,9 +110,7 @@ viewof gridSize = {
     options: [
       [64, "64×36"],
       [160, "160×90"],
-      [320, "320×180"],
       [640, "640×360"],
-      [1280, "1280×720"],
     ],
     value: 160,
   });
@@ -144,7 +142,7 @@ viewof gridSize = {
   // The grid is 16:9 and wraps round its edges; both sides are even so the two
   // chessboard colours tile it. Buffers are made for the largest grid and the
   // chosen one uses the start of them.
-  const maxWidth = 1280;
+  const maxWidth = 640;
   const maxSites = maxWidth * ((maxWidth * 9) / 16);
   let width = gridInput.value;
   let height = (width * 9) / 16;
