@@ -17,7 +17,8 @@
       "/webgpu-buffons-needle/index.html",
       "/webgpu-mandelbrot-area/index.html",
       "/webgpu-darts-in-many-dimensions/index.html",
-      "/webgpu-metropolis-walkers/index.html"
+      "/webgpu-metropolis-walkers/index.html",
+      "/webgpu-ising-model/index.html"
     ]
   },
   {
@@ -38,7 +39,8 @@
       "/webgpu-buffons-needle/index.html",
       "/webgpu-mandelbrot-area/index.html",
       "/webgpu-darts-in-many-dimensions/index.html",
-      "/webgpu-metropolis-walkers/index.html"
+      "/webgpu-metropolis-walkers/index.html",
+      "/webgpu-ising-model/index.html"
     ]
   },
   {
@@ -59,7 +61,8 @@
       "/webgpu-buffons-needle/index.html",
       "/webgpu-mandelbrot-area/index.html",
       "/webgpu-darts-in-many-dimensions/index.html",
-      "/webgpu-metropolis-walkers/index.html"
+      "/webgpu-metropolis-walkers/index.html",
+      "/webgpu-ising-model/index.html"
     ]
   },
   {
@@ -80,7 +83,8 @@
       "/webgpu-buffons-needle/index.html",
       "/webgpu-mandelbrot-area/index.html",
       "/webgpu-darts-in-many-dimensions/index.html",
-      "/webgpu-metropolis-walkers/index.html"
+      "/webgpu-metropolis-walkers/index.html",
+      "/webgpu-ising-model/index.html"
     ]
   },
   {
@@ -101,7 +105,8 @@
       "/webgpu-blast-wave/index.html",
       "/webgpu-mandelbrot-area/index.html",
       "/webgpu-darts-in-many-dimensions/index.html",
-      "/webgpu-metropolis-walkers/index.html"
+      "/webgpu-metropolis-walkers/index.html",
+      "/webgpu-ising-model/index.html"
     ]
   },
   {
@@ -122,7 +127,8 @@
       "/webgpu-blast-wave/index.html",
       "/webgpu-buffons-needle/index.html",
       "/webgpu-mandelbrot-area/index.html",
-      "/webgpu-metropolis-walkers/index.html"
+      "/webgpu-metropolis-walkers/index.html",
+      "/webgpu-ising-model/index.html"
     ]
   },
   {
@@ -143,7 +149,8 @@
       "/webgpu-buffons-needle/index.html",
       "/webgpu-mandelbrot-area/index.html",
       "/webgpu-darts-in-many-dimensions/index.html",
-      "/webgpu-metropolis-walkers/index.html"
+      "/webgpu-metropolis-walkers/index.html",
+      "/webgpu-ising-model/index.html"
     ]
   },
   {
@@ -162,6 +169,7 @@
       "/random-walks/index.html",
       "/pi/index.html",
       "/useful-mac-apps-for-scientists/index.html",
+      "/webgpu-ising-model/index.html",
       "/webgpu-metropolis-walkers/index.html",
       "/webgpu-darts-in-many-dimensions/index.html",
       "/webgpu-mandelbrot-area/index.html",
@@ -226,7 +234,8 @@
       "/webgpu-buffons-needle/index.html",
       "/webgpu-mandelbrot-area/index.html",
       "/webgpu-darts-in-many-dimensions/index.html",
-      "/webgpu-metropolis-walkers/index.html"
+      "/webgpu-metropolis-walkers/index.html",
+      "/webgpu-ising-model/index.html"
     ]
   },
   {
@@ -235,6 +244,29 @@
       "/webgpu-hello-world/index.html",
       "/webgpu-three-particles/index.html",
       "/webgpu-animation-loop/index.html",
+      "/webgpu-compute-shader/index.html",
+      "/webgpu-lennard-jones/index.html",
+      "/webgpu-gravity/index.html",
+      "/webgpu-reading-back/index.html",
+      "/webgpu-structure/index.html",
+      "/webgpu-brownian-motion/index.html",
+      "/webgpu-twenty-thousand-atoms/index.html",
+      "/webgpu-weather-in-a-box/index.html",
+      "/webgpu-blast-wave/index.html",
+      "/webgpu-buffons-needle/index.html",
+      "/webgpu-mandelbrot-area/index.html",
+      "/webgpu-darts-in-many-dimensions/index.html",
+      "/webgpu-metropolis-walkers/index.html",
+      "/webgpu-ising-model/index.html"
+    ]
+  },
+  {
+    "listing": "/webgpu-ising-model/index.html",
+    "items": [
+      "/webgpu-hello-world/index.html",
+      "/webgpu-three-particles/index.html",
+      "/webgpu-animation-loop/index.html",
+      "/webgpu-bouncing-particles/index.html",
       "/webgpu-compute-shader/index.html",
       "/webgpu-lennard-jones/index.html",
       "/webgpu-gravity/index.html",
@@ -268,7 +300,8 @@
       "/webgpu-buffons-needle/index.html",
       "/webgpu-mandelbrot-area/index.html",
       "/webgpu-darts-in-many-dimensions/index.html",
-      "/webgpu-metropolis-walkers/index.html"
+      "/webgpu-metropolis-walkers/index.html",
+      "/webgpu-ising-model/index.html"
     ]
   },
   {
@@ -289,7 +322,8 @@
       "/webgpu-blast-wave/index.html",
       "/webgpu-buffons-needle/index.html",
       "/webgpu-mandelbrot-area/index.html",
-      "/webgpu-darts-in-many-dimensions/index.html"
+      "/webgpu-darts-in-many-dimensions/index.html",
+      "/webgpu-ising-model/index.html"
     ]
   },
   {
@@ -310,7 +344,8 @@
       "/webgpu-buffons-needle/index.html",
       "/webgpu-mandelbrot-area/index.html",
       "/webgpu-darts-in-many-dimensions/index.html",
-      "/webgpu-metropolis-walkers/index.html"
+      "/webgpu-metropolis-walkers/index.html",
+      "/webgpu-ising-model/index.html"
     ]
   },
   {
@@ -331,7 +366,8 @@
       "/webgpu-blast-wave/index.html",
       "/webgpu-buffons-needle/index.html",
       "/webgpu-darts-in-many-dimensions/index.html",
-      "/webgpu-metropolis-walkers/index.html"
+      "/webgpu-metropolis-walkers/index.html",
+      "/webgpu-ising-model/index.html"
     ]
   },
   {
@@ -352,7 +388,8 @@
       "/webgpu-buffons-needle/index.html",
       "/webgpu-mandelbrot-area/index.html",
       "/webgpu-darts-in-many-dimensions/index.html",
-      "/webgpu-metropolis-walkers/index.html"
+      "/webgpu-metropolis-walkers/index.html",
+      "/webgpu-ising-model/index.html"
     ]
   },
   {
@@ -373,7 +410,8 @@
       "/webgpu-buffons-needle/index.html",
       "/webgpu-mandelbrot-area/index.html",
       "/webgpu-darts-in-many-dimensions/index.html",
-      "/webgpu-metropolis-walkers/index.html"
+      "/webgpu-metropolis-walkers/index.html",
+      "/webgpu-ising-model/index.html"
     ]
   },
   {
@@ -394,7 +432,8 @@
       "/webgpu-buffons-needle/index.html",
       "/webgpu-mandelbrot-area/index.html",
       "/webgpu-darts-in-many-dimensions/index.html",
-      "/webgpu-metropolis-walkers/index.html"
+      "/webgpu-metropolis-walkers/index.html",
+      "/webgpu-ising-model/index.html"
     ]
   },
   {
@@ -415,7 +454,8 @@
       "/webgpu-buffons-needle/index.html",
       "/webgpu-mandelbrot-area/index.html",
       "/webgpu-darts-in-many-dimensions/index.html",
-      "/webgpu-metropolis-walkers/index.html"
+      "/webgpu-metropolis-walkers/index.html",
+      "/webgpu-ising-model/index.html"
     ]
   }
 ]
