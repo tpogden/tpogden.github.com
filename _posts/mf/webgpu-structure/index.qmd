@@ -28,15 +28,6 @@ falls towards 0. Atoms bright yellow are crystalline, blue are not. (The same id
 is behind the [hexatic phase](https://en.wikipedia.org/wiki/Hexatic_phase).) Switch
 the colouring to speed to see the same atoms the way the earlier posts drew them.
 
-The left chart is the
-[radial distribution function](https://en.wikipedia.org/wiki/Radial_distribution_function)
-$g(r)$: how likely you are to find a neighbour at distance $r$, compared with a gas
-of the same density. A crystal has sharp, repeating peaks at the lattice spacings; a
-liquid has a first peak and a couple of fading ripples; a gas is flat at 1. The
-histogram is built on the GPU. Every thread adds one to a bin with `atomicAdd`
-while it is already looping over its neighbours, and only the 120 counts come back.
-The right chart is the fraction of atoms with $|\psi_6| > 0.8$, over time.
-
 At the starting temperature the islands stay crystalline, with a thin vapour between
 them. Warm it and the islands melt into liquid droplets: the peaks wash out and the
 yellow drains away. Cool it and the liquid freezes into crystallites, usually with
@@ -448,6 +439,17 @@ viewof colouring = {
   yield ui.stage(canvas, [temperatureInput, densityInput, colourInput]);
 }
 ```
+
+## Analysis
+
+The left chart is the
+[radial distribution function](https://en.wikipedia.org/wiki/Radial_distribution_function)
+$g(r)$: how likely you are to find a neighbour at distance $r$, compared with a gas
+of the same density. A crystal has sharp, repeating peaks at the lattice spacings; a
+liquid has a first peak and a couple of fading ripples; a gas is flat at 1. The
+histogram is built on the GPU. Every thread adds one to a bin with `atomicAdd`
+while it is already looping over its neighbours, and only the 120 counts come back.
+The right chart is the fraction of atoms with $|\psi_6| > 0.8$, over time.
 
 ```{ojs}
 //| echo: false

@@ -34,10 +34,7 @@ random angle is a circle of directions in disguise.
 
 The slider is the number of needles dropped per second, up to a hundred million, on
 a scale that goes up by a factor of ten a step. The board shows the latest needles, which fade
-out after a second or two; the millions that have gone before are only counted. The left chart is the
-estimate as the needles pile up, with the shaded band the size of a typical error.
-The right chart is the size of the error itself, against the dashed line a random
-process of this kind is expected to follow. **Restart** clears the count, and
+out after a second or two; the millions that have gone before are only counted. **Restart** clears the count, and
 changing the needle length does too, since an estimate made with one length means
 nothing for another.
 
@@ -46,15 +43,6 @@ part that is easy to get wrong: drawing the angle uniformly from 0 to π uses th
 number we are trying to find. Instead each needle's direction is a random point in
 the unit square, thrown away if it falls outside the unit circle, and only its
 direction is used. That is uniform in angle without ever writing down π.
-
-The error shrinks as $1/\sqrt{N}$, which is slow: a hundred times more needles buys
-one more digit. A graphics card does not change that, only how soon you get there.
-That is the dashed line on the right, and the red dots wander about it.
-
-The needle length matters too. A short needle crosses a line less often, so π is
-read off a smaller count: a needle half the spacing long needs about four times as
-many drops as one the full spacing long for the same precision. Switching the length
-moves the band and the dashed line to match.
 
 ```{ojs}
 //| echo: false
@@ -565,6 +553,22 @@ viewof needle = {
   yield ui.stage(canvas, [rateInput, lengthInput, resetButton, readout]);
 }
 ```
+
+## Analysis
+
+The left chart is the
+estimate as the needles pile up, with the shaded band the size of a typical error.
+The right chart is the size of the error itself, against the dashed line a random
+process of this kind is expected to follow.
+
+The error shrinks as $1/\sqrt{N}$, which is slow: a hundred times more needles buys
+one more digit. A graphics card does not change that, only how soon you get there.
+That is the dashed line on the right, and the red dots wander about it.
+
+The needle length matters too. A short needle crosses a line less often, so π is
+read off a smaller count: a needle half the spacing long needs about four times as
+many drops as one the full spacing long for the same precision. Switching the length
+moves the band and the dashed line to match.
 
 ```{ojs}
 //| echo: false

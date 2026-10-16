@@ -24,14 +24,6 @@ and wait, because the copy only happens once the GPU has finished the work queue
 before it. So we do it every few frames, never every frame, and the charts lag the
 picture a little.
 
-Two charts are drawn with [Observable Plot](https://observablehq.com/plot/). The left
-one is the energy per atom: kinetic, potential and total. Turn the thermostat off and
-the box is an isolated system, so the total should stay flat apart from small
-wiggles. That is the test of the integrator. The right one is the density of atoms
-against height. The dashed line is the barometric profile of an
-ideal gas, started at the top of the liquid pool: the vapour above follows it, while
-the pool below does not, because a liquid is nearly incompressible.
-
 ```{ojs}
 //| echo: false
 //| output: false
@@ -72,7 +64,6 @@ viewof gravity = {
   });
 }
 ```
-
 
 ```{ojs}
 //| column: screen-inset
@@ -397,6 +388,16 @@ viewof gravity = {
   yield ui.stage(canvas, [temperatureInput, thermostatInput, gravityInput]);
 }
 ```
+
+## Analysis
+
+Two charts are drawn with [Observable Plot](https://observablehq.com/plot/). The left
+one is the energy per atom: kinetic, potential and total. Turn the thermostat off and
+the box is an isolated system, so the total should stay flat apart from small
+wiggles. That is the test of the integrator. The right one is the density of atoms
+against height. The dashed line is the barometric profile of an
+ideal gas, started at the top of the liquid pool: the vapour above follows it, while
+the pool below does not, because a liquid is nearly incompressible.
 
 ```{ojs}
 //| echo: false
