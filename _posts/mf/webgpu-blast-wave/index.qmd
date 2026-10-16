@@ -38,12 +38,7 @@ $R \sim (E t^2 / \rho)^{1/4}$ in two dimensions, so the radius of the blast grow
 
 $$R \propto t^{1/2}.$$
 
-The right-hand chart measures that on log axes, where a power law is a straight line
-and the dashed line has the slope $\tfrac12$ the theory predicts. The left-hand chart
-is the density against distance from the centre, with the shell of the shock as its
-peak (a modest one: the gas is compressed by about half again, not by an order of
-magnitude). The walls reflect, so once the shock reaches them it bounces back and the
-box keeps sloshing; the chart stops measuring there. **Detonate** puts the quiet gas
+**Detonate** puts the quiet gas
 back and sets off a new explosion; the slider is the temperature the blast atoms are
 given.
 
@@ -494,6 +489,15 @@ viewof energy = {
   yield ui.stage(canvas, [energyInput, detonateButton, readout]);
 }
 ```
+
+## Analysis
+
+The right-hand chart measures the radius of the blast, $R$, on log axes, where a power law is a straight line
+and the dashed line has the slope $\tfrac12$ the theory predicts. The left-hand chart
+is the density against distance from the centre, with the shell of the shock as its
+peak (a modest one: the gas is compressed by about half again, not by an order of
+magnitude). The walls reflect, so once the shock reaches them it bounces back and the
+box keeps sloshing; the chart stops measuring there.
 
 ```{ojs}
 //| echo: false

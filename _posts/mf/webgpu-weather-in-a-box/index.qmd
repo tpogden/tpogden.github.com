@@ -49,13 +49,6 @@ Condensing depends on the vapour being thick enough, and that depends on gravity
 with weak gravity the atmosphere is tall and thin, with strong gravity it hugs the
 floor.
 
-The charts measure it. The left is the density of atoms against height on a log
-axis, where an isothermal atmosphere is a straight line, and the dashed line is the
-barometric prediction for the temperature of the vapour. The right is the
-temperature against height, which shows the heat flowing from floor to roof. Twenty
-thousand atoms is what makes these profiles smooth: every height band holds enough
-atoms to average over.
-
 ```{ojs}
 //| echo: false
 //| output: false
@@ -694,6 +687,15 @@ viewof colouring = {
   yield stage;
 }
 ```
+
+## Analysis
+
+The charts measure the result. The left is the density of atoms against height on a log
+axis, where an isothermal atmosphere is a straight line, and the dashed line is the
+barometric prediction for the temperature of the vapour. The right is the
+temperature against height, which shows the heat flowing from floor to roof. Twenty
+thousand atoms is what makes these profiles smooth: every height band holds enough
+atoms to average over.
 
 ```{ojs}
 //| echo: false
