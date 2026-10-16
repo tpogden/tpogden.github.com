@@ -215,48 +215,7 @@ viewof colouring = {
         return c.y * sim.grid.x + c.x;
       }
 
-      @compute @workgroup_size(64)
-      fn clearCells(@builtin(global_invocation_id) id: vec3u) {
-        if (id.x <= sim.cells) { atomicStore(&cellStart[id.x], 0u); }
-      }
-
-      @compute @workgroup_size(64)
-      fn assign(@builtin(global_invocation_id) id: vec3u) {
-        let i = id.x;
-        if (i >= sim.count) { return; }
-        let c = cellOf(positions[i]);
-        cellInfo[i] = vec2u(c, atomicAdd(&cellStart[c], 1u));
-      }
-
-      // One workgroup: each thread sums a chunk of cells, the chunk totals give each
-      // thread its offset, then each thread turns its own chunk into running starts.
-      var<workgroup> partial: array<u32, 256>;
-
-      @compute @workgroup_size(256)
-      fn scan(@builtin(local_invocation_id) lid: vec3u) {
-        let chunk = (sim.cells + 255u) / 256u;
-        let begin = min(lid.x * chunk, sim.cells);
-        let end = min(begin + chunk, sim.cells);
-        var sum = 0u;
-        for (var c = begin; c < end; c++) { sum += atomicLoad(&cellStart[c]); }
-        partial[lid.x] = sum;
-        workgroupBarrier();
-        var run = 0u;
-        for (var t = 0u; t < lid.x; t++) { run += partial[t]; }
-        for (var c = begin; c < end; c++) {
-          let n = atomicLoad(&cellStart[c]);
-          atomicStore(&cellStart[c], run);
-          run += n;
-        }
-        if (lid.x == 255u) { atomicStore(&cellStart[sim.cells], run); }
-      }
-
-      @compute @workgroup_size(64)
-      fn scatter(@builtin(global_invocation_id) id: vec3u) {
-        let i = id.x;
-        if (i >= sim.count) { return; }
-        sorted[atomicLoad(&cellStart[cellInfo[i].x]) + cellInfo[i].y] = i;
-      }
+      ${md.cellListWGSL}
 
       @compute @workgroup_size(64)
       fn forces(@builtin(global_invocation_id) id: vec3u) {
