@@ -17,7 +17,7 @@ listing:
 Building on [Bouncing Particles](../webgpu-bouncing-particles/), the same simulation
 now runs on the GPU. The `step` function from last time becomes a _compute shader_:
 a program with no vertices or pixels, just a function that runs once per particle
-over a storage buffer. A _compute pass_ dispatches it in _workgroups_ of 64, so
+over a storage buffer. A _compute pass_ dispatches it in _workgroups_ of 64 so
 2,000 particles update in parallel. Positions and velocities are uploaded once and
 never touched by the CPU again. The render pass reads the same buffer the compute
 pass has just written.

@@ -14,14 +14,14 @@ listing:
     sort: "title asc"
 ---
 
-Every post so far has simulated a thousand or two atoms, because that is about what
+Every post so far has simulated a thousand or two atoms because that is about what
 you can afford when every atom is compared with every other one. Here there are
 nineteen thousand, ten times more, and a few things that were invisible at the
 smaller scale appear.
 
-Heat the box until it is a liquid, then _quench_ it: cool it so suddenly that the
+Heat the box until it is a liquid then _quench_ it: cool it so suddenly that the
 atoms have no time to arrange themselves in an orderly way. It does not freeze into
-one crystal. Crystals nucleate in many places at once, and each one has its own
+one crystal. Crystals nucleate in many places at once and each one has its own
 _orientation_: the same hexagonal lattice, but turned to a different angle, like
 tiles laid in different directions. Where two of them meet there is a _grain
 boundary_, a seam where the lattice changes direction and the atoms do not fit
@@ -30,11 +30,11 @@ neatly on either side.
 The colour shows the orientation. Every atom looks at the directions of the bonds to
 its neighbours, which in a crystal all line up with the lattice. A hexagonal lattice
 looks the same after a turn of 60 degrees, so the angle only matters between 0 and
-60, and that range is mapped round the colour wheel. Every grain is its own hue, and
+60 and that range is mapped round the colour wheel. Every grain is its own hue and
 the atoms in the boundaries, where the angle is not well defined, fade to grey.
 
-Over time the boundaries move: small grains shrink, big ones grow, and the pattern
-coarsens. This is the structure of nearly every metal or ceramic you have touched,
+Over time the boundaries move: small grains shrink, big ones grow and the pattern
+coarsens. This is the structure of nearly every metal or ceramic you have touched
 and it takes thousands of atoms before it shows at all.
 
 ```{ojs}
@@ -647,19 +647,19 @@ viewof colouring = {
 Getting there took two changes to the force calculation, which is where the time
 goes:
 
-1. _Cell lists._ An atom only feels neighbours within 2.5 σ, but the all-pairs loop
-    still visits every atom to find them. Instead, divide the box into cells 2.5 σ
+1. _Cell lists._ An atom only feels neighbours within 2.5 σ but the all-pairs loop
+    still visits every atom to find them. Instead divide the box into cells 2.5 σ
     wide, sort the atoms into cells, and look only in an atom's own cell and the eight
-    around it. That is about 50 candidates instead of 19,000, so the work grows with
+    around it. That is about 50 candidates instead of 19,000 so the work grows with
     the number of atoms, $N$, instead of $N^2$. Building the sort on a GPU takes four
     small passes: count the atoms in each cell with `atomicAdd`, turn the counts into
-    start offsets with a prefix sum, and scatter each atom's index into its slot.
+    start offsets with a prefix sum and scatter each atom's index into its slot.
 
 2. _Tiling in workgroup memory._ In the all-pairs loop every thread in a workgroup
     reads the same neighbour's position from slow memory, one atom at a time. A tiled
     loop has the 64 threads each fetch one position into fast `var<workgroup>` memory,
-    wait at a barrier, and then all read the whole tile from there. It is the standard
-    trick for an N-body loop, and it is in the benchmark below.
+    wait at a barrier and then all read the whole tile from there. It is the standard
+    trick for an N-body loop and it is in the benchmark below.
 
 Press **Benchmark** to time all three kernels on your GPU at several sizes (it pauses
 the simulation while it runs). Moving a slider does not restart anything.

@@ -19,7 +19,7 @@ fluid with one large particle dropped in. The big particle is not pushed by anyt
 we put in: it is only ever hit by the small atoms around it, thousands of times a
 second, a little harder from one side than the other. The result is a
 [random walk](../random-walks/). This is [Brownian motion](https://en.wikipedia.org/wiki/Brownian_motion), and it is
-what Feynman, in the first lecture, calls "a perpetual jiggling of the particles".
+what Feynman in the first lecture calls "a perpetual jiggling of the particles".
 The tiny kicks cannot be seen, but their sum can.
 
 The trail is the path of the big particle.
@@ -478,14 +478,14 @@ viewof showTrail = {
 The left chart is the big particle's mean squared
 displacement: how far it has wandered, squared, after a time $t$, averaged over every
 starting point in the recording. For a random walk in 2D this grows in a straight
-line, $\langle r^2 \rangle = 4Dt$, and the slope gives the diffusion coefficient $D$.
-That linear growth, and what $D$ depends on, was how Einstein showed in 1905 that
+line $\langle r^2 \rangle = 4Dt$ and the slope gives the diffusion coefficient $D$.
+That linear growth and what $D$ depends on was how Einstein showed in 1905 that
 atoms had to exist.
 
 The right chart is the distribution of the big particle's velocity components. The
 [equipartition theorem](https://en.wikipedia.org/wiki/Equipartition_theorem) says
 each one has a mean energy of $\tfrac12 k_BT$ no matter how heavy the particle is, so
-the spread is $\sqrt{k_BT/M}$: a heavier particle is a slower one, and the dashed
+the spread is $\sqrt{k_BT/M}$: a heavier particle is a slower one and the dashed
 curve is that prediction. Moving a slider restarts the statistics.
 
 ```{ojs}

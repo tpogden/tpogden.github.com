@@ -14,7 +14,7 @@ listing:
     sort: "title asc"
 ---
 
-Building on [Three Particles](../webgpu-three-particles/), now there are 50 of them,
+Building on [Three Particles](../webgpu-three-particles/), now there are 50 of them
 and they pulse. New stuff: _instancing_, where one square is drawn 50 times and each
 copy looks up its own position in a _storage buffer_. A _uniform buffer_ carries the
 current time into the shader, and a _bind group_ plugs both buffers in. Then an

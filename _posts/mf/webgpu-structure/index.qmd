@@ -17,18 +17,18 @@ listing:
 Building on [Jiggling Atoms](../webgpu-lennard-jones/) and on the measuring tools of
 [Is Energy Conserved?](../webgpu-reading-back/), the box starts as a triangular
 crystal that has been stretched out to a density of 0.5, far thinner than a crystal
-wants to be. It cannot hold together as one piece, and soon breaks into crystalline
+wants to be. It cannot hold together as one piece and soon breaks into crystalline
 islands floating in vapour. We look at how the atoms are arranged, in two ways.
 
 Each atom is coloured by how hexagonal its neighbourhood is. For every bond to a
 neighbour closer than 1.4 σ, take the bond's angle $\theta$ and average
 $e^{6i\theta}$ over the bonds. In a triangular crystal all six bonds line up and the
-magnitude, $|\psi_6|$, is close to 1; in a liquid the angles are scrambled and it
+magnitude, $|\psi_6|$, is close to 1. In a liquid the angles are scrambled and it
 falls towards 0. Atoms bright yellow are crystalline, blue are not. (The same idea
 is behind the [hexatic phase](https://en.wikipedia.org/wiki/Hexatic_phase).) Switch
 the colouring to speed to see the same atoms the way the earlier posts drew them.
 
-At the starting temperature the islands stay crystalline, with a thin vapour between
+At the starting temperature the islands stay crystalline with a thin vapour between
 them. Warm it and the islands melt into liquid droplets: the peaks wash out and the
 yellow drains away. Cool it and the liquid freezes into crystallites, usually with
 defects and grain boundaries rather than a perfect lattice.
@@ -36,7 +36,7 @@ defects and grain boundaries rather than a perfect lattice.
 Temperature alone does not tell the whole story, because the phase also depends on
 density. The density slider expands or compresses the box, and the atoms with it. At
 the crystal's own density, 0.87, there is no room for a gas: even a hot box is just a
-dense liquid. Spread the atoms thinly and keep it warm, and the colours go blue, the
+dense liquid. Spread the atoms thinly and keep it warm and the colours go blue, the
 first peak shrinks and g(r) flattens towards 1.
 
 ```{ojs}
@@ -445,11 +445,11 @@ viewof colouring = {
 The left chart is the
 [radial distribution function](https://en.wikipedia.org/wiki/Radial_distribution_function)
 $g(r)$: how likely you are to find a neighbour at distance $r$, compared with a gas
-of the same density. A crystal has sharp, repeating peaks at the lattice spacings; a
-liquid has a first peak and a couple of fading ripples; a gas is flat at 1. The
+of the same density. A crystal has sharp, repeating peaks at the lattice spacings. A
+liquid has a first peak and a couple of fading ripples. A gas is flat at 1. The
 histogram is built on the GPU. Every thread adds one to a bin with `atomicAdd`
 while it is already looping over its neighbours, and only the 120 counts come back.
-The right chart is the fraction of atoms with $|\psi_6| > 0.8$, over time.
+The right chart is the fraction of atoms with $|\psi_6| > 0.8$ over time.
 
 ```{ojs}
 //| echo: false

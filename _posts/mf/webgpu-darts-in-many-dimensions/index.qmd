@@ -15,13 +15,13 @@ listing:
 ---
 
 [Last time](../webgpu-mandelbrot-area/) the darts measured an area. Nothing in the
-method was special to two dimensions, so this time they measure a volume, and then a
-volume in four dimensions, and then in twenty.
+method was special to two dimensions so this time they measure a volume and then a
+volume in four dimensions and then in twenty.
 
 The shape is the unit ball: all the points within distance 1 of the origin. The box is
 the cube around it, from $-1$ to $1$ in every direction. A dart is a random point of
 the cube, and it is _inside_ if its coordinates satisfy $x_1^2 + x_2^2 + \dots + x_d^2
-\le 1$. In two dimensions that is a circle in a square, the fraction inside is $\pi/4$,
+\le 1$. In two dimensions that is a circle in a square. The fraction inside is $\pi/4$
 and this is the [π of the sticks](../webgpu-buffons-needle/) again.
 
 The ball does have a formula, which is what makes it a good test:
@@ -32,13 +32,13 @@ so the darts can be checked against it. One dart serves every dimension at once:
 first $d$ coordinates are a dart in $d$ dimensions. All twenty estimates on the left
 chart come from the same throws.
 
-The picture is a slice. It shows the first two coordinates of each dart, in the
-dimension chosen with the slider, and the circle is the ball's edge in that slice. In
+The picture is a slice. It shows the first two coordinates of each dart in the
+dimension chosen with the slider and the circle is the ball's edge in that slice. In
 two dimensions the red darts fill the circle. In higher ones a dart can land inside the
-circle and still be a miss, because some other coordinate carried it out of the ball.
+circle and still be a miss because some other coordinate carried it out of the ball.
 
 The slider is the number of darts a second, and **Dimension** is the one the picture
-and the right chart follow; it does not restart the run, **Restart** does. At the
+and the right chart follow. It does not restart the run, **Restart** does. At the
 top speed the twenty-dimensional ball gets a few hits a second.
 
 ```{ojs}
@@ -578,7 +578,7 @@ viewof dimension = {
 ## Analysis
 
 The left chart is the share of the cube inside the ball in every dimension: the darts'
-estimate in red, and the exact value dashed. The right chart follows the dimension
+estimate in red and the exact value dashed. The right chart follows the dimension
 chosen with the slider.
 
 Three things to look for:
@@ -587,10 +587,10 @@ Three things to look for:
     of the chosen dimension. It is the same $1/\sqrt{N}$ as the sticks and the fractal,
     with a hundred times more darts for one more digit.
 
-2. _The cost does._ What the darts have to measure is a fraction, and the ball takes up
+2. _The cost does._ What the darts have to measure is a fraction and the ball takes up
     a smaller and smaller part of its cube: about 0.8 in two dimensions, 0.16 in five,
     0.0025 in ten and $2.5 \times 10^{-8}$ in twenty. The relative error after $N$
-    darts is $\sqrt{(1-p)/(pN)}$, so a rare hit costs a lot of darts. The grey lines on
+    darts is $\sqrt{(1-p)/(pN)}$ so a rare hit costs a lot of darts. The grey lines on
     the right chart are that for every dimension: the same slope, each one higher than
     the last.
 

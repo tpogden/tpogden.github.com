@@ -15,10 +15,10 @@ listing:
 ---
 
 Building on [Animation Loop](../webgpu-animation-loop/), the particles now move. Each
-one has a velocity, and every step its position is advanced and reflected off the
+one has a velocity and every step its position is advanced and reflected off the
 walls. The new idea is the _fixed timestep_: physics advances in constant steps of
-1/120 s, however fast the browser redraws, so the simulation behaves the same on
-every display. There is almost no new WebGPU here; positions are simply rewritten
+1/120 s, however fast the browser redraws so the simulation behaves the same on
+every display. There is almost no new WebGPU here: positions are simply rewritten
 into the storage buffer each frame with `writeBuffer`.
 
 ```{ojs}
