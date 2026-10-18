@@ -470,7 +470,7 @@ leave time for the dots the tank slows to a step a frame while a blow-up is grow
 
 ## Where the limit comes from
 
-This was found before there were computers. In 1928 Richard Courant, Kurt Friedrichs and
+This was found before there were computers. In 1928, Richard Courant, Kurt Friedrichs and
 Hans Lewy at Göttingen were not trying to simulate anything. They wanted to prove that
 the equations of mathematical physics have solutions at all by replacing them with
 grids and showing the grids converge. In doing so they noticed a limit. A cell only hears
