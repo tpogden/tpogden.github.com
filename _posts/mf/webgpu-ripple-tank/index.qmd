@@ -489,6 +489,7 @@ viewof courant = {
     }
     const theory = sourceInput.value === "plane" ? prediction(wavelengthInput.value) : null;
     draw(screenHost, {
+      height: 200,
       x: { label: "position along the far wall (cells from the middle)", grid: true },
       y: { label: "wave brightness (relative)", grid: true, domain: [0, 1.05] },
       marks: [
@@ -505,6 +506,7 @@ viewof courant = {
       ],
     });
     draw(peakHost, {
+      height: 200,
       x: { label: "time steps", grid: true },
       y: { label: "largest wave height", grid: true, type: "log", domain: [1e-4, 1e6] },
       marks: [
