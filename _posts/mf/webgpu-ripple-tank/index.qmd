@@ -38,10 +38,6 @@ Try these:
 - _Choose Double slit._ Two holes make two rings, and where they overlap the waves add.
   Crest on crest is a bigger crest, and crest on trough is flat water. The calm lines
   fanning out are the interference pattern.
-- _Choose Lens._ The paler patch is shallow water, where waves travel slower. A wave
-  slows as it enters, so the front tilts, and the beam bends towards a focus.
-- _Turn Beaches off._ The tank gets walls that waves bounce off. It does not take long
-  for the surface to become a mess.
 - _Push the Courant number just over 0.7._ This one is about the computer, not the water. It
   is explained [below](#why-the-timestep-has-a-limit).
 
@@ -54,7 +50,6 @@ viewof tankSource = {
     label: "Source",
     options: [
       ["pebbles", "Pebbles"],
-      ["rain", "Rain"],
       ["plane", "Plane wave"],
     ],
     value: "pebbles",
@@ -73,7 +68,6 @@ viewof tankBarrier = {
       ["open", "Open"],
       ["gap", "Gap"],
       ["double", "Double slit"],
-      ["lens", "Lens"],
     ],
     value: "open",
   });
@@ -130,15 +124,6 @@ viewof courant = {
 
 ```{ojs}
 //| echo: false
-//| output: false
-viewof beaches = {
-  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
-  return ui.toggle({ label: "Beaches", value: true });
-}
-```
-
-```{ojs}
-//| echo: false
 //| column: screen-inset
 //| code-fold: true
 //| code-summary: "Show code"
@@ -154,7 +139,6 @@ viewof beaches = {
   const wavelengthInput = viewof wavelength;
   const speedInput = viewof waveSpeed; // log10 of cells a second
   const courantInput = viewof courant;
-  const beachInput = viewof beaches;
 
   const { canvas, device, context, format } = await gpu.setup({
     width: 640,
@@ -179,7 +163,7 @@ viewof beaches = {
   const amplitude = 0.25; // height of the plane wave
   const maxSplashes = 8;
 
-  // How easily the surface moves at each cell: 1 deep, 0.5 shallow, 0 a wall
+  // Whether each cell is water (1) or a wall (0)
   function buildDepth(kind) {
     const depth = new Float32Array(cells).fill(1);
     const wall = (x0, x1, y0, y1) => {
@@ -196,18 +180,6 @@ viewof beaches = {
       wall(wallX, wallX + wallWidth, 0, top - half);
       wall(wallX, wallX + wallWidth, top + half, bottom - half);
       wall(wallX, wallX + wallWidth, bottom + half, H);
-    } else if (kind === "lens") {
-      // Two overlapping discs: a thick convex patch of shallow water
-      const radius = 120;
-      const offset = 66;
-      const cx = 320;
-      for (let y = 0; y < H; y++) {
-        for (let x = 0; x < W; x++) {
-          const a = (x - (cx - offset)) ** 2 + (y - mid) ** 2;
-          const b = (x - (cx + offset)) ** 2 + (y - mid) ** 2;
-          if (a <= radius * radius && b <= radius * radius) depth[y * W + x] = 0.5;
-        }
-      }
     }
     return depth;
   }
@@ -220,7 +192,7 @@ viewof beaches = {
       courant2: f32,
       sponge: f32,        // damping per step at the very edge of the tank
       edge: f32,          // width of the beach, in cells
-      beach: u32,
+      pad2: u32,
       sourceOn: u32,
       sourceX: u32,
       sourceAmp: f32,     // forcing added each step
@@ -273,11 +245,8 @@ viewof beaches = {
         if (y > 0u)     { pull += min(k, depth[i - w]) * (now[i - w] - here); }
         if (y + 1u < h) { pull += min(k, depth[i + w]) * (now[i + w] - here); }
 
-        var sigma = 0.0;
-        if (params.beach == 1u) {
-          let q = beachFraction(x, y);
-          sigma = params.sponge * q * q;
-        }
+        let q = beachFraction(x, y);
+        let sigma = params.sponge * q * q;
         var next = (2.0 * here - (1.0 - sigma) * before[i] + params.courant2 * pull) / (1.0 + sigma);
 
         // The plane-wave paddle adds to the water rather than fixing it, so waves
@@ -366,15 +335,12 @@ viewof beaches = {
         let k = depth[i];
         if (k == 0.0) { return vec4f(0.62, 0.62, 0.64, 1.0); }
 
-        // Flat water is dark, and a paler grey-blue where it is shallow
-        let flat = mix(vec3f(0.20, 0.24, 0.28), vec3f(0.10, 0.10, 0.10), smoothstep(0.2, 1.0, k));
+        let flat = vec3f(0.10, 0.10, 0.10);
         let v = now[i] * params.gain;
         let crest = vec3f(1.0, 0.282, 0.204);   // #FF4834
         let trough = vec3f(0.22, 0.60, 0.85);
         var colour = mix(flat, select(trough, crest, v > 0.0), clamp(abs(v), 0.0, 1.0));
-        if (params.beach == 1u) {
-          colour *= 1.0 - 0.45 * beachFraction(x, y);
-        }
+        colour *= 1.0 - 0.45 * beachFraction(x, y);
         if (params.sourceOn == 1u && (x == params.sourceX || x == params.sourceX + 1u)) {
           colour = vec3f(0.92);
         }
@@ -449,7 +415,6 @@ viewof beaches = {
   let stepCount = 0;
   let sourceStart = 0;
   const pebbles = []; // [x, y, height, radius] waiting to be dropped
-  let rainClock = 0;
 
   const drop = (x, y, height = 2) => {
     pebbles.push([x, y, height, 6]);
@@ -612,7 +577,6 @@ viewof beaches = {
   on(wavelengthInput, restartSource);
   // Once the numbers have blown up there is nothing left to save: start again
   on(courantInput, () => (peak > 1e3 ? clear() : restartStats()));
-  on(beachInput, restartStats);
 
   changeBarrier();
   drop(W / 2, H / 2);
@@ -638,13 +602,6 @@ viewof beaches = {
     const count = Math.min(Math.floor(owed), 40);
     owed = Math.min(owed - count, 1);
 
-    if (sourceInput.value === "rain") {
-      rainClock -= dt;
-      if (rainClock < 0) {
-        drop(beachWidth + Math.random() * (W - 2 * beachWidth), beachWidth + Math.random() * (H - 2 * beachWidth), 1 + Math.random());
-        rainClock = 0.12 + 0.3 * Math.random();
-      }
-    }
     const splashes = pebbles.splice(0, maxSplashes);
 
     paramU32[0] = W;
@@ -652,7 +609,6 @@ viewof beaches = {
     paramF32[2] = C * C;
     paramF32[3] = 0.3 * C; // damping per step at the edge: a wave crosses the beach once
     paramF32[4] = beachWidth;
-    paramU32[5] = beachInput.value ? 1 : 0;
     paramU32[6] = planeOn ? 1 : 0;
     paramU32[7] = sourceX;
     paramF32[8] = (4 * Math.PI * C * C * amplitude) / lambda;
@@ -719,7 +675,6 @@ viewof beaches = {
     wavelengthInput,
     speedInput,
     courantInput,
-    beachInput,
     clearButton,
     readout,
   ]);
@@ -756,32 +711,30 @@ array. Then the three arrays swap roles, with no copying: "the one before" becom
 "the one before that", "now" becomes "the one before", and the new heights become
 "now".
 
-The walls, the shallow lens and the open water are all the same rule. Each cell has a
-number for how easily the water moves there, 1 for deep water, 0.5 for shallows and 0
-for wall, and the rule uses it when a cell looks at its neighbours. A wall is a cell with
-nothing to pull on. There is no special case for a barrier, which is why a gap or a slit
-costs nothing extra.
+The walls and the open water are the same rule. Each cell has a number, 1 for water and
+0 for wall, and the rule uses it when a cell looks at its neighbours. A wall is a cell
+with nothing to pull on. There is no special case for a barrier, which is why a gap or a
+slit costs nothing extra.
 
 At the edges the tank has beaches. Close to the border, the rule gets a little damping
-that grows towards the edge, so a wave that reaches it slowly dies. Real ripple tanks
-often have sloping edges or sponge for the same reason.
+that grows towards the edge, so a wave that reaches it slowly dies instead of bouncing
+back. Without them the surface soon becomes a mess. Real ripple tanks often have
+sloping edges or sponge for the same reason.
 
 ::: {.callout-note collapse="true"}
 ## The wave equation, and the update
 
-With the height written $u(x, y, t)$ and the wave speed $c$ allowed to vary from place
-to place, the wave equation is
+With the height written $u(x, y, t)$ and the wave speed $c$, the wave equation is
 
-$$\frac{\partial^2 u}{\partial t^2} = \nabla \cdot \left( c^2 \, \nabla u \right).$$
+$$\frac{\partial^2 u}{\partial t^2} = c^2 \, \nabla^2 u.$$
 
 On a grid with spacing $\Delta x$ and time step $\Delta t$, each cell is updated with
 
 $$u^{n+1}_{ij} = 2 u^n_{ij} - u^{n-1}_{ij} + C^2 \sum_{\text{4 neighbours}} k \left( u^n_{\text{nb}} - u^n_{ij} \right),$$
 
-where $C = c \, \Delta t / \Delta x$ is the Courant number for deep water, and $k$ is 1
-for deep water, 0.5 for shallow water (where $c$ is smaller by a factor of $\sqrt{2}$) and 0 against a wall. Taking
-the smaller of the two cells' $k$ across each link is what makes a wall reflect and a
-shore bend the wave the right way.
+where $C = c \, \Delta t / \Delta x$ is the Courant number, and $k$ is 1 for a link
+between two water cells and 0 for a link that touches a wall. A link with $k = 0$ pulls on
+nothing, which is what makes a wall reflect.
 :::
 
 ## Why the timestep has a limit

@@ -60,6 +60,8 @@ Some arcs lean on one strand more than the others (the waves arc on physics, Tre
 | 023 | Sine-Gordon in 2D | ring kinks on a pendulum surface | topological soliton |
 | 024 | FPU / Toda | particle chain | recurrence; bridge back to MD |
 
+018 as drafted had a shallow-water lens (refraction and focusing, with a depth field that slows the waves) and a Rain source and Beaches toggle; all three were cut as too much for one post. The lens is in git history (commit 7adcdcc) and is a candidate for a later refraction post, which would also suit the shoaling and beach posts.
+
 Later: NLSE bright solitons (split-step FFT) and Maxwell-Bloch, linking to the existing optical-solitons and simultons posts.
 
 This arc is the foundation for C (FDTD), D (FFT) and the optics arc, so it goes first. 018 can carry a "what goes wrong" section on the CFL condition (item B2).
