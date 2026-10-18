@@ -14,14 +14,14 @@ listing:
     sort: "title asc"
 ---
 
-Building on [Falling Atoms](../webgpu-gravity/), the same box, but now we ask it
+Building on [Falling Atoms](../webgpu-gravity/), the same box but now we ask it
 questions. Everything so far has been one-way: JavaScript uploads buffers, the GPU
-simulates and draws, and the numbers never come back. To plot anything we need them
+simulates and draws and the numbers never come back. To plot anything we need them
 back. WebGPU makes that deliberately awkward. A buffer the shaders write cannot be
 read directly: you copy it into a _staging buffer_, ask for it to be mapped with
-[`mapAsync`](https://developer.mozilla.org/en-US/docs/Web/API/GPUBuffer/mapAsync),
-and wait, because the copy only happens once the GPU has finished the work queued
-before it. So we do it every few frames, never every frame, and the charts lag the
+[`mapAsync`](https://developer.mozilla.org/en-US/docs/Web/API/GPUBuffer/mapAsync)
+and wait because the copy only happens once the GPU has finished the work queued
+before it. So we do it every few frames, never every frame and the charts lag the
 picture a little.
 
 ```{ojs}
@@ -396,8 +396,8 @@ one is the energy per atom: kinetic, potential and total. Turn the thermostat of
 the box is an isolated system, so the total should stay flat apart from small
 wiggles. That is the test of the integrator. The right one is the density of atoms
 against height. The dashed line is the barometric profile of an
-ideal gas, started at the top of the liquid pool: the vapour above follows it, while
-the pool below does not, because a liquid is nearly incompressible.
+ideal gas, started at the top of the liquid pool: the vapour above follows it while
+the pool below does not because a liquid is nearly incompressible.
 
 ```{ojs}
 //| echo: false

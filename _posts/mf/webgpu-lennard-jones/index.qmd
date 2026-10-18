@@ -27,13 +27,13 @@ integrates the motion (leapfrog, which follows the same trajectory as
 The walls are replaced by _periodic boundaries_: leave on one side, re-enter on the
 other.
 
-Condensing lowers the potential energy, and with nothing else to take it, that
-energy becomes motion, so on its own the box would just warm up. A
+Condensing lowers the potential energy and with nothing else to take it, that
+energy becomes motion so on its own the box would just warm up. A
 [Langevin thermostat](https://en.wikipedia.org/wiki/Langevin_dynamics) takes it
 away: every step each particle is slightly slowed and given a small random kick,
 which holds the temperature at the slider's value. The kicks need random numbers on
 the GPU, so each particle carries its own generator state. Particles are coloured by
-speed. Hot and they stay a gas; cool them and the attraction wins, and droplets of
+speed. Hot and they stay a gas. Cool them and the attraction wins and droplets of
 liquid condense out of it.
 
 ```{ojs}

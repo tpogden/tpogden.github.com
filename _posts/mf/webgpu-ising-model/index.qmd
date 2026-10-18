@@ -14,7 +14,7 @@ listing:
     sort: "title asc"
 ---
 
-Heat a magnet and, at some temperature, it stops being a magnet. It does not fade: there
+Heat a magnet and at some temperature it stops being a magnet. It does not fade: there
 is one temperature, the Curie point, where it switches. This post is a toy magnet that
 shows why, small enough to run in the browser.
 
@@ -22,20 +22,20 @@ Each cell below is a tiny compass needle, pointing up (red) or down (dark). Two 
 act on every needle:
 
 - It prefers to agree with its four neighbours.
-- Heat shakes it, at random.
+- Heat shakes it at random.
 
 Cold, the neighbours win and the whole sheet is one colour: a magnet. Hot, the shaking
 wins and it is static: no magnet at all. This is the
 [Ising model](https://en.wikipedia.org/wiki/Ising_model).
 
-The sheet starts hot, at a temperature of 3, so it is static: no magnet. Press
+The sheet starts hot, at a temperature of 3 so it is static: no magnet. Press
 **Quench**, which drops the temperature straight to 1.5, and it freezes into patches of
 red and dark that slowly eat each other, like the grains in
 [twenty thousand atoms](../webgpu-twenty-thousand-atoms/). On a small sheet one colour
 usually wins in the end. Then **drag Temperature upwards**: somewhere near 2.27 the order
 falls apart.
 
-It runs slowly on purpose, ten sweeps a second, so the flips can be followed;
+It runs slowly on purpose, ten sweeps a second so the flips can be followed.
 **Sweeps/s** speeds it up.
 
 ## How the computer shakes the needles
@@ -44,8 +44,8 @@ This is the walker's rule from [the last post](../webgpu-metropolis-walkers/), w
 different map. There the walker's position was a point on a landscape. Here it is
 the whole sheet: one arrangement of needles out of far too many to count, even
 for this small sheet, $2^{2{,}304}$ of them. Nobody can throw darts at "a magnet at
-temperature $T$", but a walker can feel whether a change makes things better or worse.
-Change one needle, and the same rule decides:
+temperature $T$" but a walker can feel whether a change makes things better or worse.
+Change one needle and the same rule decides:
 
 1. Pick a needle and work out the change in energy $\Delta E$ if it flipped.
 2. If $\Delta E \le 0$ (it would agree better), flip it.
@@ -57,7 +57,7 @@ Count the arrangements the walk visits and you have the average a magnet would s
 
 The GPU does a sweep (one try per needle) in two halves, laid out like the squares of a
 chessboard: every other cell first, then the rest. A needle's four neighbours are all in
-the other half, so no two needles in the same half affect each other and they can all
+the other half so no two needles in the same half affect each other and they can all
 flip at once.
 
 ::: {.callout-note collapse="true"}
@@ -68,7 +68,7 @@ With the needles $s = \pm 1$, the energy is
 $$E = -\sum_{\langle ij \rangle} s_i s_j$$
 
 summed over neighbouring pairs, in units where the coupling and Boltzmann's constant are
-both 1, so $T$ here is in those units. The switch is at
+both 1 so $T$ here is in those units. The switch is at
 $T_c = 2/\ln(1+\sqrt{2}) \approx 2.269$.
 :::
 
@@ -505,12 +505,12 @@ viewof gridSize = {
 
 _Left._ How magnetised the sheet is, $|m|$, against the temperature it was at. $|m|$ is 1
 when every needle agrees and 0 when half point each way. The dots are what the sheet
-does, and the dashed line is Onsager's exact answer from 1944. Near the switch the dots
-sit above the line, because a sheet of finite size has a smeared switch rather than a
+does and the dashed line is Onsager's exact answer from 1944. Near the switch the dots
+sit above the line because a sheet of finite size has a smeared switch rather than a
 sharp one: try the smallest and largest **Grid**.
 
 _Right._ The magnetisation as time goes on. Below the switch it is pinned, above it is
-noise, and at the switch it wanders slowly, because needles that are close to deciding
+noise and at the switch it wanders slowly because needles that are close to deciding
 drag one another about.
 
 ```{ojs}

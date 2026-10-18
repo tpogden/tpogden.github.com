@@ -20,21 +20,21 @@ explosion: a ring of compressed, fast atoms racing outwards with a thinned-out
 cavity behind it.
 
 The atoms only repel one another, the short-range half of the Lennard-Jones force
-with the attraction removed. A gas with an attraction condenses when it is cold, and
+with the attraction removed. A gas with an attraction condenses when it is cold and
 a blast wave needs a gas that stays a gas: cold enough that the explosion is by far
 the most energetic thing in the box.
 
-This is a [shock wave](https://en.wikipedia.org/wiki/Shock_wave), and it is a result
+This is a [shock wave](https://en.wikipedia.org/wiki/Shock_wave) and it is a result
 of the atoms and nothing else. No equation for a fluid is in the code. Each atom
-only feels the Lennard-Jones force from its neighbours, and yet a front forms and
+only feels the Lennard-Jones force from its neighbours and yet a front forms and
 moves much faster than the speed of sound in the gas ahead of it, which therefore
 has no warning and no time to move out of the way.
 
-How fast does it grow? Dimensional analysis answers it, in the
+How fast does it grow? Dimensional analysis answers it in the
 [Sedov–Taylor](https://en.wikipedia.org/wiki/Taylor%E2%80%93von_Neumann%E2%80%93Sedov_blast_wave)
 solution. A point explosion releases an energy $E$ into a gas of density $\rho$. The
 only length you can make from those two numbers and the time $t$ is
-$R \sim (E t^2 / \rho)^{1/4}$ in two dimensions, so the radius of the blast grows as
+$R \sim (E t^2 / \rho)^{1/4}$ in two dimensions so the radius of the blast grows as
 
 $$R \propto t^{1/2}.$$
 
@@ -468,7 +468,7 @@ and the dashed line has the slope $\tfrac12$ the theory predicts. The left-hand 
 is the density against distance from the centre, with the shell of the shock as its
 peak (a modest one: the gas is compressed by about half again, not by an order of
 magnitude). The walls reflect, so once the shock reaches them it bounces back and the
-box keeps sloshing; the chart stops measuring there.
+box keeps sloshing. The chart stops measuring there.
 
 ```{ojs}
 //| echo: false

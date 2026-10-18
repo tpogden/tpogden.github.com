@@ -14,12 +14,12 @@ listing:
     sort: "title asc"
 ---
 
-One of the first things I ever put on the web, in 2011, was a [page that estimates
+One of the first things I ever put on the web in 2011 was a [page that estimates
 π by dropping sticks](https://ogden.eu/pi). You clicked, a hundred sticks fell on a
-board of parallel lines, and the page counted how many landed across a line. This is
+board of parallel lines and the page counted how many landed across a line. This is
 the same experiment with a graphics card to do the dropping.
 
-It is [Buffon's needle](https://en.wikipedia.org/wiki/Buffon%27s_needle_problem),
+It is [Buffon's needle](https://en.wikipedia.org/wiki/Buffon%27s_needle_problem)
 from 1777. Drop a needle of length $\ell$ on a floor ruled with parallel lines a
 distance $d$ apart. If $\ell \le d$ it crosses a line with probability
 
@@ -29,13 +29,13 @@ so the fraction of $N$ needles that cross, $n/N$, estimates $p$, and
 
 $$\pi \approx \frac{2\ell}{d}\,\frac{N}{n}.$$
 
-Nothing about a circle goes in, and π comes out, because a needle that lands at a
+Nothing about a circle goes in and π comes out because a needle that lands at a
 random angle is a circle of directions in disguise.
 
 The slider is the number of needles dropped per second, up to a hundred million, on
 a scale that goes up by a factor of ten a step. The board shows the latest needles, which fade
-out after a second or two; the millions that have gone before are only counted. **Restart** clears the count, and
-changing the needle length does too, since an estimate made with one length means
+out after a second or two. The millions that have gone before are only counted. **Restart** clears the count and
+changing the needle length does too since an estimate made with one length means
 nothing for another.
 
 Each needle lands at a random place with a random direction. The direction is the
@@ -563,9 +563,9 @@ process of this kind is expected to follow.
 
 The error shrinks as $1/\sqrt{N}$, which is slow: a hundred times more needles buys
 one more digit. A graphics card does not change that, only how soon you get there.
-That is the dashed line on the right, and the red dots wander about it.
+That is the dashed line on the right and the red dots wander about it.
 
-The needle length matters too. A short needle crosses a line less often, so π is
+The needle length matters too. A short needle crosses a line less often so π is
 read off a smaller count: a needle half the spacing long needs about four times as
 many drops as one the full spacing long for the same precision. Switching the length
 moves the band and the dashed line to match.

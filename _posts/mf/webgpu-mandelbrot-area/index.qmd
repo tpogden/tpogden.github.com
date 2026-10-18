@@ -25,10 +25,10 @@ runs away. It has no known formula for its area. The best values are numerical, 
 they are about 1.5066.
 
 Each dart picks a random $c$ in the box, repeats that step up to a fixed number of
-times, and is _inside_ if $z$ never gets further than 2 from the origin. The
+times and is _inside_ if $z$ never gets further than 2 from the origin. The
 picture develops as the darts land: red ones are inside, grey ones ran away.
 
-The slider is the number of darts a second. **Iterations** is $n$, and
+The slider is the number of darts a second. **Iterations** is $n$ and
 changing it, like **Restart**, begins the run again.
 
 ```{ojs}
@@ -624,7 +624,7 @@ Two things stand in the way of a clean answer:
     how far the estimate is from the reference, against the sloping dashed line that
     size of error is expected to follow. The reference is itself only so exact: making
     its grid four times coarser or finer moves it by up to about $5 \times 10^{-5}$ (at
-    100 steps, less at the others), so that is as low as the chart can meaningfully go.
+    100 steps, less at the others) so that is as low as the chart can meaningfully go.
 
 ```{ojs}
 //| echo: false
