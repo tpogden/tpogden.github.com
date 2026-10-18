@@ -571,8 +571,7 @@ that grows towards the edge, so a wave that reaches it slowly dies instead of bo
 back. Without them the surface soon becomes a mess. Real ripple tanks often have
 sloping edges or sponge for the same reason.
 
-::: {.callout-note collapse="true"}
-## The wave equation, and the update
+## The wave equation
 
 With the height written $u(x, y, t)$ and the wave speed $c$, the wave equation is
 
@@ -585,7 +584,6 @@ $$u^{n+1}_{ij} = 2 u^n_{ij} - u^{n-1}_{ij} + C^2 \sum_{\text{4 neighbours}} \lef
 where $C = c \, \Delta t / \Delta x$ is the Courant number: the distance a ripple travels in
 one step in cells. Here it is 0.5 and it cannot be much bigger as
 [a later post](../webgpu-courant-number/) explains.
-:::
 
 Next [the tank gets a wall](../webgpu-two-holes-in-a-wall/) with holes in it.
 
