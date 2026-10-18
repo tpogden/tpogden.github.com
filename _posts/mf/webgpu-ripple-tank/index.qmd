@@ -492,10 +492,7 @@ On a grid with spacing $\Delta x$ and time step $\Delta t$, each cell is updated
 $$u^{n+1}_{ij} = 2 u^n_{ij} - u^{n-1}_{ij} + C^2 \sum_{\text{4 neighbours}} \left( u^n_{\text{nb}} - u^n_{ij} \right),$$
 
 where $C = c \, \Delta t / \Delta x$ is the Courant number: the distance a ripple travels in
-one step in cells. Here it is 0.5 and it cannot be much bigger as
-[a later post](../webgpu-courant-number/) explains.
-
-Next [a straight wave meets a wall](../webgpu-two-holes-in-a-wall/) with holes in it.
+one step in cells. Here it is 0.5 and it cannot be much bigger. We'll find out why later.
 
 ## Sources
 
