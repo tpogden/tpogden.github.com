@@ -603,8 +603,10 @@ corner of the array and the drawing shifts it by half to the middle.
   fast Fourier transform", _IEEE ASSP Magazine_ 1 (4), 14 to 21.
 - IEEE, [First demonstration of the fast Fourier transform, 1964](https://ethw.org/Milestones:First_Demonstration_of_the_Fast_Fourier_Transform_(FFT),_1964),
   for the story of the 1963 meeting.
+- Adams, C. S. and Hughes, I. G. (2018), [_Optics f2f: From Fourier to Fresnel_](https://academic.oup.com/book/43688)
+  (Oxford University Press), for the pattern behind a hole as a Fourier transform.
 - Goodman, J. W., _Introduction to Fourier Optics_ (3rd edition, Roberts and Company, 2005),
-  for the pattern behind a hole as a Fourier transform.
+  for the same.
 
 ::: {.mf-series-bar}
 Moving Figures
