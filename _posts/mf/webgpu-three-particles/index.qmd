@@ -16,7 +16,7 @@ listing:
 
 Building on [Hello GPU](../webgpu-hello-world/), here's three points on the same
 canvas. New stuff: a _buffer_ holding the particle positions on the GPU, a
-_shader module_ (WGSL) with a vertex and a fragment shader, and a _render pipeline_
+_shader module_ (WGSL) with a vertex and a fragment shader and a _render pipeline_
 that ties them together and tells the GPU to draw the vertices as triangles. GPU
 points are always one pixel, so each particle is a square made of two triangles.
 

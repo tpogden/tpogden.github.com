@@ -15,7 +15,7 @@ listing:
 ---
 
 Building on [Jiggling Atoms](../webgpu-lennard-jones/), the box now has a floor and
-a ceiling, and every particle is pulled down. Gravity is one extra line in the
+a ceiling and every particle is pulled down. Gravity is one extra line in the
 integrate pass: a constant acceleration $-g$ added to each vertical velocity. The
 sides stay periodic, and the floor and ceiling reflect. The thermostat from last
 time still holds the temperature.
@@ -25,7 +25,7 @@ thinning out with height. In an isothermal gas the density falls off exponential
 $n(y) \propto e^{-mgy/k_BT}$, the
 [barometric formula](https://en.wikipedia.org/wiki/Barometric_formula) that sets the
 density of the air. Warm it and the surface evaporates, the pool dissolves into the
-atmosphere, and with gravity off you are back to droplets and a uniform gas.
+atmosphere and with gravity off you are back to droplets and a uniform gas.
 
 ```{ojs}
 //| echo: false

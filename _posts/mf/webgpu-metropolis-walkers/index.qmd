@@ -15,15 +15,15 @@ listing:
 ---
 
 [Last time](../webgpu-darts-in-many-dimensions/) the darts ran out of room. In
-twenty dimensions the thing being measured was a billionth of the box, and nearly every
-dart missed. A dart knows nothing about where it landed, so it cannot do better.
+twenty dimensions the thing being measured was a billionth of the box and nearly every
+dart missed. A dart knows nothing about where it landed so it cannot do better.
 
 A walker can. It can feel whether the ground is higher or lower where it is about to
 step. This post is about the simplest use of that: a walker that spends its time on
 a landscape in proportion to how high it is.
 
 The map below is a landscape with two hills. The lines are contours. Each white
-dot is a walker, with the line behind it showing where it has been, and each step goes
+dot is a walker, with the line behind it showing where it has been and each step goes
 like this:
 
 1. Propose a small step in a random direction.
@@ -32,12 +32,12 @@ like this:
     coin that is weighted by how much is lost. Otherwise stay where you are.
 
 A rejected step is the yellow dot. That is the whole algorithm. It is the _Metropolis_
-method, and the walker never needs to know what the landscape adds up to, only
+method and the walker never needs to know what the landscape adds up to, only
 how its height compares between two nearby places.
 
 The grey is the landscape: the higher the ground, the lighter. The red builds up as
-walkers visit, and it is strongest where they have been most. When the rule works the
-red fills the hills and nothing else, and its shape matches the contours underneath.
+walkers visit and it is strongest where they have been most. When the rule works the
+red fills the hills and nothing else and its shape matches the contours underneath.
 A small yellow dot is a step that was rejected: the walker stays where it was.
 
 Try these:
@@ -47,16 +47,16 @@ Try these:
   whole map, and each trail is a [Brownian path](../webgpu-brownian-motion/): a step
   in a random direction, then another.
 - _Make the step very small_, then very large. A small step is nearly always accepted but
-  crawls, so the walkers take a long time to get anywhere. A large step often lands
-  somewhere low and is rejected, so the walkers sit. The acceptance rate in the
+  crawls so the walkers take a long time to get anywhere. A large step often lands
+  somewhere low and is rejected so the walkers sit. The acceptance rate in the
   readout is what changes. Somewhere in between, a quarter to a half of steps
   accepted, is the quickest way to cover the map.
 - _Look at the two hills._ The right-hand one is a third as high but a good deal wider.
-  Walkers spend more of their time there, because what counts is the whole hill and
+  Walkers spend more of their time there because what counts is the whole hill and
   not just its top.
 
 It starts with three walkers so that each one can be followed. **Walkers** goes up to a
-hundred: more of them fill the map in faster and make the charts smooth, but they all
+hundred: more of them fill the map in faster and make the charts smooth but they all
 do the same thing. **Step size** is how far a proposal can go, **Steps/s** is the
 speed, and **Rule** switches between Metropolis and always stepping. **Restart** puts
 the walkers back at random places.
@@ -793,9 +793,9 @@ viewof rate = {
 
 The left chart is for one number, as the π and the fractal were: the share of the time
 the walkers spend in the left half of the map. The left hill is tall and narrow and the
-right one is low and wide, and the right holds more, so the exact answer is below a
+right one is low and wide, and the right holds more so the exact answer is below a
 half. The chart is the walkers' estimate as the steps pile up, with its uncertainty (the
-walkers differ from one another, and that spread is how far to trust it) and the exact
+walkers differ from one another and that spread is how far to trust it) and the exact
 value dashed.
 
 The right chart is the same thing in more detail: the share of the time in each vertical
@@ -803,7 +803,7 @@ strip of the map, against what it ought to be (the dashed line). It is the two h
 seen from the side.
 
 The first stretch of steps is the walkers finding the hills, so the estimate starts far
-off. At a small step a walker rarely crosses the gap between the hills, and its time
+off. At a small step a walker rarely crosses the gap between the hills and its time
 is split by where it began and not by how high the ground is: more walkers, or a
 larger step, fixes that.
 
