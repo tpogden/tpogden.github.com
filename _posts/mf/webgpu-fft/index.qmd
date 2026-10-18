@@ -60,15 +60,6 @@ viewof shape = {
 
 ```{ojs}
 //| echo: false
-//| output: false
-viewof erase = {
-  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
-  return ui.toggle({ label: "Erase", value: false });
-}
-```
-
-```{ojs}
-//| echo: false
 //| column: screen-inset
 //| code-fold: true
 //| code-summary: "Show code"
@@ -82,7 +73,6 @@ viewof erase = {
   // Controls are read live from their elements, so moving them does not restart
   // this cell.
   const shapeInput = viewof shape;
-  const eraseInput = viewof erase;
   const brush = 6; // radius of the brush, in cells
 
   // The hole on the left and the pattern on the right, each 512 by 512 cells
@@ -244,10 +234,9 @@ viewof erase = {
   };
   function stamp(x, y) {
     const r = brush;
-    const value = eraseInput.value ? 0 : 1;
     for (let j = Math.max(0, Math.floor(y - r)); j <= Math.min(N - 1, Math.ceil(y + r)); j++) {
       for (let i = Math.max(0, Math.floor(x - r)); i <= Math.min(N - 1, Math.ceil(x + r)); i++) {
-        if ((i - x) ** 2 + (j - y) ** 2 <= r * r) mask[j * N + i] = value;
+        if ((i - x) ** 2 + (j - y) ** 2 <= r * r) mask[j * N + i] = 1;
       }
     }
     painted = true;
@@ -492,7 +481,7 @@ viewof erase = {
   gpu.run(invalidation, device, frame);
 
   // The canvas with the controls laid over its corner
-  yield ui.stage(canvas, [shapeInput, eraseInput, readout]);
+  yield ui.stage(canvas, [shapeInput, readout]);
 }
 ```
 
