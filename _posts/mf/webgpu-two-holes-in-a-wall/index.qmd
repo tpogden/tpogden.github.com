@@ -30,7 +30,7 @@ Try these:
 - _One slit, as wide as you can make it._ **Slit width** at 32 and most of the wave goes
   straight through as a beam with a little spreading at the edges.
 - _Now narrow it._ As the slit shrinks towards the **Wavelength** the beam gives way to a
-  ring, as if the slit were a pebble. A hole about as small as the wave does not let
+  ring, as if the slit were a stone. A hole about as small as the wave does not let
   it through as a beam. It makes a new wave.
 - _Two slits._ Each makes its own ring and where the rings cross they add. Crest on crest
   is a bigger crest and crest on trough is flat water so bands fan out from the wall,

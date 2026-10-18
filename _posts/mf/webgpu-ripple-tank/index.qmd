@@ -1,5 +1,5 @@
 ---
-title: "018: Skimming Pebbles"
+title: "018: Skimming Stones"
 date: "2026-10-18"
 categories: [mf]
 page-layout: article
@@ -20,20 +20,20 @@ So far everything has been made of separate pieces. First atoms: even the
 the [needles of a magnet](../webgpu-ising-model/), all pushed about by chance. This post
 has no atoms and no dice.
 
-Drop a pebble in a pond and a ring spreads out. Nothing travels with the ring: the water
+Drop a stone in a pond and a ring spreads out. Nothing travels with the ring: the water
 only moves up and down a little and the shape of that moving goes on across the pond.
 A wave is that shape. It is a thing in its own right and it does things that no single
 particle does. It passes straight through other waves and where two meet it can cancel.
 
 The tank below is a sheet of water seen from above. Red is a crest, blue is a trough and
-dark is flat. **Click anywhere to drop a pebble** or drag to skim a stone across the water.
+dark is flat. **Click anywhere to drop a stone** or drag to skim one across the water.
 
 Try these:
 
-- _Drop one pebble._ The ring grows and fades. It fades because the same wave has to
+- _Drop one stone._ The ring grows and fades. It fades because the same wave has to
   cover a longer and longer circle so each stretch of it gets weaker. **Wavelength** sets
-  the size of the splash: a longer one makes a bigger pebble and wider rings.
-- _Drop two pebbles a little apart._ Each makes its own ring and where the rings
+  the size of the splash: a longer one makes a bigger stone and wider rings.
+- _Drop two stones a little apart._ Each makes its own ring and where the rings
   cross they add. Crest on crest is a bigger crest and crest on trough is flat water.
   Then they carry on as if the other had never been there.
 - _Switch Source to Plane wave._ A straight line of crests marches across the tank from
@@ -48,10 +48,10 @@ viewof tankSource = {
   return ui.segmented({
     label: "Source",
     options: [
-      ["pebbles", "Pebbles"],
+      ["stones", "Stones"],
       ["plane", "Plane wave"],
     ],
-    value: "pebbles",
+    value: "stones",
   });
 }
 ```
@@ -201,7 +201,7 @@ viewof wavelength = {
       @group(0) @binding(2) var<storage, read_write> before: array<f32>;
       @group(0) @binding(3) var<storage, read_write> now: array<f32>;
 
-      // A pebble: a dent with a ring round it, added to the surface and not moving to begin
+      // A stone: a dent with a ring round it, added to the surface and not moving to begin
       // with. The ring makes the dent add up to no net water, as a real splash does
       @compute @workgroup_size(${groupSide}, ${groupSide})
       fn splash(@builtin(global_invocation_id) id: vec3u) {
@@ -326,17 +326,17 @@ viewof wavelength = {
   let turn = 0; // which of the three arrays is "one step ago"
   let stepCount = 0;
   let sourceStart = 0;
-  const pebbles = []; // [x, y, height, radius] waiting to be dropped
+  const stones = []; // [x, y, height, radius] waiting to be dropped
 
   // The splash is as wide as the wavelength allows, so the slider sets its size too.
   // A small one is given a little more height so that its rings stay visible
   const drop = (x, y, height = 2) => {
     const radius = 0.375 * wavelengthInput.value;
-    pebbles.push([x, y, height * Math.sqrt(6 / radius), radius]);
-    if (pebbles.length > maxSplashes) pebbles.shift();
+    stones.push([x, y, height * Math.sqrt(6 / radius), radius]);
+    if (stones.length > maxSplashes) stones.shift();
   };
 
-  // Pebbles and drags
+  // Stones and drags
   let lastDrag = null;
   const place = (event) => {
     const box = canvas.getBoundingClientRect();
@@ -366,7 +366,7 @@ viewof wavelength = {
   let frameCount = 0;
   let epoch = 0; // bumped when the tank is cleared, so a read in flight is dropped
   let peak = 0;
-  let startStep = 0; // step at which the latest pebble dropped, or the paddle started
+  let startStep = 0; // step at which the latest stone dropped, or the paddle started
   const heightHistory = []; // {r, peak}: largest wave height against distance travelled
 
   const [heightHost] = charts.children;
@@ -377,7 +377,7 @@ viewof wavelength = {
     // fall as 1/sqrt(r). The dashed line is that, matched to the first point past 40
     const first = heightHistory.find((d) => d.r >= 40);
     const spreading =
-      sourceInput.value === "pebbles" && first
+      sourceInput.value === "stones" && first
         ? [40, 400].map((r) => ({ r, peak: first.peak * Math.sqrt(first.r / r) }))
         : [];
     draw(heightHost, {
@@ -413,7 +413,7 @@ viewof wavelength = {
     epoch++;
     const zeros = new Float32Array(cells);
     for (const buffer of heights) device.queue.writeBuffer(buffer, 0, zeros);
-    pebbles.length = 0;
+    stones.length = 0;
     heightHistory.length = 0;
     peak = 0;
   }
@@ -422,7 +422,7 @@ viewof wavelength = {
     sourceStart = stepCount;
     startStep = stepCount;
     heightHistory.length = 0;
-    if (sourceInput.value === "pebbles") drop(W / 2, H / 2);
+    if (sourceInput.value === "stones") drop(W / 2, H / 2);
   }
 
   const on = (element, handler) => {
@@ -452,7 +452,7 @@ viewof wavelength = {
     const count = Math.min(Math.floor(owed), 40);
     owed = Math.min(owed - count, 1);
 
-    const splashes = pebbles.splice(0, maxSplashes);
+    const splashes = stones.splice(0, maxSplashes);
     if (splashes.length) {
       startStep = stepCount;
       heightHistory.length = 0;
@@ -544,7 +544,7 @@ charts = {
 ```
 
 The largest wave height in the tank against how far the wave has gone, both on a
-logarithmic scale. After a pebble the line falls along the dashed one, which is the
+logarithmic scale. After a stone the line falls along the dashed one, which is the
 height of a ring that gets weaker as $1/\sqrt{r}$ because the same wave has to cover
 a circle whose length grows with $r$. The height squared is what a wave carries and
 it is shared out round that circle. On a log scale a power is a straight line, here
