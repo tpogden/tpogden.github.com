@@ -61,22 +61,6 @@ viewof shape = {
 ```{ojs}
 //| echo: false
 //| output: false
-viewof brush = {
-  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
-  return ui.slider({
-    label: "Brush",
-    min: 2,
-    max: 24,
-    step: 1,
-    value: 6,
-    format: (v) => `${v} cells`,
-  });
-}
-```
-
-```{ojs}
-//| echo: false
-//| output: false
 viewof erase = {
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
   return ui.toggle({ label: "Erase", value: false });
@@ -98,8 +82,8 @@ viewof erase = {
   // Controls are read live from their elements, so moving them does not restart
   // this cell.
   const shapeInput = viewof shape;
-  const brushInput = viewof brush;
   const eraseInput = viewof erase;
+  const brush = 6; // radius of the brush, in cells
 
   // The hole on the left and the pattern on the right, each 512 by 512 cells
   const N = 512;
@@ -259,7 +243,7 @@ viewof erase = {
     return [fx * 2 * N, fy * N];
   };
   function stamp(x, y) {
-    const r = brushInput.value;
+    const r = brush;
     const value = eraseInput.value ? 0 : 1;
     for (let j = Math.max(0, Math.floor(y - r)); j <= Math.min(N - 1, Math.ceil(y + r)); j++) {
       for (let i = Math.max(0, Math.floor(x - r)); i <= Math.min(N - 1, Math.ceil(x + r)); i++) {
@@ -508,7 +492,7 @@ viewof erase = {
   gpu.run(invalidation, device, frame);
 
   // The canvas with the controls laid over its corner
-  yield ui.stage(canvas, [shapeInput, brushInput, eraseInput, readout]);
+  yield ui.stage(canvas, [shapeInput, eraseInput, readout]);
 }
 ```
 
