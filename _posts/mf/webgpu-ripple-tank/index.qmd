@@ -692,7 +692,7 @@ the wave a moment later is what they add up to. A gap in a wall is then easy to 
 the wave arrives, the points in the gap each start a ring, and nothing is left to cancel
 the rings except one another. Two gaps are two sets of rings.
 
-Around 1800 to 1803 Thomas Young used the same picture to argue that light is a wave.
+Around 1800 Thomas Young used the same picture to argue that light is a wave.
 In his lectures he showed what two sets of water waves do in a shallow tank, with a
 lamp underneath, and then showed that light passed through two slits makes bright and
 dark bands of the same kind. That is the double slit in the tank above, and it is still
@@ -843,7 +843,7 @@ does to the pattern behind a ship.
   215 to 234,
   [doi:10.1147/rd.112.0215](https://doi.org/10.1147/rd.112.0215).
 - Huygens, C. (1690), _Traité de la lumière_ (Leiden).
-- Young, T., lectures to the Royal Society, 1800 to 1803, as described in
+- Young, T., lectures to the Royal Society, around 1800, as described in
   [Young's interference experiment](https://en.wikipedia.org/wiki/Young%27s_interference_experiment).
 
 ::: {.mf-series-bar}
