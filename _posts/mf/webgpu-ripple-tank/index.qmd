@@ -826,15 +826,6 @@ charts = {
 }
 ```
 
-## What the tank leaves out
-
-Every wavelength in this tank travels at the same speed, so a ring keeps its shape as
-it spreads. Real water is not so well behaved. Long waves on deep water travel faster
-than short ones, and the little ripples of a real tank are partly driven by surface
-tension, so the tank above is the idealised case, closest to long waves in shallow
-water. The next step is to let the speed depend on the wavelength, and to see what that
-does to the pattern behind a ship.
-
 ## Sources
 
 - Courant, R., Friedrichs, K. and Lewy, H. (1928), "Über die partiellen
