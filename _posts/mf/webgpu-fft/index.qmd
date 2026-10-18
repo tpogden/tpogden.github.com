@@ -1,0 +1,614 @@
+---
+title: "021: Fourier's Window"
+date: "2026-10-18"
+categories: [mf]
+page-layout: article
+listing:
+  - id: mf-series
+    contents: "../*/index.qmd"
+    type: default
+    categories: false
+    include:
+      categories: "mf"
+    fields: [title]
+    sort: "title asc"
+---
+
+[Last time](../webgpu-two-holes-in-a-wall/) a wave went through a hole in a wall and made a
+pattern on the far wall. A single slit made a broad hump. Two slits made fringes. It
+looked as if each hole had its own pattern and each one needed working out.
+
+They are all one rule. The pattern a long way behind a hole is the _Fourier transform_ of
+the hole. A Fourier transform takes a picture and says how much of each ripple it is made
+of: a few broad ripples and a few fine ones, in every direction. A hole is a picture too,
+open where the wave gets through and shut where it does not. The wave leaves the hole in
+all directions and each direction sees a different ripple of the hole.
+
+On the left below is a hole in a wall, white where it is open. On the right is the pattern
+a long way behind it, brightest in the middle. **Paint on the hole with the mouse** and
+the pattern follows.
+
+Try these:
+
+- _Two slits._ The same fringes as last time, now with the rest of the pattern. The slits
+  are tall and narrow, so the pattern is spread sideways and squeezed up and down.
+- _Paint over half of one slit,_ or make a slit fatter. Whatever gets bigger in the hole
+  gets smaller in the pattern. A wide hole makes a tight pattern and a narrow one a broad
+  pattern.
+- _Circle._ A round hole makes rings. It is how a telescope blurs a star.
+- _Grating._ Five slits instead of two. The fringes get sharper.
+- _Blank,_ then draw anything you like.
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof shape = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.segmented({
+    label: "Hole",
+    options: [
+      ["one", "One slit"],
+      ["two", "Two slits"],
+      ["grating", "Grating"],
+      ["circle", "Circle"],
+      ["blank", "Blank"],
+    ],
+    value: "two",
+  });
+}
+```
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof brush = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.slider({
+    label: "Brush",
+    min: 2,
+    max: 24,
+    step: 1,
+    value: 6,
+    format: (v) => `${v} cells`,
+  });
+}
+```
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof erase = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.toggle({ label: "Erase", value: false });
+}
+```
+
+```{ojs}
+//| echo: false
+//| column: screen-inset
+//| code-fold: true
+//| code-summary: "Show code"
+{
+  // Shared WebGPU boilerplate: setup, buffers and the animation loop (lib/gpu.js), and
+  // the fast Fourier transform (lib/fft.js)
+  const gpu = await import(new URL("../lib/gpu.js", document.baseURI).href);
+  const fft = await import(new URL("../lib/fft.js", document.baseURI).href);
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+
+  // Controls are read live from their elements, so moving them does not restart
+  // this cell.
+  const shapeInput = viewof shape;
+  const brushInput = viewof brush;
+  const eraseInput = viewof erase;
+
+  // The hole on the left and the pattern on the right, each 512 by 512 cells
+  const N = 512;
+  const { canvas, device, context, format } = await gpu.setup({
+    width: 1024,
+    height: 512,
+    resolution: "auto",
+  });
+  canvas.style.touchAction = "none";
+
+  // The hole: 1 where it is open and 0 where it is wall, kept here and copied across
+  const mask = new Float32Array(N * N);
+  let area = 0; // how much of it is open
+  let painted = false; // true once the shape has been changed by hand
+  let dirty = true; // the hole has changed since the pattern was made
+
+  // The slits are tall bars, 80 cells high, with their widths and spacings in cells
+  const slitHeight = 80;
+  const slits = {
+    one: { width: 12, centres: [0] },
+    two: { width: 8, centres: [-24, 24] },
+    grating: { width: 6, centres: [-64, -32, 0, 32, 64] },
+  };
+
+  function shapeMask(kind) {
+    mask.fill(0);
+    if (kind === "circle") {
+      for (let y = 0; y < N; y++) {
+        for (let x = 0; x < N; x++) {
+          if ((x - N / 2) ** 2 + (y - N / 2) ** 2 < 40 ** 2) mask[y * N + x] = 1;
+        }
+      }
+    } else if (slits[kind]) {
+      const { width, centres } = slits[kind];
+      for (const c of centres) {
+        for (let y = N / 2 - slitHeight / 2; y < N / 2 + slitHeight / 2; y++) {
+          for (let x = N / 2 + c - width / 2; x < N / 2 + c + width / 2; x++) mask[y * N + x] = 1;
+        }
+      }
+    }
+    painted = false;
+    dirty = true;
+  }
+
+  // ------------------------------------------------------------------- the transform
+  const transform = fft.create(device, N);
+  const maskBuffer = gpu.storageBuffer(device, mask);
+
+  // Copy the hole into the transform's input: real part from the hole, imaginary zero
+  const loadModule = device.createShaderModule({
+    code: `
+      @group(0) @binding(0) var<storage, read> hole: array<f32>;
+      @group(0) @binding(1) var<storage, read_write> data: array<vec2f>;
+
+      @compute @workgroup_size(16, 16)
+      fn load(@builtin(global_invocation_id) id: vec3u) {
+        if (id.x >= ${N}u || id.y >= ${N}u) { return; }
+        let i = id.y * ${N}u + id.x;
+        data[i] = vec2f(hole[i], 0.0);
+      }
+    `,
+  });
+  const loadPipeline = device.createComputePipeline({
+    layout: "auto",
+    compute: { module: loadModule, entryPoint: "load" },
+  });
+  const loadGroup = device.createBindGroup({
+    layout: loadPipeline.getBindGroupLayout(0),
+    entries: [
+      { binding: 0, resource: { buffer: maskBuffer } },
+      { binding: 1, resource: { buffer: transform.data } },
+    ],
+  });
+
+  // ---------------------------------------------------------------------- drawing
+  const paramBuffer = device.createBuffer({
+    size: 16,
+    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+  });
+  const cornerBuffer = gpu.unitSquare(device);
+  const showModule = device.createShaderModule({
+    code: `
+      struct Params {
+        area: f32,    // how much of the hole is open: the brightest the pattern can be is area squared
+        pad0: f32,
+        pad1: f32,
+        pad2: f32,
+      }
+
+      @group(0) @binding(0) var<uniform> params: Params;
+      @group(0) @binding(1) var<storage, read> hole: array<f32>;
+      @group(0) @binding(2) var<storage, read> spectrum: array<vec2f>;
+
+      struct Out {
+        @builtin(position) position: vec4f,
+        @location(0) uv: vec2f,
+      }
+
+      @vertex
+      fn showVertex(@location(0) corner: vec2f) -> Out {
+        return Out(
+          vec4f(corner, 0.0, 1.0),
+          vec2f(corner.x * 0.5 + 0.5, 0.5 - corner.y * 0.5),
+        );
+      }
+
+      @fragment
+      fn showFragment(in: Out) -> @location(0) vec4f {
+        let n = ${N}u;
+        let y = min(u32(in.uv.y * f32(n)), n - 1u);
+        if (abs(in.uv.x - 0.5) < 0.0015) { return vec4f(0.5, 0.5, 0.5, 1.0); }
+
+        // The hole, on the left
+        if (in.uv.x < 0.5) {
+          let x = min(u32(in.uv.x * 2.0 * f32(n)), n - 1u);
+          return vec4f(vec3f(mix(0.10, 0.92, hole[y * n + x])), 1.0);
+        }
+
+        // The pattern, on the right: the zero frequency is the first element of the
+        // transform, so shift by half to put it in the middle
+        let x = min(u32((in.uv.x - 0.5) * 2.0 * f32(n)), n - 1u);
+        let f = spectrum[((y + n / 2u) % n) * n + (x + n / 2u) % n];
+        let intensity = (f.x * f.x + f.y * f.y) / max(params.area * params.area, 1.0);
+        // Four decades of brightness, on a log scale
+        let t = clamp((log(intensity + 1e-9) / 2.302585 + 4.0) / 4.0, 0.0, 1.0);
+        let dark = vec3f(0.10, 0.10, 0.10);
+        let red = vec3f(1.0, 0.282, 0.204);   // #FF4834
+        let white = vec3f(1.0, 0.95, 0.9);
+        let colour = select(mix(dark, red, t / 0.6), mix(red, white, (t - 0.6) / 0.4), t > 0.6);
+        return vec4f(colour, 1.0);
+      }
+    `,
+  });
+  const showPipeline = device.createRenderPipeline({
+    layout: "auto",
+    vertex: { module: showModule, entryPoint: "showVertex", buffers: [gpu.squareLayout] },
+    fragment: { module: showModule, entryPoint: "showFragment", targets: [{ format }] },
+    primitive: { topology: "triangle-list" },
+  });
+  const showGroup = device.createBindGroup({
+    layout: showPipeline.getBindGroupLayout(0),
+    entries: [
+      { binding: 0, resource: { buffer: paramBuffer } },
+      { binding: 1, resource: { buffer: maskBuffer } },
+      { binding: 2, resource: { buffer: transform.data } },
+    ],
+  });
+
+  // ------------------------------------------------------------------ painting
+  // Brush strokes go into the hole, on the left half of the canvas
+  let painting = false;
+  let last = null;
+  const place = (event) => {
+    const box = canvas.getBoundingClientRect();
+    const fx = (event.clientX - box.left) / box.width;
+    const fy = (event.clientY - box.top) / box.height;
+    return [fx * 2 * N, fy * N];
+  };
+  function stamp(x, y) {
+    const r = brushInput.value;
+    const value = eraseInput.value ? 0 : 1;
+    for (let j = Math.max(0, Math.floor(y - r)); j <= Math.min(N - 1, Math.ceil(y + r)); j++) {
+      for (let i = Math.max(0, Math.floor(x - r)); i <= Math.min(N - 1, Math.ceil(x + r)); i++) {
+        if ((i - x) ** 2 + (j - y) ** 2 <= r * r) mask[j * N + i] = value;
+      }
+    }
+    painted = true;
+    dirty = true;
+  }
+  function stroke(from, to) {
+    // Stamp along the way so that a fast drag leaves no gaps
+    const steps = Math.max(1, Math.ceil(Math.hypot(to[0] - from[0], to[1] - from[1]) / 2));
+    for (let s = 1; s <= steps; s++) {
+      stamp(from[0] + ((to[0] - from[0]) * s) / steps, from[1] + ((to[1] - from[1]) * s) / steps);
+    }
+  }
+  canvas.addEventListener("pointerdown", (event) => {
+    const at = place(event);
+    if (at[0] >= N) return; // the pattern side is not paintable
+    canvas.setPointerCapture(event.pointerId);
+    painting = true;
+    last = at;
+    stamp(...at);
+  });
+  canvas.addEventListener("pointermove", (event) => {
+    if (!painting) return;
+    const at = place(event);
+    stroke(last, at);
+    last = at;
+  });
+  const stop = () => (painting = false);
+  canvas.addEventListener("pointerup", stop);
+  canvas.addEventListener("pointercancel", stop);
+
+  // -------------------------------------------------------------------- the charts
+  // The middle row of the pattern (the zero frequency vertically) is the first row of
+  // the transform
+  const readback = gpu.readback(device, [{ buffer: transform.data, bytes: N * 8 }]);
+  let row = []; // {k, I}: brightness along the middle row, relative to the centre
+  let needRead = true;
+
+  const [rowHost, costHost] = charts.children;
+  const draw = ui.plotter(Plot);
+
+  // What last time's formula gives for these slits: a hump from the width of each slit
+  // times fringes from the spacing between them, with k the number of ripples that fit
+  // across the 512 cells
+  function formula() {
+    const kind = shapeInput.value;
+    if (painted || !(kind === "one" || kind === "two")) return [];
+    const a = slits[kind].width;
+    const d = kind === "two" ? slits[kind].centres[1] - slits[kind].centres[0] : 0;
+    const rows = [];
+    for (let k = -100; k <= 100; k += 0.5) {
+      const alpha = (Math.PI * a * k) / N;
+      const hump = alpha === 0 ? 1 : (Math.sin(alpha) / alpha) ** 2;
+      rows.push({ k, I: hump * (d === 0 ? 1 : Math.cos((Math.PI * d * k) / N) ** 2) });
+    }
+    return rows;
+  }
+
+  function drawRow() {
+    draw(rowHost, {
+      height: 220,
+      x: { label: "ripples across the hole (sideways in the pattern)", grid: true, domain: [-100, 100] },
+      y: { label: "brightness (relative to the centre)", grid: true, domain: [0, 1.02] },
+      marks: [
+        Plot.line(row, { x: "k", y: "I", stroke: "#FF4834" }),
+        Plot.line(formula(), {
+          x: "k",
+          y: "I",
+          stroke: "currentColor",
+          strokeOpacity: 0.7,
+          strokeDasharray: "4 3",
+        }),
+      ],
+    });
+  }
+
+  // How long a transform takes to do by the definition and by the fast method, measured
+  // here, for a line of n numbers. The definition adds up n terms for each of the n
+  // results. The fast method splits the line in two again and again
+  function naive(n, re, im) {
+    const cos = new Float64Array(n);
+    const sin = new Float64Array(n);
+    for (let j = 0; j < n; j++) {
+      cos[j] = Math.cos((-2 * Math.PI * j) / n);
+      sin[j] = Math.sin((-2 * Math.PI * j) / n);
+    }
+    const outRe = new Float64Array(n);
+    const outIm = new Float64Array(n);
+    for (let k = 0; k < n; k++) {
+      let sr = 0;
+      let si = 0;
+      for (let j = 0; j < n; j++) {
+        const w = (j * k) % n;
+        sr += re[j] * cos[w] - im[j] * sin[w];
+        si += re[j] * sin[w] + im[j] * cos[w];
+      }
+      outRe[k] = sr;
+      outIm[k] = si;
+    }
+    return outRe;
+  }
+
+  function fast(n, re, im) {
+    re = Float64Array.from(re);
+    im = Float64Array.from(im);
+    // Put the numbers in bit-reversed order, then join pairs, then pairs of pairs
+    for (let i = 1, j = 0; i < n; i++) {
+      let bit = n >> 1;
+      for (; j & bit; bit >>= 1) j ^= bit;
+      j ^= bit;
+      if (i < j) {
+        [re[i], re[j]] = [re[j], re[i]];
+        [im[i], im[j]] = [im[j], im[i]];
+      }
+    }
+    for (let size = 2; size <= n; size *= 2) {
+      const step = (-2 * Math.PI) / size;
+      for (let start = 0; start < n; start += size) {
+        for (let k = 0; k < size / 2; k++) {
+          const wr = Math.cos(step * k);
+          const wi = Math.sin(step * k);
+          const a = start + k;
+          const b = a + size / 2;
+          const tr = re[b] * wr - im[b] * wi;
+          const ti = re[b] * wi + im[b] * wr;
+          re[b] = re[a] - tr;
+          im[b] = im[a] - ti;
+          re[a] += tr;
+          im[a] += ti;
+        }
+      }
+    }
+    return re;
+  }
+
+  const costs = []; // {n, method, us}
+  function time(method, n) {
+    const re = Float64Array.from({ length: n }, () => Math.random());
+    const im = new Float64Array(n);
+    let runs = 0;
+    const start = performance.now();
+    do {
+      method(n, re, im);
+      runs++;
+    } while (performance.now() - start < 20);
+    return ((performance.now() - start) * 1000) / runs;
+  }
+  function drawCost() {
+    draw(costHost, {
+      height: 220,
+      x: { label: "numbers in the line", type: "log", grid: true, domain: [16, 2048] },
+      y: { label: "time for one transform (microseconds)", type: "log", grid: true },
+      color: { legend: true, domain: ["by the definition", "the fast way"], range: ["#FF4834", "currentColor"] },
+      marks: [
+        Plot.line(costs, { x: "n", y: "us", stroke: "method" }),
+        Plot.dot(costs, { x: "n", y: "us", stroke: "method", r: 2.5 }),
+      ],
+    });
+  }
+  // Time a size at a time, so that the page is never stuck for long
+  (async () => {
+    for (let n = 16; n <= 2048; n *= 2) {
+      await new Promise((resolve) => setTimeout(resolve, 30));
+      costs.push({ n, method: "by the definition", us: time(naive, n) });
+      costs.push({ n, method: "the fast way", us: time(fast, n) });
+      drawCost();
+    }
+  })();
+
+  // ------------------------------------------------------------------- the picture
+  const readout = ui.readout();
+
+  // How long a 512 by 512 transform takes on this GPU: a batch of them, timed. This
+  // overwrites the transform's data, so the pattern is made again afterwards
+  async function benchmark() {
+    const warm = device.createCommandEncoder();
+    transform.encode(warm);
+    device.queue.submit([warm.finish()]);
+    await device.queue.onSubmittedWorkDone();
+    const runs = 100;
+    const encoder = device.createCommandEncoder();
+    for (let r = 0; r < runs; r++) transform.encode(encoder);
+    const start = performance.now();
+    device.queue.submit([encoder.finish()]);
+    await device.queue.onSubmittedWorkDone();
+    return (performance.now() - start) / runs;
+  }
+  const ms = await benchmark();
+  readout.textContent = `${N} by ${N} transform: ${ms.toFixed(2)} ms`;
+
+  shapeMask(shapeInput.value);
+  const on = (element, handler) => {
+    element.addEventListener("input", handler);
+    invalidation.then(() => element.removeEventListener("input", handler));
+  };
+  on(shapeInput, () => shapeMask(shapeInput.value));
+  drawRow();
+
+  function frame() {
+    const encoder = device.createCommandEncoder();
+    let sample = false;
+    if (dirty) {
+      dirty = false;
+      area = mask.reduce((sum, v) => sum + v, 0);
+      device.queue.writeBuffer(maskBuffer, 0, mask);
+      device.queue.writeBuffer(paramBuffer, 0, new Float32Array([area, 0, 0, 0]));
+      const load = encoder.beginComputePass();
+      load.setPipeline(loadPipeline);
+      load.setBindGroup(0, loadGroup);
+      load.dispatchWorkgroups(N / 16, N / 16);
+      load.end();
+      transform.encode(encoder);
+      needRead = true;
+    }
+    if (needRead && !readback.pending) {
+      readback.copy(encoder);
+      needRead = false;
+      sample = true;
+    }
+
+    const pass = gpu.beginRenderPass(encoder, context);
+    pass.setPipeline(showPipeline);
+    pass.setBindGroup(0, showGroup);
+    pass.setVertexBuffer(0, cornerBuffer);
+    pass.draw(6);
+    pass.end();
+    device.queue.submit([encoder.finish()]);
+
+    if (sample) {
+      readback.read((buffer) => {
+        const f = new Float32Array(buffer);
+        const centre = f[0] ** 2 + f[1] ** 2 || 1;
+        row = [];
+        for (let k = -100; k <= 100; k++) {
+          const i = (k + N) % N;
+          row.push({ k, I: (f[2 * i] ** 2 + f[2 * i + 1] ** 2) / centre });
+        }
+        drawRow();
+      });
+    }
+  }
+
+  gpu.run(invalidation, device, frame);
+
+  // The canvas with the controls laid over its corner
+  yield ui.stage(canvas, [shapeInput, brushInput, eraseInput, readout]);
+}
+```
+
+## Analysis
+
+```{ojs}
+//| echo: false
+//| column: page
+charts = {
+  // Two empty hosts; the simulation cell above draws into them as data arrives
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.chartHosts(["row", "cost"]);
+}
+```
+
+_Left._ The brightness along the middle row of the pattern, for the **One slit** and **Two
+slits** holes. The solid line is what the transform gives and the dashed line is last
+time's formula for the pattern behind a slit: a hump from the width of the slit and, for
+two, fringes from the gap between them. They are the same thing. The formula was the
+Fourier transform of a slit, worked out by hand, and here the computer has done it for
+every pixel at once. It stops matching as soon as you paint on the hole.
+
+_Right._ How long a transform of a line of numbers takes, measured in this browser. By
+the definition the time grows as the square of the length: twice as many numbers take four
+times as long. The fast method takes barely more than twice as long. At two thousand
+numbers it is already tens of times quicker and the gap keeps widening: for a million
+numbers it would be about fifty thousand to one.
+
+## Gauss, and a Cold War
+
+In about 1805, Carl Friedrich Gauss was working out the orbits of the asteroids Pallas and
+Juno from a handful of observations and needed the ripples that the measurements were made
+of. He found a way to do it with far fewer sums, wrote it up and did not publish it. It
+turned up in his collected works long after his death.
+
+It was found again, more than once. The time it stuck was in 1963 and it was because of
+the Cold War. John Tukey was at a meeting of President Kennedy's science advisory
+committee, which was talking about how to detect underground nuclear tests from seismometers
+placed in the ground. The measurements needed transforms that were too slow to calculate.
+Tukey had a way to do them with far fewer sums. Richard Garwin, who was at the meeting,
+saw what it could do and passed it to James Cooley at IBM to turn into a program. They
+published it in 1965.
+
+::: {.callout-note appearance="simple"}
+## Trefethen's 13, no. 1
+
+This is the first paper on [Nick Trefethen's list of 13 classic papers in applied
+mathematics](https://web.stanford.edu/class/cme324/classics/): Cooley and Tukey, 1965.
+:::
+
+## The shortcut
+
+A line of $N$ numbers $x_j$ has the transform
+
+$$X_k = \sum_{j=0}^{N-1} x_j \, e^{-2\pi i j k / N},$$
+
+which is $N$ sums of $N$ terms each, $N^2$ in all. Split the $x_j$ into the even-numbered
+ones and the odd-numbered ones, and each half has a transform of its own, $E_k$ and $O_k$,
+that is only $N/2$ numbers long. Putting them back together takes one multiplication each:
+
+$$X_k = E_k + e^{-2\pi i k / N} O_k, \qquad X_{k+N/2} = E_k - e^{-2\pi i k / N} O_k.$$
+
+That joins two half-size transforms into a whole one for the price of about $N$ steps, and
+each half can be split the same way, down to lines of one number, which are their own
+transform. There are $\log_2 N$ levels of $N$ steps. A million numbers needs about twenty
+million steps and not a million million.
+
+## How the computer does it
+
+The pattern is a two-dimensional transform. It is done on the rows and then on the
+columns, each of them a line like the one above, so there are $2 \log_2 512 = 18$ passes
+over the 512 by 512 grid.
+
+Each pass is the joining step above. One thread on the GPU takes one pair of numbers
+and writes out the two they combine to. The passes alternate between two arrays, each one
+reading the last one's result and writing into the other, so the numbers come out in order
+without a separate shuffle. This form is named for Stockham, and the whole of it is in
+`lib/fft.js`. All 262,144 numbers go through each pass at once. The readout under the
+canvas is how long the whole thing takes on this machine, measured when the page loaded.
+
+The shader that draws the pattern squares each result to get a brightness and puts it on
+a log scale, four factors of ten from the brightest to the dimmest, since the middle is
+very much brighter than the edges. The Fourier transform puts the zero frequency in the
+corner of the array and the drawing shifts it by half to the middle.
+
+## Sources
+
+- Cooley, J. W. and Tukey, J. W. (1965), "An algorithm for the machine calculation of
+  complex Fourier series", _Mathematics of Computation_ 19, 297 to 301,
+  [doi:10.1090/S0025-5718-1965-0178586-1](https://doi.org/10.1090/S0025-5718-1965-0178586-1).
+- Heideman, M. T., Johnson, D. H. and Burrus, C. S. (1984), "Gauss and the history of the
+  fast Fourier transform", _IEEE ASSP Magazine_ 1 (4), 14 to 21.
+- IEEE, [First demonstration of the fast Fourier transform, 1964](https://ethw.org/Milestones:First_Demonstration_of_the_Fast_Fourier_Transform_(FFT),_1964),
+  for the story of the 1963 meeting.
+- Goodman, J. W., _Introduction to Fourier Optics_ (3rd edition, Roberts and Company, 2005),
+  for the pattern behind a hole as a Fourier transform.
+
+::: {.mf-series-bar}
+Moving Figures
+
+:::{#mf-series}
+:::
+:::

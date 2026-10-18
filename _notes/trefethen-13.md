@@ -76,6 +76,8 @@ Difficulty: S = a weekend, M = a week, L = a big build. "GPU" says whether the s
 
 ### T1. Cooley & Tukey (1965), FFT
 
+**Status: done as 021 "Fourier's Window".** The Gauss, Garwin and Cooley story is now sourced: Heideman, Johnson & Burrus (1984) for Gauss (about 1805, Pallas and Juno, unpublished in his lifetime), and the IEEE milestone page for the 1963 meeting of Kennedy's science advisory committee. The Garwin story rests on those secondary accounts, not on Cooley's own retrospective.
+
 *Math. Comp.* 19, 297 to 301.
 
 - **Story:** Gauss had the algorithm around 1805, working out the orbit of an asteroid, and never published it in his lifetime. ✔ (Heideman, Johnson & Burrus, "Gauss and the history of the fast Fourier transform", 1984, with a longer 1985 version in the *Archive for History of Exact Sciences*; the venue and year vary across sources, so cite from the paper itself.) Runge and König (1924) and Danielson and Lanczos are earlier pieces. ✔ The Garwin story (a push from a physicist who wanted fast spectra, linked to nuclear test detection) is widely told but I did not confirm it. ? Source to check: Cooley's own "How the FFT gained acceptance" or his IBM account of the rediscovery.
