@@ -28,8 +28,8 @@ Try these:
 
 - _Start at 0.50 and move it down._ Nothing you can see changes. The same waves in more and
   smaller steps. Half the Courant number is twice the work for the same picture.
-- _Move it up, a little at a time._ The waves look fine all the way to 0.70.
-- _Go to 0.71._ A fine red and blue checkerboard starts where the waves are made,
+- _Move it up a little at a time._ The waves look fine for a while.
+- _Keep going._ At some point a fine red and blue checkerboard starts where the waves are made,
   spreads across the tank and grows without limit. It is not a rare accident or a bug in
   one cell: every cell is doing what the rule says.
 
@@ -461,14 +461,14 @@ How much bigger the largest wave in the tank gets in one step, against the Coura
 The red dots are measured from the tank as you move the slider: a steady wave stays the
 same size so it sits on 1 and a blow-up multiplies each step by the same number. The dashed
 line is what the rule predicts for the worst case and the faint vertical line is where it
-leaves 1 at $1/\sqrt{2} \approx 0.707$. The growth is steep right after it: 0.71 is already
+leaves 1. The growth is steep right after it: just past the line the wave is already
 about a fifth bigger every step so the tank is full in a couple of hundred steps and by 0.9
 the wave is four times bigger every step. The first dot or two of a blow-up sit a little
 below the line because the plane wave itself is still the biggest thing in the tank. To
 leave time for the dots the tank slows to a step a frame while a blow-up is growing. Beside the chart is the picture behind the limit, explained
-[below](#why-0.707). It turns red when the circle sticks out of the diamond.
+[below](#where-the-limit-comes-from). It turns red when the circle sticks out of the diamond.
 
-## Why 0.707
+## Where the limit comes from
 
 This was found before there were computers. In 1928 Richard Courant, Kurt Friedrichs and
 Hans Lewy at Göttingen were not trying to simulate anything. They wanted to prove that
