@@ -686,7 +686,7 @@ viewof courant = {
 
 ## A very old picture
 
-Christiaan Huygens said, in a treatise written around 1678 and published in 1690, that
+Christiaan Huygens said, in a treatise published in 1690, that
 every point on a wave can be treated as a new source of little circular waves, and that
 the wave a moment later is what they add up to. A gap in a wall is then easy to understand:
 the wave arrives, the points in the gap each start a ring, and nothing is left to cancel
@@ -842,7 +842,7 @@ does to the pattern behind a ship.
   32 to 74. English translation: _IBM Journal of Research and Development_ 11 (1967),
   215 to 234,
   [doi:10.1147/rd.112.0215](https://doi.org/10.1147/rd.112.0215).
-- Huygens, C. (1690), _Traité de la lumière_ (Leiden). Written around 1678.
+- Huygens, C. (1690), _Traité de la lumière_ (Leiden).
 - Young, T., lectures to the Royal Society, 1800 to 1803, as described in
   [Young's interference experiment](https://en.wikipedia.org/wiki/Young%27s_interference_experiment).
 
