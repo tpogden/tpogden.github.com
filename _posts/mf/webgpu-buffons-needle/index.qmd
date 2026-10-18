@@ -580,6 +580,14 @@ charts = {
 }
 ```
 
+## Sources
+
+- Buffon, G.-L. L. (1777), "Essai d'arithmétique morale", _Supplément à l'Histoire
+  naturelle_ 4.
+- Metropolis, N. and Ulam, S. (1949), "The Monte Carlo Method", _Journal of the American
+  Statistical Association_ 44, 335 to 341,
+  [doi:10.1080/01621459.1949.10483310](https://doi.org/10.1080/01621459.1949.10483310).
+
 ::: {.mf-series-bar}
 Moving Figures
 

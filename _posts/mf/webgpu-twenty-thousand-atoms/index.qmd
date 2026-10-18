@@ -674,6 +674,13 @@ charts = {
 }
 ```
 
+## Sources
+
+- Allen, M. P. and Tildesley, D. J. (1987), _Computer Simulation of Liquids_ (Oxford
+  University Press).
+- Quentrec, B. and Brot, C. (1973), "New method for searching for neighbors in molecular
+  dynamics computations", _Journal of Computational Physics_ 13, 430 to 432.
+
 ::: {.mf-series-bar}
 Moving Figures
 
