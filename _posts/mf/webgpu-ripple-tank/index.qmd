@@ -684,6 +684,33 @@ viewof courant = {
 ```
 
 
+## Analysis
+
+```{ojs}
+//| echo: false
+//| column: page
+charts = {
+  // Two empty hosts; the simulation cell above draws into them as data arrives
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.chartHosts(["screen", "peak"]);
+}
+```
+
+_Left._ The brightness of the waves along the far wall of the tank, with a plane
+wave through the **Gap** or the **Double slit**. The solid line is what the tank gives,
+averaged over many moments, and the dashed line is the classic prediction for
+two slits of width $a$ a distance $d$ apart, a long way from the screen. It has two
+parts. The fine fringes come from the two slits, bright where the paths from them
+differ by a whole number of wavelengths, $d \sin\theta = m\lambda$. The broad hump
+they sit under comes from the width of each slit. Change the **Wavelength** and both
+move, in the way the formula says. The two do not agree exactly, because the far wall
+is not very far away and the tank is two-dimensional.
+
+_Right._ The largest wave height in the tank as time goes by, on a logarithmic scale. A
+pebble's wave fades, a plane wave holds steady, and above $C = 0.707$ the line goes
+straight up, because the error is multiplied by the same number at every step. A
+straight line on a log scale is exponential growth.
+
 ## A very old picture
 
 Christiaan Huygens said, in a treatise published in 1690, that
@@ -798,33 +825,6 @@ a step. The dashed circle just touches the diamond's sides, at $C = 1/\sqrt{2} \
 and past that the circle pokes out of the diamond and the grid is deaf. The same
 number turns out to be the exact point at which the rule becomes unstable, which is
 not obvious in advance, and which a short calculation confirms.
-
-## Analysis
-
-_Left._ The brightness of the waves along the far wall of the tank, with a plane
-wave through the **Gap** or the **Double slit**. The solid line is what the tank gives,
-averaged over many moments, and the dashed line is the classic prediction for
-two slits of width $a$ a distance $d$ apart, a long way from the screen. It has two
-parts. The fine fringes come from the two slits, bright where the paths from them
-differ by a whole number of wavelengths, $d \sin\theta = m\lambda$. The broad hump
-they sit under comes from the width of each slit. Change the **Wavelength** and both
-move, in the way the formula says. The two do not agree exactly, because the far wall
-is not very far away and the tank is two-dimensional.
-
-_Right._ The largest wave height in the tank as time goes by, on a logarithmic scale. A
-pebble's wave fades, a plane wave holds steady, and above $C = 0.707$ the line goes
-straight up, because the error is multiplied by the same number at every step. A
-straight line on a log scale is exponential growth.
-
-```{ojs}
-//| echo: false
-//| column: page
-charts = {
-  // Two empty hosts; the simulation cell above draws into them as data arrives
-  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
-  return ui.chartHosts(["screen", "peak"]);
-}
-```
 
 ## Sources
 
