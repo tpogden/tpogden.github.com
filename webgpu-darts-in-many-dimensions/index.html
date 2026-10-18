@@ -398,14 +398,14 @@ window.Quarto = {
 </header>
 
 
-<p><a href="../webgpu-mandelbrot-area/">Last time</a> the darts measured an area. Nothing in the method was special to two dimensions, so this time they measure a volume, and then a volume in four dimensions, and then in twenty.</p>
+<p><a href="../webgpu-mandelbrot-area/">Last time</a> the darts measured an area. Nothing in the method was special to two dimensions so this time they measure a volume and then a volume in four dimensions and then in twenty.</p>
 <p>The shape is the unit ball: all the points within distance 1 of the origin. The box is the cube around it, from <span class="math inline">-1</span> to <span class="math inline">1</span> in every direction. A dart is a random point of the cube, and it is <em>inside</em> if its coordinates satisfy <span class="math inline">x_1^2 + x_2^2 + \dots + x_d^2
-\le 1</span>. In two dimensions that is a circle in a square, the fraction inside is <span class="math inline">\pi/4</span>, and this is the <a href="../webgpu-buffons-needle/">π of the sticks</a> again.</p>
+\le 1</span>. In two dimensions that is a circle in a square. The fraction inside is <span class="math inline">\pi/4</span> and this is the <a href="../webgpu-buffons-needle/">π of the sticks</a> again.</p>
 <p>The ball does have a formula, which is what makes it a good test:</p>
 <p><span class="math display">V_d = \frac{\pi^{d/2}}{\Gamma(d/2 + 1)}</span></p>
 <p>so the darts can be checked against it. One dart serves every dimension at once: its first <span class="math inline">d</span> coordinates are a dart in <span class="math inline">d</span> dimensions. All twenty estimates on the left chart come from the same throws.</p>
-<p>The picture is a slice. It shows the first two coordinates of each dart, in the dimension chosen with the slider, and the circle is the ball’s edge in that slice. In two dimensions the red darts fill the circle. In higher ones a dart can land inside the circle and still be a miss, because some other coordinate carried it out of the ball.</p>
-<p>The slider is the number of darts a second, and <strong>Dimension</strong> is the one the picture and the right chart follow; it does not restart the run, <strong>Restart</strong> does. At the top speed the twenty-dimensional ball gets a few hits a second.</p>
+<p>The picture is a slice. It shows the first two coordinates of each dart in the dimension chosen with the slider and the circle is the ball’s edge in that slice. In two dimensions the red darts fill the circle. In higher ones a dart can land inside the circle and still be a miss because some other coordinate carried it out of the ball.</p>
+<p>The slider is the number of darts a second, and <strong>Dimension</strong> is the one the picture and the right chart follow. It does not restart the run, <strong>Restart</strong> does. At the top speed the twenty-dimensional ball gets a few hits a second.</p>
 <div class="cell hidden">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb1" data-startfrom="46" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 45;"><span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>viewof rate <span class="op">=</span> {</span>
 <span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> ui <span class="op">=</span> <span class="cf">await</span> <span class="im">import</span>(<span class="kw">new</span> <span class="fu">URL</span>(<span class="st">"../lib/ui.js"</span><span class="op">,</span> <span class="bu">document</span><span class="op">.</span><span class="at">baseURI</span>)<span class="op">.</span><span class="at">href</span>)<span class="op">;</span></span>
@@ -950,11 +950,11 @@ window.Quarto = {
 </div>
 <section id="analysis" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="analysis">Analysis</h2>
-<p>The left chart is the share of the cube inside the ball in every dimension: the darts’ estimate in red, and the exact value dashed. The right chart follows the dimension chosen with the slider.</p>
+<p>The left chart is the share of the cube inside the ball in every dimension: the darts’ estimate in red and the exact value dashed. The right chart follows the dimension chosen with the slider.</p>
 <p>Three things to look for:</p>
 <ol type="1">
 <li><p><em>The error doesn’t care about the dimension.</em> The right chart follows the estimate of the chosen dimension. It is the same <span class="math inline">1/\sqrt{N}</span> as the sticks and the fractal, with a hundred times more darts for one more digit.</p></li>
-<li><p><em>The cost does.</em> What the darts have to measure is a fraction, and the ball takes up a smaller and smaller part of its cube: about 0.8 in two dimensions, 0.16 in five, 0.0025 in ten and <span class="math inline">2.5 \times 10^{-8}</span> in twenty. The relative error after <span class="math inline">N</span> darts is <span class="math inline">\sqrt{(1-p)/(pN)}</span>, so a rare hit costs a lot of darts. The grey lines on the right chart are that for every dimension: the same slope, each one higher than the last.</p></li>
+<li><p><em>The cost does.</em> What the darts have to measure is a fraction and the ball takes up a smaller and smaller part of its cube: about 0.8 in two dimensions, 0.16 in five, 0.0025 in ten and <span class="math inline">2.5 \times 10^{-8}</span> in twenty. The relative error after <span class="math inline">N</span> darts is <span class="math inline">\sqrt{(1-p)/(pN)}</span> so a rare hit costs a lot of darts. The grey lines on the right chart are that for every dimension: the same slope, each one higher than the last.</p></li>
 <li><p><em>The volume peaks and falls.</em> The ball’s volume grows to a maximum of about 5.26 in five dimensions and then shrinks towards nothing, while the cube’s is <span class="math inline">2^d</span>. Almost all of a high-dimensional cube is in its corners, far from any ball.</p></li>
 </ol>
 <p>When no dart has hit yet, the left chart shows a hollow triangle at <span class="math inline">3/N</span>, the most the fraction could be and still not have been seen (the “rule of three”). Bars on the estimates are one standard error.</p>
@@ -974,7 +974,7 @@ window.Quarto = {
 <p>Moving Figures</p>
 <div id="listing-mf-series" class="quarto-listing quarto-listing-container-default">
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="bWY=" data-listing-date-sort="1791676800000" data-listing-file-modified-sort="1792179557360" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="268">
+<div class="quarto-post image-right" data-index="0" data-categories="bWY=" data-listing-date-sort="1791676800000" data-listing-file-modified-sort="1792356605134" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="268">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-hello-world/index.html" class="no-external">000: Hello GPU</a>
@@ -985,7 +985,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="1" data-categories="bWY=" data-listing-date-sort="1791676800000" data-listing-file-modified-sort="1792179557361" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="681">
+<div class="quarto-post image-right" data-index="1" data-categories="bWY=" data-listing-date-sort="1791676800000" data-listing-file-modified-sort="1792356605136" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="681">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-three-particles/index.html" class="no-external">001: Three Particles</a>
@@ -996,7 +996,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="2" data-categories="bWY=" data-listing-date-sort="1791676800000" data-listing-file-modified-sort="1792179557360" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1022">
+<div class="quarto-post image-right" data-index="2" data-categories="bWY=" data-listing-date-sort="1791676800000" data-listing-file-modified-sort="1792356605133" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1022">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-animation-loop/index.html" class="no-external">002: Animation Loop</a>
@@ -1007,7 +1007,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="3" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792179557360" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="998">
+<div class="quarto-post image-right" data-index="3" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792356605133" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="998">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-bouncing-particles/index.html" class="no-external">003: Bouncing Particles</a>
@@ -1018,7 +1018,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="4" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792179557360" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1303">
+<div class="quarto-post image-right" data-index="4" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792356605134" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1303">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-compute-shader/index.html" class="no-external">004: Compute Shader</a>
@@ -1029,7 +1029,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="5" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792179557360" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1814">
+<div class="quarto-post image-right" data-index="5" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792356605134" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1814">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-lennard-jones/index.html" class="no-external">005: Jiggling Atoms</a>
@@ -1040,7 +1040,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="6" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792179557360" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1938">
+<div class="quarto-post image-right" data-index="6" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792356605134" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1938">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-gravity/index.html" class="no-external">006: Falling Atoms</a>
@@ -1051,7 +1051,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="7" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792179557360" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="17" data-listing-word-count-sort="3259">
+<div class="quarto-post image-right" data-index="7" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792356605135" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="17" data-listing-word-count-sort="3259">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-reading-back/index.html" class="no-external">007: Is Energy Conserved?</a>
@@ -1062,7 +1062,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="8" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792179557361" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="18" data-listing-word-count-sort="3522">
+<div class="quarto-post image-right" data-index="8" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792356605135" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="18" data-listing-word-count-sort="3522">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-structure/index.html" class="no-external">008: Solid, Liquid, Gas</a>
@@ -1073,7 +1073,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="9" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792179557360" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="20" data-listing-word-count-sort="3998">
+<div class="quarto-post image-right" data-index="9" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792356605133" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="20" data-listing-word-count-sort="3998">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-brownian-motion/index.html" class="no-external">009: Brownian Motion</a>
@@ -1084,7 +1084,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="10" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792179557361" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="29" data-listing-word-count-sort="5679">
+<div class="quarto-post image-right" data-index="10" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792356605136" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="29" data-listing-word-count-sort="5679">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-twenty-thousand-atoms/index.html" class="no-external">010: Twenty Thousand Atoms</a>
@@ -1095,7 +1095,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="11" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792179557361" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="30" data-listing-word-count-sort="5975">
+<div class="quarto-post image-right" data-index="11" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792356605136" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="30" data-listing-word-count-sort="5975">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-weather-in-a-box/index.html" class="no-external">011: Weather in a Box</a>
@@ -1106,7 +1106,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="12" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792179557360" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="21" data-listing-word-count-sort="4083">
+<div class="quarto-post image-right" data-index="12" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792356605133" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="21" data-listing-word-count-sort="4083">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-blast-wave/index.html" class="no-external">012: Blast Wave</a>
@@ -1117,7 +1117,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="13" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792179557360" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="25" data-listing-word-count-sort="4944">
+<div class="quarto-post image-right" data-index="13" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792356605133" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="25" data-listing-word-count-sort="4944">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-buffons-needle/index.html" class="no-external">013: Dropping Sticks Again</a>
@@ -1128,7 +1128,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="14" data-categories="bWY=" data-listing-date-sort="1791936000000" data-listing-file-modified-sort="1792179557360" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="27" data-listing-word-count-sort="5249">
+<div class="quarto-post image-right" data-index="14" data-categories="bWY=" data-listing-date-sort="1791936000000" data-listing-file-modified-sort="1792356605135" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="27" data-listing-word-count-sort="5249">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-mandelbrot-area/index.html" class="no-external">014: Throwing Darts at a Fractal</a>
@@ -1139,7 +1139,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="15" data-categories="bWY=" data-listing-date-sort="1792022400000" data-listing-file-modified-sort="1792179557360" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="36" data-listing-word-count-sort="7081">
+<div class="quarto-post image-right" data-index="15" data-categories="bWY=" data-listing-date-sort="1792022400000" data-listing-file-modified-sort="1792356605135" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="36" data-listing-word-count-sort="7081">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-metropolis-walkers/index.html" class="no-external">016: Running Up That Hill (A Deal with Metropolis)</a>
@@ -1150,7 +1150,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="16" data-categories="bWY=" data-listing-date-sort="1792022400000" data-listing-file-modified-sort="1792179557360" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="19" data-listing-word-count-sort="3780">
+<div class="quarto-post image-right" data-index="16" data-categories="bWY=" data-listing-date-sort="1792022400000" data-listing-file-modified-sort="1792356605134" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="19" data-listing-word-count-sort="3780">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-ising-model/index.html" class="no-external">017: Melting a Magnet</a>

@@ -398,25 +398,25 @@ window.Quarto = {
 </header>
 
 
-<p>Heat a magnet and, at some temperature, it stops being a magnet. It does not fade: there is one temperature, the Curie point, where it switches. This post is a toy magnet that shows why, small enough to run in the browser.</p>
+<p>Heat a magnet and at some temperature it stops being a magnet. It does not fade: there is one temperature, the Curie point, where it switches. This post is a toy magnet that shows why, small enough to run in the browser.</p>
 <p>Each cell below is a tiny compass needle, pointing up (red) or down (dark). Two things act on every needle:</p>
 <ul>
 <li>It prefers to agree with its four neighbours.</li>
-<li>Heat shakes it, at random.</li>
+<li>Heat shakes it at random.</li>
 </ul>
 <p>Cold, the neighbours win and the whole sheet is one colour: a magnet. Hot, the shaking wins and it is static: no magnet at all. This is the <a href="https://en.wikipedia.org/wiki/Ising_model">Ising model</a>.</p>
-<p>The sheet starts hot, at a temperature of 3, so it is static: no magnet. Press <strong>Quench</strong>, which drops the temperature straight to 1.5, and it freezes into patches of red and dark that slowly eat each other, like the grains in <a href="../webgpu-twenty-thousand-atoms/">twenty thousand atoms</a>. On a small sheet one colour usually wins in the end. Then <strong>drag Temperature upwards</strong>: somewhere near 2.27 the order falls apart.</p>
-<p>It runs slowly on purpose, ten sweeps a second, so the flips can be followed; <strong>Sweeps/s</strong> speeds it up.</p>
+<p>The sheet starts hot, at a temperature of 3 so it is static: no magnet. Press <strong>Quench</strong>, which drops the temperature straight to 1.5, and it freezes into patches of red and dark that slowly eat each other, like the grains in <a href="../webgpu-twenty-thousand-atoms/">twenty thousand atoms</a>. On a small sheet one colour usually wins in the end. Then <strong>drag Temperature upwards</strong>: somewhere near 2.27 the order falls apart.</p>
+<p>It runs slowly on purpose, ten sweeps a second so the flips can be followed. <strong>Sweeps/s</strong> speeds it up.</p>
 <section id="how-the-computer-shakes-the-needles" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="how-the-computer-shakes-the-needles">How the computer shakes the needles</h2>
-<p>This is the walker’s rule from <a href="../webgpu-metropolis-walkers/">the last post</a>, with a different map. There the walker’s position was a point on a landscape. Here it is the whole sheet: one arrangement of needles out of far too many to count, even for this small sheet, <span class="math inline">2^{2{,}304}</span> of them. Nobody can throw darts at “a magnet at temperature <span class="math inline">T</span>”, but a walker can feel whether a change makes things better or worse. Change one needle, and the same rule decides:</p>
+<p>This is the walker’s rule from <a href="../webgpu-metropolis-walkers/">the last post</a>, with a different map. There the walker’s position was a point on a landscape. Here it is the whole sheet: one arrangement of needles out of far too many to count, even for this small sheet, <span class="math inline">2^{2{,}304}</span> of them. Nobody can throw darts at “a magnet at temperature <span class="math inline">T</span>” but a walker can feel whether a change makes things better or worse. Change one needle and the same rule decides:</p>
 <ol type="1">
 <li>Pick a needle and work out the change in energy <span class="math inline">\Delta E</span> if it flipped.</li>
 <li>If <span class="math inline">\Delta E \le 0</span> (it would agree better), flip it.</li>
 <li>Otherwise flip it with probability <span class="math inline">e^{-\Delta E / T}</span>.</li>
 </ol>
 <p>Cold, a flip that costs energy is almost never accepted, as with a walker unwilling to go downhill. Hot, nearly every flip is, which is the walker with the rule turned off. Count the arrangements the walk visits and you have the average a magnet would show.</p>
-<p>The GPU does a sweep (one try per needle) in two halves, laid out like the squares of a chessboard: every other cell first, then the rest. A needle’s four neighbours are all in the other half, so no two needles in the same half affect each other and they can all flip at once.</p>
+<p>The GPU does a sweep (one try per needle) in two halves, laid out like the squares of a chessboard: every other cell first, then the rest. A needle’s four neighbours are all in the other half so no two needles in the same half affect each other and they can all flip at once.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -431,7 +431,7 @@ window.Quarto = {
 <div class="callout-body-container callout-body">
 <p>With the needles <span class="math inline">s = \pm 1</span>, the energy is</p>
 <p><span class="math display">E = -\sum_{\langle ij \rangle} s_i s_j</span></p>
-<p>summed over neighbouring pairs, in units where the coupling and Boltzmann’s constant are both 1, so <span class="math inline">T</span> here is in those units. The switch is at <span class="math inline">T_c = 2/\ln(1+\sqrt{2}) \approx 2.269</span>.</p>
+<p>summed over neighbouring pairs, in units where the coupling and Boltzmann’s constant are both 1 so <span class="math inline">T</span> here is in those units. The switch is at <span class="math inline">T_c = 2/\ln(1+\sqrt{2}) \approx 2.269</span>.</p>
 </div>
 </div>
 </div>
@@ -877,8 +877,8 @@ window.Quarto = {
 </section>
 <section id="analysis" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="analysis">Analysis</h2>
-<p><em>Left.</em> How magnetised the sheet is, <span class="math inline">|m|</span>, against the temperature it was at. <span class="math inline">|m|</span> is 1 when every needle agrees and 0 when half point each way. The dots are what the sheet does, and the dashed line is Onsager’s exact answer from 1944. Near the switch the dots sit above the line, because a sheet of finite size has a smeared switch rather than a sharp one: try the smallest and largest <strong>Grid</strong>.</p>
-<p><em>Right.</em> The magnetisation as time goes on. Below the switch it is pinned, above it is noise, and at the switch it wanders slowly, because needles that are close to deciding drag one another about.</p>
+<p><em>Left.</em> How magnetised the sheet is, <span class="math inline">|m|</span>, against the temperature it was at. <span class="math inline">|m|</span> is 1 when every needle agrees and 0 when half point each way. The dots are what the sheet does and the dashed line is Onsager’s exact answer from 1944. Near the switch the dots sit above the line because a sheet of finite size has a smeared switch rather than a sharp one: try the smallest and largest <strong>Grid</strong>.</p>
+<p><em>Right.</em> The magnetisation as time goes on. Below the switch it is pinned, above it is noise and at the switch it wanders slowly because needles that are close to deciding drag one another about.</p>
 <div class="cell page-columns page-full">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb5" data-startfrom="518" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 517;"><span id="cb5-518"><a href="#cb5-518" aria-hidden="true" tabindex="-1"></a>charts <span class="op">=</span> {</span>
 <span id="cb5-519"><a href="#cb5-519" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Two empty hosts; the simulation cell above draws into them as data arrives</span></span>
@@ -895,7 +895,7 @@ window.Quarto = {
 <p>Moving Figures</p>
 <div id="listing-mf-series" class="quarto-listing quarto-listing-container-default">
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="bWY=" data-listing-date-sort="1791676800000" data-listing-file-modified-sort="1792179557360" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="268">
+<div class="quarto-post image-right" data-index="0" data-categories="bWY=" data-listing-date-sort="1791676800000" data-listing-file-modified-sort="1792356605134" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="268">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-hello-world/index.html" class="no-external">000: Hello GPU</a>
@@ -906,7 +906,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="1" data-categories="bWY=" data-listing-date-sort="1791676800000" data-listing-file-modified-sort="1792179557361" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="681">
+<div class="quarto-post image-right" data-index="1" data-categories="bWY=" data-listing-date-sort="1791676800000" data-listing-file-modified-sort="1792356605136" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="681">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-three-particles/index.html" class="no-external">001: Three Particles</a>
@@ -917,7 +917,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="2" data-categories="bWY=" data-listing-date-sort="1791676800000" data-listing-file-modified-sort="1792179557360" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1022">
+<div class="quarto-post image-right" data-index="2" data-categories="bWY=" data-listing-date-sort="1791676800000" data-listing-file-modified-sort="1792356605133" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1022">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-animation-loop/index.html" class="no-external">002: Animation Loop</a>
@@ -928,7 +928,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="3" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792179557360" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="998">
+<div class="quarto-post image-right" data-index="3" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792356605133" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="998">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-bouncing-particles/index.html" class="no-external">003: Bouncing Particles</a>
@@ -939,7 +939,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="4" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792179557360" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1303">
+<div class="quarto-post image-right" data-index="4" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792356605134" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1303">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-compute-shader/index.html" class="no-external">004: Compute Shader</a>
@@ -950,7 +950,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="5" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792179557360" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1814">
+<div class="quarto-post image-right" data-index="5" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792356605134" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1814">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-lennard-jones/index.html" class="no-external">005: Jiggling Atoms</a>
@@ -961,7 +961,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="6" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792179557360" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1938">
+<div class="quarto-post image-right" data-index="6" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792356605134" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1938">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-gravity/index.html" class="no-external">006: Falling Atoms</a>
@@ -972,7 +972,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="7" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792179557360" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="17" data-listing-word-count-sort="3259">
+<div class="quarto-post image-right" data-index="7" data-categories="bWY=" data-listing-date-sort="1791763200000" data-listing-file-modified-sort="1792356605135" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="17" data-listing-word-count-sort="3259">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-reading-back/index.html" class="no-external">007: Is Energy Conserved?</a>
@@ -983,7 +983,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="8" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792179557361" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="18" data-listing-word-count-sort="3522">
+<div class="quarto-post image-right" data-index="8" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792356605135" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="18" data-listing-word-count-sort="3522">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-structure/index.html" class="no-external">008: Solid, Liquid, Gas</a>
@@ -994,7 +994,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="9" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792179557360" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="20" data-listing-word-count-sort="3998">
+<div class="quarto-post image-right" data-index="9" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792356605133" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="20" data-listing-word-count-sort="3998">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-brownian-motion/index.html" class="no-external">009: Brownian Motion</a>
@@ -1005,7 +1005,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="10" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792179557361" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="29" data-listing-word-count-sort="5679">
+<div class="quarto-post image-right" data-index="10" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792356605136" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="29" data-listing-word-count-sort="5679">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-twenty-thousand-atoms/index.html" class="no-external">010: Twenty Thousand Atoms</a>
@@ -1016,7 +1016,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="11" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792179557361" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="30" data-listing-word-count-sort="5975">
+<div class="quarto-post image-right" data-index="11" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792356605136" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="30" data-listing-word-count-sort="5975">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-weather-in-a-box/index.html" class="no-external">011: Weather in a Box</a>
@@ -1027,7 +1027,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="12" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792179557360" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="21" data-listing-word-count-sort="4083">
+<div class="quarto-post image-right" data-index="12" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792356605133" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="21" data-listing-word-count-sort="4083">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-blast-wave/index.html" class="no-external">012: Blast Wave</a>
@@ -1038,7 +1038,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="13" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792179557360" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="25" data-listing-word-count-sort="4944">
+<div class="quarto-post image-right" data-index="13" data-categories="bWY=" data-listing-date-sort="1791849600000" data-listing-file-modified-sort="1792356605133" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="25" data-listing-word-count-sort="4944">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-buffons-needle/index.html" class="no-external">013: Dropping Sticks Again</a>
@@ -1049,7 +1049,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="14" data-categories="bWY=" data-listing-date-sort="1791936000000" data-listing-file-modified-sort="1792179557360" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="27" data-listing-word-count-sort="5249">
+<div class="quarto-post image-right" data-index="14" data-categories="bWY=" data-listing-date-sort="1791936000000" data-listing-file-modified-sort="1792356605135" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="27" data-listing-word-count-sort="5249">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-mandelbrot-area/index.html" class="no-external">014: Throwing Darts at a Fractal</a>
@@ -1060,7 +1060,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="15" data-categories="bWY=" data-listing-date-sort="1792022400000" data-listing-file-modified-sort="1792179557360" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="27" data-listing-word-count-sort="5237">
+<div class="quarto-post image-right" data-index="15" data-categories="bWY=" data-listing-date-sort="1792022400000" data-listing-file-modified-sort="1792356605134" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="27" data-listing-word-count-sort="5237">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-darts-in-many-dimensions/index.html" class="no-external">015: Lost in the Corners</a>
@@ -1071,7 +1071,7 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="16" data-categories="bWY=" data-listing-date-sort="1792022400000" data-listing-file-modified-sort="1792179557360" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="36" data-listing-word-count-sort="7081">
+<div class="quarto-post image-right" data-index="16" data-categories="bWY=" data-listing-date-sort="1792022400000" data-listing-file-modified-sort="1792356605135" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="36" data-listing-word-count-sort="7081">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="../webgpu-metropolis-walkers/index.html" class="no-external">016: Running Up That Hill (A Deal with Metropolis)</a>
