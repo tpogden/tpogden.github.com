@@ -1,0 +1,510 @@
+---
+title: "018: Skimming Stones"
+date: "2026-10-18"
+categories: [mf]
+page-layout: article
+listing:
+  - id: mf-series
+    contents: "../*/index.qmd"
+    type: default
+    categories: false
+    include:
+      categories: "mf"
+    fields: [title]
+    sort: "title asc"
+---
+
+So far everything has been made of separate pieces. First atoms: even the
+[blast wave](../webgpu-blast-wave/) was a wave of atoms shoving one another. Then
+[darts](../webgpu-darts-in-many-dimensions/), [walkers](../webgpu-metropolis-walkers/) and
+the [needles of a magnet](../webgpu-ising-model/), all pushed about by chance. This post
+has no atoms and no dice.
+
+Drop a stone in a pond and a ring spreads out. Nothing travels with the ring: the water
+only moves up and down a little and the shape of that moving goes on across the pond.
+A wave is that shape. It is a thing in its own right and it does things that no single
+particle does. It passes straight through other waves and where two meet it can cancel.
+
+The tank below is a sheet of water seen from above. Red is a crest, blue is a trough and
+dark is flat. **Click anywhere to drop a stone** or drag to skim one across the water.
+
+Try these:
+
+- _Drop one stone._ The ring grows and fades. It fades because the same wave has to
+  cover a longer and longer circle so each stretch of it gets weaker.
+- _Change the Stone size._ A bigger stone makes a wider ring.
+- _Drop two stones a little apart._ Each makes its own ring and where the rings
+  cross they add. Crest on crest is a bigger crest and crest on trough is flat water.
+  Then they carry on as if the other had never been there.
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof stoneSize = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.slider({
+    label: "Stone size",
+    min: 3,
+    max: 12,
+    step: 1,
+    value: 6,
+    format: (v) => `${v} cells`,
+  });
+}
+```
+
+```{ojs}
+//| echo: false
+//| column: screen-inset
+//| code-fold: true
+//| code-summary: "Show code"
+{
+  // Shared WebGPU boilerplate: setup, buffers and the animation loop (lib/gpu.js)
+  const gpu = await import(new URL("../lib/gpu.js", document.baseURI).href);
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+
+  // Controls are read live from their elements, so moving them does not restart
+  // this cell.
+  const sizeInput = viewof stoneSize;
+
+  const { canvas, device, context, format } = await gpu.setup({
+    width: 640,
+    height: 360,
+    resolution: "auto",
+  });
+  canvas.style.touchAction = "none";
+
+  // The tank, in cells, and where things sit in it
+  const W = 640;
+  const H = 360;
+  const cells = W * H;
+  const groupSide = 16;
+  const beachWidth = 24; // cells of damping at each edge
+  const C = 0.5; // the Courant number: cells a ripple travels in one step
+  const wave = 100; // wave speed, in cells a second
+  const maxSplashes = 8;
+
+  // --------------------------------------------------------------- the shaders
+  const common = `
+    struct Params {
+      width: u32,
+      height: u32,
+      courant2: f32,
+      sponge: f32,        // damping per step at the very edge of the tank
+      edge: f32,          // width of the beach, in cells
+      splashCount: u32,
+      gain: f32,
+      pad: u32,
+      splashes: array<vec4f, ${maxSplashes}>, // x, y, height, radius
+    }
+
+    @group(0) @binding(0) var<uniform> params: Params;
+
+    // 0 in open water, rising to 1 at the border: how far into the beach a cell is
+    fn beachFraction(x: u32, y: u32) -> f32 {
+      let ex = min(f32(x), f32(params.width - 1u - x));
+      let ey = min(f32(y), f32(params.height - 1u - y));
+      let e = min(ex, ey);
+      return select(0.0, (params.edge - e) / params.edge, e < params.edge);
+    }
+  `;
+
+  const stepModule = device.createShaderModule({
+    code: `
+      ${common}
+      @group(0) @binding(2) var<storage, read> before: array<f32>;
+      @group(0) @binding(3) var<storage, read> now: array<f32>;
+      @group(0) @binding(4) var<storage, read_write> after: array<f32>;
+
+      @compute @workgroup_size(${groupSide}, ${groupSide})
+      fn step(@builtin(global_invocation_id) id: vec3u) {
+        let w = params.width;
+        let h = params.height;
+        if (id.x >= w || id.y >= h) { return; }
+        let x = id.x;
+        let y = id.y;
+        let i = y * w + x;
+        let here = now[i];
+
+        // Pull towards each of the four neighbours. At the edge of the tank a cell
+        // has nothing to pull on that side
+        var pull = 0.0;
+        if (x > 0u)     { pull += now[i - 1u] - here; }
+        if (x + 1u < w) { pull += now[i + 1u] - here; }
+        if (y > 0u)     { pull += now[i - w] - here; }
+        if (y + 1u < h) { pull += now[i + w] - here; }
+
+        let q = beachFraction(x, y);
+        let sigma = params.sponge * q * q;
+        after[i] = (2.0 * here - (1.0 - sigma) * before[i] + params.courant2 * pull) / (1.0 + sigma);
+      }
+    `,
+  });
+  const stepPipeline = device.createComputePipeline({
+    layout: "auto",
+    compute: { module: stepModule, entryPoint: "step" },
+  });
+
+  const splashModule = device.createShaderModule({
+    code: `
+      ${common}
+      @group(0) @binding(2) var<storage, read_write> before: array<f32>;
+      @group(0) @binding(3) var<storage, read_write> now: array<f32>;
+
+      // A stone: a dent with a ring round it, added to the surface and not moving to begin
+      // with. The ring makes the dent add up to no net water, as a real splash does
+      @compute @workgroup_size(${groupSide}, ${groupSide})
+      fn splash(@builtin(global_invocation_id) id: vec3u) {
+        if (id.x >= params.width || id.y >= params.height) { return; }
+        let i = id.y * params.width + id.x;
+        var bump = 0.0;
+        for (var n = 0u; n < params.splashCount; n++) {
+          let s = params.splashes[n];
+          let dx = f32(id.x) - s.x;
+          let dy = f32(id.y) - s.y;
+          let r2 = (dx * dx + dy * dy) / (2.0 * s.w * s.w);
+          bump += s.z * (1.0 - r2) * exp(-r2);
+        }
+        now[i] += bump;
+        before[i] += bump;
+      }
+    `,
+  });
+  const splashPipeline = device.createComputePipeline({
+    layout: "auto",
+    compute: { module: splashModule, entryPoint: "splash" },
+  });
+
+  const showModule = device.createShaderModule({
+    code: `
+      ${common}
+      @group(0) @binding(3) var<storage, read> now: array<f32>;
+
+      struct Out {
+        @builtin(position) position: vec4f,
+        @location(0) uv: vec2f,
+      }
+
+      @vertex
+      fn showVertex(@location(0) corner: vec2f) -> Out {
+        return Out(
+          vec4f(corner, 0.0, 1.0),
+          vec2f(corner.x * 0.5 + 0.5, 0.5 - corner.y * 0.5),
+        );
+      }
+
+      @fragment
+      fn showFragment(in: Out) -> @location(0) vec4f {
+        let w = params.width;
+        let h = params.height;
+        let x = min(u32(in.uv.x * f32(w)), w - 1u);
+        let y = min(u32(in.uv.y * f32(h)), h - 1u);
+        let i = y * w + x;
+
+        let flat = vec3f(0.10, 0.10, 0.10);
+        let v = now[i] * params.gain;
+        let crest = vec3f(1.0, 0.282, 0.204);   // #FF4834
+        let trough = vec3f(0.22, 0.60, 0.85);
+        var colour = mix(flat, select(trough, crest, v > 0.0), clamp(abs(v), 0.0, 1.0));
+        colour *= 1.0 - 0.45 * beachFraction(x, y);
+        return vec4f(colour, 1.0);
+      }
+    `,
+  });
+  const showPipeline = device.createRenderPipeline({
+    layout: "auto",
+    vertex: { module: showModule, entryPoint: "showVertex", buffers: [gpu.squareLayout] },
+    fragment: { module: showModule, entryPoint: "showFragment", targets: [{ format }] },
+    primitive: { topology: "triangle-list" },
+  });
+
+  // --------------------------------------------------------------------- buffers
+  // Three height arrays that take turns: one step ago, now, and the one being made
+  const heights = [0, 1, 2].map(() => gpu.storageBuffer(device, new Float32Array(cells)));
+  const snapshot = gpu.storageBuffer(device, new Float32Array(cells));
+  const paramSize = 8 * 4 + maxSplashes * 16;
+  const paramBuffer = device.createBuffer({
+    size: paramSize,
+    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+  });
+  const paramBytes = new ArrayBuffer(paramSize);
+  const paramU32 = new Uint32Array(paramBytes);
+  const paramF32 = new Float32Array(paramBytes);
+
+  // Bind groups for each way the three arrays can be taking turns
+  const stepGroups = [0, 1, 2].map((r) =>
+    device.createBindGroup({
+      layout: stepPipeline.getBindGroupLayout(0),
+      entries: [
+        { binding: 0, resource: { buffer: paramBuffer } },
+        { binding: 2, resource: { buffer: heights[r] } },
+        { binding: 3, resource: { buffer: heights[(r + 1) % 3] } },
+        { binding: 4, resource: { buffer: heights[(r + 2) % 3] } },
+      ],
+    }),
+  );
+  const splashGroups = [0, 1, 2].map((r) =>
+    device.createBindGroup({
+      layout: splashPipeline.getBindGroupLayout(0),
+      entries: [
+        { binding: 0, resource: { buffer: paramBuffer } },
+        { binding: 2, resource: { buffer: heights[r] } },
+        { binding: 3, resource: { buffer: heights[(r + 1) % 3] } },
+      ],
+    }),
+  );
+  const showGroups = [0, 1, 2].map((r) =>
+    device.createBindGroup({
+      layout: showPipeline.getBindGroupLayout(0),
+      entries: [
+        { binding: 0, resource: { buffer: paramBuffer } },
+        { binding: 3, resource: { buffer: heights[(r + 1) % 3] } },
+      ],
+    }),
+  );
+  const cornerBuffer = gpu.unitSquare(device);
+
+  // ------------------------------------------------------------------- the state
+  let turn = 0; // which of the three arrays is "one step ago"
+  let stepCount = 0;
+  const stones = []; // [x, y, height, radius] waiting to be dropped
+
+  // A small stone is given a little more height so that its rings stay visible
+  const drop = (x, y, height = 2) => {
+    const radius = sizeInput.value;
+    stones.push([x, y, height * Math.sqrt(6 / radius), radius]);
+    if (stones.length > maxSplashes) stones.shift();
+  };
+
+  // Stones and skims
+  let lastDrag = null;
+  const place = (event) => {
+    const box = canvas.getBoundingClientRect();
+    return [((event.clientX - box.left) / box.width) * W, ((event.clientY - box.top) / box.height) * H];
+  };
+  canvas.addEventListener("pointerdown", (event) => {
+    canvas.setPointerCapture(event.pointerId);
+    lastDrag = place(event);
+    drop(...lastDrag);
+  });
+  canvas.addEventListener("pointermove", (event) => {
+    if (!lastDrag) return;
+    const here = place(event);
+    if (Math.hypot(here[0] - lastDrag[0], here[1] - lastDrag[1]) > 10) {
+      lastDrag = here;
+      drop(...here, 1.4);
+    }
+  });
+  const release = () => (lastDrag = null);
+  canvas.addEventListener("pointerup", release);
+  canvas.addEventListener("pointercancel", release);
+
+  // What the chart is built from
+  const readback = gpu.readback(device, [{ buffer: snapshot, bytes: cells * 4 }]);
+  const sampleEvery = 10; // frames between readbacks
+  const keep = 400; // samples kept for the chart
+  let frameCount = 0;
+  let epoch = 0; // bumped when the tank is cleared, so a read in flight is dropped
+  let peak = 0;
+  let startStep = 0; // step at which the latest stone dropped
+  const heightHistory = []; // {r, peak}: largest wave height against distance travelled
+
+  const [heightHost] = charts.children;
+  const draw = ui.plotter(Plot);
+
+  function drawChart() {
+    // A ring spreads over a circle that grows with its radius, so its height should
+    // fall as 1/sqrt(r). The dashed line is that, matched to the first point past 40
+    const first = heightHistory.find((d) => d.r >= 40);
+    const spreading = first
+      ? [40, 400].map((r) => ({ r, peak: first.peak * Math.sqrt(first.r / r) }))
+      : [];
+    draw(heightHost, {
+      height: 200,
+      x: { label: "distance the wave has travelled (cells)", grid: true, type: "log", domain: [10, 400] },
+      y: { label: "largest wave height", grid: true, type: "log", domain: [0.01, 3] },
+      marks: [
+        Plot.line(spreading, {
+          x: "r",
+          y: "peak",
+          stroke: "currentColor",
+          strokeOpacity: 0.7,
+          strokeDasharray: "4 3",
+        }),
+        Plot.line(heightHistory, { x: "r", y: "peak", stroke: "#FF4834", clip: true }),
+      ],
+    });
+  }
+
+  function onData(buffer) {
+    const u = new Float32Array(buffer);
+    let top = 0;
+    for (let i = 0; i < cells; i++) top = Math.max(top, Math.abs(u[i]));
+    peak = top;
+    const r = (stepCount - startStep) * C;
+    if (r > 10) heightHistory.push({ r, peak: Math.max(top, 1e-4) });
+    if (heightHistory.length > keep) heightHistory.shift();
+    drawChart();
+  }
+
+  // Empty the tank
+  function clear() {
+    epoch++;
+    const zeros = new Float32Array(cells);
+    for (const buffer of heights) device.queue.writeBuffer(buffer, 0, zeros);
+    stones.length = 0;
+    heightHistory.length = 0;
+    peak = 0;
+  }
+
+  drop(W / 2, H / 2);
+
+  const clearButton = ui.button({ label: "Clear", onClick: clear });
+  const readout = ui.readout();
+  drawChart();
+
+  let owed = 0; // steps due but not yet done
+  let lastTime = null;
+  const groups = { x: Math.ceil(W / groupSide), y: Math.ceil(H / groupSide) };
+
+  function frame(ms) {
+    const dt = lastTime === null ? 0 : Math.min((ms - lastTime) / 1000, 0.1);
+    lastTime = ms;
+
+    owed += (wave / C) * dt;
+    const count = Math.min(Math.floor(owed), 40);
+    owed = Math.min(owed - count, 1);
+
+    const splashes = stones.splice(0, maxSplashes);
+    if (splashes.length) {
+      startStep = stepCount;
+      heightHistory.length = 0;
+    }
+
+    paramU32[0] = W;
+    paramU32[1] = H;
+    paramF32[2] = C * C;
+    paramF32[3] = 0.3 * C; // damping per step at the edge: a wave crosses the beach once
+    paramF32[4] = beachWidth;
+    paramU32[5] = splashes.length;
+    paramF32[6] = 2.5;
+    splashes.forEach((s, n) => paramF32.set(s, 8 + 4 * n));
+    device.queue.writeBuffer(paramBuffer, 0, paramBytes);
+
+    const encoder = device.createCommandEncoder();
+    const compute = encoder.beginComputePass();
+    if (splashes.length) {
+      compute.setPipeline(splashPipeline);
+      compute.setBindGroup(0, splashGroups[turn]);
+      compute.dispatchWorkgroups(groups.x, groups.y);
+    }
+    compute.setPipeline(stepPipeline);
+    for (let s = 0; s < count; s++) {
+      compute.setBindGroup(0, stepGroups[turn]);
+      compute.dispatchWorkgroups(groups.x, groups.y);
+      turn = (turn + 1) % 3;
+    }
+    compute.end();
+    stepCount += count;
+
+    const sample = !readback.pending && ++frameCount % sampleEvery === 0;
+    if (sample) {
+      encoder.copyBufferToBuffer(heights[(turn + 1) % 3], 0, snapshot, 0, cells * 4);
+      readback.copy(encoder);
+    }
+
+    const pass = gpu.beginRenderPass(encoder, context);
+    pass.setPipeline(showPipeline);
+    pass.setBindGroup(0, showGroups[turn]);
+    pass.setVertexBuffer(0, cornerBuffer);
+    pass.draw(6);
+    pass.end();
+    device.queue.submit([encoder.finish()]);
+
+    if (sample) {
+      const mine = epoch;
+      readback.read((buffer) => {
+        if (mine === epoch) onData(buffer);
+      });
+    }
+
+    if (frameCount % 6 === 0) {
+      readout.textContent = `largest wave ${peak.toFixed(2)}`;
+    }
+  }
+
+  gpu.run(invalidation, device, frame);
+
+  // The canvas with the controls laid over its corner
+  yield ui.stage(canvas, [sizeInput, clearButton, readout]);
+}
+```
+
+## Analysis
+
+```{ojs}
+//| echo: false
+//| column: page
+charts = {
+  // An empty host; the simulation cell above draws into it as data arrives
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.chartHosts(["height"]);
+}
+```
+
+The largest wave height in the tank against how far the wave has gone, both on a
+logarithmic scale. After a stone the line falls along the dashed one, which is the
+height of a ring that gets weaker as $1/\sqrt{r}$ because the same wave has to cover
+a circle whose length grows with $r$. The height squared is what a wave carries and
+it is shared out round that circle. On a log scale a power is a straight line, here
+with a slope of $-1/2$. Near the end the line drops faster where the ring reaches the
+beach.
+
+## How the computer makes ripples
+
+The tank is a grid of 640 by 360 cells and each cell holds one number: the height of the
+water there. The rule is the same one a ball on a spring follows. A cell is pulled
+towards the average of its four neighbours and it carries on moving the way it was
+already going. That is all a wave is in the end: each cell is pulled by its neighbours
+and they are pulled by it.
+
+To step forward in time the rule needs three things for every cell: its height now, its
+height one step ago and the heights of its four neighbours now. The GPU takes one thread
+per cell (all 230,400 at once) and each writes its cell's new height into a third
+array. Then the three arrays swap roles with no copying: "the one before" becomes
+"the one before that", "now" becomes "the one before" and the new heights become
+"now".
+
+At the edges the tank has beaches. Close to the border the rule gets a little damping
+that grows towards the edge so a wave that reaches it slowly dies instead of bouncing
+back. Without them the surface soon becomes a mess. Real ripple tanks often have
+sloping edges or sponge for the same reason.
+
+## The wave equation
+
+Jean le Rond d'Alembert wrote down the wave equation in 1747 for a vibrating string. For a sheet of water
+with the height written $u(x, y, t)$ and the wave speed $c$ it is
+
+$$\frac{\partial^2 u}{\partial t^2} = c^2 \, \nabla^2 u.$$
+
+On a grid with spacing $\Delta x$ and time step $\Delta t$, each cell is updated with
+
+$$u^{n+1}_{ij} = 2 u^n_{ij} - u^{n-1}_{ij} + C^2 \sum_{\text{4 neighbours}} \left( u^n_{\text{nb}} - u^n_{ij} \right),$$
+
+where $C = c \, \Delta t / \Delta x$ is the Courant number: the distance a ripple travels in
+one step in cells. Here it is 0.5 and it cannot be much bigger. We'll find out why later.
+
+## Sources
+
+- d'Alembert, J. le R. (1747), "Recherches sur la courbe que forme une corde tenduë mise
+  en vibration", _Histoire de l'Académie royale des sciences et belles lettres de Berlin_
+  3, 214 to 219 (published 1750).
+- Feynman, R. P., Leighton, R. B. and Sands, M. (1963), _The Feynman Lectures on Physics_,
+  volume I, chapter 47, [Sound. The wave equation](https://www.feynmanlectures.caltech.edu/I_47.html).
+
+::: {.mf-series-bar}
+Moving Figures
+
+:::{#mf-series}
+:::
+:::
