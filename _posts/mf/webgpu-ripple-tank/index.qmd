@@ -21,7 +21,7 @@ the [needles of a magnet](../webgpu-ising-model/), all pushed about by chance. T
 has no atoms and no dice.
 
 Drop a pebble in a pond and a ring spreads out. Nothing travels with the ring: the water
-only moves up and down, a little, and the shape of that moving goes on across the pond.
+only moves up and down a little and the shape of that moving goes on across the pond.
 A wave is that shape. It is a thing in its own right, and it does things that no single
 particle does. It passes straight through other waves, and where two meet it can cancel.
 
