@@ -31,7 +31,8 @@ dark is flat. **Click anywhere to drop a pebble** or drag to drop a line of them
 Try these:
 
 - _Drop one pebble._ The ring grows and fades. It fades because the same wave has to
-  cover a longer and longer circle so each stretch of it gets weaker.
+  cover a longer and longer circle so each stretch of it gets weaker. **Wavelength** sets
+  the size of the splash: a longer one makes a bigger pebble and wider rings.
 - _Drop two pebbles a little apart._ Each makes its own ring and where the rings
   cross they add. Crest on crest is a bigger crest and crest on trough is flat water.
   Then they carry on as if the other had never been there.
@@ -327,8 +328,11 @@ viewof wavelength = {
   let sourceStart = 0;
   const pebbles = []; // [x, y, height, radius] waiting to be dropped
 
+  // The splash is as wide as the wavelength allows, so the slider sets its size too.
+  // A small one is given a little more height so that its rings stay visible
   const drop = (x, y, height = 2) => {
-    pebbles.push([x, y, height, 6]);
+    const radius = 0.375 * wavelengthInput.value;
+    pebbles.push([x, y, height * Math.sqrt(6 / radius), radius]);
     if (pebbles.length > maxSplashes) pebbles.shift();
   };
 
