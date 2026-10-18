@@ -461,6 +461,15 @@ charts = {
 }
 ```
 
+## Sources
+
+- Alder, B. J. and Wainwright, T. E. (1962), "Phase Transition in Elastic Disks",
+  _Physical Review_ 127, 359 to 361,
+  [doi:10.1103/PhysRev.127.359](https://doi.org/10.1103/PhysRev.127.359).
+- Nelson, D. R. and Halperin, B. I. (1979), "Dislocation-mediated melting in two dimensions",
+  _Physical Review B_ 19, 2457 to 2484,
+  [doi:10.1103/PhysRevB.19.2457](https://doi.org/10.1103/PhysRevB.19.2457).
+
 ::: {.mf-series-bar}
 Moving Figures
 

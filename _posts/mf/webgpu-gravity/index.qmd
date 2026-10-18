@@ -264,6 +264,11 @@ viewof gravity = {
 }
 ```
 
+## Sources
+
+- Feynman, R. P., Leighton, R. B. and Sands, M. (1963), _The Feynman Lectures on Physics_,
+  volume I, chapter 40, [The principles of statistical mechanics](https://www.feynmanlectures.caltech.edu/I_40.html).
+
 ::: {.mf-series-bar}
 Moving Figures
 

@@ -817,6 +817,15 @@ charts = {
 }
 ```
 
+## Sources
+
+- Metropolis, N., Rosenbluth, A. W., Rosenbluth, M. N., Teller, A. H. and Teller, E. (1953),
+  "Equation of State Calculations by Fast Computing Machines", _Journal of Chemical
+  Physics_ 21, 1087 to 1092, [doi:10.1063/1.1699114](https://doi.org/10.1063/1.1699114).
+- Hastings, W. K. (1970), "Monte Carlo sampling methods using Markov chains and their
+  applications", _Biometrika_ 57, 97 to 109,
+  [doi:10.1093/biomet/57.1.97](https://doi.org/10.1093/biomet/57.1.97).
+
 ::: {.mf-series-bar}
 Moving Figures
 

@@ -168,6 +168,10 @@ animation loop with `requestAnimationFrame` redraws every frame.
 }
 ```
 
+## Sources
+
+- WHATWG, [HTML Standard: animation frames](https://html.spec.whatwg.org/multipage/imagebitmap-and-animations.html#animation-frames).
+
 ::: {.mf-series-bar}
 Moving Figures
 
