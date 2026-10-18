@@ -507,7 +507,7 @@ with $k_x$ and $k_y$ in radians a cell. The wave stays the same size if $|\lambd
 which needs the right-hand side to lie between $-2$ and $2$. The worst wave is the
 checkerboard, $k_x = k_y = \pi$, where the right-hand side is $2 - 8C^2$. That is at least
 $-2$ only if $C \le 1/\sqrt{2}$. Past it, $\lambda$ is a real number with $|\lambda| > 1$ and
-the checkerboard is multiplied by it every step. That is the dashed line in the chart, and
+the checkerboard is multiplied by it every step. That is the dashed line in the chart and
 the pattern in the tank.
 :::
 

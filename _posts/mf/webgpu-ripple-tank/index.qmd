@@ -32,7 +32,7 @@ Try these:
 
 - _Drop one pebble._ The ring grows and fades. It fades because the same wave has to
   cover a longer and longer circle so each stretch of it gets weaker.
-- _Drop two pebbles a little apart._ Each makes its own ring, and where the rings
+- _Drop two pebbles a little apart._ Each makes its own ring and where the rings
   cross they add. Crest on crest is a bigger crest and crest on trough is flat water.
   Then they carry on as if the other had never been there.
 - _Switch Source to Plane wave._ A straight line of crests marches across the tank from
@@ -551,13 +551,13 @@ beach. A plane wave has no circle to spread round so its line is flat.
 
 The tank is a grid of 640 by 360 cells and each cell holds one number: the height of the
 water there. The rule is the same one a ball on a spring follows. A cell is pulled
-towards the average of its four neighbours, and it carries on moving the way it was
+towards the average of its four neighbours and it carries on moving the way it was
 already going. That is all a wave is in the end: each cell is pulled by its neighbours,
 and they are pulled by it.
 
 To step forward in time the rule needs three things for every cell: its height now, its
 height one step ago and the heights of its four neighbours now. The GPU takes one thread
-per cell, all 230,400 of them at once, and writes each cell's new height into a third
+per cell, all 230,400 of them at once and writes each cell's new height into a third
 array. Then the three arrays swap roles with no copying: "the one before" becomes
 "the one before that", "now" becomes "the one before" and the new heights become
 "now".
