@@ -537,7 +537,7 @@ between. Change the **Wavelength**, **Slit width** or **Slit spacing** and both 
 in the way the formula says. They do not agree exactly because the far wall is not very far
 away and the tank is two-dimensional.
 
-## A very old picture
+## A letter from Leiden
 
 Christiaan Huygens said in a treatise published in 1690 that every point on a wave can be
 treated as a new source of little circular waves and that the wave a moment later is what
