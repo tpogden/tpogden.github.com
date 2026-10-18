@@ -14,19 +14,19 @@ listing:
     sort: "title asc"
 ---
 
-The tank in [the last two posts](../webgpu-ripple-tank/) moves forward in time in small, fixed
-steps. How small? That has to be chosen, and there is a wrong answer. It is not that the
+The tank in [the last two posts](../webgpu-ripple-tank/) moves forward in time in small fixed
+steps. How small? That has to be chosen and there is a wrong answer. It is not that the
 picture gets less accurate: it falls apart.
 
 The number that decides it is the _Courant number_, $C$. It is how far a ripple travels in
-one step, measured in cells. Below, the tank has a plane wave coming from the paddle on
-the left, as before, and one control: **Courant number**. The waves on the screen go at
-the same speed whatever it says, because the speed is set in cells a second. The slider only
+one step, measured in cells. Below the tank has a plane wave coming from the paddle on
+the left as before and one control: **Courant number**. The waves on the screen go at
+the same speed whatever it says because the speed is set in cells a second. The slider only
 changes how finely time is cut up.
 
 Try these:
 
-- _Start at 0.50 and move it down._ Nothing you can see changes. The same waves, in more,
+- _Start at 0.50 and move it down._ Nothing you can see changes. The same waves in more and
   smaller steps. Half the Courant number is twice the work for the same picture.
 - _Move it up, a little at a time._ The waves look fine all the way to 0.70.
 - _Go to 0.71._ A fine red and blue checkerboard starts where the waves are made,
@@ -433,23 +433,23 @@ charts = {
 
 How much bigger the largest wave in the tank gets in one step, against the Courant number.
 The red dots are measured from the tank as you move the slider: a steady wave stays the
-same size, so it sits on 1, and a blow-up multiplies each step by the same number. The dashed
-line is what the rule predicts for the worst case, and the faint vertical line is where it
-leaves 1, at $1/\sqrt{2} \approx 0.707$. The growth is steep right after it: 0.71 is already
-about a fifth bigger every step, so the tank is full in a couple of hundred steps, and by 0.9
+same size so it sits on 1 and a blow-up multiplies each step by the same number. The dashed
+line is what the rule predicts for the worst case and the faint vertical line is where it
+leaves 1 at $1/\sqrt{2} \approx 0.707$. The growth is steep right after it: 0.71 is already
+about a fifth bigger every step so the tank is full in a couple of hundred steps and by 0.9
 the wave is four times bigger every step. The first dot or two of a blow-up sit a little
-below the line, because the plane wave itself is still the biggest thing in the tank. To
-leave time for the dots, the tank slows to a step a frame while a blow-up is growing.
+below the line because the plane wave itself is still the biggest thing in the tank. To
+leave time for the dots the tank slows to a step a frame while a blow-up is growing.
 
 ## Why 0.707
 
 This was found before there were computers. In 1928 Richard Courant, Kurt Friedrichs and
-Hans Lewy, at Göttingen, were not trying to simulate anything. They wanted to prove that
-the equations of mathematical physics have solutions at all, by replacing them with
+Hans Lewy at Göttingen were not trying to simulate anything. They wanted to prove that
+the equations of mathematical physics have solutions at all by replacing them with
 grids and showing the grids converge. In doing so they noticed a limit. A cell only hears
-from its neighbours each step, so the numbers on the grid can only know about a
+from its neighbours each step so the numbers on the grid can only know about a
 ripple that has had time to reach them. If a real ripple can get further in one step than
-the grid can listen, the grid is deaf to something that matters, and the answer cannot
+the grid can listen the grid is deaf to something that matters and the answer cannot
 be right.
 
 ::: {.callout-note appearance="simple"}
@@ -460,8 +460,8 @@ mathematics](https://web.stanford.edu/class/cme324/classics/): Courant, Friedric
 Lewy, 1928.
 :::
 
-The picture is this. In one step a cell hears from the four cells next to it, so it
-can listen to a diamond, one cell out along the axes. A ripple travels a circle of
+The picture is this. In one step a cell hears from the four cells next to it so it
+can listen to a diamond one cell out along the axes. A ripple travels a circle of
 radius $C$ cells in that step. The circle must fit inside the diamond.
 
 ```{ojs}
@@ -489,10 +489,10 @@ radius $C$ cells in that step. The circle must fit inside the diamond.
 ```
 
 The diamond is what the grid can hear. The coloured circle is how far a ripple gets in
-a step. The dashed circle just touches the diamond's sides, at $C = 1/\sqrt{2} \approx 0.707$,
+a step. The dashed circle just touches the diamond's sides at $C = 1/\sqrt{2} \approx 0.707$
 and past that the circle pokes out of the diamond and the grid is deaf. The same
-number turns out to be the exact point at which the rule becomes unstable, which is
-not obvious in advance, and which a short calculation confirms.
+number turns out to be the exact point at which the rule becomes unstable. That is
+not obvious in advance and a short calculation confirms it.
 
 ::: {.callout-note collapse="true"}
 ## The calculation
@@ -503,7 +503,7 @@ satisfies
 
 $$\lambda + \frac{1}{\lambda} = 2 - 4C^2 \left( \sin^2\frac{k_x}{2} + \sin^2\frac{k_y}{2} \right),$$
 
-with $k_x$ and $k_y$ in radians a cell. The wave stays the same size if $|\lambda| = 1$,
+with $k_x$ and $k_y$ in radians a cell. The wave stays the same size if $|\lambda| = 1$
 which needs the right-hand side to lie between $-2$ and $2$. The worst wave is the
 checkerboard, $k_x = k_y = \pi$, where the right-hand side is $2 - 8C^2$. That is at least
 $-2$ only if $C \le 1/\sqrt{2}$. Past it, $\lambda$ is a real number with $|\lambda| > 1$ and
@@ -515,14 +515,14 @@ the pattern in the tank.
 
 Stability is only the first test. Even below the limit the grid does not quite carry a
 wave at the right speed. For a wave along one of the axes the step and the cell size give
-a speed that is slightly low, and more so the shorter the wave: for a wavelength of 8 cells
-at $C = 0.5$ it is about 2% slow, and for 4 cells about 8%. The tank's own waves are 16 cells
-long, which is long enough that the error is small and cannot be seen. A wave of a few
+a speed that is slightly low and more so the shorter the wave: for a wavelength of 8 cells
+at $C = 0.5$ it is about 2% slow and for 4 cells about 8%. The tank's own waves are 16 cells
+long. That is long enough that the error is small and cannot be seen. A wave of a few
 cells, which the grid only just holds, is the real difficulty with any such scheme.
 
-The result is the opposite of what you might hope for: along an axis, a smaller step makes
-the wave slower and so less right, not more. Sixteen cells to a wavelength and a Courant
-number of 0.5 is a choice that works, not one that is exact.
+The result is the opposite of what you might hope for: along an axis a smaller step makes
+the wave slower and so less right not more. Sixteen cells to a wavelength and a Courant
+number of 0.5 is a choice that works and not one that is exact.
 
 ## Sources
 

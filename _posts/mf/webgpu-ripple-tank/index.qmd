@@ -22,21 +22,21 @@ has no atoms and no dice.
 
 Drop a pebble in a pond and a ring spreads out. Nothing travels with the ring: the water
 only moves up and down a little and the shape of that moving goes on across the pond.
-A wave is that shape. It is a thing in its own right, and it does things that no single
-particle does. It passes straight through other waves, and where two meet it can cancel.
+A wave is that shape. It is a thing in its own right and it does things that no single
+particle does. It passes straight through other waves and where two meet it can cancel.
 
 The tank below is a sheet of water seen from above. Red is a crest, blue is a trough and
-dark is flat. **Click anywhere to drop a pebble**, or drag to drop a line of them.
+dark is flat. **Click anywhere to drop a pebble** or drag to drop a line of them.
 
 Try these:
 
 - _Drop one pebble._ The ring grows and fades. It fades because the same wave has to
-  cover a longer and longer circle, so each stretch of it gets weaker.
+  cover a longer and longer circle so each stretch of it gets weaker.
 - _Drop two pebbles a little apart._ Each makes its own ring, and where the rings
-  cross they add. Crest on crest is a bigger crest, and crest on trough is flat water.
-  Then they carry on, as if the other had never been there.
+  cross they add. Crest on crest is a bigger crest and crest on trough is flat water.
+  Then they carry on as if the other had never been there.
 - _Switch Source to Plane wave._ A straight line of crests marches across the tank from
-  the white paddle on the left. It does not fade, because it has no circle to spread
+  the white paddle on the left. It does not fade because it has no circle to spread
   round. **Wavelength** is the distance from one crest to the next.
 
 ```{ojs}
@@ -541,28 +541,28 @@ charts = {
 
 The largest wave height in the tank against how far the wave has gone, both on a
 logarithmic scale. After a pebble the line falls along the dashed one, which is the
-height of a ring that gets weaker as $1/\sqrt{r}$, because the same wave has to cover
-a circle whose length grows with $r$. The height squared is what a wave carries, and
+height of a ring that gets weaker as $1/\sqrt{r}$ because the same wave has to cover
+a circle whose length grows with $r$. The height squared is what a wave carries and
 it is shared out round that circle. On a log scale a power is a straight line, here
-with a slope of $-1/2$. Near the end the line drops faster, where the ring reaches the
-beach. A plane wave has no circle to spread round, so its line is flat.
+with a slope of $-1/2$. Near the end the line drops faster where the ring reaches the
+beach. A plane wave has no circle to spread round so its line is flat.
 
 ## How the computer makes ripples
 
-The tank is a grid of 640 by 360 cells, and each cell holds one number: the height of the
+The tank is a grid of 640 by 360 cells and each cell holds one number: the height of the
 water there. The rule is the same one a ball on a spring follows. A cell is pulled
 towards the average of its four neighbours, and it carries on moving the way it was
-already going. That is all a wave is, in the end: each cell is pulled by its neighbours,
+already going. That is all a wave is in the end: each cell is pulled by its neighbours,
 and they are pulled by it.
 
 To step forward in time the rule needs three things for every cell: its height now, its
-height one step ago, and the heights of its four neighbours now. The GPU takes one thread
+height one step ago and the heights of its four neighbours now. The GPU takes one thread
 per cell, all 230,400 of them at once, and writes each cell's new height into a third
-array. Then the three arrays swap roles, with no copying: "the one before" becomes
-"the one before that", "now" becomes "the one before", and the new heights become
+array. Then the three arrays swap roles with no copying: "the one before" becomes
+"the one before that", "now" becomes "the one before" and the new heights become
 "now".
 
-At the edges the tank has beaches. Close to the border, the rule gets a little damping
+At the edges the tank has beaches. Close to the border the rule gets a little damping
 that grows towards the edge, so a wave that reaches it slowly dies instead of bouncing
 back. Without them the surface soon becomes a mess. Real ripple tanks often have
 sloping edges or sponge for the same reason.
@@ -579,11 +579,11 @@ On a grid with spacing $\Delta x$ and time step $\Delta t$, each cell is updated
 $$u^{n+1}_{ij} = 2 u^n_{ij} - u^{n-1}_{ij} + C^2 \sum_{\text{4 neighbours}} \left( u^n_{\text{nb}} - u^n_{ij} \right),$$
 
 where $C = c \, \Delta t / \Delta x$ is the Courant number: the distance a ripple travels in
-one step, in cells. Here it is 0.5, and it cannot be much bigger, as
+one step in cells. Here it is 0.5 and it cannot be much bigger as
 [a later post](../webgpu-courant-number/) explains.
 :::
 
-Next, [the tank gets a wall](../webgpu-two-holes-in-a-wall/), with holes in it.
+Next [the tank gets a wall](../webgpu-two-holes-in-a-wall/) with holes in it.
 
 ::: {.mf-series-bar}
 Moving Figures
