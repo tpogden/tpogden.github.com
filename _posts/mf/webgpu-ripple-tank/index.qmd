@@ -26,7 +26,7 @@ A wave is that shape. It is a thing in its own right and it does things that no 
 particle does. It passes straight through other waves and where two meet it can cancel.
 
 The tank below is a sheet of water seen from above. Red is a crest, blue is a trough and
-dark is flat. **Click anywhere to drop a pebble** or drag to drop a line of them.
+dark is flat. **Click anywhere to drop a pebble** or drag to skim a stone across the water.
 
 Try these:
 
