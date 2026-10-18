@@ -545,7 +545,7 @@ they add up to. A gap in a wall is then easy to understand: the wave arrives, th
 in the gap each start a ring and nothing is left to cancel the rings except one another.
 Two gaps are two sets of rings.
 
-Around 1800 Thomas Young used the same picture to argue that light is a wave. In his
+Around 1800, Thomas Young used the same picture to argue that light is a wave. In his
 lectures he showed what two sets of water waves do in a shallow tank with a lamp
 underneath and then showed that light passed through two slits makes bright and dark
 bands of the same kind. That is the two slits in the tank above and it is still the
