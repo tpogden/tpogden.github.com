@@ -22,7 +22,7 @@ has no atoms and no dice.
 
 Drop a pebble in a pond and a ring spreads out. Nothing travels with the ring: the water
 only moves up and down, a little, and the shape of that moving goes on across the pond.
-A wave is that shape. It is a thing in its own right, and it has habits that no single
+A wave is that shape. It is a thing in its own right, and it does things that no single
 particle has. It bends round corners, it passes through other waves, and where two meet
 it can cancel.
 
