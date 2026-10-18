@@ -31,42 +31,23 @@ dark is flat. **Click anywhere to drop a stone** or drag to skim one across the 
 Try these:
 
 - _Drop one stone._ The ring grows and fades. It fades because the same wave has to
-  cover a longer and longer circle so each stretch of it gets weaker. **Wavelength** sets
-  the size of the splash: a longer one makes a bigger stone and wider rings.
+  cover a longer and longer circle so each stretch of it gets weaker.
+- _Change the Stone size._ A bigger stone makes a wider ring.
 - _Drop two stones a little apart._ Each makes its own ring and where the rings
   cross they add. Crest on crest is a bigger crest and crest on trough is flat water.
   Then they carry on as if the other had never been there.
-- _Switch Source to Plane wave._ A straight line of crests marches across the tank from
-  the white paddle on the left. It does not fade because it has no circle to spread
-  round. **Wavelength** is the distance from one crest to the next.
 
 ```{ojs}
 //| echo: false
 //| output: false
-viewof tankSource = {
-  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
-  return ui.segmented({
-    label: "Source",
-    options: [
-      ["stones", "Stones"],
-      ["plane", "Plane wave"],
-    ],
-    value: "stones",
-  });
-}
-```
-
-```{ojs}
-//| echo: false
-//| output: false
-viewof wavelength = {
+viewof stoneSize = {
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
   return ui.slider({
-    label: "Wavelength",
-    min: 8,
-    max: 32,
+    label: "Stone size",
+    min: 3,
+    max: 12,
     step: 1,
-    value: 16,
+    value: 6,
     format: (v) => `${v} cells`,
   });
 }
@@ -84,8 +65,7 @@ viewof wavelength = {
 
   // Controls are read live from their elements, so moving them does not restart
   // this cell.
-  const sourceInput = viewof tankSource;
-  const wavelengthInput = viewof wavelength;
+  const sizeInput = viewof stoneSize;
 
   const { canvas, device, context, format } = await gpu.setup({
     width: 640,
@@ -100,8 +80,6 @@ viewof wavelength = {
   const cells = W * H;
   const groupSide = 16;
   const beachWidth = 24; // cells of damping at each edge
-  const sourceX = 28; // the paddle for the plane wave, just inside the beach
-  const amplitude = 0.25; // height of the plane wave
   const C = 0.5; // the Courant number: cells a ripple travels in one step
   const wave = 100; // wave speed, in cells a second
   const maxSplashes = 8;
@@ -114,17 +92,9 @@ viewof wavelength = {
       courant2: f32,
       sponge: f32,        // damping per step at the very edge of the tank
       edge: f32,          // width of the beach, in cells
-      pad2: u32,
-      sourceOn: u32,
-      sourceX: u32,
-      sourceAmp: f32,     // forcing added each step
-      sourceOmega: f32,   // radians a step
-      sourceStart: u32,   // step at which the source switched on
-      rampSteps: f32,
       splashCount: u32,
       gain: f32,
-      pad0: u32,
-      pad1: u32,
+      pad: u32,
       splashes: array<vec4f, ${maxSplashes}>, // x, y, height, radius
     }
 
@@ -145,7 +115,6 @@ viewof wavelength = {
       @group(0) @binding(2) var<storage, read> before: array<f32>;
       @group(0) @binding(3) var<storage, read> now: array<f32>;
       @group(0) @binding(4) var<storage, read_write> after: array<f32>;
-      @group(0) @binding(5) var<storage, read_write> clock: array<u32>;
 
       @compute @workgroup_size(${groupSide}, ${groupSide})
       fn step(@builtin(global_invocation_id) id: vec3u) {
@@ -167,32 +136,13 @@ viewof wavelength = {
 
         let q = beachFraction(x, y);
         let sigma = params.sponge * q * q;
-        var next = (2.0 * here - (1.0 - sigma) * before[i] + params.courant2 * pull) / (1.0 + sigma);
-
-        // The plane-wave paddle adds to the water rather than fixing it
-        if (params.sourceOn == 1u && x == params.sourceX) {
-          let t = f32(clock[0]) - f32(params.sourceStart);
-          let ramp = smoothstep(0.0, 1.0, t / params.rampSteps);
-          next += params.sourceAmp * ramp * cos(params.sourceOmega * t);
-        }
-        // Past the stability limit the numbers grow without bound: stop them
-        // overflowing so the picture stays drawable
-        after[i] = clamp(next, -1e6, 1e6);
-      }
-
-      @compute @workgroup_size(1)
-      fn tick() {
-        clock[0] = clock[0] + 1u;
+        after[i] = (2.0 * here - (1.0 - sigma) * before[i] + params.courant2 * pull) / (1.0 + sigma);
       }
     `,
   });
   const stepPipeline = device.createComputePipeline({
     layout: "auto",
     compute: { module: stepModule, entryPoint: "step" },
-  });
-  const tickPipeline = device.createComputePipeline({
-    layout: "auto",
-    compute: { module: stepModule, entryPoint: "tick" },
   });
 
   const splashModule = device.createShaderModule({
@@ -257,9 +207,6 @@ viewof wavelength = {
         let trough = vec3f(0.22, 0.60, 0.85);
         var colour = mix(flat, select(trough, crest, v > 0.0), clamp(abs(v), 0.0, 1.0));
         colour *= 1.0 - 0.45 * beachFraction(x, y);
-        if (params.sourceOn == 1u && (x == params.sourceX || x == params.sourceX + 1u)) {
-          colour = vec3f(0.92);
-        }
         return vec4f(colour, 1.0);
       }
     `,
@@ -274,13 +221,13 @@ viewof wavelength = {
   // --------------------------------------------------------------------- buffers
   // Three height arrays that take turns: one step ago, now, and the one being made
   const heights = [0, 1, 2].map(() => gpu.storageBuffer(device, new Float32Array(cells)));
-  const clock = gpu.storageBuffer(device, new Uint32Array(1));
   const snapshot = gpu.storageBuffer(device, new Float32Array(cells));
+  const paramSize = 8 * 4 + maxSplashes * 16;
   const paramBuffer = device.createBuffer({
-    size: 16 * 4 + maxSplashes * 16,
+    size: paramSize,
     usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
   });
-  const paramBytes = new ArrayBuffer(16 * 4 + maxSplashes * 16);
+  const paramBytes = new ArrayBuffer(paramSize);
   const paramU32 = new Uint32Array(paramBytes);
   const paramF32 = new Float32Array(paramBytes);
 
@@ -293,14 +240,9 @@ viewof wavelength = {
         { binding: 2, resource: { buffer: heights[r] } },
         { binding: 3, resource: { buffer: heights[(r + 1) % 3] } },
         { binding: 4, resource: { buffer: heights[(r + 2) % 3] } },
-        { binding: 5, resource: { buffer: clock } },
       ],
     }),
   );
-  const tickGroup = device.createBindGroup({
-    layout: tickPipeline.getBindGroupLayout(0),
-    entries: [{ binding: 5, resource: { buffer: clock } }],
-  });
   const splashGroups = [0, 1, 2].map((r) =>
     device.createBindGroup({
       layout: splashPipeline.getBindGroupLayout(0),
@@ -325,18 +267,16 @@ viewof wavelength = {
   // ------------------------------------------------------------------- the state
   let turn = 0; // which of the three arrays is "one step ago"
   let stepCount = 0;
-  let sourceStart = 0;
   const stones = []; // [x, y, height, radius] waiting to be dropped
 
-  // The splash is as wide as the wavelength allows, so the slider sets its size too.
-  // A small one is given a little more height so that its rings stay visible
+  // A small stone is given a little more height so that its rings stay visible
   const drop = (x, y, height = 2) => {
-    const radius = 0.375 * wavelengthInput.value;
+    const radius = sizeInput.value;
     stones.push([x, y, height * Math.sqrt(6 / radius), radius]);
     if (stones.length > maxSplashes) stones.shift();
   };
 
-  // Stones and drags
+  // Stones and skims
   let lastDrag = null;
   const place = (event) => {
     const box = canvas.getBoundingClientRect();
@@ -366,20 +306,19 @@ viewof wavelength = {
   let frameCount = 0;
   let epoch = 0; // bumped when the tank is cleared, so a read in flight is dropped
   let peak = 0;
-  let startStep = 0; // step at which the latest stone dropped, or the paddle started
+  let startStep = 0; // step at which the latest stone dropped
   const heightHistory = []; // {r, peak}: largest wave height against distance travelled
 
   const [heightHost] = charts.children;
   const draw = ui.plotter(Plot);
 
-  function drawCharts() {
+  function drawChart() {
     // A ring spreads over a circle that grows with its radius, so its height should
     // fall as 1/sqrt(r). The dashed line is that, matched to the first point past 40
     const first = heightHistory.find((d) => d.r >= 40);
-    const spreading =
-      sourceInput.value === "stones" && first
-        ? [40, 400].map((r) => ({ r, peak: first.peak * Math.sqrt(first.r / r) }))
-        : [];
+    const spreading = first
+      ? [40, 400].map((r) => ({ r, peak: first.peak * Math.sqrt(first.r / r) }))
+      : [];
     draw(heightHost, {
       height: 200,
       x: { label: "distance the wave has travelled (cells)", grid: true, type: "log", domain: [10, 400] },
@@ -405,7 +344,7 @@ viewof wavelength = {
     const r = (stepCount - startStep) * C;
     if (r > 10) heightHistory.push({ r, peak: Math.max(top, 1e-4) });
     if (heightHistory.length > keep) heightHistory.shift();
-    drawCharts();
+    drawChart();
   }
 
   // Empty the tank
@@ -418,25 +357,11 @@ viewof wavelength = {
     peak = 0;
   }
 
-  function changeSource() {
-    sourceStart = stepCount;
-    startStep = stepCount;
-    heightHistory.length = 0;
-    if (sourceInput.value === "stones") drop(W / 2, H / 2);
-  }
-
-  const on = (element, handler) => {
-    element.addEventListener("input", handler);
-    invalidation.then(() => element.removeEventListener("input", handler));
-  };
-  on(sourceInput, changeSource);
-  on(wavelengthInput, () => (sourceStart = stepCount));
-
   drop(W / 2, H / 2);
 
   const clearButton = ui.button({ label: "Clear", onClick: clear });
   const readout = ui.readout();
-  drawCharts();
+  drawChart();
 
   let owed = 0; // steps due but not yet done
   let lastTime = null;
@@ -445,8 +370,6 @@ viewof wavelength = {
   function frame(ms) {
     const dt = lastTime === null ? 0 : Math.min((ms - lastTime) / 1000, 0.1);
     lastTime = ms;
-    const lambda = wavelengthInput.value;
-    const planeOn = sourceInput.value === "plane";
 
     owed += (wave / C) * dt;
     const count = Math.min(Math.floor(owed), 40);
@@ -463,15 +386,9 @@ viewof wavelength = {
     paramF32[2] = C * C;
     paramF32[3] = 0.3 * C; // damping per step at the edge: a wave crosses the beach once
     paramF32[4] = beachWidth;
-    paramU32[6] = planeOn ? 1 : 0;
-    paramU32[7] = sourceX;
-    paramF32[8] = (4 * Math.PI * C * C * amplitude) / lambda;
-    paramF32[9] = (2 * Math.PI * C) / lambda;
-    paramU32[10] = sourceStart;
-    paramF32[11] = (3 * lambda) / C;
-    paramU32[12] = splashes.length;
-    paramF32[13] = 2.5;
-    splashes.forEach((s, n) => paramF32.set(s, 16 + 4 * n));
+    paramU32[5] = splashes.length;
+    paramF32[6] = 2.5;
+    splashes.forEach((s, n) => paramF32.set(s, 8 + 4 * n));
     device.queue.writeBuffer(paramBuffer, 0, paramBytes);
 
     const encoder = device.createCommandEncoder();
@@ -481,13 +398,10 @@ viewof wavelength = {
       compute.setBindGroup(0, splashGroups[turn]);
       compute.dispatchWorkgroups(groups.x, groups.y);
     }
+    compute.setPipeline(stepPipeline);
     for (let s = 0; s < count; s++) {
-      compute.setPipeline(stepPipeline);
       compute.setBindGroup(0, stepGroups[turn]);
       compute.dispatchWorkgroups(groups.x, groups.y);
-      compute.setPipeline(tickPipeline);
-      compute.setBindGroup(0, tickGroup);
-      compute.dispatchWorkgroups(1);
       turn = (turn + 1) % 3;
     }
     compute.end();
@@ -522,12 +436,7 @@ viewof wavelength = {
   gpu.run(invalidation, device, frame);
 
   // The canvas with the controls laid over its corner
-  yield ui.stage(canvas, [
-    sourceInput,
-    wavelengthInput,
-    clearButton,
-    readout,
-  ]);
+  yield ui.stage(canvas, [sizeInput, clearButton, readout]);
 }
 ```
 
@@ -549,25 +458,25 @@ height of a ring that gets weaker as $1/\sqrt{r}$ because the same wave has to c
 a circle whose length grows with $r$. The height squared is what a wave carries and
 it is shared out round that circle. On a log scale a power is a straight line, here
 with a slope of $-1/2$. Near the end the line drops faster where the ring reaches the
-beach. A plane wave has no circle to spread round so its line is flat.
+beach.
 
 ## How the computer makes ripples
 
 The tank is a grid of 640 by 360 cells and each cell holds one number: the height of the
 water there. The rule is the same one a ball on a spring follows. A cell is pulled
 towards the average of its four neighbours and it carries on moving the way it was
-already going. That is all a wave is in the end: each cell is pulled by its neighbours,
+already going. That is all a wave is in the end: each cell is pulled by its neighbours
 and they are pulled by it.
 
 To step forward in time the rule needs three things for every cell: its height now, its
 height one step ago and the heights of its four neighbours now. The GPU takes one thread
-per cell, all 230,400 of them at once and writes each cell's new height into a third
+per cell (all 230,400 at once) and each writes its cell's new height into a third
 array. Then the three arrays swap roles with no copying: "the one before" becomes
 "the one before that", "now" becomes "the one before" and the new heights become
 "now".
 
 At the edges the tank has beaches. Close to the border the rule gets a little damping
-that grows towards the edge, so a wave that reaches it slowly dies instead of bouncing
+that grows towards the edge so a wave that reaches it slowly dies instead of bouncing
 back. Without them the surface soon becomes a mess. Real ripple tanks often have
 sloping edges or sponge for the same reason.
 
@@ -585,7 +494,7 @@ where $C = c \, \Delta t / \Delta x$ is the Courant number: the distance a rippl
 one step in cells. Here it is 0.5 and it cannot be much bigger as
 [a later post](../webgpu-courant-number/) explains.
 
-Next [the tank gets a wall](../webgpu-two-holes-in-a-wall/) with holes in it.
+Next [a straight wave meets a wall](../webgpu-two-holes-in-a-wall/) with holes in it.
 
 ::: {.mf-series-bar}
 Moving Figures
