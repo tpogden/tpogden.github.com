@@ -262,8 +262,32 @@ viewof courant = {
   const growth = []; // {C, g}: growth of the largest height in one step
   const keep = 600;
 
-  const [growthHost] = charts.children;
+  const [growthHost, stencilHost] = charts.children;
   const draw = ui.plotter(Plot);
+
+  // The picture behind the limit, beside the chart: the four-neighbour stencil as a
+  // diamond, and the circle a ripple covers in one step. It turns red when the circle
+  // sticks out of the diamond
+  function drawStencil() {
+    const unit = 70;
+    const size = 2 * unit * 1.25;
+    const mid = size / 2;
+    const limit = 1 / Math.SQRT2;
+    const C = courantInput.value;
+    const colour = C > limit ? "#FF4834" : "#3a9ad9";
+    stencilHost.innerHTML = `<svg viewBox="0 0 ${size} ${size}" role="img"
+        style="height: 240px; max-width: 100%; display: block; margin: 0 auto"
+        aria-label="The four-neighbour stencil as a diamond, with a circle of radius equal to the Courant number">
+      <polygon points="${mid},${mid - unit} ${mid + unit},${mid} ${mid},${mid + unit} ${mid - unit},${mid}"
+        fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="2"/>
+      <circle cx="${mid}" cy="${mid}" r="${unit * limit}" fill="none" stroke="currentColor"
+        stroke-opacity="0.3" stroke-dasharray="4 3"/>
+      <circle cx="${mid}" cy="${mid}" r="${unit * C}" fill="${colour}" fill-opacity="0.35"
+        stroke="${colour}" stroke-width="2"/>
+      <text x="${mid}" y="${size - 6}" text-anchor="middle" font-size="12" fill="currentColor"
+        font-family="system-ui, sans-serif">C = ${C.toFixed(2)}${C > limit ? ": too big" : ""}</text>
+    </svg>`;
+  }
 
   // The growth each step of the worst wave the grid can hold, from the pattern of
   // alternating signs, a crest next to a trough in both directions: 1 when it is
@@ -333,6 +357,8 @@ viewof courant = {
   };
   // Once the numbers have blown up there is nothing left to save: start again
   on(courantInput, () => (peak > 1e3 ? restart() : (previous = null)));
+  on(courantInput, drawStencil);
+  drawStencil();
 
   const restartButton = ui.button({ label: "Restart", onClick: restart });
   const readout = ui.readout();
@@ -427,7 +453,7 @@ viewof courant = {
 charts = {
   // An empty host; the simulation cell above draws into it as data arrives
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
-  return ui.chartHosts(["growth"]);
+  return ui.chartHosts(["growth", "stencil"]);
 }
 ```
 
@@ -439,7 +465,8 @@ leaves 1 at $1/\sqrt{2} \approx 0.707$. The growth is steep right after it: 0.71
 about a fifth bigger every step so the tank is full in a couple of hundred steps and by 0.9
 the wave is four times bigger every step. The first dot or two of a blow-up sit a little
 below the line because the plane wave itself is still the biggest thing in the tank. To
-leave time for the dots the tank slows to a step a frame while a blow-up is growing.
+leave time for the dots the tank slows to a step a frame while a blow-up is growing. Beside the chart is the picture behind the limit, explained
+[below](#why-0.707). It turns red when the circle sticks out of the diamond.
 
 ## Why 0.707
 
@@ -460,33 +487,9 @@ mathematics](https://web.stanford.edu/class/cme324/classics/): Courant, Friedric
 Lewy, 1928.
 :::
 
-The picture is this. In one step a cell hears from the four cells next to it so it
+The diamond beside the chart shows why. In one step a cell hears from the four cells next to it so it
 can listen to a diamond one cell out along the axes. A ripple travels a circle of
 radius $C$ cells in that step. The circle must fit inside the diamond.
-
-```{ojs}
-//| echo: false
-{
-  // The stencil diamond and the circle a ripple covers in one step
-  const unit = 70;
-  const size = 2 * unit * 1.25;
-  const limit = 1 / Math.SQRT2;
-  const bad = courant > limit;
-  const mid = size / 2;
-  return html`<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}"
-      style="max-width: 100%; display: block; margin: 0 auto;" role="img"
-      aria-label="The four-neighbour stencil as a diamond, with a circle of radius equal to the Courant number">
-    <polygon points="${mid},${mid - unit} ${mid + unit},${mid} ${mid},${mid + unit} ${mid - unit},${mid}"
-      fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="2"/>
-    <circle cx="${mid}" cy="${mid}" r="${unit * limit}" fill="none" stroke="currentColor"
-      stroke-opacity="0.3" stroke-dasharray="4 3"/>
-    <circle cx="${mid}" cy="${mid}" r="${unit * courant}" fill="${bad ? "#FF4834" : "#3a9ad9"}"
-      fill-opacity="0.35" stroke="${bad ? "#FF4834" : "#3a9ad9"}" stroke-width="2"/>
-    <text x="${mid}" y="${size - 6}" text-anchor="middle" font-size="12" fill="currentColor"
-      font-family="system-ui, sans-serif">C = ${courant.toFixed(2)}${bad ? ": too big" : ""}</text>
-  </svg>`;
-}
-```
 
 The diamond is what the grid can hear. The coloured circle is how far a ripple gets in
 a step. The dashed circle just touches the diamond's sides at $C = 1/\sqrt{2} \approx 0.707$
@@ -494,7 +497,6 @@ and past that the circle pokes out of the diamond and the grid is deaf. The same
 number turns out to be the exact point at which the rule becomes unstable. That is
 not obvious in advance and a short calculation confirms it.
 
-::: {.callout-note collapse="true"}
 ## The calculation
 
 Write any wave on the grid as a sum of waves $e^{i(k_x x + k_y y)}$ and look at how one of
@@ -509,7 +511,6 @@ checkerboard, $k_x = k_y = \pi$, where the right-hand side is $2 - 8C^2$. That i
 $-2$ only if $C \le 1/\sqrt{2}$. Past it, $\lambda$ is a real number with $|\lambda| > 1$ and
 the checkerboard is multiplied by it every step. That is the dashed line in the chart and
 the pattern in the tank.
-:::
 
 ## Safe is not the same as right
 
