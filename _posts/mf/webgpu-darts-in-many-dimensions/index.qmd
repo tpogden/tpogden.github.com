@@ -38,7 +38,7 @@ two dimensions the red darts fill the circle. In higher ones a dart can land ins
 circle and still be a miss because some other coordinate carried it out of the ball.
 
 The slider is the number of darts a second, and **Dimension** is the one the picture
-and the right chart follow. It does not restart the run but **Restart** does. At the
+and the right chart follow. It does not restart the run, **Restart** does. At the
 top speed the twenty-dimensional ball gets a few hits a second.
 
 ```{ojs}
