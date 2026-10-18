@@ -482,7 +482,8 @@ sloping edges or sponge for the same reason.
 
 ## The wave equation
 
-With the height written $u(x, y, t)$ and the wave speed $c$, the wave equation is
+Jean le Rond d'Alembert wrote down the wave equation in 1747 for a vibrating string. For a sheet of water
+with the height written $u(x, y, t)$ and the wave speed $c$ it is
 
 $$\frac{\partial^2 u}{\partial t^2} = c^2 \, \nabla^2 u.$$
 
@@ -495,6 +496,14 @@ one step in cells. Here it is 0.5 and it cannot be much bigger as
 [a later post](../webgpu-courant-number/) explains.
 
 Next [a straight wave meets a wall](../webgpu-two-holes-in-a-wall/) with holes in it.
+
+## Sources
+
+- d'Alembert, J. le R. (1747), "Recherches sur la courbe que forme une corde tenduë mise
+  en vibration", _Histoire de l'Académie royale des sciences et belles lettres de Berlin_
+  3, 214 to 219 (published 1750).
+- Feynman, R. P., Leighton, R. B. and Sands, M. (1963), _The Feynman Lectures on Physics_,
+  volume I, chapter 47, [Sound. The wave equation](https://www.feynmanlectures.caltech.edu/I_47.html).
 
 ::: {.mf-series-bar}
 Moving Figures
