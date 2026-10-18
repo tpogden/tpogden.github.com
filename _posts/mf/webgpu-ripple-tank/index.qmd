@@ -14,9 +14,11 @@ listing:
     sort: "title asc"
 ---
 
-For seventeen posts everything has been made of particles. Even the
-[blast wave](../webgpu-blast-wave/) was a wave of atoms shoving one another. This post
-throws the atoms away.
+So far everything has been made of separate pieces. First atoms: even the
+[blast wave](../webgpu-blast-wave/) was a wave of atoms shoving one another. Then
+[darts](../webgpu-darts-in-many-dimensions/), [walkers](../webgpu-metropolis-walkers/) and
+the [needles of a magnet](../webgpu-ising-model/), all pushed about by chance. This post
+has no atoms and no dice.
 
 Drop a pebble in a pond and a ring spreads out. Nothing travels with the ring: the water
 only moves up and down, a little, and the shape of that moving goes on across the pond.
