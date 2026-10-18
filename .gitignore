@@ -19,6 +19,7 @@
 /webgpu-brownian-motion/
 /webgpu-buffons-needle/
 /webgpu-compute-shader/
+/webgpu-courant-number/
 /webgpu-darts-in-many-dimensions/
 /webgpu-gravity/
 /webgpu-hello-world/
@@ -31,6 +32,7 @@
 /webgpu-structure/
 /webgpu-three-particles/
 /webgpu-twenty-thousand-atoms/
+/webgpu-two-holes-in-a-wall/
 /webgpu-weather-in-a-box/
 /10000-days/
 /sing-of-old-djurgarden/

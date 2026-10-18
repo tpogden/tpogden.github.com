@@ -23,8 +23,7 @@ has no atoms and no dice.
 Drop a pebble in a pond and a ring spreads out. Nothing travels with the ring: the water
 only moves up and down, a little, and the shape of that moving goes on across the pond.
 A wave is that shape. It is a thing in its own right, and it does things that no single
-particle does. It bends round corners, it passes through other waves, and where two meet
-it can cancel.
+particle does. It passes straight through other waves, and where two meet it can cancel.
 
 The tank below is a sheet of water seen from above. Red is a crest, blue is a trough and
 dark is flat. **Click anywhere to drop a pebble**, or drag to drop a line of them.
@@ -33,15 +32,12 @@ Try these:
 
 - _Drop one pebble._ The ring grows and fades. It fades because the same wave has to
   cover a longer and longer circle, so each stretch of it gets weaker.
-- _Switch Source to Plane wave and Barrier to Gap._ A wall with a hole in it. When the
-  hole is much wider than the wavelength, a beam goes through. Make the **Wavelength**
-  longer and the hole is small by comparison: the beam gives way to a ring, as if
-  the hole were a pebble.
-- _Choose Double slit._ Two holes make two rings, and where they overlap the waves add.
-  Crest on crest is a bigger crest, and crest on trough is flat water. The calm lines
-  fanning out are the interference pattern.
-- _Push the Courant number just over 0.7._ This one is about the computer, not the water. It
-  is explained [below](#why-the-timestep-has-a-limit).
+- _Drop two pebbles a little apart._ Each makes its own ring, and where the rings
+  cross they add. Crest on crest is a bigger crest, and crest on trough is flat water.
+  Then they carry on, as if the other had never been there.
+- _Switch Source to Plane wave._ A straight line of crests marches across the tank from
+  the white paddle on the left. It does not fade, because it has no circle to spread
+  round. **Wavelength** is the distance from one crest to the next.
 
 ```{ojs}
 //| echo: false
@@ -55,23 +51,6 @@ viewof tankSource = {
       ["plane", "Plane wave"],
     ],
     value: "pebbles",
-  });
-}
-```
-
-```{ojs}
-//| echo: false
-//| output: false
-viewof tankBarrier = {
-  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
-  return ui.segmented({
-    label: "Barrier",
-    options: [
-      ["open", "Open"],
-      ["gap", "Gap"],
-      ["double", "Double slit"],
-    ],
-    value: "open",
   });
 }
 ```
@@ -94,38 +73,6 @@ viewof wavelength = {
 
 ```{ojs}
 //| echo: false
-//| output: false
-viewof waveSpeed = {
-  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
-  return ui.slider({
-    label: "Wave speed",
-    min: 1.5,
-    max: 2.5,
-    step: 0.1,
-    value: 2,
-    format: (v) => `${Math.round(10 ** v)} cells/s`,
-  });
-}
-```
-
-```{ojs}
-//| echo: false
-//| output: false
-viewof courant = {
-  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
-  return ui.slider({
-    label: "Courant number",
-    min: 0.2,
-    max: 0.9,
-    step: 0.01,
-    value: 0.5,
-    format: (v) => v.toFixed(2),
-  });
-}
-```
-
-```{ojs}
-//| echo: false
 //| column: screen-inset
 //| code-fold: true
 //| code-summary: "Show code"
@@ -137,10 +84,7 @@ viewof courant = {
   // Controls are read live from their elements, so moving them does not restart
   // this cell.
   const sourceInput = viewof tankSource;
-  const barrierInput = viewof tankBarrier;
   const wavelengthInput = viewof wavelength;
-  const speedInput = viewof waveSpeed; // log10 of cells a second
-  const courantInput = viewof courant;
 
   const { canvas, device, context, format } = await gpu.setup({
     width: 640,
@@ -156,35 +100,10 @@ viewof courant = {
   const groupSide = 16;
   const beachWidth = 24; // cells of damping at each edge
   const sourceX = 28; // the paddle for the plane wave, just inside the beach
-  const wallX = 196; // left side of a barrier
-  const wallWidth = 8;
-  const screenX = 592; // the far wall, where the pattern is measured
-  const slitWidth = 16;
-  const slitSpacing = 64;
-  const gapWidth = 32;
   const amplitude = 0.25; // height of the plane wave
+  const C = 0.5; // the Courant number: cells a ripple travels in one step
+  const wave = 100; // wave speed, in cells a second
   const maxSplashes = 8;
-
-  // Whether each cell is water (1) or a wall (0)
-  function buildDepth(kind) {
-    const depth = new Float32Array(cells).fill(1);
-    const wall = (x0, x1, y0, y1) => {
-      for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) depth[y * W + x] = 0;
-    };
-    const mid = H / 2;
-    if (kind === "gap") {
-      wall(wallX, wallX + wallWidth, 0, mid - gapWidth / 2);
-      wall(wallX, wallX + wallWidth, mid + gapWidth / 2, H);
-    } else if (kind === "double") {
-      const top = mid - slitSpacing / 2;
-      const bottom = mid + slitSpacing / 2;
-      const half = slitWidth / 2;
-      wall(wallX, wallX + wallWidth, 0, top - half);
-      wall(wallX, wallX + wallWidth, top + half, bottom - half);
-      wall(wallX, wallX + wallWidth, bottom + half, H);
-    }
-    return depth;
-  }
 
   // --------------------------------------------------------------- the shaders
   const common = `
@@ -209,7 +128,6 @@ viewof courant = {
     }
 
     @group(0) @binding(0) var<uniform> params: Params;
-    @group(0) @binding(1) var<storage, read> depth: array<f32>;
 
     // 0 in open water, rising to 1 at the border: how far into the beach a cell is
     fn beachFraction(x: u32, y: u32) -> f32 {
@@ -236,23 +154,21 @@ viewof courant = {
         let x = id.x;
         let y = id.y;
         let i = y * w + x;
-        let k = depth[i];
         let here = now[i];
 
-        // Pull towards each neighbour, weighted by the smaller of the two cells'
-        // depth: a wall (0) has nothing to pull on
+        // Pull towards each of the four neighbours. At the edge of the tank a cell
+        // has nothing to pull on that side
         var pull = 0.0;
-        if (x > 0u)     { pull += min(k, depth[i - 1u]) * (now[i - 1u] - here); }
-        if (x + 1u < w) { pull += min(k, depth[i + 1u]) * (now[i + 1u] - here); }
-        if (y > 0u)     { pull += min(k, depth[i - w]) * (now[i - w] - here); }
-        if (y + 1u < h) { pull += min(k, depth[i + w]) * (now[i + w] - here); }
+        if (x > 0u)     { pull += now[i - 1u] - here; }
+        if (x + 1u < w) { pull += now[i + 1u] - here; }
+        if (y > 0u)     { pull += now[i - w] - here; }
+        if (y + 1u < h) { pull += now[i + w] - here; }
 
         let q = beachFraction(x, y);
         let sigma = params.sponge * q * q;
         var next = (2.0 * here - (1.0 - sigma) * before[i] + params.courant2 * pull) / (1.0 + sigma);
 
-        // The plane-wave paddle adds to the water rather than fixing it, so waves
-        // coming back from the barrier pass through it
+        // The plane-wave paddle adds to the water rather than fixing it
         if (params.sourceOn == 1u && x == params.sourceX) {
           let t = f32(clock[0]) - f32(params.sourceStart);
           let ramp = smoothstep(0.0, 1.0, t / params.rampSteps);
@@ -260,7 +176,7 @@ viewof courant = {
         }
         // Past the stability limit the numbers grow without bound: stop them
         // overflowing so the picture stays drawable
-        after[i] = select(0.0, clamp(next, -1e6, 1e6), k > 0.0);
+        after[i] = clamp(next, -1e6, 1e6);
       }
 
       @compute @workgroup_size(1)
@@ -290,7 +206,6 @@ viewof courant = {
       fn splash(@builtin(global_invocation_id) id: vec3u) {
         if (id.x >= params.width || id.y >= params.height) { return; }
         let i = id.y * params.width + id.x;
-        if (depth[i] == 0.0) { return; }
         var bump = 0.0;
         for (var n = 0u; n < params.splashCount; n++) {
           let s = params.splashes[n];
@@ -334,8 +249,6 @@ viewof courant = {
         let x = min(u32(in.uv.x * f32(w)), w - 1u);
         let y = min(u32(in.uv.y * f32(h)), h - 1u);
         let i = y * w + x;
-        let k = depth[i];
-        if (k == 0.0) { return vec4f(0.62, 0.62, 0.64, 1.0); }
 
         let flat = vec3f(0.10, 0.10, 0.10);
         let v = now[i] * params.gain;
@@ -360,7 +273,6 @@ viewof courant = {
   // --------------------------------------------------------------------- buffers
   // Three height arrays that take turns: one step ago, now, and the one being made
   const heights = [0, 1, 2].map(() => gpu.storageBuffer(device, new Float32Array(cells)));
-  const depthBuffer = gpu.storageBuffer(device, buildDepth("open"));
   const clock = gpu.storageBuffer(device, new Uint32Array(1));
   const snapshot = gpu.storageBuffer(device, new Float32Array(cells));
   const paramBuffer = device.createBuffer({
@@ -377,7 +289,6 @@ viewof courant = {
       layout: stepPipeline.getBindGroupLayout(0),
       entries: [
         { binding: 0, resource: { buffer: paramBuffer } },
-        { binding: 1, resource: { buffer: depthBuffer } },
         { binding: 2, resource: { buffer: heights[r] } },
         { binding: 3, resource: { buffer: heights[(r + 1) % 3] } },
         { binding: 4, resource: { buffer: heights[(r + 2) % 3] } },
@@ -394,7 +305,6 @@ viewof courant = {
       layout: splashPipeline.getBindGroupLayout(0),
       entries: [
         { binding: 0, resource: { buffer: paramBuffer } },
-        { binding: 1, resource: { buffer: depthBuffer } },
         { binding: 2, resource: { buffer: heights[r] } },
         { binding: 3, resource: { buffer: heights[(r + 1) % 3] } },
       ],
@@ -405,7 +315,6 @@ viewof courant = {
       layout: showPipeline.getBindGroupLayout(0),
       entries: [
         { binding: 0, resource: { buffer: paramBuffer } },
-        { binding: 1, resource: { buffer: depthBuffer } },
         { binding: 3, resource: { buffer: heights[(r + 1) % 3] } },
       ],
     }),
@@ -446,82 +355,42 @@ viewof courant = {
   canvas.addEventListener("pointerup", release);
   canvas.addEventListener("pointercancel", release);
 
-  // What the charts are built from
+  // What the chart is built from
   const readback = gpu.readback(device, [{ buffer: snapshot, bytes: cells * 4 }]);
   const sampleEvery = 10; // frames between readbacks
-  const keep = 400; // peak samples kept for the chart
+  const keep = 400; // samples kept for the chart
   let frameCount = 0;
   let epoch = 0; // bumped when the tank is cleared, so a read in flight is dropped
-  let statsStart = 0; // step at which the averaged pattern last restarted
   let peak = 0;
-  const peakHistory = [];
-  const brightness = new Float64Array(H); // summed squared height along the far wall
-  let averaged = 0;
+  let startStep = 0; // step at which the latest pebble dropped, or the paddle started
+  const heightHistory = []; // {r, peak}: largest wave height against distance travelled
 
-  const [screenHost, peakHost] = charts.children;
+  const [heightHost] = charts.children;
   const draw = ui.plotter(Plot);
 
-  // The classic prediction for the pattern on a distant wall, for waves of this
-  // wavelength through slits of width a that are d apart (d = 0 for one slit)
-  function prediction(lambda) {
-    const barrier = barrierInput.value;
-    if (barrier !== "gap" && barrier !== "double") return null;
-    const a = barrier === "gap" ? gapWidth : slitWidth;
-    const d = barrier === "gap" ? 0 : slitSpacing;
-    const distance = screenX - (wallX + wallWidth / 2);
-    const rows = [];
-    for (let y = -H / 2 + 20; y <= H / 2 - 20; y += 2) {
-      const s = y / Math.hypot(y, distance);
-      const alpha = (Math.PI * a * s) / lambda;
-      const beta = (Math.PI * d * s) / lambda;
-      const envelope = alpha === 0 ? 1 : (Math.sin(alpha) / alpha) ** 2;
-      rows.push({ y, I: envelope * (d === 0 ? 1 : Math.cos(beta) ** 2) });
-    }
-    return rows;
-  }
-
   function drawCharts() {
-    const measured = [];
-    if (averaged > 0) {
-      let top = 0;
-      for (let y = 20; y < H - 20; y++) top = Math.max(top, brightness[y]);
-      for (let y = 20; y < H - 20; y++) measured.push({ y: y - H / 2, I: brightness[y] / top });
-    }
-    const theory = sourceInput.value === "plane" ? prediction(wavelengthInput.value) : null;
-    draw(screenHost, {
+    // A ring spreads over a circle that grows with its radius, so its height should
+    // fall as 1/sqrt(r). The dashed line is that, matched to the first point past 40
+    const first = heightHistory.find((d) => d.r >= 40);
+    const spreading =
+      sourceInput.value === "pebbles" && first
+        ? [40, 400].map((r) => ({ r, peak: first.peak * Math.sqrt(first.r / r) }))
+        : [];
+    draw(heightHost, {
       height: 200,
-      x: { label: "position along the far wall (cells from the middle)", grid: true },
-      y: { label: "wave brightness (relative)", grid: true, domain: [0, 1.05] },
+      x: { label: "distance the wave has travelled (cells)", grid: true, type: "log", domain: [10, 400] },
+      y: { label: "largest wave height", grid: true, type: "log", domain: [0.01, 3] },
       marks: [
-        Plot.line(measured, { x: "y", y: "I", stroke: "#FF4834" }),
-        theory
-          ? Plot.line(theory, {
-              x: "y",
-              y: "I",
-              stroke: "currentColor",
-              strokeOpacity: 0.7,
-              strokeDasharray: "4 3",
-            })
-          : null,
+        Plot.line(spreading, {
+          x: "r",
+          y: "peak",
+          stroke: "currentColor",
+          strokeOpacity: 0.7,
+          strokeDasharray: "4 3",
+        }),
+        Plot.line(heightHistory, { x: "r", y: "peak", stroke: "#FF4834", clip: true }),
       ],
     });
-    draw(peakHost, {
-      height: 200,
-      x: { label: "time steps", grid: true },
-      y: { label: "largest wave height", grid: true, type: "log", domain: [1e-4, 1e6] },
-      marks: [
-        Plot.ruleY([1], { stroke: "currentColor", strokeOpacity: 0.2 }),
-        Plot.line(peakHistory, { x: "t", y: "peak", stroke: "#FF4834", clip: true }),
-      ],
-    });
-  }
-
-  // Wait for the start-up transient to leave the far wall before averaging
-  function settled() {
-    const lambda = wavelengthInput.value;
-    const C = courantInput.value;
-    const travel = (screenX - sourceX) / C + (6 * lambda) / C;
-    return stepCount - statsStart > travel;
   }
 
   function onData(buffer) {
@@ -529,19 +398,10 @@ viewof courant = {
     let top = 0;
     for (let i = 0; i < cells; i++) top = Math.max(top, Math.abs(u[i]));
     peak = top;
-    peakHistory.push({ t: stepCount, peak: Math.max(top, 1e-4) });
-    if (peakHistory.length > keep) peakHistory.shift();
-    if (sourceInput.value === "plane" && settled()) {
-      for (let y = 0; y < H; y++) brightness[y] += u[y * W + screenX] ** 2;
-      averaged++;
-    }
+    const r = (stepCount - startStep) * C;
+    if (r > 10) heightHistory.push({ r, peak: Math.max(top, 1e-4) });
+    if (heightHistory.length > keep) heightHistory.shift();
     drawCharts();
-  }
-
-  function restartStats() {
-    brightness.fill(0);
-    averaged = 0;
-    statsStart = stepCount;
   }
 
   // Empty the tank
@@ -550,39 +410,24 @@ viewof courant = {
     const zeros = new Float32Array(cells);
     for (const buffer of heights) device.queue.writeBuffer(buffer, 0, zeros);
     pebbles.length = 0;
-    peakHistory.length = 0;
+    heightHistory.length = 0;
     peak = 0;
-    restartStats();
-  }
-
-  function restartSource() {
-    sourceStart = stepCount;
-    restartStats();
-  }
-
-  function changeBarrier() {
-    device.queue.writeBuffer(depthBuffer, 0, buildDepth(barrierInput.value));
-    clear();
-    // Something to see, to the left of any barrier
-    if (sourceInput.value === "pebbles") drop(100, H / 2);
   }
 
   function changeSource() {
-    restartSource();
-    if (sourceInput.value === "pebbles") drop(100, H / 2);
+    sourceStart = stepCount;
+    startStep = stepCount;
+    heightHistory.length = 0;
+    if (sourceInput.value === "pebbles") drop(W / 2, H / 2);
   }
 
   const on = (element, handler) => {
     element.addEventListener("input", handler);
     invalidation.then(() => element.removeEventListener("input", handler));
   };
-  on(barrierInput, changeBarrier);
   on(sourceInput, changeSource);
-  on(wavelengthInput, restartSource);
-  // Once the numbers have blown up there is nothing left to save: start again
-  on(courantInput, () => (peak > 1e3 ? clear() : restartStats()));
+  on(wavelengthInput, () => (sourceStart = stepCount));
 
-  changeBarrier();
   drop(W / 2, H / 2);
 
   const clearButton = ui.button({ label: "Clear", onClick: clear });
@@ -596,17 +441,18 @@ viewof courant = {
   function frame(ms) {
     const dt = lastTime === null ? 0 : Math.min((ms - lastTime) / 1000, 0.1);
     lastTime = ms;
-    const C = courantInput.value;
     const lambda = wavelengthInput.value;
     const planeOn = sourceInput.value === "plane";
 
-    // Waves travel at the chosen speed whatever the Courant number: a smaller one
-    // just means more, smaller steps
-    owed += ((10 ** speedInput.value) / C) * dt;
+    owed += (wave / C) * dt;
     const count = Math.min(Math.floor(owed), 40);
     owed = Math.min(owed - count, 1);
 
     const splashes = pebbles.splice(0, maxSplashes);
+    if (splashes.length) {
+      startStep = stepCount;
+      heightHistory.length = 0;
+    }
 
     paramU32[0] = W;
     paramU32[1] = H;
@@ -665,8 +511,7 @@ viewof courant = {
     }
 
     if (frameCount % 6 === 0) {
-      const state = peak > 1e3 ? " · unstable" : "";
-      readout.textContent = `${stepCount.toLocaleString()} steps · largest wave ${peak.toFixed(2)}${state}`;
+      readout.textContent = `largest wave ${peak.toFixed(2)}`;
     }
   }
 
@@ -675,16 +520,12 @@ viewof courant = {
   // The canvas with the controls laid over its corner
   yield ui.stage(canvas, [
     sourceInput,
-    barrierInput,
     wavelengthInput,
-    speedInput,
-    courantInput,
     clearButton,
     readout,
   ]);
 }
 ```
-
 
 ## Analysis
 
@@ -692,40 +533,19 @@ viewof courant = {
 //| echo: false
 //| column: page
 charts = {
-  // Two empty hosts; the simulation cell above draws into them as data arrives
+  // An empty host; the simulation cell above draws into it as data arrives
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
-  return ui.chartHosts(["screen", "peak"]);
+  return ui.chartHosts(["height"]);
 }
 ```
 
-_Left._ The brightness of the waves along the far wall of the tank, with a plane
-wave through the **Gap** or the **Double slit**. The solid line is what the tank gives,
-averaged over many moments, and the dashed line is the classic prediction for
-two slits of width $a$ a distance $d$ apart, a long way from the screen. It has two
-parts. The fine fringes come from the two slits, bright where the paths from them
-differ by a whole number of wavelengths, $d \sin\theta = m\lambda$. The broad hump
-they sit under comes from the width of each slit. Change the **Wavelength** and both
-move, in the way the formula says. The two do not agree exactly, because the far wall
-is not very far away and the tank is two-dimensional.
-
-_Right._ The largest wave height in the tank as time goes by, on a logarithmic scale. A
-pebble's wave fades, a plane wave holds steady, and above $C = 0.707$ the line goes
-straight up, because the error is multiplied by the same number at every step. A
-straight line on a log scale is exponential growth.
-
-## A very old picture
-
-Christiaan Huygens said, in a treatise published in 1690, that
-every point on a wave can be treated as a new source of little circular waves, and that
-the wave a moment later is what they add up to. A gap in a wall is then easy to understand:
-the wave arrives, the points in the gap each start a ring, and nothing is left to cancel
-the rings except one another. Two gaps are two sets of rings.
-
-Around 1800 Thomas Young used the same picture to argue that light is a wave.
-In his lectures he showed what two sets of water waves do in a shallow tank, with a
-lamp underneath, and then showed that light passed through two slits makes bright and
-dark bands of the same kind. That is the double slit in the tank above, and it is still
-the standard way to show waves in a classroom.
+The largest wave height in the tank against how far the wave has gone, both on a
+logarithmic scale. After a pebble the line falls along the dashed one, which is the
+height of a ring that gets weaker as $1/\sqrt{r}$, because the same wave has to cover
+a circle whose length grows with $r$. The height squared is what a wave carries, and
+it is shared out round that circle. On a log scale a power is a straight line, here
+with a slope of $-1/2$. Near the end the line drops faster, where the ring reaches the
+beach. A plane wave has no circle to spread round, so its line is flat.
 
 ## How the computer makes ripples
 
@@ -742,11 +562,6 @@ array. Then the three arrays swap roles, with no copying: "the one before" becom
 "the one before that", "now" becomes "the one before", and the new heights become
 "now".
 
-The walls and the open water are the same rule. Each cell has a number, 1 for water and
-0 for wall, and the rule uses it when a cell looks at its neighbours. A wall is a cell
-with nothing to pull on. There is no special case for a barrier, which is why a gap or a
-slit costs nothing extra.
-
 At the edges the tank has beaches. Close to the border, the rule gets a little damping
 that grows towards the edge, so a wave that reaches it slowly dies instead of bouncing
 back. Without them the surface soon becomes a mess. Real ripple tanks often have
@@ -761,83 +576,14 @@ $$\frac{\partial^2 u}{\partial t^2} = c^2 \, \nabla^2 u.$$
 
 On a grid with spacing $\Delta x$ and time step $\Delta t$, each cell is updated with
 
-$$u^{n+1}_{ij} = 2 u^n_{ij} - u^{n-1}_{ij} + C^2 \sum_{\text{4 neighbours}} k \left( u^n_{\text{nb}} - u^n_{ij} \right),$$
+$$u^{n+1}_{ij} = 2 u^n_{ij} - u^{n-1}_{ij} + C^2 \sum_{\text{4 neighbours}} \left( u^n_{\text{nb}} - u^n_{ij} \right),$$
 
-where $C = c \, \Delta t / \Delta x$ is the Courant number, and $k$ is 1 for a link
-between two water cells and 0 for a link that touches a wall. A link with $k = 0$ pulls on
-nothing, which is what makes a wall reflect.
+where $C = c \, \Delta t / \Delta x$ is the Courant number: the distance a ripple travels in
+one step, in cells. Here it is 0.5, and it cannot be much bigger, as
+[a later post](../webgpu-courant-number/) explains.
 :::
 
-## Why the timestep has a limit
-
-Try the **Courant number** slider. It is the distance a ripple travels in one step,
-measured in cells. The waves on the screen move at the same speed whatever it says,
-because **Wave speed** is in cells a second, so the slider only changes how finely
-time is cut up. Make it small and nothing changes but the cost. Make it larger than 0.707
-and the tank blows up: a fine red and blue checkerboard starts where the waves are made,
-spreads across the tank and grows without limit.
-
-This was found before there were computers. In 1928 Richard Courant, Kurt Friedrichs and
-Hans Lewy, at Göttingen, were not trying to simulate anything. They wanted to prove that
-the equations of mathematical physics have solutions at all, by replacing them with
-grids and showing the grids converge. In doing so they noticed a limit. A cell only hears
-from its neighbours each step, so the numbers on the grid can only know about a
-ripple that has had time to reach them. If a real ripple can get further in one step than
-the grid can listen, the grid is deaf to something that matters, and the answer cannot
-be right.
-
-::: {.callout-note appearance="simple"}
-## Trefethen's 13, no. 2
-
-This is the second paper on [Nick Trefethen's list of 13 classic papers in applied
-mathematics](https://web.stanford.edu/class/cme324/classics/): Courant, Friedrichs and
-Lewy, 1928.
-:::
-
-The picture is this. In one step a cell hears from the four cells next to it, so it
-can listen to a diamond, one cell out along the axes. A ripple travels a circle of
-radius $C$ cells in that step. The circle must fit inside the diamond.
-
-```{ojs}
-//| echo: false
-{
-  // The stencil diamond and the circle a ripple covers in one step
-  const unit = 70;
-  const size = 2 * unit * 1.25;
-  const limit = 1 / Math.SQRT2;
-  const bad = courant > limit;
-  const mid = size / 2;
-  return html`<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}"
-      style="max-width: 100%; display: block; margin: 0 auto;" role="img"
-      aria-label="The four-neighbour stencil as a diamond, with a circle of radius equal to the Courant number">
-    <polygon points="${mid},${mid - unit} ${mid + unit},${mid} ${mid},${mid + unit} ${mid - unit},${mid}"
-      fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="2"/>
-    <circle cx="${mid}" cy="${mid}" r="${unit * limit}" fill="none" stroke="currentColor"
-      stroke-opacity="0.3" stroke-dasharray="4 3"/>
-    <circle cx="${mid}" cy="${mid}" r="${unit * courant}" fill="${bad ? "#FF4834" : "#3a9ad9"}"
-      fill-opacity="0.35" stroke="${bad ? "#FF4834" : "#3a9ad9"}" stroke-width="2"/>
-    <text x="${mid}" y="${size - 6}" text-anchor="middle" font-size="12" fill="currentColor"
-      font-family="system-ui, sans-serif">C = ${courant.toFixed(2)}${bad ? ": too big" : ""}</text>
-  </svg>`;
-}
-```
-
-The diamond is what the grid can hear. The coloured circle is how far a ripple gets in
-a step. The dashed circle just touches the diamond's sides, at $C = 1/\sqrt{2} \approx 0.707$,
-and past that the circle pokes out of the diamond and the grid is deaf. The same
-number turns out to be the exact point at which the rule becomes unstable, which is
-not obvious in advance, and which a short calculation confirms.
-
-## Sources
-
-- Courant, R., Friedrichs, K. and Lewy, H. (1928), "Über die partiellen
-  Differenzengleichungen der mathematischen Physik", _Mathematische Annalen_ 100,
-  32 to 74. English translation: _IBM Journal of Research and Development_ 11 (1967),
-  215 to 234,
-  [doi:10.1147/rd.112.0215](https://doi.org/10.1147/rd.112.0215).
-- Huygens, C. (1690), _Traité de la lumière_ (Leiden).
-- Young, T., lectures to the Royal Society, around 1800, as described in
-  [Young's interference experiment](https://en.wikipedia.org/wiki/Young%27s_interference_experiment).
+Next, [the tank gets a wall](../webgpu-two-holes-in-a-wall/), with holes in it.
 
 ::: {.mf-series-bar}
 Moving Figures

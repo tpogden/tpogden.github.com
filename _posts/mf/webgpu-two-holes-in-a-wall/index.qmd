@@ -1,0 +1,596 @@
+---
+title: "019: Two Holes in a Wall"
+date: "2026-10-18"
+categories: [mf]
+page-layout: article
+listing:
+  - id: mf-series
+    contents: "../*/index.qmd"
+    type: default
+    categories: false
+    include:
+      categories: "mf"
+    fields: [title]
+    sort: "title asc"
+---
+
+[Last time](../webgpu-ripple-tank/) the waves had the tank to themselves. This time there
+is a wall in the way, with a hole in it.
+
+A plane wave, a straight line of crests, comes in from the white paddle on the left and
+meets the wall. The wall has one slit in it, or two. What comes out of the other side?
+It is the first thing most people see of how waves behave, and the answer is not what
+you would get by throwing something through the hole.
+
+Red is a crest, blue is a trough and dark is flat. The faint line near the right-hand edge
+is the far wall, where the waves are measured for the chart below.
+
+Try these:
+
+- _One slit, as wide as you can make it._ **Slit width** at 32 and most of the wave goes
+  straight through, as a beam, with a little spreading at the edges.
+- _Now narrow it._ As the slit shrinks towards the **Wavelength** the beam gives way to a
+  ring, as if the slit were a pebble. A hole about as small as the wave does not let
+  it through as a beam, it makes a new wave.
+- _Two slits._ Each makes its own ring, and where the rings cross they add. Crest on crest
+  is a bigger crest and crest on trough is flat water, so bands fan out from the wall,
+  bright and dark in turn.
+- _Move the slits apart with Slit spacing,_ and the bands crowd closer together. Make the
+  wavelength longer, and they spread out.
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof slitCount = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.segmented({
+    label: "Wall",
+    options: [
+      [1, "One slit"],
+      [2, "Two slits"],
+    ],
+    value: 1,
+  });
+}
+```
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof wavelength = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.slider({
+    label: "Wavelength",
+    min: 8,
+    max: 32,
+    step: 1,
+    value: 16,
+    format: (v) => `${v} cells`,
+  });
+}
+```
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof slitWidth = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.slider({
+    label: "Slit width",
+    min: 8,
+    max: 32,
+    step: 2,
+    value: 16,
+    format: (v) => `${v} cells`,
+  });
+}
+```
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof slitSpacing = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.slider({
+    label: "Slit spacing",
+    min: 48,
+    max: 128,
+    step: 8,
+    value: 64,
+    format: (v) => `${v} cells`,
+  });
+}
+```
+
+```{ojs}
+//| echo: false
+//| column: screen-inset
+//| code-fold: true
+//| code-summary: "Show code"
+{
+  // Shared WebGPU boilerplate: setup, buffers and the animation loop (lib/gpu.js)
+  const gpu = await import(new URL("../lib/gpu.js", document.baseURI).href);
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+
+  // Controls are read live from their elements, so moving them does not restart
+  // this cell.
+  const countInput = viewof slitCount;
+  const wavelengthInput = viewof wavelength;
+  const widthInput = viewof slitWidth;
+  const spacingInput = viewof slitSpacing;
+
+  const { canvas, device, context, format } = await gpu.setup({
+    width: 640,
+    height: 360,
+    resolution: "auto",
+  });
+
+  // The tank, in cells, and where things sit in it
+  const W = 640;
+  const H = 360;
+  const cells = W * H;
+  const groupSide = 16;
+  const beachWidth = 24; // cells of damping at each edge
+  const sourceX = 28; // the paddle, just inside the beach
+  const wallX = 196; // left side of the wall
+  const wallWidth = 8;
+  const screenX = 592; // the far wall, where the pattern is measured
+  const amplitude = 0.25; // height of the plane wave
+  const C = 0.5; // the Courant number: cells a ripple travels in one step
+  const wave = 150; // wave speed, in cells a second
+
+  // Whether each cell is water (1) or a wall (0): a wall with one slit or two,
+  // centred on the middle of the tank
+  function buildWall() {
+    const water = new Float32Array(cells).fill(1);
+    const width = widthInput.value;
+    const mid = H / 2;
+    // Slit centres: one in the middle, or two spacing apart
+    const centres =
+      countInput.value === 1
+        ? [mid]
+        : [mid - Math.max(spacingInput.value, width + 8) / 2, mid + Math.max(spacingInput.value, width + 8) / 2];
+    for (let y = 0; y < H; y++) {
+      if (centres.some((c) => Math.abs(y + 0.5 - c) < width / 2)) continue;
+      for (let x = wallX; x < wallX + wallWidth; x++) water[y * W + x] = 0;
+    }
+    return water;
+  }
+
+  // --------------------------------------------------------------- the shaders
+  const common = `
+    struct Params {
+      width: u32,
+      height: u32,
+      courant2: f32,
+      sponge: f32,        // damping per step at the very edge of the tank
+      edge: f32,          // width of the beach, in cells
+      screenX: u32,       // the column the pattern is measured on
+      sourceX: u32,
+      sourceStart: u32,   // step at which the paddle started
+      sourceAmp: f32,     // forcing added each step
+      sourceOmega: f32,   // radians a step
+      rampSteps: f32,
+      gain: f32,
+    }
+
+    @group(0) @binding(0) var<uniform> params: Params;
+    @group(0) @binding(1) var<storage, read> water: array<f32>;
+
+    // 0 in open water, rising to 1 at the border: how far into the beach a cell is
+    fn beachFraction(x: u32, y: u32) -> f32 {
+      let ex = min(f32(x), f32(params.width - 1u - x));
+      let ey = min(f32(y), f32(params.height - 1u - y));
+      let e = min(ex, ey);
+      return select(0.0, (params.edge - e) / params.edge, e < params.edge);
+    }
+  `;
+
+  const stepModule = device.createShaderModule({
+    code: `
+      ${common}
+      @group(0) @binding(2) var<storage, read> before: array<f32>;
+      @group(0) @binding(3) var<storage, read> now: array<f32>;
+      @group(0) @binding(4) var<storage, read_write> after: array<f32>;
+      @group(0) @binding(5) var<storage, read_write> clock: array<u32>;
+
+      @compute @workgroup_size(${groupSide}, ${groupSide})
+      fn step(@builtin(global_invocation_id) id: vec3u) {
+        let w = params.width;
+        let h = params.height;
+        if (id.x >= w || id.y >= h) { return; }
+        let x = id.x;
+        let y = id.y;
+        let i = y * w + x;
+        let k = water[i];
+        let here = now[i];
+
+        // Pull towards each neighbour, but only through water: a wall (0) has nothing
+        // to pull on, and neither has a cell next to one
+        var pull = 0.0;
+        if (x > 0u)     { pull += min(k, water[i - 1u]) * (now[i - 1u] - here); }
+        if (x + 1u < w) { pull += min(k, water[i + 1u]) * (now[i + 1u] - here); }
+        if (y > 0u)     { pull += min(k, water[i - w]) * (now[i - w] - here); }
+        if (y + 1u < h) { pull += min(k, water[i + w]) * (now[i + w] - here); }
+
+        let q = beachFraction(x, y);
+        let sigma = params.sponge * q * q;
+        var next = (2.0 * here - (1.0 - sigma) * before[i] + params.courant2 * pull) / (1.0 + sigma);
+
+        // The paddle adds to the water rather than fixing it, so waves coming back
+        // from the wall pass through it
+        if (x == params.sourceX) {
+          let t = f32(clock[0]) - f32(params.sourceStart);
+          let ramp = smoothstep(0.0, 1.0, t / params.rampSteps);
+          next += params.sourceAmp * ramp * cos(params.sourceOmega * t);
+        }
+        after[i] = select(0.0, next, k > 0.0);
+      }
+
+      @compute @workgroup_size(1)
+      fn tick() {
+        clock[0] = clock[0] + 1u;
+      }
+    `,
+  });
+  const stepPipeline = device.createComputePipeline({
+    layout: "auto",
+    compute: { module: stepModule, entryPoint: "step" },
+  });
+  const tickPipeline = device.createComputePipeline({
+    layout: "auto",
+    compute: { module: stepModule, entryPoint: "tick" },
+  });
+
+  const showModule = device.createShaderModule({
+    code: `
+      ${common}
+      @group(0) @binding(3) var<storage, read> now: array<f32>;
+
+      struct Out {
+        @builtin(position) position: vec4f,
+        @location(0) uv: vec2f,
+      }
+
+      @vertex
+      fn showVertex(@location(0) corner: vec2f) -> Out {
+        return Out(
+          vec4f(corner, 0.0, 1.0),
+          vec2f(corner.x * 0.5 + 0.5, 0.5 - corner.y * 0.5),
+        );
+      }
+
+      @fragment
+      fn showFragment(in: Out) -> @location(0) vec4f {
+        let w = params.width;
+        let h = params.height;
+        let x = min(u32(in.uv.x * f32(w)), w - 1u);
+        let y = min(u32(in.uv.y * f32(h)), h - 1u);
+        let i = y * w + x;
+        if (water[i] == 0.0) { return vec4f(0.62, 0.62, 0.64, 1.0); }
+
+        let flat = vec3f(0.10, 0.10, 0.10);
+        let v = now[i] * params.gain;
+        let crest = vec3f(1.0, 0.282, 0.204);   // #FF4834
+        let trough = vec3f(0.22, 0.60, 0.85);
+        var colour = mix(flat, select(trough, crest, v > 0.0), clamp(abs(v), 0.0, 1.0));
+        colour *= 1.0 - 0.45 * beachFraction(x, y);
+        if (x == params.sourceX || x == params.sourceX + 1u) {
+          colour = vec3f(0.92);
+        }
+        if (x == params.screenX) {
+          colour = mix(colour, vec3f(0.92), 0.35);
+        }
+        return vec4f(colour, 1.0);
+      }
+    `,
+  });
+  const showPipeline = device.createRenderPipeline({
+    layout: "auto",
+    vertex: { module: showModule, entryPoint: "showVertex", buffers: [gpu.squareLayout] },
+    fragment: { module: showModule, entryPoint: "showFragment", targets: [{ format }] },
+    primitive: { topology: "triangle-list" },
+  });
+
+  // --------------------------------------------------------------------- buffers
+  // Three height arrays that take turns: one step ago, now, and the one being made
+  const heights = [0, 1, 2].map(() => gpu.storageBuffer(device, new Float32Array(cells)));
+  const waterBuffer = gpu.storageBuffer(device, buildWall());
+  const clock = gpu.storageBuffer(device, new Uint32Array(1));
+  // The heights now and one step ago, side by side, for reading back
+  const snapshot = gpu.storageBuffer(device, new Float32Array(2 * cells));
+  const paramBuffer = device.createBuffer({
+    size: 48,
+    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+  });
+  const paramBytes = new ArrayBuffer(48);
+  const paramU32 = new Uint32Array(paramBytes);
+  const paramF32 = new Float32Array(paramBytes);
+
+  // Bind groups for each way the three arrays can be taking turns
+  const stepGroups = [0, 1, 2].map((r) =>
+    device.createBindGroup({
+      layout: stepPipeline.getBindGroupLayout(0),
+      entries: [
+        { binding: 0, resource: { buffer: paramBuffer } },
+        { binding: 1, resource: { buffer: waterBuffer } },
+        { binding: 2, resource: { buffer: heights[r] } },
+        { binding: 3, resource: { buffer: heights[(r + 1) % 3] } },
+        { binding: 4, resource: { buffer: heights[(r + 2) % 3] } },
+        { binding: 5, resource: { buffer: clock } },
+      ],
+    }),
+  );
+  const tickGroup = device.createBindGroup({
+    layout: tickPipeline.getBindGroupLayout(0),
+    entries: [{ binding: 5, resource: { buffer: clock } }],
+  });
+  const showGroups = [0, 1, 2].map((r) =>
+    device.createBindGroup({
+      layout: showPipeline.getBindGroupLayout(0),
+      entries: [
+        { binding: 0, resource: { buffer: paramBuffer } },
+        { binding: 1, resource: { buffer: waterBuffer } },
+        { binding: 3, resource: { buffer: heights[(r + 1) % 3] } },
+      ],
+    }),
+  );
+  const cornerBuffer = gpu.unitSquare(device);
+
+  // ------------------------------------------------------------------- the state
+  let turn = 0; // which of the three arrays is "one step ago"
+  let stepCount = 0;
+  let sourceStart = 0;
+
+  // What the chart is built from: how big the wave is down the far wall, averaged
+  const readback = gpu.readback(device, [{ buffer: snapshot, bytes: 2 * cells * 4 }]);
+  const sampleEvery = 5; // frames between readbacks
+  let frameCount = 0;
+  let epoch = 0; // bumped when the tank is cleared, so a read in flight is dropped
+  let statsStart = 0; // step at which the averaged pattern last restarted
+  const brightness = new Float64Array(H);
+  let averaged = 0;
+
+  const [screenHost] = charts.children;
+  const draw = ui.plotter(Plot);
+
+  // The classic prediction for the pattern on a distant wall, for waves of this
+  // wavelength through slits of width a that are d apart (d = 0 for one slit)
+  function prediction() {
+    const lambda = wavelengthInput.value;
+    const a = widthInput.value;
+    const d = countInput.value === 1 ? 0 : Math.max(spacingInput.value, a + 8);
+    const distance = screenX - (wallX + wallWidth / 2);
+    const rows = [];
+    for (let y = -H / 2 + 20; y <= H / 2 - 20; y += 2) {
+      const s = y / Math.hypot(y, distance);
+      const alpha = (Math.PI * a * s) / lambda;
+      const beta = (Math.PI * d * s) / lambda;
+      const envelope = alpha === 0 ? 1 : (Math.sin(alpha) / alpha) ** 2;
+      rows.push({ y, I: envelope * (d === 0 ? 1 : Math.cos(beta) ** 2) });
+    }
+    return rows;
+  }
+
+  function drawChart() {
+    const measured = [];
+    if (averaged > 0) {
+      let top = 0;
+      for (let y = 20; y < H - 20; y++) top = Math.max(top, brightness[y]);
+      for (let y = 20; y < H - 20; y++) measured.push({ y: y - H / 2, I: brightness[y] / top });
+    }
+    draw(screenHost, {
+      height: 220,
+      x: { label: "position along the far wall (cells from the middle)", grid: true },
+      y: { label: "wave brightness (relative)", grid: true, domain: [0, 1.05] },
+      marks: [
+        Plot.line(measured, { x: "y", y: "I", stroke: "#FF4834" }),
+        Plot.line(prediction(), {
+          x: "y",
+          y: "I",
+          stroke: "currentColor",
+          strokeOpacity: 0.7,
+          strokeDasharray: "4 3",
+        }),
+      ],
+    });
+  }
+
+  // Wait for the start-up transient to leave the far wall before averaging
+  function settled() {
+    const travel = (screenX - sourceX + 6 * wavelengthInput.value) / C;
+    return stepCount - statsStart > travel;
+  }
+
+  function onData(buffer) {
+    if (settled()) {
+      // Two heights a step apart fix the size of a wave of one frequency, whatever
+      // moment they are taken at: A^2 = (s^2 + p^2 - 2 s p cos w) / sin^2 w, for the
+      // height s now and p one step ago, with w the radians a step
+      const now = new Float32Array(buffer, 0, cells);
+      const before = new Float32Array(buffer, cells * 4, cells);
+      const w = (2 * Math.PI * C) / wavelengthInput.value;
+      const cos = Math.cos(w);
+      const sin2 = Math.sin(w) ** 2;
+      for (let y = 0; y < H; y++) {
+        const s = now[y * W + screenX];
+        const p = before[y * W + screenX];
+        brightness[y] += (s * s + p * p - 2 * s * p * cos) / sin2;
+      }
+      averaged++;
+    }
+    drawChart();
+  }
+
+  // Empty the tank and start the paddle again
+  function restart() {
+    epoch++;
+    device.queue.writeBuffer(waterBuffer, 0, buildWall());
+    const zeros = new Float32Array(cells);
+    for (const buffer of heights) device.queue.writeBuffer(buffer, 0, zeros);
+    sourceStart = stepCount;
+    statsStart = stepCount;
+    brightness.fill(0);
+    averaged = 0;
+    drawChart();
+  }
+
+  const on = (element, handler) => {
+    element.addEventListener("input", handler);
+    invalidation.then(() => element.removeEventListener("input", handler));
+  };
+  for (const input of [countInput, wavelengthInput, widthInput, spacingInput]) on(input, restart);
+
+  const restartButton = ui.button({ label: "Restart", onClick: restart });
+  drawChart();
+
+  let owed = 0; // steps due but not yet done
+  let lastTime = null;
+  const groups = { x: Math.ceil(W / groupSide), y: Math.ceil(H / groupSide) };
+
+  function frame(ms) {
+    const dt = lastTime === null ? 0 : Math.min((ms - lastTime) / 1000, 0.1);
+    lastTime = ms;
+    const lambda = wavelengthInput.value;
+
+    owed += (wave / C) * dt;
+    const count = Math.min(Math.floor(owed), 40);
+    owed = Math.min(owed - count, 1);
+
+    paramU32[0] = W;
+    paramU32[1] = H;
+    paramF32[2] = C * C;
+    paramF32[3] = 0.3 * C; // damping per step at the edge: a wave crosses the beach once
+    paramF32[4] = beachWidth;
+    paramU32[5] = screenX;
+    paramU32[6] = sourceX;
+    paramU32[7] = sourceStart;
+    paramF32[8] = (4 * Math.PI * C * C * amplitude) / lambda;
+    paramF32[9] = (2 * Math.PI * C) / lambda;
+    paramF32[10] = (3 * lambda) / C;
+    paramF32[11] = 2.5;
+    device.queue.writeBuffer(paramBuffer, 0, paramBytes);
+
+    const encoder = device.createCommandEncoder();
+    const compute = encoder.beginComputePass();
+    for (let s = 0; s < count; s++) {
+      compute.setPipeline(stepPipeline);
+      compute.setBindGroup(0, stepGroups[turn]);
+      compute.dispatchWorkgroups(groups.x, groups.y);
+      compute.setPipeline(tickPipeline);
+      compute.setBindGroup(0, tickGroup);
+      compute.dispatchWorkgroups(1);
+      turn = (turn + 1) % 3;
+    }
+    compute.end();
+    stepCount += count;
+
+    const sample = !readback.pending && ++frameCount % sampleEvery === 0;
+    if (sample) {
+      encoder.copyBufferToBuffer(heights[(turn + 1) % 3], 0, snapshot, 0, cells * 4);
+      encoder.copyBufferToBuffer(heights[turn], 0, snapshot, cells * 4, cells * 4);
+      readback.copy(encoder);
+    }
+
+    const pass = gpu.beginRenderPass(encoder, context);
+    pass.setPipeline(showPipeline);
+    pass.setBindGroup(0, showGroups[turn]);
+    pass.setVertexBuffer(0, cornerBuffer);
+    pass.draw(6);
+    pass.end();
+    device.queue.submit([encoder.finish()]);
+
+    if (sample) {
+      const mine = epoch;
+      readback.read((buffer) => {
+        if (mine === epoch) onData(buffer);
+      });
+    }
+  }
+
+  gpu.run(invalidation, device, frame);
+
+  // The canvas with the controls laid over its corner
+  yield ui.stage(canvas, [countInput, wavelengthInput, widthInput, spacingInput, restartButton]);
+}
+```
+
+## Analysis
+
+```{ojs}
+//| echo: false
+//| column: page
+charts = {
+  // An empty host; the simulation cell above draws into it as data arrives
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.chartHosts(["screen"]);
+}
+```
+
+How bright the waves are along the far wall, the faint line on the right of the tank. The
+solid line is what the tank gives, averaged over many moments, and the dashed line is the
+classic prediction for waves through slits of width $a$ that are $d$ apart, a long way
+from the wall. It has two parts. One slit gives only the broad hump, wider the narrower the
+slit. Two slits add fine fringes inside it, bright where the paths from the two slits
+differ by a whole number of wavelengths, $d \sin\theta = m\lambda$, and dark halfway
+between. Change the **Wavelength**, **Slit width** or **Slit spacing** and both lines move,
+in the way the formula says. They do not agree exactly, because the far wall is not very far
+away and the tank is two-dimensional.
+
+## A very old picture
+
+Christiaan Huygens said, in a treatise published in 1690, that every point on a wave can be
+treated as a new source of little circular waves, and that the wave a moment later is what
+they add up to. A gap in a wall is then easy to understand: the wave arrives, the points
+in the gap each start a ring, and nothing is left to cancel the rings except one another.
+Two gaps are two sets of rings.
+
+Around 1800 Thomas Young used the same picture to argue that light is a wave. In his
+lectures he showed what two sets of water waves do in a shallow tank, with a lamp
+underneath, and then showed that light passed through two slits makes bright and dark
+bands of the same kind. That is the two slits in the tank above, and it is still the
+standard way to show waves in a classroom.
+
+## How the computer does it
+
+The tank is the one from last time, with one change. Each cell has a number, 1 for water
+and 0 for wall, and the rule uses it when a cell looks at its neighbours. A wall is a cell
+with nothing to pull on. There is no special case for a slit: a slit is just a gap in the
+zeros, which is why the width and spacing sliders cost nothing extra, and the tank is
+rebuilt in a moment when they move.
+
+The chart is measured in the tank. A few times a second the GPU hands back the heights, and
+the page takes the column along the far wall and adds up the square of each height there.
+The size of a wave is how high it gets over a whole cycle, and a single snapshot catches
+it part-way through. But two snapshots a step apart are enough to work it out, because a
+wave of one frequency changes in a known way from one step to the next. The page does that
+along the far wall, squares it to get a brightness, and averages over many readings. It
+only starts counting once the first crests have had time to reach the far wall.
+
+::: {.callout-note collapse="true"}
+## The pattern, in formulas
+
+For waves of wavelength $\lambda$ through slits of width $a$ with centres $d$ apart, seen
+at an angle $\theta$ a long way from the wall, the brightness is
+
+$$I(\theta) \propto \cos^2\!\left(\frac{\pi d \sin\theta}{\lambda}\right) \left(\frac{\sin \alpha}{\alpha}\right)^2, \qquad \alpha = \frac{\pi a \sin\theta}{\lambda}.$$
+
+The cosine is the fringes from the two slits, with bright bands where
+$d \sin\theta = m\lambda$. The second factor is the hump from the width of one slit, and its
+first dark place is where $a \sin\theta = \lambda$. With one slit there is only the hump
+($d = 0$ takes the cosine to 1). On a wall a distance $L$ away the fringes are about
+$\lambda L / d$ apart.
+:::
+
+## Sources
+
+- Huygens, C. (1690), _Traité de la lumière_ (Leiden).
+- Young, T., lectures to the Royal Society, around 1800, as described in
+  [Young's interference experiment](https://en.wikipedia.org/wiki/Young%27s_interference_experiment).
+
+::: {.mf-series-bar}
+Moving Figures
+
+:::{#mf-series}
+:::
+:::

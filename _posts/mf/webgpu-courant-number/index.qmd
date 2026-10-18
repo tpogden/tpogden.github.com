@@ -1,0 +1,540 @@
+---
+title: "020: Too Big a Step"
+date: "2026-10-18"
+categories: [mf]
+page-layout: article
+listing:
+  - id: mf-series
+    contents: "../*/index.qmd"
+    type: default
+    categories: false
+    include:
+      categories: "mf"
+    fields: [title]
+    sort: "title asc"
+---
+
+The tank in [the last two posts](../webgpu-ripple-tank/) moves forward in time in small, fixed
+steps. How small? That has to be chosen, and there is a wrong answer. It is not that the
+picture gets less accurate: it falls apart.
+
+The number that decides it is the _Courant number_, $C$. It is how far a ripple travels in
+one step, measured in cells. Below, the tank has a plane wave coming from the paddle on
+the left, as before, and one control: **Courant number**. The waves on the screen go at
+the same speed whatever it says, because the speed is set in cells a second. The slider only
+changes how finely time is cut up.
+
+Try these:
+
+- _Start at 0.50 and move it down._ Nothing you can see changes. The same waves, in more,
+  smaller steps. Half the Courant number is twice the work for the same picture.
+- _Move it up, a little at a time._ The waves look fine all the way to 0.70.
+- _Go to 0.71._ A fine red and blue checkerboard starts where the waves are made,
+  spreads across the tank and grows without limit. It is not a rare accident or a bug in
+  one cell: every cell is doing what the rule says.
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof courant = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.slider({
+    label: "Courant number",
+    min: 0.2,
+    max: 0.9,
+    step: 0.01,
+    value: 0.5,
+    format: (v) => v.toFixed(2),
+  });
+}
+```
+
+```{ojs}
+//| echo: false
+//| column: screen-inset
+//| code-fold: true
+//| code-summary: "Show code"
+{
+  // Shared WebGPU boilerplate: setup, buffers and the animation loop (lib/gpu.js)
+  const gpu = await import(new URL("../lib/gpu.js", document.baseURI).href);
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+
+  // Controls are read live from their elements, so moving them does not restart
+  // this cell.
+  const courantInput = viewof courant;
+
+  const { canvas, device, context, format } = await gpu.setup({
+    width: 640,
+    height: 360,
+    resolution: "auto",
+  });
+
+  // The tank, in cells, and where things sit in it
+  const W = 640;
+  const H = 360;
+  const cells = W * H;
+  const groupSide = 16;
+  const beachWidth = 24; // cells of damping at each edge
+  const sourceX = 28; // the paddle, just inside the beach
+  const amplitude = 0.25; // height of the plane wave
+  const wavelength = 16; // in cells
+  const wave = 100; // wave speed, in cells a second
+
+  // --------------------------------------------------------------- the shaders
+  const common = `
+    struct Params {
+      width: u32,
+      height: u32,
+      courant2: f32,
+      sponge: f32,        // damping per step at the very edge of the tank
+      edge: f32,          // width of the beach, in cells
+      sourceX: u32,
+      sourceStart: u32,   // step at which the paddle started
+      rampSteps: f32,
+      sourceAmp: f32,     // forcing added each step
+      sourceOmega: f32,   // radians a step
+      gain: f32,
+      pad: u32,
+    }
+
+    @group(0) @binding(0) var<uniform> params: Params;
+
+    // 0 in open water, rising to 1 at the border: how far into the beach a cell is
+    fn beachFraction(x: u32, y: u32) -> f32 {
+      let ex = min(f32(x), f32(params.width - 1u - x));
+      let ey = min(f32(y), f32(params.height - 1u - y));
+      let e = min(ex, ey);
+      return select(0.0, (params.edge - e) / params.edge, e < params.edge);
+    }
+  `;
+
+  const stepModule = device.createShaderModule({
+    code: `
+      ${common}
+      @group(0) @binding(2) var<storage, read> before: array<f32>;
+      @group(0) @binding(3) var<storage, read> now: array<f32>;
+      @group(0) @binding(4) var<storage, read_write> after: array<f32>;
+      @group(0) @binding(5) var<storage, read_write> clock: array<u32>;
+
+      @compute @workgroup_size(${groupSide}, ${groupSide})
+      fn step(@builtin(global_invocation_id) id: vec3u) {
+        let w = params.width;
+        let h = params.height;
+        if (id.x >= w || id.y >= h) { return; }
+        let x = id.x;
+        let y = id.y;
+        let i = y * w + x;
+        let here = now[i];
+
+        var pull = 0.0;
+        if (x > 0u)     { pull += now[i - 1u] - here; }
+        if (x + 1u < w) { pull += now[i + 1u] - here; }
+        if (y > 0u)     { pull += now[i - w] - here; }
+        if (y + 1u < h) { pull += now[i + w] - here; }
+
+        let q = beachFraction(x, y);
+        let sigma = params.sponge * q * q;
+        var next = (2.0 * here - (1.0 - sigma) * before[i] + params.courant2 * pull) / (1.0 + sigma);
+
+        if (x == params.sourceX) {
+          let t = f32(clock[0]) - f32(params.sourceStart);
+          let ramp = smoothstep(0.0, 1.0, t / params.rampSteps);
+          next += params.sourceAmp * ramp * cos(params.sourceOmega * t);
+        }
+        // Past the stability limit the numbers grow without bound: stop them
+        // overflowing so the picture stays drawable
+        after[i] = clamp(next, -1e6, 1e6);
+      }
+
+      @compute @workgroup_size(1)
+      fn tick() {
+        clock[0] = clock[0] + 1u;
+      }
+    `,
+  });
+  const stepPipeline = device.createComputePipeline({
+    layout: "auto",
+    compute: { module: stepModule, entryPoint: "step" },
+  });
+  const tickPipeline = device.createComputePipeline({
+    layout: "auto",
+    compute: { module: stepModule, entryPoint: "tick" },
+  });
+
+  const showModule = device.createShaderModule({
+    code: `
+      ${common}
+      @group(0) @binding(3) var<storage, read> now: array<f32>;
+
+      struct Out {
+        @builtin(position) position: vec4f,
+        @location(0) uv: vec2f,
+      }
+
+      @vertex
+      fn showVertex(@location(0) corner: vec2f) -> Out {
+        return Out(
+          vec4f(corner, 0.0, 1.0),
+          vec2f(corner.x * 0.5 + 0.5, 0.5 - corner.y * 0.5),
+        );
+      }
+
+      @fragment
+      fn showFragment(in: Out) -> @location(0) vec4f {
+        let w = params.width;
+        let h = params.height;
+        let x = min(u32(in.uv.x * f32(w)), w - 1u);
+        let y = min(u32(in.uv.y * f32(h)), h - 1u);
+        let i = y * w + x;
+
+        let flat = vec3f(0.10, 0.10, 0.10);
+        let v = now[i] * params.gain;
+        let crest = vec3f(1.0, 0.282, 0.204);   // #FF4834
+        let trough = vec3f(0.22, 0.60, 0.85);
+        var colour = mix(flat, select(trough, crest, v > 0.0), clamp(abs(v), 0.0, 1.0));
+        colour *= 1.0 - 0.45 * beachFraction(x, y);
+        if (x == params.sourceX || x == params.sourceX + 1u) {
+          colour = vec3f(0.92);
+        }
+        return vec4f(colour, 1.0);
+      }
+    `,
+  });
+  const showPipeline = device.createRenderPipeline({
+    layout: "auto",
+    vertex: { module: showModule, entryPoint: "showVertex", buffers: [gpu.squareLayout] },
+    fragment: { module: showModule, entryPoint: "showFragment", targets: [{ format }] },
+    primitive: { topology: "triangle-list" },
+  });
+
+  // --------------------------------------------------------------------- buffers
+  // Three height arrays that take turns: one step ago, now, and the one being made
+  const heights = [0, 1, 2].map(() => gpu.storageBuffer(device, new Float32Array(cells)));
+  const clock = gpu.storageBuffer(device, new Uint32Array(1));
+  const snapshot = gpu.storageBuffer(device, new Float32Array(cells));
+  const paramBuffer = device.createBuffer({
+    size: 48,
+    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+  });
+  const paramBytes = new ArrayBuffer(48);
+  const paramU32 = new Uint32Array(paramBytes);
+  const paramF32 = new Float32Array(paramBytes);
+
+  // Bind groups for each way the three arrays can be taking turns
+  const stepGroups = [0, 1, 2].map((r) =>
+    device.createBindGroup({
+      layout: stepPipeline.getBindGroupLayout(0),
+      entries: [
+        { binding: 0, resource: { buffer: paramBuffer } },
+        { binding: 2, resource: { buffer: heights[r] } },
+        { binding: 3, resource: { buffer: heights[(r + 1) % 3] } },
+        { binding: 4, resource: { buffer: heights[(r + 2) % 3] } },
+        { binding: 5, resource: { buffer: clock } },
+      ],
+    }),
+  );
+  const tickGroup = device.createBindGroup({
+    layout: tickPipeline.getBindGroupLayout(0),
+    entries: [{ binding: 5, resource: { buffer: clock } }],
+  });
+  const showGroups = [0, 1, 2].map((r) =>
+    device.createBindGroup({
+      layout: showPipeline.getBindGroupLayout(0),
+      entries: [
+        { binding: 0, resource: { buffer: paramBuffer } },
+        { binding: 3, resource: { buffer: heights[(r + 1) % 3] } },
+      ],
+    }),
+  );
+  const cornerBuffer = gpu.unitSquare(device);
+
+  // ------------------------------------------------------------------- the state
+  let turn = 0; // which of the three arrays is "one step ago"
+  let stepCount = 0;
+  let sourceStart = 0;
+
+  // What the chart is built from: the largest height in the tank, read back every
+  // frame, and from consecutive readings how much it grew each step
+  const readback = gpu.readback(device, [{ buffer: snapshot, bytes: cells * 4 }]);
+  let epoch = 0; // bumped on a restart, so a read in flight is dropped
+  let peak = 0;
+  let previous = null; // {step, peak, C} at the last reading
+  const growth = []; // {C, g}: growth of the largest height in one step
+  const keep = 600;
+
+  const [growthHost] = charts.children;
+  const draw = ui.plotter(Plot);
+
+  // The growth each step of the worst wave the grid can hold, from the pattern of
+  // alternating signs, a crest next to a trough in both directions: 1 when it is
+  // safe, more when it is not
+  const theory = (C) => {
+    const b = 8 * C * C - 2;
+    return b <= 2 ? 1 : (b + Math.sqrt(b * b - 4)) / 2;
+  };
+  const curve = Array.from({ length: 141 }, (_, k) => {
+    const C = 0.2 + (0.7 * k) / 140;
+    return { C, g: theory(C) };
+  });
+
+  function drawChart() {
+    draw(growthHost, {
+      height: 240,
+      x: { label: "Courant number", grid: true, domain: [0.2, 0.9] },
+      y: { label: "growth in one step (times)", grid: true, type: "log", domain: [0.9, 6] },
+      marks: [
+        Plot.ruleX([1 / Math.SQRT2], { stroke: "currentColor", strokeOpacity: 0.3 }),
+        Plot.ruleY([1], { stroke: "currentColor", strokeOpacity: 0.3 }),
+        Plot.line(curve, {
+          x: "C",
+          y: "g",
+          stroke: "currentColor",
+          strokeOpacity: 0.7,
+          strokeDasharray: "4 3",
+        }),
+        Plot.dot(growth, { x: "C", y: "g", r: 2.5, fill: "#FF4834", fillOpacity: 0.7 }),
+      ],
+    });
+  }
+
+  function onData(buffer, step, C) {
+    const u = new Float32Array(buffer);
+    let top = 0;
+    for (let i = 0; i < cells; i++) top = Math.max(top, Math.abs(u[i]));
+    peak = top;
+    // Above the height of the plane wave itself the largest height is the blow-up
+    // growing. After the first crests have crossed the tank, a steady wave counts too
+    const steady = step - sourceStart > (W + 100) / C;
+    if (previous && previous.C === C && step > previous.step) {
+      const growing = previous.peak > 1 && top > previous.peak && top < 1e5;
+      const holding = steady && previous.peak > 0.05 && top < 1 && previous.peak < 1;
+      if (growing || holding) {
+        growth.push({ C, g: (top / previous.peak) ** (1 / (step - previous.step)) });
+        if (growth.length > keep) growth.shift();
+      }
+    }
+    previous = { step, peak: top, C };
+    drawChart();
+  }
+
+  // Empty the tank and start the paddle again
+  function restart() {
+    epoch++;
+    const zeros = new Float32Array(cells);
+    for (const buffer of heights) device.queue.writeBuffer(buffer, 0, zeros);
+    sourceStart = stepCount;
+    peak = 0;
+    previous = null;
+  }
+
+  const on = (element, handler) => {
+    element.addEventListener("input", handler);
+    invalidation.then(() => element.removeEventListener("input", handler));
+  };
+  // Once the numbers have blown up there is nothing left to save: start again
+  on(courantInput, () => (peak > 1e3 ? restart() : (previous = null)));
+
+  const restartButton = ui.button({ label: "Restart", onClick: restart });
+  const readout = ui.readout();
+  drawChart();
+
+  let owed = 0; // steps due but not yet done
+  let lastTime = null;
+  let frameCount = 0;
+  const groups = { x: Math.ceil(W / groupSide), y: Math.ceil(H / groupSide) };
+
+  function frame(ms) {
+    const dt = lastTime === null ? 0 : Math.min((ms - lastTime) / 1000, 0.1);
+    lastTime = ms;
+    const C = courantInput.value;
+
+    // Waves travel at the chosen speed whatever the Courant number: a smaller one
+    // just means more, smaller steps
+    owed += (wave / C) * dt;
+    let count = Math.min(Math.floor(owed), 40);
+    owed = Math.min(owed - count, 1);
+    // While a blow-up is growing, go a step a frame: slow enough to read it
+    if (peak > 1 && peak < 1e5) count = Math.min(count, 1);
+
+    paramU32[0] = W;
+    paramU32[1] = H;
+    paramF32[2] = C * C;
+    paramF32[3] = 0.3 * C; // damping per step at the edge: a wave crosses the beach once
+    paramF32[4] = beachWidth;
+    paramU32[5] = sourceX;
+    paramU32[6] = sourceStart;
+    paramF32[7] = (3 * wavelength) / C;
+    paramF32[8] = (4 * Math.PI * C * C * amplitude) / wavelength;
+    paramF32[9] = (2 * Math.PI * C) / wavelength;
+    paramF32[10] = 2.5;
+    device.queue.writeBuffer(paramBuffer, 0, paramBytes);
+
+    const encoder = device.createCommandEncoder();
+    const compute = encoder.beginComputePass();
+    for (let s = 0; s < count; s++) {
+      compute.setPipeline(stepPipeline);
+      compute.setBindGroup(0, stepGroups[turn]);
+      compute.dispatchWorkgroups(groups.x, groups.y);
+      compute.setPipeline(tickPipeline);
+      compute.setBindGroup(0, tickGroup);
+      compute.dispatchWorkgroups(1);
+      turn = (turn + 1) % 3;
+    }
+    compute.end();
+    stepCount += count;
+
+    // Read the heights back every frame this time: the blow-up is quick
+    const sample = !readback.pending && count > 0;
+    if (sample) {
+      encoder.copyBufferToBuffer(heights[(turn + 1) % 3], 0, snapshot, 0, cells * 4);
+      readback.copy(encoder);
+    }
+
+    const pass = gpu.beginRenderPass(encoder, context);
+    pass.setPipeline(showPipeline);
+    pass.setBindGroup(0, showGroups[turn]);
+    pass.setVertexBuffer(0, cornerBuffer);
+    pass.draw(6);
+    pass.end();
+    device.queue.submit([encoder.finish()]);
+
+    if (sample) {
+      const mine = epoch;
+      const step = stepCount;
+      readback.read((buffer) => {
+        if (mine === epoch) onData(buffer, step, C);
+      });
+    }
+
+    if (++frameCount % 6 === 0) {
+      const state = peak > 1e3 ? " · unstable" : "";
+      readout.textContent = `largest wave ${peak < 1e5 ? peak.toFixed(2) : "huge"}${state}`;
+    }
+  }
+
+  gpu.run(invalidation, device, frame);
+
+  // The canvas with the controls laid over its corner
+  yield ui.stage(canvas, [courantInput, restartButton, readout]);
+}
+```
+
+## Analysis
+
+```{ojs}
+//| echo: false
+//| column: page
+charts = {
+  // An empty host; the simulation cell above draws into it as data arrives
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.chartHosts(["growth"]);
+}
+```
+
+How much bigger the largest wave in the tank gets in one step, against the Courant number.
+The red dots are measured from the tank as you move the slider: a steady wave stays the
+same size, so it sits on 1, and a blow-up multiplies each step by the same number. The dashed
+line is what the rule predicts for the worst case, and the faint vertical line is where it
+leaves 1, at $1/\sqrt{2} \approx 0.707$. The growth is steep right after it: 0.71 is already
+about a fifth bigger every step, so the tank is full in a couple of hundred steps, and by 0.9
+the wave is four times bigger every step. The first dot or two of a blow-up sit a little
+below the line, because the plane wave itself is still the biggest thing in the tank. To
+leave time for the dots, the tank slows to a step a frame while a blow-up is growing.
+
+## Why 0.707
+
+This was found before there were computers. In 1928 Richard Courant, Kurt Friedrichs and
+Hans Lewy, at Göttingen, were not trying to simulate anything. They wanted to prove that
+the equations of mathematical physics have solutions at all, by replacing them with
+grids and showing the grids converge. In doing so they noticed a limit. A cell only hears
+from its neighbours each step, so the numbers on the grid can only know about a
+ripple that has had time to reach them. If a real ripple can get further in one step than
+the grid can listen, the grid is deaf to something that matters, and the answer cannot
+be right.
+
+::: {.callout-note appearance="simple"}
+## Trefethen's 13, no. 2
+
+This is the second paper on [Nick Trefethen's list of 13 classic papers in applied
+mathematics](https://web.stanford.edu/class/cme324/classics/): Courant, Friedrichs and
+Lewy, 1928.
+:::
+
+The picture is this. In one step a cell hears from the four cells next to it, so it
+can listen to a diamond, one cell out along the axes. A ripple travels a circle of
+radius $C$ cells in that step. The circle must fit inside the diamond.
+
+```{ojs}
+//| echo: false
+{
+  // The stencil diamond and the circle a ripple covers in one step
+  const unit = 70;
+  const size = 2 * unit * 1.25;
+  const limit = 1 / Math.SQRT2;
+  const bad = courant > limit;
+  const mid = size / 2;
+  return html`<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}"
+      style="max-width: 100%; display: block; margin: 0 auto;" role="img"
+      aria-label="The four-neighbour stencil as a diamond, with a circle of radius equal to the Courant number">
+    <polygon points="${mid},${mid - unit} ${mid + unit},${mid} ${mid},${mid + unit} ${mid - unit},${mid}"
+      fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="2"/>
+    <circle cx="${mid}" cy="${mid}" r="${unit * limit}" fill="none" stroke="currentColor"
+      stroke-opacity="0.3" stroke-dasharray="4 3"/>
+    <circle cx="${mid}" cy="${mid}" r="${unit * courant}" fill="${bad ? "#FF4834" : "#3a9ad9"}"
+      fill-opacity="0.35" stroke="${bad ? "#FF4834" : "#3a9ad9"}" stroke-width="2"/>
+    <text x="${mid}" y="${size - 6}" text-anchor="middle" font-size="12" fill="currentColor"
+      font-family="system-ui, sans-serif">C = ${courant.toFixed(2)}${bad ? ": too big" : ""}</text>
+  </svg>`;
+}
+```
+
+The diamond is what the grid can hear. The coloured circle is how far a ripple gets in
+a step. The dashed circle just touches the diamond's sides, at $C = 1/\sqrt{2} \approx 0.707$,
+and past that the circle pokes out of the diamond and the grid is deaf. The same
+number turns out to be the exact point at which the rule becomes unstable, which is
+not obvious in advance, and which a short calculation confirms.
+
+::: {.callout-note collapse="true"}
+## The calculation
+
+Write any wave on the grid as a sum of waves $e^{i(k_x x + k_y y)}$ and look at how one of
+them changes from step to step: it is multiplied by a number $\lambda$ every step, which
+satisfies
+
+$$\lambda + \frac{1}{\lambda} = 2 - 4C^2 \left( \sin^2\frac{k_x}{2} + \sin^2\frac{k_y}{2} \right),$$
+
+with $k_x$ and $k_y$ in radians a cell. The wave stays the same size if $|\lambda| = 1$,
+which needs the right-hand side to lie between $-2$ and $2$. The worst wave is the
+checkerboard, $k_x = k_y = \pi$, where the right-hand side is $2 - 8C^2$. That is at least
+$-2$ only if $C \le 1/\sqrt{2}$. Past it, $\lambda$ is a real number with $|\lambda| > 1$ and
+the checkerboard is multiplied by it every step. That is the dashed line in the chart, and
+the pattern in the tank.
+:::
+
+## Safe is not the same as right
+
+Stability is only the first test. Even below the limit the grid does not quite carry a
+wave at the right speed. For a wave along one of the axes the step and the cell size give
+a speed that is slightly low, and more so the shorter the wave: for a wavelength of 8 cells
+at $C = 0.5$ it is about 2% slow, and for 4 cells about 8%. The tank's own waves are 16 cells
+long, which is long enough that the error is small and cannot be seen. A wave of a few
+cells, which the grid only just holds, is the real difficulty with any such scheme.
+
+The result is the opposite of what you might hope for: along an axis, a smaller step makes
+the wave slower and so less right, not more. Sixteen cells to a wavelength and a Courant
+number of 0.5 is a choice that works, not one that is exact.
+
+## Sources
+
+- Courant, R., Friedrichs, K. and Lewy, H. (1928), "Über die partiellen
+  Differenzengleichungen der mathematischen Physik", _Mathematische Annalen_ 100,
+  32 to 74. English translation: _IBM Journal of Research and Development_ 11 (1967),
+  215 to 234,
+  [doi:10.1147/rd.112.0215](https://doi.org/10.1147/rd.112.0215).
+
+::: {.mf-series-bar}
+Moving Figures
+
+:::{#mf-series}
+:::
+:::
