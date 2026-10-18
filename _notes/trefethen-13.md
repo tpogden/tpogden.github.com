@@ -91,7 +91,7 @@ Difficulty: S = a weekend, M = a week, L = a big build. "GPU" says whether the s
 - **Story:** it was written to prove that solutions of PDEs exist, using difference equations as a tool. The stability condition fell out as a necessary requirement for convergence: the numerical domain of dependence must contain the true one. ✔ This was long before computers, which is the fun fact. A 1956 AEC report translation by Phyllis Fox also circulated. ✔
 - **Picture:** the 1D wave equation on a grid, with the physical light cone and the numerical stencil's cone drawn over it. Raise the timestep past the limit and the cone no longer covers: the solution blows up in a visible sawtooth.
 - **Interactive:** a pulse; slider for the Courant number; toggle for a scheme (upwind, Lax-Friedrichs, leapfrog). Analysis: the amplification factor against the Courant number.
-- **Plan:** it began as a section of the ripple tank post and became its own post, 020 "Too Big a Step" (the Courant slider, a measured growth-per-step chart against the von Neumann prediction, the stencil diamond, and a note that stable is not the same as accurate). Difficulty S. Needs the 2D stencil from 018.
+- **Plan:** it began as a section of the ripple tank post and became its own post, 020 "A Step too Far" (the Courant slider, a measured growth-per-step chart against the von Neumann prediction, the stencil diamond, and a note that stable is not the same as accurate). Difficulty S. Needs the 2D stencil from 018.
 - **Sources:** CFL 1967 translation; Lax 1967 review; the Springer volume *The CFL Condition: 80 Years After Its Discovery* ✔ (listed; not read).
 
 ### T3. Householder (1958), QR by reflections
@@ -213,7 +213,7 @@ Each paper goes in the arc where the problem it solves first bites. "Tentative" 
 
 | Paper | Host arc | Where it bites | Status |
 |---|---|---|---|
-| T2 CFL | Waves | The timestep blows up. Written as its own post, 020 "Too Big a Step", after the ripple tank (018) and the slits (019), with a measured growth-per-step chart against the predicted curve | done (drafted) |
+| T2 CFL | Waves | The timestep blows up. Written as its own post, 020 "A Step too Far", after the ripple tank (018) and the slits (019), with a measured growth-per-step chart against the predicted curve | done (drafted) |
 | T1 FFT | Waves (ship wakes) | Deep-water dispersion is non-local and needs a spectral method; also feeds cosmology and the NLSE | natural |
 | T6 FEM | Waves, after the ripple tank | Drum and membrane modes on a drawn shape | natural |
 | T8 multigrid, T9 CG | Numerical electrodynamics (electrostatics) or cosmology | A Poisson solve that relaxation cannot finish | natural, either host |

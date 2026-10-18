@@ -1,5 +1,5 @@
 ---
-title: "018: Ripple Tank"
+title: "018: Skimming Pebbles"
 date: "2026-10-18"
 categories: [mf]
 page-layout: article
