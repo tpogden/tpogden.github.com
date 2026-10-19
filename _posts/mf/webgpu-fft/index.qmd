@@ -372,29 +372,66 @@ viewof shape = {
   }
 
   const costs = []; // {n, method, us}
+  // The best of three, so that a busy moment in the browser does not show up as a bump
   function time(method, n) {
     const re = Float64Array.from({ length: n }, () => Math.random());
     const im = new Float64Array(n);
-    let runs = 0;
-    const start = performance.now();
-    do {
-      method(n, re, im);
-      runs++;
-    } while (performance.now() - start < 20);
-    return ((performance.now() - start) * 1000) / runs;
+    let best = Infinity;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      let runs = 0;
+      const start = performance.now();
+      do {
+        method(n, re, im);
+        runs++;
+      } while (performance.now() - start < 10);
+      best = Math.min(best, ((performance.now() - start) * 1000) / runs);
+    }
+    return best;
   }
   function drawCost() {
     draw(costHost, {
       height: 220,
-      x: { label: "numbers in the line", type: "log", grid: true, domain: [16, 2048] },
+      x: { label: "numbers transformed", type: "log", grid: true, domain: [16, 1.1e6] },
       y: { label: "time for one transform (microseconds)", type: "log", grid: true },
-      color: { legend: true, domain: ["by the definition", "the fast way"], range: ["#FF4834", "currentColor"] },
+      color: {
+        legend: true,
+        domain: ["by the definition", "the fast way", "the fast way on the GPU"],
+        range: ["#FF4834", "currentColor", "#3a9ad9"],
+      },
       marks: [
         Plot.line(costs, { x: "n", y: "us", stroke: "method" }),
         Plot.dot(costs, { x: "n", y: "us", stroke: "method", r: 2.5 }),
       ],
     });
   }
+  // ------------------------------------------------------------------- the picture
+  const readout = ui.readout();
+
+  // How long a transform of a whole picture takes on this GPU, size by size: a batch of
+  // them, timed, with the first one thrown away
+  async function gpuTime(size) {
+    const test = fft.create(device, size);
+    const warm = device.createCommandEncoder();
+    test.encode(warm);
+    device.queue.submit([warm.finish()]);
+    await device.queue.onSubmittedWorkDone();
+    const runs = 50;
+    const encoder = device.createCommandEncoder();
+    for (let r = 0; r < runs; r++) test.encode(encoder);
+    const start = performance.now();
+    device.queue.submit([encoder.finish()]);
+    await device.queue.onSubmittedWorkDone();
+    return (performance.now() - start) / runs;
+  }
+  let ms = 0;
+  for (const size of [32, 64, 128, 256, 512, 1024]) {
+    const t = await gpuTime(size);
+    if (size === N) ms = t;
+    costs.push({ n: size * size, method: "the fast way on the GPU", us: t * 1000 });
+  }
+  drawCost();
+  readout.textContent = `${N} by ${N} transform: ${ms.toFixed(2)} ms`;
+
   // Time a size at a time, so that the page is never stuck for long
   (async () => {
     for (let n = 16; n <= 2048; n *= 2) {
@@ -404,27 +441,6 @@ viewof shape = {
       drawCost();
     }
   })();
-
-  // ------------------------------------------------------------------- the picture
-  const readout = ui.readout();
-
-  // How long a 512 by 512 transform takes on this GPU: a batch of them, timed. This
-  // overwrites the transform's data, so the pattern is made again afterwards
-  async function benchmark() {
-    const warm = device.createCommandEncoder();
-    transform.encode(warm);
-    device.queue.submit([warm.finish()]);
-    await device.queue.onSubmittedWorkDone();
-    const runs = 100;
-    const encoder = device.createCommandEncoder();
-    for (let r = 0; r < runs; r++) transform.encode(encoder);
-    const start = performance.now();
-    device.queue.submit([encoder.finish()]);
-    await device.queue.onSubmittedWorkDone();
-    return (performance.now() - start) / runs;
-  }
-  const ms = await benchmark();
-  readout.textContent = `${N} by ${N} transform: ${ms.toFixed(2)} ms`;
 
   shapeMask(shapeInput.value);
   const on = (element, handler) => {
@@ -504,11 +520,16 @@ two, fringes from the gap between them. They are the same thing. The formula was
 Fourier transform of a slit, worked out by hand, and here the computer has done it for
 every pixel at once. It stops matching as soon as you paint on the hole.
 
-_Right._ How long a transform of a line of numbers takes, measured in this browser. By
-the definition the time grows as the square of the length: twice as many numbers take four
-times as long. The fast method takes barely more than twice as long. At two thousand
-numbers it is already tens of times quicker and the gap keeps widening: for a million
-numbers it would be about fifty thousand to one.
+_Right._ How long a transform takes, measured in this browser. The red and grey lines are
+a line of numbers on the CPU. By the definition the time grows as the square of the length:
+twice as many numbers take four times as long. The fast method takes barely more than
+twice as long. At two thousand numbers it is already tens of times quicker and the gap
+keeps widening: for a million numbers it would be about fifty thousand to one.
+
+The blue line is the GPU, which transforms a whole picture at once. A 512 by 512 picture
+is 262,144 numbers and the GPU does it in less time than the CPU needs for a line of two
+thousand. At the small sizes the blue line is above the others, since getting the work
+started costs more than the work.
 
 ## Gauss, and a Cold War
 
