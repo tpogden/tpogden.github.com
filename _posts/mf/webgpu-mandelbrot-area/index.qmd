@@ -636,6 +636,16 @@ charts = {
 }
 ```
 
+## Sources
+
+- Mandelbrot, B. B. (1980), "Fractal aspects of the iteration of $z \mapsto \lambda z(1-z)$ for
+  complex $\lambda$ and $z$", _Annals of the New York Academy of Sciences_ 357, 249 to 259.
+- Ewing, J. H. and Schober, G. (1992), "The area of the Mandelbrot set", _Numerische
+  Mathematik_ 61, 59 to 72, [doi:10.1007/BF01385497](https://doi.org/10.1007/BF01385497).
+- Metropolis, N. and Ulam, S. (1949), "The Monte Carlo Method", _Journal of the American
+  Statistical Association_ 44, 335 to 341,
+  [doi:10.1080/01621459.1949.10483310](https://doi.org/10.1080/01621459.1949.10483310).
+
 ::: {.mf-series-bar}
 Moving Figures
 

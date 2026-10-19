@@ -156,6 +156,10 @@ into the storage buffer each frame with `writeBuffer`.
 }
 ```
 
+## Sources
+
+- Fiedler, G. (2004), [Fix Your Timestep!](https://gafferongames.com/post/fix_your_timestep/), _Gaffer on Games_.
+
 ::: {.mf-series-bar}
 Moving Figures
 

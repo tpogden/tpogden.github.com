@@ -409,6 +409,14 @@ charts = {
 }
 ```
 
+## Sources
+
+- Verlet, L. (1967), "Computer 'Experiments' on Classical Fluids. I. Thermodynamical
+  Properties of Lennard-Jones Molecules", _Physical Review_ 159, 98 to 103,
+  [doi:10.1103/PhysRev.159.98](https://doi.org/10.1103/PhysRev.159.98).
+- Allen, M. P. and Tildesley, D. J. (1987), _Computer Simulation of Liquids_ (Oxford
+  University Press).
+
 ::: {.mf-series-bar}
 Moving Figures
 

@@ -523,6 +523,14 @@ charts = {
 }
 ```
 
+## Sources
+
+- Ising, E. (1925), "Beitrag zur Theorie des Ferromagnetismus", _Zeitschrift für Physik_ 31,
+  253 to 258, [doi:10.1007/BF02980577](https://doi.org/10.1007/BF02980577).
+- Onsager, L. (1944), "Crystal Statistics. I. A Two-Dimensional Model with an
+  Order-Disorder Transition", _Physical Review_ 65, 117 to 149,
+  [doi:10.1103/PhysRev.65.117](https://doi.org/10.1103/PhysRev.65.117).
+
 ::: {.mf-series-bar}
 Moving Figures
 
