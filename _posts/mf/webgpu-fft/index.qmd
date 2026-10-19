@@ -28,10 +28,20 @@ On the left below is a hole in a wall, white where it is open. On the right is t
 a long way behind it, brightest in the middle. **Paint on the hole with the mouse** and
 the pattern follows.
 
+Each point in the pattern stands for one ripple. Where it is says how many crests of the
+ripple fit across the hole and which way they run. How bright it is says how well the hole
+lines up with the ripple. **Move the mouse over the pattern** and the ripple for that
+point sweeps across the hole, red for the crests and blue for the troughs. At a bright point
+the crests reach every open part of the hole together, so the open parts flash red and
+blue in step and the sum swings far. At a dark point some open parts are on crests while
+others are on troughs, they cancel and the sum stays near zero.
+
 Try these:
 
 - _Two slits._ The same fringes as last time, now with the rest of the pattern. The slits
-  are tall and narrow, so the pattern is spread sideways and squeezed up and down.
+  are tall and narrow, so the pattern is spread sideways and squeezed up and down. Move the
+  mouse to a bright fringe and both slits flash red and blue together. Move it to the dark
+  gap between and one slit is red while the other is blue.
 - _Paint over half of one slit,_ or make a slit fatter. Whatever gets bigger in the hole
   gets smaller in the pattern. A wide hole makes a tight pattern and a narrow one a broad
   pattern.
@@ -89,6 +99,7 @@ viewof shape = {
   let area = 0; // how much of it is open
   let painted = false; // true once the shape has been changed by hand
   let dirty = true; // the hole has changed since the pattern was made
+  let needRipple = true; // the ripple shown on the hole has to be worked out again
 
   // The slits are tall bars, 80 cells high, with their widths and spacings in cells
   const slitHeight = 80;
@@ -150,7 +161,7 @@ viewof shape = {
 
   // ---------------------------------------------------------------------- drawing
   const paramBuffer = device.createBuffer({
-    size: 16,
+    size: 32,
     usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
   });
   const cornerBuffer = gpu.unitSquare(device);
@@ -158,9 +169,13 @@ viewof shape = {
     code: `
       struct Params {
         area: f32,    // how much of the hole is open: the brightest the pattern can be is area squared
+        kx: f32,      // the ripple picked out: how many fit across the hole sideways
+        ky: f32,      // and up and down
+        phase: f32,   // moves on with time, so that the ripple travels across the hole
+        pickX: f32,   // where it is in the pattern, in cells
+        pickY: f32,
         pad0: f32,
         pad1: f32,
-        pad2: f32,
       }
 
       @group(0) @binding(0) var<uniform> params: Params;
@@ -186,10 +201,20 @@ viewof shape = {
         let y = min(u32(in.uv.y * f32(n)), n - 1u);
         if (abs(in.uv.x - 0.5) < 0.0015) { return vec4f(0.5, 0.5, 0.5, 1.0); }
 
-        // The hole, on the left
+        let crest = vec3f(1.0, 0.282, 0.204);   // #FF4834
+        let trough = vec3f(0.22, 0.60, 0.85);
+
+        // The hole, on the left, with the ripple picked out in the pattern laid over it:
+        // red where its crests fall and blue where its troughs do. Where the hole is open
+        // the ripple shows in full and elsewhere only faintly
         if (in.uv.x < 0.5) {
           let x = min(u32(in.uv.x * 2.0 * f32(n)), n - 1u);
-          return vec4f(vec3f(mix(0.10, 0.92, hole[y * n + x])), 1.0);
+          let open = hole[y * n + x];
+          let ripple = cos(6.283185 * (params.kx * f32(x) + params.ky * f32(y)) / f32(n) + params.phase);
+          let tint = select(trough, crest, ripple > 0.0);
+          let shut = mix(vec3f(0.10), tint, 0.12 * abs(ripple));
+          let through = mix(vec3f(0.92), tint, abs(ripple));
+          return vec4f(mix(shut, through, open), 1.0);
         }
 
         // The pattern, on the right: the zero frequency is the first element of the
@@ -200,9 +225,11 @@ viewof shape = {
         // Four decades of brightness, on a log scale
         let t = clamp((log(intensity + 1e-9) / 2.302585 + 4.0) / 4.0, 0.0, 1.0);
         let dark = vec3f(0.10, 0.10, 0.10);
-        let red = vec3f(1.0, 0.282, 0.204);   // #FF4834
         let white = vec3f(1.0, 0.95, 0.9);
-        let colour = select(mix(dark, red, t / 0.6), mix(red, white, (t - 0.6) / 0.4), t > 0.6);
+        var colour = select(mix(dark, crest, t / 0.6), mix(crest, white, (t - 0.6) / 0.4), t > 0.6);
+        // A ring round the point whose ripple is shown on the left
+        let away = length(vec2f(f32(x), f32(y)) + 0.5 - vec2f(params.pickX, params.pickY));
+        if (abs(away - 8.0) < 1.5) { colour = vec3f(0.95); }
         return vec4f(colour, 1.0);
       }
     `,
@@ -221,6 +248,33 @@ viewof shape = {
       { binding: 2, resource: { buffer: transform.data } },
     ],
   });
+
+  // ------------------------------------------------------------- picking a ripple
+  // A point in the pattern stands for one ripple: kx crests across the hole sideways and
+  // ky up and down. How much of it the hole contains is the sum, over the open cells, of
+  // exp(-2 pi i (kx x + ky y) / N). The transform on the GPU does this for every ripple at
+  // once. Here it is done for just the one picked, to show it on the hole
+  let pick = { kx: 11, ky: 0 }; // starts on the first bright fringe of the two slits
+  let brightness = 0; // how much of the ripple the hole holds, relative to the most it could
+  function updateRipple() {
+    let re = 0;
+    let im = 0;
+    const w = (2 * Math.PI) / N;
+    for (let y = 0; y < N; y++) {
+      for (let x = 0; x < N; x++) {
+        if (mask[y * N + x]) {
+          const angle = w * (pick.kx * x + pick.ky * y);
+          re += Math.cos(angle);
+          im -= Math.sin(angle);
+        }
+      }
+    }
+    // The size of the sum is how bright the point is. As the ripple moves across the hole
+    // the sum swings up and down by that much
+    brightness = (re * re + im * im) / Math.max(area * area, 1);
+    rippleReadout.textContent =
+      `ripple: ${Math.abs(pick.kx)} across, ${Math.abs(pick.ky)} up · brightness ${brightness.toFixed(3)}`;
+  }
 
   // ------------------------------------------------------------------ painting
   // Brush strokes go into the hole, on the left half of the canvas
@@ -249,19 +303,31 @@ viewof shape = {
       stamp(from[0] + ((to[0] - from[0]) * s) / steps, from[1] + ((to[1] - from[1]) * s) / steps);
     }
   }
+  // Over the pattern: pick the ripple under the mouse
+  function choose(at) {
+    const kx = Math.min(N - 1, Math.floor(at[0] - N)) - N / 2;
+    const ky = Math.min(N - 1, Math.max(0, Math.floor(at[1]))) - N / 2;
+    if (kx !== pick.kx || ky !== pick.ky) {
+      pick = { kx, ky };
+      needRipple = true;
+    }
+  }
   canvas.addEventListener("pointerdown", (event) => {
     const at = place(event);
-    if (at[0] >= N) return; // the pattern side is not paintable
+    if (at[0] >= N) return choose(at); // the pattern side is not paintable
     canvas.setPointerCapture(event.pointerId);
     painting = true;
     last = at;
     stamp(...at);
   });
   canvas.addEventListener("pointermove", (event) => {
-    if (!painting) return;
     const at = place(event);
-    stroke(last, at);
-    last = at;
+    if (painting) {
+      stroke(last, at);
+      last = at;
+    } else if (at[0] >= N) {
+      choose(at);
+    }
   });
   const stop = () => (painting = false);
   canvas.addEventListener("pointerup", stop);
@@ -405,7 +471,8 @@ viewof shape = {
     });
   }
   // ------------------------------------------------------------------- the picture
-  const readout = ui.readout();
+  const readout = ui.readout(); // how fast the GPU is
+  const rippleReadout = ui.readout(); // which ripple is picked
 
   // How long a transform of a whole picture takes on this GPU, size by size: a batch of
   // them, timed, with the first one thrown away
@@ -450,14 +517,13 @@ viewof shape = {
   on(shapeInput, () => shapeMask(shapeInput.value));
   drawRow();
 
-  function frame() {
+  function frame(ms) {
     const encoder = device.createCommandEncoder();
     let sample = false;
     if (dirty) {
       dirty = false;
       area = mask.reduce((sum, v) => sum + v, 0);
       device.queue.writeBuffer(maskBuffer, 0, mask);
-      device.queue.writeBuffer(paramBuffer, 0, new Float32Array([area, 0, 0, 0]));
       const load = encoder.beginComputePass();
       load.setPipeline(loadPipeline);
       load.setBindGroup(0, loadGroup);
@@ -465,7 +531,19 @@ viewof shape = {
       load.end();
       transform.encode(encoder);
       needRead = true;
+      needRipple = true;
     }
+    if (needRipple) {
+      needRipple = false;
+      updateRipple();
+    }
+    // The ripple travels across the hole a little each frame
+    const centre = N / 2 + 0.5;
+    device.queue.writeBuffer(
+      paramBuffer,
+      0,
+      new Float32Array([area, pick.kx, pick.ky, -ms / 400, pick.kx + centre, pick.ky + centre, 0, 0]),
+    );
     if (needRead && !readback.pending) {
       readback.copy(encoder);
       needRead = false;
@@ -497,7 +575,7 @@ viewof shape = {
   gpu.run(invalidation, device, frame);
 
   // The canvas with the controls laid over its corner
-  yield ui.stage(canvas, [shapeInput, readout]);
+  yield ui.stage(canvas, [shapeInput, rippleReadout, readout]);
 }
 ```
 
@@ -572,9 +650,13 @@ million steps and not a million million.
 
 ## How the computer does it
 
-The pattern is a two-dimensional transform. It is done on the rows and then on the
-columns, each of them a line like the one above, so there are $2 \log_2 512 = 18$ passes
-over the 512 by 512 grid.
+The pattern is a two-dimensional transform. Every point in it is the sum you see on the
+left for the ripple you pick, a sum over all the open cells of the hole, and the transform
+does it for every ripple at once. The page does it by hand for the one you point at, so
+that it can show you.
+
+The transform is done on the rows and then on the columns, each of them a line like the
+one above, so there are $2 \log_2 512 = 18$ passes over the 512 by 512 grid.
 
 Each pass is the joining step above. One thread on the GPU takes one pair of numbers
 and writes out the two they combine to. The passes alternate between two arrays, each one
