@@ -340,7 +340,7 @@ viewof shape = {
   let row = []; // {k, I}: brightness along the middle row, relative to the centre
   let needRead = true;
 
-  const [rowHost, costHost] = charts.children;
+  const [rowHost] = charts.children;
   const draw = ui.plotter(Plot);
 
   // What last time's formula gives for these slits: a hump from the width of each slit
@@ -378,136 +378,28 @@ viewof shape = {
     });
   }
 
-  // How long a transform takes to do by the definition and by the fast method, measured
-  // here, for a line of n numbers. The definition adds up n terms for each of the n
-  // results. The fast method splits the line in two again and again
-  function naive(n, re, im) {
-    const cos = new Float64Array(n);
-    const sin = new Float64Array(n);
-    for (let j = 0; j < n; j++) {
-      cos[j] = Math.cos((-2 * Math.PI * j) / n);
-      sin[j] = Math.sin((-2 * Math.PI * j) / n);
-    }
-    const outRe = new Float64Array(n);
-    const outIm = new Float64Array(n);
-    for (let k = 0; k < n; k++) {
-      let sr = 0;
-      let si = 0;
-      for (let j = 0; j < n; j++) {
-        const w = (j * k) % n;
-        sr += re[j] * cos[w] - im[j] * sin[w];
-        si += re[j] * sin[w] + im[j] * cos[w];
-      }
-      outRe[k] = sr;
-      outIm[k] = si;
-    }
-    return outRe;
-  }
-
-  function fast(n, re, im) {
-    re = Float64Array.from(re);
-    im = Float64Array.from(im);
-    // Put the numbers in bit-reversed order, then join pairs, then pairs of pairs
-    for (let i = 1, j = 0; i < n; i++) {
-      let bit = n >> 1;
-      for (; j & bit; bit >>= 1) j ^= bit;
-      j ^= bit;
-      if (i < j) {
-        [re[i], re[j]] = [re[j], re[i]];
-        [im[i], im[j]] = [im[j], im[i]];
-      }
-    }
-    for (let size = 2; size <= n; size *= 2) {
-      const step = (-2 * Math.PI) / size;
-      for (let start = 0; start < n; start += size) {
-        for (let k = 0; k < size / 2; k++) {
-          const wr = Math.cos(step * k);
-          const wi = Math.sin(step * k);
-          const a = start + k;
-          const b = a + size / 2;
-          const tr = re[b] * wr - im[b] * wi;
-          const ti = re[b] * wi + im[b] * wr;
-          re[b] = re[a] - tr;
-          im[b] = im[a] - ti;
-          re[a] += tr;
-          im[a] += ti;
-        }
-      }
-    }
-    return re;
-  }
-
-  const costs = []; // {n, method, us}
-  // The best of three, so that a busy moment in the browser does not show up as a bump
-  function time(method, n) {
-    const re = Float64Array.from({ length: n }, () => Math.random());
-    const im = new Float64Array(n);
-    let best = Infinity;
-    for (let attempt = 0; attempt < 3; attempt++) {
-      let runs = 0;
-      const start = performance.now();
-      do {
-        method(n, re, im);
-        runs++;
-      } while (performance.now() - start < 10);
-      best = Math.min(best, ((performance.now() - start) * 1000) / runs);
-    }
-    return best;
-  }
-  function drawCost() {
-    draw(costHost, {
-      height: 220,
-      x: { label: "numbers transformed", type: "log", grid: true, domain: [16, 1.1e6] },
-      y: { label: "time for one transform (microseconds)", type: "log", grid: true },
-      color: {
-        legend: true,
-        domain: ["by the definition", "the fast way", "the fast way on the GPU"],
-        range: ["#FF4834", "currentColor", "#3a9ad9"],
-      },
-      marks: [
-        Plot.line(costs, { x: "n", y: "us", stroke: "method" }),
-        Plot.dot(costs, { x: "n", y: "us", stroke: "method", r: 2.5 }),
-      ],
-    });
-  }
   // ------------------------------------------------------------------- the picture
   const readout = ui.readout(); // how fast the GPU is
   const rippleReadout = ui.readout(); // which ripple is picked
 
-  // How long a transform of a whole picture takes on this GPU, size by size: a batch of
-  // them, timed, with the first one thrown away
-  async function gpuTime(size) {
-    const test = fft.create(device, size);
+  // How long a 512 by 512 transform takes on this GPU: a batch of them, timed, with the
+  // first one thrown away. It overwrites the transform's data, so the pattern is made again
+  // afterwards (the hole starts out marked as changed)
+  async function benchmark() {
     const warm = device.createCommandEncoder();
-    test.encode(warm);
+    transform.encode(warm);
     device.queue.submit([warm.finish()]);
     await device.queue.onSubmittedWorkDone();
-    const runs = 50;
+    const runs = 100;
     const encoder = device.createCommandEncoder();
-    for (let r = 0; r < runs; r++) test.encode(encoder);
+    for (let r = 0; r < runs; r++) transform.encode(encoder);
     const start = performance.now();
     device.queue.submit([encoder.finish()]);
     await device.queue.onSubmittedWorkDone();
     return (performance.now() - start) / runs;
   }
-  let ms = 0;
-  for (const size of [32, 64, 128, 256, 512, 1024]) {
-    const t = await gpuTime(size);
-    if (size === N) ms = t;
-    costs.push({ n: size * size, method: "the fast way on the GPU", us: t * 1000 });
-  }
-  drawCost();
+  const ms = await benchmark();
   readout.textContent = `${N} by ${N} transform: ${ms.toFixed(2)} ms`;
-
-  // Time a size at a time, so that the page is never stuck for long
-  (async () => {
-    for (let n = 16; n <= 2048; n *= 2) {
-      await new Promise((resolve) => setTimeout(resolve, 30));
-      costs.push({ n, method: "by the definition", us: time(naive, n) });
-      costs.push({ n, method: "the fast way", us: time(fast, n) });
-      drawCost();
-    }
-  })();
 
   shapeMask(shapeInput.value);
   const on = (element, handler) => {
@@ -585,100 +477,53 @@ viewof shape = {
 //| echo: false
 //| column: page
 charts = {
-  // Two empty hosts; the simulation cell above draws into them as data arrives
+  // An empty host; the simulation cell above draws into it as data arrives
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
-  return ui.chartHosts(["row", "cost"]);
+  return ui.chartHosts(["row"]);
 }
 ```
 
-_Left._ The brightness along the middle row of the pattern, for the **One slit** and **Two
-slits** holes. The solid line is what the transform gives and the dashed line is last
-time's formula for the pattern behind a slit: a hump from the width of the slit and, for
-two, fringes from the gap between them. They are the same thing. The formula was the
-Fourier transform of a slit, worked out by hand, and here the computer has done it for
-every pixel at once. It stops matching as soon as you paint on the hole.
+The brightness along the middle row of the pattern, for the **One slit** and **Two slits**
+holes. The solid line is what the transform gives and the dashed line is last time's
+formula for the pattern behind a slit: a hump from the width of the slit and, for two,
+fringes from the gap between them. They are the same thing. The formula was the Fourier
+transform of a slit, worked out by hand, and here the computer has done it for every point
+at once. It stops matching as soon as you paint on the hole.
 
-_Right._ How long a transform takes, measured in this browser. The red and grey lines are
-a line of numbers on the CPU. By the definition the time grows as the square of the length:
-twice as many numbers take four times as long. The fast method takes barely more than
-twice as long. At two thousand numbers it is already tens of times quicker and the gap
-keeps widening: for a million numbers it would be about fifty thousand to one.
+## A sum of ripples
 
-The blue line is the GPU, which transforms a whole picture at once. A 512 by 512 picture
-is 262,144 numbers and the GPU does it in less time than the CPU needs for a line of two
-thousand. At the small sizes the blue line is above the others, since getting the work
-started costs more than the work.
+In 1822 Joseph Fourier published his book on how heat flows, and in it the claim that any
+pattern along a line can be built by adding sine waves of different sizes. A picture is a
+pattern along two lines at once, so it can be built from ripples: waves that run across it
+in some direction with some number of crests.
 
-## Gauss, and a Cold War
+To find how much of one ripple a hole contains you multiply the hole by the ripple, cell by
+cell, and add up. That sum is one point of the pattern:
 
-In about 1805, Carl Friedrich Gauss was working out the orbits of the asteroids Pallas and
-Juno from a handful of observations and needed the ripples that the measurements were made
-of. He found a way to do it with far fewer sums, wrote it up and did not publish it. It
-turned up in his collected works long after his death.
+$$F(k_x, k_y) = \sum_{x, y} h(x, y) \, e^{-2\pi i (k_x x + k_y y) / N}.$$
 
-It was found again, more than once. The time it stuck was in 1963 and it was because of
-the Cold War. John Tukey was at a meeting of President Kennedy's science advisory
-committee, which was talking about how to detect underground nuclear tests from seismometers
-placed in the ground. The measurements needed transforms that were too slow to calculate.
-Tukey had a way to do them with far fewer sums. Richard Garwin, who was at the meeting,
-saw what it could do and passed it to James Cooley at IBM to turn into a program. They
-published it in 1965.
-
-::: {.callout-note appearance="simple"}
-## Trefethen's 13, no. 1
-
-This is the first paper on [Nick Trefethen's list of 13 classic papers in applied
-mathematics](https://web.stanford.edu/class/cme324/classics/): Cooley and Tukey, 1965.
-:::
-
-## The shortcut
-
-A line of $N$ numbers $x_j$ has the transform
-
-$$X_k = \sum_{j=0}^{N-1} x_j \, e^{-2\pi i j k / N},$$
-
-which is $N$ sums of $N$ terms each, $N^2$ in all. Split the $x_j$ into the even-numbered
-ones and the odd-numbered ones, and each half has a transform of its own, $E_k$ and $O_k$,
-that is only $N/2$ numbers long. Putting them back together takes one multiplication each:
-
-$$X_k = E_k + e^{-2\pi i k / N} O_k, \qquad X_{k+N/2} = E_k - e^{-2\pi i k / N} O_k.$$
-
-That joins two half-size transforms into a whole one for the price of about $N$ steps, and
-each half can be split the same way, down to lines of one number, which are their own
-transform. There are $\log_2 N$ levels of $N$ steps. A million numbers needs about twenty
-million steps and not a million million.
+Here $h$ is 1 where the hole is open and 0 where it is wall. The exponential is the ripple,
+with $k_x$ crests across the hole sideways and $k_y$ up and down, and $N$ is 512. The
+brightness of the point is $|F|^2$. It is the sum you watch when you point at the pattern.
+Where the ripple puts a crest on every open part of the hole the terms all add and the sum
+is large. Where it puts crests on some and troughs on others they cancel.
 
 ## How the computer does it
 
-The pattern is a two-dimensional transform. Every point in it is the sum you see on the
-left for the ripple you pick, a sum over all the open cells of the hole, and the transform
-does it for every ripple at once. The page does it by hand for the one you point at, so
-that it can show you.
-
-The transform is done on the rows and then on the columns, each of them a line like the
-one above, so there are $2 \log_2 512 = 18$ passes over the 512 by 512 grid.
-
-Each pass is the joining step above. One thread on the GPU takes one pair of numbers
-and writes out the two they combine to. The passes alternate between two arrays, each one
-reading the last one's result and writing into the other, so the numbers come out in order
-without a separate shuffle. This form is named for Stockham, and the whole of it is in
-`lib/fft.js`. All 262,144 numbers go through each pass at once. The readout under the
-canvas is how long the whole thing takes on this machine, measured when the page loaded.
+The page works out that sum by hand for the one ripple you point at, a loop over the open
+cells of the hole. For the whole pattern it would need a sum for every ripple. The GPU
+does that for all 262,144 of them at once by a shortcut, and we'll find out how later.
+The readout under the canvas is how long it takes on this machine, measured when the page
+loaded.
 
 The shader that draws the pattern squares each result to get a brightness and puts it on
 a log scale, four factors of ten from the brightest to the dimmest, since the middle is
-very much brighter than the edges. The Fourier transform puts the zero frequency in the
-corner of the array and the drawing shifts it by half to the middle.
+very much brighter than the edges. The transform puts the zero frequency in the corner of
+the array and the drawing shifts it by half to the middle.
 
 ## Sources
 
-- Cooley, J. W. and Tukey, J. W. (1965), "An algorithm for the machine calculation of
-  complex Fourier series", _Mathematics of Computation_ 19, 297 to 301,
-  [doi:10.1090/S0025-5718-1965-0178586-1](https://doi.org/10.1090/S0025-5718-1965-0178586-1).
-- Heideman, M. T., Johnson, D. H. and Burrus, C. S. (1984), "Gauss and the history of the
-  fast Fourier transform", _IEEE ASSP Magazine_ 1 (4), 14 to 21.
-- IEEE, [First demonstration of the fast Fourier transform, 1964](https://ethw.org/Milestones:First_Demonstration_of_the_Fast_Fourier_Transform_(FFT),_1964),
-  for the story of the 1963 meeting.
+- Fourier, J. (1822), _Théorie analytique de la chaleur_ (Paris: Firmin Didot).
 - Adams, C. S. and Hughes, I. G. (2018), [_Optics f2f: From Fourier to Fresnel_](https://academic.oup.com/book/43688)
   (Oxford University Press), for the pattern behind a hole as a Fourier transform.
 
