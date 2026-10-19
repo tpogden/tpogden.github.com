@@ -175,6 +175,11 @@ div.page-columns:has(.no-row-height) {
     margin-top: 1em;
 }
 
+// Homepage section lists sit under an h4
+.quarto-listing-container-custom {
+    margin-top: 1em;
+}
+
 div.quarto-post {
     font-size: 1rem;
     gap: 0em;
