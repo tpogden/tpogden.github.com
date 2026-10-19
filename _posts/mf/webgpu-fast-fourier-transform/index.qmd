@@ -15,7 +15,7 @@ listing:
 ---
 
 [Last time](../webgpu-fft/) every point in the pattern was a sum. To find how much of one
-ripple a hole contains you multiply the hole by the ripple, cell by cell, and add up. The
+ripple a hole contains you multiply the hole by the ripple, cell by cell and add up. The
 hole is 512 by 512 cells and the pattern has a point for each of 512 by 512 ripples. That is
 a sum over 262,144 cells for each of 262,144 points, about 69 billion multiplications for
 one picture.
@@ -481,7 +481,7 @@ is 262,144 numbers and the GPU does it in less time than the CPU needs for a lin
 thousand. At the small sizes the blue line is above the others, since getting the work
 started costs more than the work.
 
-## Gauss, and a Cold War
+## Gauss and a Cold War
 
 In about 1805, Carl Friedrich Gauss was working out the orbits of the asteroids Pallas and
 Juno from a handful of observations and needed the ripples that the measurements were made
@@ -510,18 +510,18 @@ A line of $N$ numbers $x_j$ has the transform
 $$X_k = \sum_{j=0}^{N-1} x_j \, e^{-2\pi i j k / N},$$
 
 which is $N$ sums of $N$ terms each, $N^2$ in all. Split the $x_j$ into the even-numbered
-ones and the odd-numbered ones, and each half has a transform of its own, $E_k$ and $O_k$,
+ones and the odd-numbered ones and each half has a transform of its own, $E_k$ and $O_k$,
 that is only $N/2$ numbers long. Putting them back together takes one multiplication each:
 
 $$X_k = E_k + e^{-2\pi i k / N} O_k, \qquad X_{k+N/2} = E_k - e^{-2\pi i k / N} O_k.$$
 
-That joins two half-size transforms into a whole one for the price of about $N$ steps, and
+That joins two half-size transforms into a whole one for the price of about $N$ steps and
 each half can be split the same way, down to lines of one number, which are their own
 transform. There are $\log_2 N$ levels of $N$ steps. A million numbers needs about twenty
 million steps and not a million million.
 
 You can see the levels in the picture. After $s$ passes along a row the row is made of
-blocks $2^s$ long, and each block is a small transform of every $(N/2^s)$th number of the
+blocks $2^s$ long and each block is a small transform of every $(N/2^s)$th number of the
 line. At the start there are 512 blocks of one number each, which is the line itself. At the
 end there is one block of 512, which is the whole transform. Each pass halves the number of
 blocks and doubles the length of each, trading a doubling of where for a doubling of which
@@ -536,7 +536,7 @@ each of them a line like the one above, so there are $2 \log_2 512 = 18$ passes 
 Each pass is the joining step above. One thread on the GPU takes one pair of numbers
 and writes out the two they combine to. The passes alternate between two arrays, each one
 reading the last one's result and writing into the other, so the numbers come out in order
-without a separate shuffle. This form is named for Stockham, and the whole of it is in
+without a separate shuffle. This form is named for Stockham and the whole of it is in
 `lib/fft.js`. All 262,144 numbers go through each pass at once. The slider stops after the
 first few passes and shows whichever array has the half-finished result.
 

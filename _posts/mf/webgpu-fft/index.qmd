@@ -487,23 +487,23 @@ The brightness along the middle row of the pattern, for the **One slit** and **T
 holes. The solid line is what the transform gives and the dashed line is last time's
 formula for the pattern behind a slit: a hump from the width of the slit and, for two,
 fringes from the gap between them. They are the same thing. The formula was the Fourier
-transform of a slit, worked out by hand, and here the computer has done it for every point
+transform of a slit worked out by hand and here the computer has done it for every point
 at once. It stops matching as soon as you paint on the hole.
 
 ## A sum of ripples
 
-In 1822 Joseph Fourier published his book on how heat flows, and in it the claim that any
+In 1822 Joseph Fourier published his book on how heat flows. In it was the claim that any
 pattern along a line can be built by adding sine waves of different sizes. A picture is a
 pattern along two lines at once, so it can be built from ripples: waves that run across it
 in some direction with some number of crests.
 
 To find how much of one ripple a hole contains you multiply the hole by the ripple, cell by
-cell, and add up. That sum is one point of the pattern:
+cell and add up. That sum is one point of the pattern:
 
 $$F(k_x, k_y) = \sum_{x, y} h(x, y) \, e^{-2\pi i (k_x x + k_y y) / N}.$$
 
 Here $h$ is 1 where the hole is open and 0 where it is wall. The exponential is the ripple,
-with $k_x$ crests across the hole sideways and $k_y$ up and down, and $N$ is 512. The
+with $k_x$ crests across the hole sideways and $k_y$ up and down and $N$ is 512. The
 brightness of the point is $|F|^2$. It is the sum you watch when you point at the pattern.
 Where the ripple puts a crest on every open part of the hole the terms all add and the sum
 is large. Where it puts crests on some and troughs on others they cancel.
@@ -512,7 +512,7 @@ is large. Where it puts crests on some and troughs on others they cancel.
 
 The page works out that sum by hand for the one ripple you point at, a loop over the open
 cells of the hole. For the whole pattern it would need a sum for every ripple. The GPU
-does that for all 262,144 of them at once by a shortcut, and we'll find out how later.
+does that for all 262,144 of them at once by a shortcut. We'll find out how later.
 The readout under the canvas is how long it takes on this machine, measured when the page
 loaded.
 
