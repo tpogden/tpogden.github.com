@@ -71,14 +71,14 @@ mountaineering and kayaking when I get chance.
 
 ## Notes
 
-#### Research, Engineering
-
-:::{#research-listing}
-:::
-
 #### Moving Figures
 
 :::{#mf-listing}
+:::
+
+#### Research, Engineering
+
+:::{#research-listing}
 :::
 
 #### Photos, Travel
