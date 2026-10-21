@@ -2,6 +2,7 @@
 title: "007: Is Energy Conserved?"
 date: "2026-10-12"
 categories: [mf]
+description: "Reading numbers back from the GPU to plot energy and ask whether it is conserved."
 page-layout: article
 listing:
   - id: mf-series

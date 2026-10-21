@@ -2,6 +2,7 @@
 title: "017: Melting a Magnet"
 date: "2026-10-15"
 categories: [mf]
+description: "A toy magnet that stops being a magnet when it gets hot."
 page-layout: article
 listing:
   - id: mf-series

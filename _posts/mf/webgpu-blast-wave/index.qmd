@@ -2,6 +2,7 @@
 title: "012: Blast Wave"
 date: "2026-10-13"
 categories: [mf]
+description: "A hundred hot atoms at the centre of a gas launch an expanding shock ring."
 page-layout: article
 listing:
   - id: mf-series

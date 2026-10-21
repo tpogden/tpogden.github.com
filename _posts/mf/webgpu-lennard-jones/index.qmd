@@ -2,6 +2,7 @@
 title: "005: Jiggling Atoms"
 date: "2026-10-12"
 categories: [mf]
+description: "Particles that push and pull on each other through the Lennard-Jones potential."
 page-layout: article
 listing:
   - id: mf-series

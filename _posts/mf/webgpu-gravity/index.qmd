@@ -2,6 +2,7 @@
 title: "006: Falling Atoms"
 date: "2026-10-12"
 categories: [mf]
+description: "A box with a floor and a ceiling and gravity pulling every atom down."
 page-layout: article
 listing:
   - id: mf-series

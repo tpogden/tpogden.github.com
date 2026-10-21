@@ -2,6 +2,7 @@
 title: "002: Animation Loop"
 date: "2026-10-11"
 categories: [mf]
+description: "Fifty pulsing particles drawn by instancing with a storage buffer and a uniform buffer."
 page-layout: article
 listing:
   - id: mf-series

@@ -2,6 +2,7 @@
 title: "015: Lost in the Corners"
 date: "2026-10-15"
 categories: [mf]
+description: "Darts measuring the volume of a ball in higher dimensions and missing nearly every time."
 page-layout: article
 listing:
   - id: mf-series

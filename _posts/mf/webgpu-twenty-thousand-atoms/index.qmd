@@ -2,6 +2,7 @@
 title: "010: Twenty Thousand Atoms"
 date: "2026-10-13"
 categories: [mf]
+description: "Ten times more atoms than before and the things that only appear at that scale."
 page-layout: article
 listing:
   - id: mf-series

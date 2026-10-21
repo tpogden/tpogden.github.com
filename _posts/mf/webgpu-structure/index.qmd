@@ -2,6 +2,7 @@
 title: "008: Solid, Liquid, Gas"
 date: "2026-10-13"
 categories: [mf]
+description: "A stretched crystal that breaks apart and settles into solid and liquid and gas."
 page-layout: article
 listing:
   - id: mf-series

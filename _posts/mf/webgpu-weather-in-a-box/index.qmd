@@ -2,6 +2,7 @@
 title: "011: Weather in a Box"
 date: "2026-10-13"
 categories: [mf]
+description: "A heated and cooled box of atoms that develops its own weather."
 page-layout: article
 listing:
   - id: mf-series

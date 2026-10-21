@@ -2,6 +2,7 @@
 title: "004: Compute Shader"
 date: "2026-10-12"
 categories: [mf]
+description: "The same simulation moved onto the GPU as a compute shader."
 page-layout: article
 listing:
   - id: mf-series
