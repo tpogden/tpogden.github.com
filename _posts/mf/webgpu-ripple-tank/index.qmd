@@ -2,6 +2,7 @@
 title: "018: Skimming Stones"
 date: "2026-10-18"
 categories: [mf]
+description: "A ripple tank on the GPU with a paddle making waves that spread and reflect."
 page-layout: article
 listing:
   - id: mf-series

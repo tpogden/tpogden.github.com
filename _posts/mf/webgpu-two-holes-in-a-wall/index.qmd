@@ -2,6 +2,7 @@
 title: "019: Hole in the Wall"
 date: "2026-10-18"
 categories: [mf]
+description: "A plane wave meets a wall with one slit or two and interference appears."
 page-layout: article
 listing:
   - id: mf-series

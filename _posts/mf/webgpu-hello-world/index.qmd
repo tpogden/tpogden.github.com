@@ -2,6 +2,7 @@
 title: "000: Hello GPU"
 date: "2026-10-11"
 categories: [mf]
+description: "Clearing a canvas to a colour with WebGPU: an adapter, a device and a render pass."
 page-layout: article
 listing:
   - id: mf-series

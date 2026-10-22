@@ -2,6 +2,7 @@
 title: "001: Three Particles"
 date: "2026-10-11"
 categories: [mf]
+description: "Three points on the canvas from a GPU buffer, a shader module and a render pipeline."
 page-layout: article
 listing:
   - id: mf-series

@@ -4,6 +4,8 @@ listing:
   - id: research-listing
     contents: "*/index.qmd"
     type: default
+    feed:
+      type: partial
     categories: false
     include:
       categories: "research"
@@ -13,6 +15,8 @@ listing:
   - id: mf-listing
     contents: "*/index.qmd"
     type: default
+    feed:
+      type: partial
     categories: false
     include:
       categories: "mf"
@@ -22,6 +26,8 @@ listing:
   - id: books-listing
     contents: "*/index.qmd"
     type: default
+    feed:
+      type: partial
     categories: false
     include:
       categories: "reading"
@@ -31,6 +37,8 @@ listing:
   - id: travel-listing
     contents: "*/index.qmd"
     type: default
+    feed:
+      type: partial
     categories: false
     include:
       categories: "travel"
@@ -40,6 +48,8 @@ listing:
   - id: personal-listing
     contents: "*/index.qmd"
     type: default
+    feed:
+      type: partial
     categories: false
     include:
       categories: "personal"

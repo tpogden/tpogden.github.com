@@ -2,6 +2,7 @@
 title: "020: A Step too Far"
 date: "2026-10-18"
 categories: [mf]
+description: "Why the time step of a wave simulation cannot be too large."
 page-layout: article
 listing:
   - id: mf-series

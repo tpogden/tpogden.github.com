@@ -17,6 +17,7 @@ website:
     background: light
   site-url: https://ogden.eu
   page-footer:
+    left: "[RSS](/index.xml)"
     right:
       _'Think deeply of simple things.'_
     border: false

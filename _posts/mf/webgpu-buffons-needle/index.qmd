@@ -2,6 +2,7 @@
 title: "013: Dropping Sticks Again"
 date: "2026-10-13"
 categories: [mf]
+description: "Estimating π by dropping sticks on a board of lines with a graphics card."
 page-layout: article
 listing:
   - id: mf-series

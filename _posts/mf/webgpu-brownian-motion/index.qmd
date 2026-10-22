@@ -2,6 +2,7 @@
 title: "009: Brownian Motion"
 date: "2026-10-13"
 categories: [mf]
+description: "One big particle kicked about by thousands of small atoms."
 page-layout: article
 listing:
   - id: mf-series

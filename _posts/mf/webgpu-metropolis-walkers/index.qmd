@@ -2,6 +2,7 @@
 title: "016: Running Up That Hill (A Deal with Metropolis)"
 date: "2026-10-15"
 categories: [mf]
+description: "Random walkers that feel the ground and climb towards likely places."
 page-layout: article
 listing:
   - id: mf-series

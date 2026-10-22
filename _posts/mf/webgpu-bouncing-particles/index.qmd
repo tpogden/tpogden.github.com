@@ -2,6 +2,7 @@
 title: "003: Bouncing Particles"
 date: "2026-10-12"
 categories: [mf]
+description: "Particles with velocities that bounce off the walls on a fixed timestep."
 page-layout: article
 listing:
   - id: mf-series

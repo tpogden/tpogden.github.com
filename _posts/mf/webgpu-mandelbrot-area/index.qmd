@@ -2,6 +2,7 @@
 title: "014: Throwing Darts at a Fractal"
 date: "2026-10-14"
 categories: [mf]
+description: "Throwing random darts at a box to measure the area of the Mandelbrot set."
 page-layout: article
 listing:
   - id: mf-series
