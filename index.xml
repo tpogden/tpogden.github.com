@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
+      xmlns:media="http://search.yahoo.com/mrss/" 
+      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+      version="2.0">
+<channel>
+<title>Thomas Ogden</title>
+<link>https://ogden.eu/</link>
+<atom:link href="https://ogden.eu/index.xml" rel="self" type="application/rss+xml"/>
+<description></description>
+<image>
+<url>https://ogden.eu/glen-coe-004.jpg</url>
+<title>Thomas Ogden</title>
+<link>https://ogden.eu/</link>
+</image>
+<generator>quarto-1.10.19</generator>
+<lastBuildDate>Sun, 18 Oct 2026 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>020: A Step too Far</title>
+  <link>https://ogden.eu/webgpu-courant-number/</link>
+  <description><![CDATA[ Why the time step of a wave simulation cannot be too large. ]]></description>
+  <category>mf</category>
+  <guid>https://ogden.eu/webgpu-courant-number/</guid>
+  <pubDate>Sun, 18 Oct 2026 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>019: Hole in the Wall</title>
+  <link>https://ogden.eu/webgpu-two-holes-in-a-wall/</link>
+  <description><![CDATA[ A plane wave meets a wall with one slit or two and interference appears. ]]></description>
+  <category>mf</category>
+  <guid>https://ogden.eu/webgpu-two-holes-in-a-wall/</guid>
+  <pubDate>Sun, 18 Oct 2026 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>018: Skimming Stones</title>
+  <link>https://ogden.eu/webgpu-ripple-tank/</link>
+  <description><![CDATA[ A ripple tank on the GPU with a paddle making waves that spread and reflect. ]]></description>
+  <category>mf</category>
+  <guid>https://ogden.eu/webgpu-ripple-tank/</guid>
+  <pubDate>Sun, 18 Oct 2026 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>017: Melting a Magnet</title>
+  <link>https://ogden.eu/webgpu-ising-model/</link>
+  <description><![CDATA[ A toy magnet that stops being a magnet when it gets hot. ]]></description>
+  <category>mf</category>
+  <guid>https://ogden.eu/webgpu-ising-model/</guid>
+  <pubDate>Thu, 15 Oct 2026 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>016: Running Up That Hill (A Deal with Metropolis)</title>
+  <link>https://ogden.eu/webgpu-metropolis-walkers/</link>
+  <description><![CDATA[ Random walkers that feel the ground and climb towards likely places. ]]></description>
+  <category>mf</category>
+  <guid>https://ogden.eu/webgpu-metropolis-walkers/</guid>
+  <pubDate>Thu, 15 Oct 2026 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>015: Lost in the Corners</title>
+  <link>https://ogden.eu/webgpu-darts-in-many-dimensions/</link>
+  <description><![CDATA[ Darts measuring the volume of a ball in higher dimensions and missing nearly every time. ]]></description>
+  <category>mf</category>
+  <guid>https://ogden.eu/webgpu-darts-in-many-dimensions/</guid>
+  <pubDate>Thu, 15 Oct 2026 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>014: Throwing Darts at a Fractal</title>
+  <link>https://ogden.eu/webgpu-mandelbrot-area/</link>
+  <description><![CDATA[ Throwing random darts at a box to measure the area of the Mandelbrot set. ]]></description>
+  <category>mf</category>
+  <guid>https://ogden.eu/webgpu-mandelbrot-area/</guid>
+  <pubDate>Wed, 14 Oct 2026 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>013: Dropping Sticks Again</title>
+  <link>https://ogden.eu/webgpu-buffons-needle/</link>
+  <description><![CDATA[ Estimating π by dropping sticks on a board of lines with a graphics card. ]]></description>
+  <category>mf</category>
+  <guid>https://ogden.eu/webgpu-buffons-needle/</guid>
+  <pubDate>Tue, 13 Oct 2026 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>012: Blast Wave</title>
+  <link>https://ogden.eu/webgpu-blast-wave/</link>
+  <description><![CDATA[ A hundred hot atoms at the centre of a gas launch an expanding shock ring. ]]></description>
+  <category>mf</category>
+  <guid>https://ogden.eu/webgpu-blast-wave/</guid>
+  <pubDate>Tue, 13 Oct 2026 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>011: Weather in a Box</title>
+  <link>https://ogden.eu/webgpu-weather-in-a-box/</link>
+  <description><![CDATA[ A heated and cooled box of atoms that develops its own weather. ]]></description>
+  <category>mf</category>
+  <guid>https://ogden.eu/webgpu-weather-in-a-box/</guid>
+  <pubDate>Tue, 13 Oct 2026 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>010: Twenty Thousand Atoms</title>
+  <link>https://ogden.eu/webgpu-twenty-thousand-atoms/</link>
+  <description><![CDATA[ Ten times more atoms than before and the things that only appear at that scale. ]]></description>
+  <category>mf</category>
+  <guid>https://ogden.eu/webgpu-twenty-thousand-atoms/</guid>
+  <pubDate>Tue, 13 Oct 2026 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>009: Brownian Motion</title>
+  <link>https://ogden.eu/webgpu-brownian-motion/</link>
+  <description><![CDATA[ One big particle kicked about by thousands of small atoms. ]]></description>
+  <category>mf</category>
+  <guid>https://ogden.eu/webgpu-brownian-motion/</guid>
+  <pubDate>Tue, 13 Oct 2026 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>008: Solid, Liquid, Gas</title>
+  <link>https://ogden.eu/webgpu-structure/</link>
+  <description><![CDATA[ A stretched crystal that breaks apart and settles into solid and liquid and gas. ]]></description>
+  <category>mf</category>
+  <guid>https://ogden.eu/webgpu-structure/</guid>
+  <pubDate>Tue, 13 Oct 2026 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>007: Is Energy Conserved?</title>
+  <link>https://ogden.eu/webgpu-reading-back/</link>
+  <description><![CDATA[ Reading numbers back from the GPU to plot energy and ask whether it is conserved. ]]></description>
+  <category>mf</category>
+  <guid>https://ogden.eu/webgpu-reading-back/</guid>
+  <pubDate>Mon, 12 Oct 2026 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>006: Falling Atoms</title>
+  <link>https://ogden.eu/webgpu-gravity/</link>
+  <description><![CDATA[ A box with a floor and a ceiling and gravity pulling every atom down. ]]></description>
+  <category>mf</category>
+  <guid>https://ogden.eu/webgpu-gravity/</guid>
+  <pubDate>Mon, 12 Oct 2026 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>005: Jiggling Atoms</title>
+  <link>https://ogden.eu/webgpu-lennard-jones/</link>
+  <description><![CDATA[ Particles that push and pull on each other through the Lennard-Jones potential. ]]></description>
+  <category>mf</category>
+  <guid>https://ogden.eu/webgpu-lennard-jones/</guid>
+  <pubDate>Mon, 12 Oct 2026 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>004: Compute Shader</title>
+  <link>https://ogden.eu/webgpu-compute-shader/</link>
+  <description><![CDATA[ The same simulation moved onto the GPU as a compute shader. ]]></description>
+  <category>mf</category>
+  <guid>https://ogden.eu/webgpu-compute-shader/</guid>
+  <pubDate>Mon, 12 Oct 2026 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>003: Bouncing Particles</title>
+  <link>https://ogden.eu/webgpu-bouncing-particles/</link>
+  <description><![CDATA[ Particles with velocities that bounce off the walls on a fixed timestep. ]]></description>
+  <category>mf</category>
+  <guid>https://ogden.eu/webgpu-bouncing-particles/</guid>
+  <pubDate>Mon, 12 Oct 2026 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>002: Animation Loop</title>
+  <link>https://ogden.eu/webgpu-animation-loop/</link>
+  <description><![CDATA[ Fifty pulsing particles drawn by instancing with a storage buffer and a uniform buffer. ]]></description>
+  <category>mf</category>
+  <guid>https://ogden.eu/webgpu-animation-loop/</guid>
+  <pubDate>Sun, 11 Oct 2026 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>001: Three Particles</title>
+  <link>https://ogden.eu/webgpu-three-particles/</link>
+  <description><![CDATA[ Three points on the canvas from a GPU buffer, a shader module and a render pipeline. ]]></description>
+  <category>mf</category>
+  <guid>https://ogden.eu/webgpu-three-particles/</guid>
+  <pubDate>Sun, 11 Oct 2026 00:00:00 GMT</pubDate>
+</item>
+</channel>
+</rss>
