@@ -76,7 +76,7 @@ Difficulty: S = a weekend, M = a week, L = a big build. "GPU" says whether the s
 
 ### T1. Cooley & Tukey (1965), FFT
 
-**Status: done as 021 "Fourier's Window" (the Fourier transform) and 022 "The Shortcut" (the algorithm, with the Trefethen no. 1 callout).** The Gauss, Garwin and Cooley story is now sourced: Heideman, Johnson & Burrus (1984) for Gauss (about 1805, Pallas and Juno, unpublished in his lifetime), and the IEEE milestone page for the 1963 meeting of Kennedy's science advisory committee. The Garwin story rests on those secondary accounts, not on Cooley's own retrospective.
+**Status: done as 021 "Fourier's Window" (the Fourier transform) and 022 "The Fast Fourier Transform" (the algorithm, with the Trefethen no. 1 callout).** The Gauss, Garwin and Cooley story is now sourced: Heideman, Johnson & Burrus (1984) for Gauss (about 1805, Pallas and Juno, unpublished in his lifetime), and the IEEE milestone page for the 1963 meeting of Kennedy's science advisory committee. The Garwin story rests on those secondary accounts, not on Cooley's own retrospective.
 
 *Math. Comp.* 19, 297 to 301.
 

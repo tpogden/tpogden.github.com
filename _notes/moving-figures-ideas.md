@@ -99,7 +99,7 @@ Source: <https://web.stanford.edu/class/cme324/classics/>. The list is numerical
 
 | # | Paper | Topic | GPU and visual fit | Post idea |
 |---|---|---|---|---|
-| 1 | Cooley & Tukey 1965 | FFT | strong | Done in two posts: 021 Fourier's Window (paint a hole, hover a point to see its ripple) and 022 The Shortcut (a Pass slider steps through the 18 passes, the cost chart with the GPU line). `lib/fft.js` is the shared 2D FFT for ship wakes, D and the NLSE |
+| 1 | Cooley & Tukey 1965 | FFT | strong | Done in two posts: 021 Fourier's Window (paint a gap, hover a point to see its ripple) and 022 The Fast Fourier Transform (a Pass slider steps through the 18 passes, the cost chart with the GPU line). `lib/fft.js` is the shared 2D FFT for ship wakes, D and the NLSE |
 | 2 | Courant, Friedrichs & Lewy 1928 | finite differences, stability | strong | Done: 020 A Step too Far |
 | 3 | Householder 1958 | QR | weak | Possible: Gram-Schmidt vs Householder loss of orthogonality, shown as a drifting basis |
 | 4 | Curtiss & Hirschfelder 1952 | stiff ODEs | medium | A stiff chemical oscillator: explicit steps shatter, implicit ones do not |

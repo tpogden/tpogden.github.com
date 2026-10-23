@@ -1,5 +1,5 @@
 ---
-title: "022: The Shortcut"
+title: "022: The Fast Fourier Transform"
 date: "2026-10-19"
 categories: [mf]
 page-layout: article
