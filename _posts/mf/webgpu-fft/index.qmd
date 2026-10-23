@@ -495,7 +495,6 @@ viewof shape = {
 
 ```{ojs}
 //| echo: false
-//| column: page
 charts = {
   // An empty host; the simulation cell above draws into it as data arrives
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
@@ -503,12 +502,14 @@ charts = {
 }
 ```
 
+::: {.mf-caption}
 The brightness along the middle row of the pattern, for the **One slit** and **Two slits**
 gaps. The solid line is what the transform gives and the dashed line is last time's
 formula for the pattern behind a slit: a hump from the width of the slit and, for two,
 fringes from the space between them. They are the same thing. The formula was the Fourier
 transform of a slit worked out by hand and here the computer has done it for every point
 at once. It stops matching as soon as you paint on the gap.
+:::
 
 ## A sum of ripples
 
