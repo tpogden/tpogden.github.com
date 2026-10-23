@@ -37,10 +37,12 @@ the pattern follows.
 Each point in the pattern stands for one ripple. Where it is says how many crests of the
 ripple fit across the hole and which way they run. How bright it is says how well the hole
 lines up with the ripple. **Move the mouse over the pattern** and the ripple for that
-point sweeps across the hole, red for the crests and blue for the troughs. At a bright point
-the crests reach every open part of the hole together, so the open parts flash red and
-blue in step and the sum swings far. At a dark point some open parts are on crests while
-others are on troughs, they cancel and the sum stays near zero.
+point appears on the hole, red for the crests and blue for the troughs. It is not a wave
+arriving at the wall. It is a test pattern, the thing the hole is being compared with, and
+it pulses in place so that the crests and troughs swap. At a bright point the crests
+reach every open part of the hole together, so the open parts flash red and blue in step
+and the sum swings far. At a dark point some open parts are on crests while others are on
+troughs, they cancel and the sum stays near zero.
 
 Try these:
 
@@ -177,10 +179,10 @@ viewof shape = {
         area: f32,    // how much of the hole is open: the brightest the pattern can be is area squared
         kx: f32,      // the ripple picked out: how many fit across the hole sideways
         ky: f32,      // and up and down
-        phase: f32,   // moves on with time, so that the ripple travels across the hole
+        phase: f32,   // where its crests sit: on the first open cell of the hole
         pickX: f32,   // where it is in the pattern, in cells
         pickY: f32,
-        pad0: f32,
+        pulse: f32,   // swings between 1 and -1 with time, so that crests and troughs swap
         pad1: f32,
       }
 
@@ -216,7 +218,7 @@ viewof shape = {
         if (in.uv.x < 0.5) {
           let x = min(u32(in.uv.x * 2.0 * f32(n)), n - 1u);
           let open = hole[y * n + x];
-          let ripple = cos(6.283185 * (params.kx * f32(x) + params.ky * f32(y)) / f32(n) + params.phase);
+          let ripple = params.pulse * cos(6.283185 * (params.kx * f32(x) + params.ky * f32(y)) / f32(n) + params.phase);
           let tint = select(trough, crest, ripple > 0.0);
           let shut = mix(vec3f(0.10), tint, 0.12 * abs(ripple));
           let through = mix(vec3f(0.92), tint, abs(ripple));
@@ -262,20 +264,24 @@ viewof shape = {
   // once. Here it is done for just the one picked, to show it on the hole
   let pick = { kx: 11, ky: 0 }; // starts on the first bright fringe of the two slits
   let brightness = 0; // how much of the ripple the hole holds, relative to the most it could
+  let anchor = 0; // puts a crest of the ripple on the first open cell of the hole
   function updateRipple() {
     let re = 0;
     let im = 0;
+    let first = null;
     const w = (2 * Math.PI) / N;
     for (let y = 0; y < N; y++) {
       for (let x = 0; x < N; x++) {
         if (mask[y * N + x]) {
+          first ??= [x, y];
           const angle = w * (pick.kx * x + pick.ky * y);
           re += Math.cos(angle);
           im -= Math.sin(angle);
         }
       }
     }
-    // The size of the sum is how bright the point is. As the ripple moves across the hole
+    anchor = first ? -w * (pick.kx * first[0] + pick.ky * first[1]) : 0;
+    // The size of the sum is how bright the point is. As the ripple pulses on the hole
     // the sum swings up and down by that much
     brightness = (re * re + im * im) / Math.max(area * area, 1);
     rippleReadout.textContent =
@@ -435,12 +441,12 @@ viewof shape = {
       needRipple = false;
       updateRipple();
     }
-    // The ripple travels across the hole a little each frame
+    // The ripple stays where it is and pulses: crests turn to troughs and back
     const centre = N / 2 + 0.5;
     device.queue.writeBuffer(
       paramBuffer,
       0,
-      new Float32Array([area, pick.kx, pick.ky, -ms / 400, pick.kx + centre, pick.ky + centre, 0, 0]),
+      new Float32Array([area, pick.kx, pick.ky, anchor, pick.kx + centre, pick.ky + centre, Math.cos(ms / 350), 0]),
     );
     if (needRead && !readback.pending) {
       readback.copy(encoder);
