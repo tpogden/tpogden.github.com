@@ -469,7 +469,6 @@ viewof passNumber = {
 
 ```{ojs}
 //| echo: false
-//| column: page
 charts = {
   // An empty host; the simulation cell above draws into it as data arrives
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
@@ -477,6 +476,7 @@ charts = {
 }
 ```
 
+::: {.mf-caption}
 How long a transform takes, measured in this browser. The red and grey lines are a line of
 numbers on the CPU. By the definition the time grows as the square of the length: twice as
 many numbers take four times as long. The fast method takes barely more than twice as long.
@@ -488,6 +488,7 @@ The blue line is the GPU, which transforms a whole picture at once. A 512 by 512
 is 262,144 numbers, 128 times as many as a line of two thousand. Compare its time with the
 CPU's for that line: it is nowhere near 128 times longer. At the small sizes the blue line
 sits above the others, since getting the work started costs more than the work.
+:::
 
 ## Gauss and a Cold War
 
