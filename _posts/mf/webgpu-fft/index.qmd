@@ -14,33 +14,33 @@ listing:
     sort: "title asc"
 ---
 
-[Last time](../webgpu-two-holes-in-a-wall/) a wave went through a hole in a wall and made a
+[Last time](../webgpu-two-holes-in-a-wall/) a wave went through a gap in a wall and made a
 pattern on the far wall. A single slit made a broad hump. Two slits made fringes. It
-looked as if each hole had its own pattern and each one needed working out.
+looked as if each gap had its own pattern and each one needed working out.
 
-They are all one rule. The pattern a long way behind a hole is the _Fourier transform_ of
-the hole. A Fourier transform takes a picture and says how much of each ripple it is made
-of: a few broad ripples and a few fine ones, in every direction. A hole is a picture too,
-open where the wave gets through and shut where it does not. The wave leaves the hole in
-all directions and each direction sees a different ripple of the hole.
+They are all one rule. The pattern a long way behind a gap is the _Fourier transform_ of
+the gap. A Fourier transform takes a picture and says how much of each ripple it is made
+of: a few broad ripples and a few fine ones, in every direction. A gap is a picture too,
+open where the wave gets through and shut where it does not. The wave leaves the gap in
+all directions and each direction sees a different ripple of the gap.
 
 The picture has changed from last time. Then we looked down on the tank from above and the
 wall was a line with gaps in it. Now we look at the wall head-on, as a wave coming towards
-us would see it. The wall is a flat sheet and the hole is a shape cut out of it. The slits
+us would see it. The wall is a flat sheet and the gap is a shape cut out of it. The slits
 are tall bars and the pattern falls on a flat screen a long way behind, so it spreads in two
 directions and not one.
 
-On the left below is the hole in the wall, white where it is open. On the right is the
-pattern on the screen, brightest in the middle. **Paint on the hole with the mouse** and
+On the left below is the gap in the wall, white where it is open. On the right is the
+pattern on the screen, brightest in the middle. **Paint on the gap with the mouse** and
 the pattern follows.
 
 Each point in the pattern stands for one ripple. Where it is says how many crests of the
-ripple fit across the hole and which way they run. How bright it is says how well the hole
+ripple fit across the gap and which way they run. How bright it is says how well the gap
 lines up with the ripple. **Move the mouse over the pattern** and the ripple for that
-point appears on the hole, red for the crests and blue for the troughs. It is not a wave
-arriving at the wall. It is a test pattern, the thing the hole is being compared with, and
+point appears on the gap, red for the crests and blue for the troughs. It is not a wave
+arriving at the wall. It is a test pattern, the thing the gap is being compared with, and
 it pulses in place so that the crests and troughs swap. At a bright point the crests
-reach every open part of the hole together, so the open parts flash red and blue in step
+reach every open part of the gap together, so the open parts flash red and blue in step
 and the sum swings far. At a dark point some open parts are on crests while others are on
 troughs, they cancel and the sum stays near zero.
 
@@ -49,11 +49,11 @@ Try these:
 - _Two slits._ The same fringes as last time, now with the rest of the pattern. The slits
   are tall and narrow, so the pattern is spread sideways and squeezed up and down. Move the
   mouse to a bright fringe and both slits flash red and blue together. Move it to the dark
-  gap between and one slit is red while the other is blue.
-- _Paint over half of one slit,_ or make a slit fatter. Whatever gets bigger in the hole
-  gets smaller in the pattern. A wide hole makes a tight pattern and a narrow one a broad
+  band between and one slit is red while the other is blue.
+- _Paint over half of one slit,_ or make a slit fatter. Whatever gets bigger in the gap
+  gets smaller in the pattern. A wide gap makes a tight pattern and a narrow one a broad
   pattern.
-- _Circle._ A round hole makes rings. It is how a telescope blurs a star.
+- _Circle._ A round gap makes rings. It is how a telescope blurs a star.
 - _Grating._ Five slits instead of two. The fringes get sharper.
 - _Clear,_ then draw anything you like.
 
@@ -63,7 +63,7 @@ Try these:
 viewof shape = {
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
   return ui.segmented({
-    label: "Hole",
+    label: "Gap",
     options: [
       ["one", "One slit"],
       ["two", "Two slits"],
@@ -92,7 +92,7 @@ viewof shape = {
   const shapeInput = viewof shape;
   const brush = 6; // radius of the brush, in cells
 
-  // The hole on the left and the pattern on the right, each 512 by 512 cells
+  // The gap on the left and the pattern on the right, each 512 by 512 cells
   const N = 512;
   const { canvas, device, context, format } = await gpu.setup({
     width: 1024,
@@ -101,12 +101,12 @@ viewof shape = {
   });
   canvas.style.touchAction = "none";
 
-  // The hole: 1 where it is open and 0 where it is wall, kept here and copied across
+  // The gap: 1 where it is open and 0 where it is wall, kept here and copied across
   const mask = new Float32Array(N * N);
   let area = 0; // how much of it is open
   let painted = false; // true once the shape has been changed by hand
-  let dirty = true; // the hole has changed since the pattern was made
-  let needRipple = true; // the ripple shown on the hole has to be worked out again
+  let dirty = true; // the gap has changed since the pattern was made
+  let needRipple = true; // the ripple shown on the gap has to be worked out again
 
   // The slits are tall bars, 80 cells high, with their widths and spacings in cells
   const slitHeight = 80;
@@ -140,17 +140,17 @@ viewof shape = {
   const transform = fft.create(device, N);
   const maskBuffer = gpu.storageBuffer(device, mask);
 
-  // Copy the hole into the transform's input: real part from the hole, imaginary zero
+  // Copy the gap into the transform's input: real part from the gap, imaginary zero
   const loadModule = device.createShaderModule({
     code: `
-      @group(0) @binding(0) var<storage, read> hole: array<f32>;
+      @group(0) @binding(0) var<storage, read> gap: array<f32>;
       @group(0) @binding(1) var<storage, read_write> data: array<vec2f>;
 
       @compute @workgroup_size(16, 16)
       fn load(@builtin(global_invocation_id) id: vec3u) {
         if (id.x >= ${N}u || id.y >= ${N}u) { return; }
         let i = id.y * ${N}u + id.x;
-        data[i] = vec2f(hole[i], 0.0);
+        data[i] = vec2f(gap[i], 0.0);
       }
     `,
   });
@@ -175,10 +175,10 @@ viewof shape = {
   const showModule = device.createShaderModule({
     code: `
       struct Params {
-        area: f32,    // how much of the hole is open: the brightest the pattern can be is area squared
-        kx: f32,      // the ripple picked out: how many fit across the hole sideways
+        area: f32,    // how much of the gap is open: the brightest the pattern can be is area squared
+        kx: f32,      // the ripple picked out: how many fit across the gap sideways
         ky: f32,      // and up and down
-        phase: f32,   // where its crests sit: on the first open cell of the hole
+        phase: f32,   // where its crests sit: on the first open cell of the gap
         pickX: f32,   // where it is in the pattern, in cells
         pickY: f32,
         pulse: f32,   // swings between 1 and -1 with time, so that crests and troughs swap
@@ -186,7 +186,7 @@ viewof shape = {
       }
 
       @group(0) @binding(0) var<uniform> params: Params;
-      @group(0) @binding(1) var<storage, read> hole: array<f32>;
+      @group(0) @binding(1) var<storage, read> gap: array<f32>;
       @group(0) @binding(2) var<storage, read> spectrum: array<vec2f>;
 
       struct Out {
@@ -211,12 +211,12 @@ viewof shape = {
         let crest = vec3f(1.0, 0.282, 0.204);   // #FF4834
         let trough = vec3f(0.22, 0.60, 0.85);
 
-        // The hole, on the left, with the ripple picked out in the pattern laid over it:
-        // red where its crests fall and blue where its troughs do. Where the hole is open
+        // The gap, on the left, with the ripple picked out in the pattern laid over it:
+        // red where its crests fall and blue where its troughs do. Where the gap is open
         // the ripple shows in full and elsewhere only faintly
         if (in.uv.x < 0.5) {
           let x = min(u32(in.uv.x * 2.0 * f32(n)), n - 1u);
-          let open = hole[y * n + x];
+          let open = gap[y * n + x];
           let ripple = params.pulse * cos(6.283185 * (params.kx * f32(x) + params.ky * f32(y)) / f32(n) + params.phase);
           let tint = select(trough, crest, ripple > 0.0);
           let shut = mix(vec3f(0.10), tint, 0.12 * abs(ripple));
@@ -257,13 +257,13 @@ viewof shape = {
   });
 
   // ------------------------------------------------------------- picking a ripple
-  // A point in the pattern stands for one ripple: kx crests across the hole sideways and
-  // ky up and down. How much of it the hole contains is the sum, over the open cells, of
+  // A point in the pattern stands for one ripple: kx crests across the gap sideways and
+  // ky up and down. How much of it the gap contains is the sum, over the open cells, of
   // exp(-2 pi i (kx x + ky y) / N). The transform on the GPU does this for every ripple at
-  // once. Here it is done for just the one picked, to show it on the hole
+  // once. Here it is done for just the one picked, to show it on the gap
   let pick = { kx: 0, ky: 0 }; // the middle of the pattern, where the ripple is flat
-  let brightness = 0; // how much of the ripple the hole holds, relative to the most it could
-  let anchor = 0; // puts a crest of the ripple on the first open cell of the hole
+  let brightness = 0; // how much of the ripple the gap holds, relative to the most it could
+  let anchor = 0; // puts a crest of the ripple on the first open cell of the gap
   function updateRipple() {
     let re = 0;
     let im = 0;
@@ -280,7 +280,7 @@ viewof shape = {
       }
     }
     anchor = first ? -w * (pick.kx * first[0] + pick.ky * first[1]) : 0;
-    // The size of the sum is how bright the point is. As the ripple pulses on the hole
+    // The size of the sum is how bright the point is. As the ripple pulses on the gap
     // the sum swings up and down by that much
     brightness = (re * re + im * im) / Math.max(area * area, 1);
     rippleReadout.textContent =
@@ -288,7 +288,7 @@ viewof shape = {
   }
 
   // ------------------------------------------------------------------ painting
-  // Brush strokes go into the hole, on the left half of the canvas
+  // Brush strokes go into the gap, on the left half of the canvas
   let painting = false;
   let last = null;
   const place = (event) => {
@@ -386,7 +386,7 @@ viewof shape = {
   function drawRow() {
     draw(rowHost, {
       height: 220,
-      x: { label: "ripples across the hole (sideways in the pattern)", grid: true, domain: [-100, 100] },
+      x: { label: "ripples across the gap (sideways in the pattern)", grid: true, domain: [-100, 100] },
       y: { label: "brightness (relative to the centre)", grid: true, domain: [0, 1.02] },
       marks: [
         Plot.line(row, { x: "k", y: "I", stroke: "#FF4834" }),
@@ -407,7 +407,7 @@ viewof shape = {
 
   // How long a 512 by 512 transform takes on this GPU: a batch of them, timed, with the
   // first one thrown away. It overwrites the transform's data, so the pattern is made again
-  // afterwards (the hole starts out marked as changed)
+  // afterwards (the gap starts out marked as changed)
   async function benchmark() {
     const warm = device.createCommandEncoder();
     transform.encode(warm);
@@ -519,11 +519,11 @@ charts = {
 ```
 
 The brightness along the middle row of the pattern, for the **One slit** and **Two slits**
-holes. The solid line is what the transform gives and the dashed line is last time's
+gaps. The solid line is what the transform gives and the dashed line is last time's
 formula for the pattern behind a slit: a hump from the width of the slit and, for two,
-fringes from the gap between them. They are the same thing. The formula was the Fourier
+fringes from the space between them. They are the same thing. The formula was the Fourier
 transform of a slit worked out by hand and here the computer has done it for every point
-at once. It stops matching as soon as you paint on the hole.
+at once. It stops matching as soon as you paint on the gap.
 
 ## A sum of ripples
 
@@ -532,21 +532,21 @@ pattern along a line can be built by adding sine waves of different sizes. A pic
 pattern along two lines at once, so it can be built from ripples: waves that run across it
 in some direction with some number of crests.
 
-To find how much of one ripple a hole contains you multiply the hole by the ripple, cell by
+To find how much of one ripple a gap contains you multiply the gap by the ripple, cell by
 cell and add up. That sum is one point of the pattern:
 
 $$F(k_x, k_y) = \sum_{x, y} h(x, y) \, e^{-2\pi i (k_x x + k_y y) / N}.$$
 
-Here $h$ is 1 where the hole is open and 0 where it is wall. The exponential is the ripple,
-with $k_x$ crests across the hole sideways and $k_y$ up and down and $N$ is 512. The
+Here $h$ is 1 where the gap is open and 0 where it is wall. The exponential is the ripple,
+with $k_x$ crests across the gap sideways and $k_y$ up and down and $N$ is 512. The
 brightness of the point is $|F|^2$. It is the sum you watch when you point at the pattern.
-Where the ripple puts a crest on every open part of the hole the terms all add and the sum
+Where the ripple puts a crest on every open part of the gap the terms all add and the sum
 is large. Where it puts crests on some and troughs on others they cancel.
 
 ## How the computer does it
 
 The page works out that sum by hand for the one ripple you point at, a loop over the open
-cells of the hole. For the whole pattern it would need a sum for every ripple. The GPU
+cells of the gap. For the whole pattern it would need a sum for every ripple. The GPU
 does that for all 262,144 of them at once by a shortcut. We'll find out how later.
 The readout under the canvas is how long it takes on this machine, measured when the page
 loaded.
@@ -560,7 +560,7 @@ the array and the drawing shifts it by half to the middle.
 
 - Fourier, J. (1822), _Théorie analytique de la chaleur_ (Paris: Firmin Didot).
 - Adams, C. S. and Hughes, I. G. (2018), [_Optics f2f: From Fourier to Fresnel_](https://academic.oup.com/book/43688)
-  (Oxford University Press), for the pattern behind a hole as a Fourier transform.
+  (Oxford University Press), for the pattern behind a gap as a Fourier transform.
 
 ::: {.mf-series-bar}
 Moving Figures

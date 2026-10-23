@@ -15,16 +15,16 @@ listing:
 ---
 
 [Last time](../webgpu-fft/) every point in the pattern was a sum. To find how much of one
-ripple a hole contains you multiply the hole by the ripple, cell by cell and add up. The
-hole is 512 by 512 cells and the pattern has a point for each of 512 by 512 ripples. That is
+ripple a gap contains you multiply the gap by the ripple, cell by cell and add up. The
+gap is 512 by 512 cells and the pattern has a point for each of 512 by 512 ripples. That is
 a sum over 262,144 cells for each of 262,144 points, about 69 billion multiplications for
 one picture.
 
 The GPU does a picture in about a third of a millisecond. No GPU does 69 billion
 multiplications in that time, so it is not doing it that way. This post is how it does it.
 
-The hole is on the left below. On the right is the transform part-way through, the same
-brightness scale as last time. **Pass** is how far along it is: 0 is the hole itself and 18
+The gap is on the left below. On the right is the transform part-way through, the same
+brightness scale as last time. **Pass** is how far along it is: 0 is the gap itself and 18
 is the finished pattern. It runs by itself from 0 to 18 when the page loads. Drag **Pass**
 to take over.
 
@@ -33,9 +33,9 @@ Try these:
 - _Drag Pass slowly from 0 to 18._ Each pass joins pairs of small transforms into bigger
   ones. Part-way through, the picture is part where and part which ripple.
 - _Passes 1 to 9 work along the rows and 10 to 18 down the columns._ After 9 every row
-  of the hole has become its own pattern of fringes and the picture is a band. The last nine
+  of the gap has become its own pattern of fringes and the picture is a band. The last nine
   spread the band up and down.
-- _Try the Circle._ The same 18 passes on a different hole.
+- _Try the Circle._ The same 18 passes on a different gap.
 
 ```{ojs}
 //| echo: false
@@ -43,7 +43,7 @@ Try these:
 viewof shape = {
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
   return ui.segmented({
-    label: "Hole",
+    label: "Gap",
     options: [
       ["one", "One slit"],
       ["two", "Two slits"],
@@ -88,7 +88,7 @@ viewof passNumber = {
   const shapeInput = viewof shape;
   const passInput = viewof passNumber;
 
-  // The hole on the left and the transform on the right, each 512 by 512 cells
+  // The gap on the left and the transform on the right, each 512 by 512 cells
   const N = 512;
   const { canvas, device, context, format } = await gpu.setup({
     width: 1024,
@@ -96,7 +96,7 @@ viewof passNumber = {
     resolution: "auto",
   });
 
-  // The hole: 1 where it is open and 0 where it is wall
+  // The gap: 1 where it is open and 0 where it is wall
   const mask = new Float32Array(N * N);
   const maskBuffer = gpu.storageBuffer(device, mask);
 
@@ -129,19 +129,19 @@ viewof passNumber = {
   // ------------------------------------------------------------------- the transform
   const transform = fft.create(device, N);
 
-  // Copy the hole into the transform's input: real part from the hole, imaginary zero.
-  // The hole is put with its middle in the corner, so that the picture of the pattern
+  // Copy the gap into the transform's input: real part from the gap, imaginary zero.
+  // The gap is put with its middle in the corner, so that the picture of the pattern
   // can always be shifted by half to put its middle in the middle
   const loadModule = device.createShaderModule({
     code: `
-      @group(0) @binding(0) var<storage, read> hole: array<f32>;
+      @group(0) @binding(0) var<storage, read> gap: array<f32>;
       @group(0) @binding(1) var<storage, read_write> data: array<vec2f>;
 
       @compute @workgroup_size(16, 16)
       fn load(@builtin(global_invocation_id) id: vec3u) {
         if (id.x >= ${N}u || id.y >= ${N}u) { return; }
         let to = ((id.y + ${N / 2}u) % ${N}u) * ${N}u + (id.x + ${N / 2}u) % ${N}u;
-        data[to] = vec2f(hole[id.y * ${N}u + id.x], 0.0);
+        data[to] = vec2f(gap[id.y * ${N}u + id.x], 0.0);
       }
     `,
   });
@@ -195,7 +195,7 @@ viewof passNumber = {
   const cornerBuffer = gpu.unitSquare(device);
   const showModule = device.createShaderModule({
     code: `
-      @group(0) @binding(0) var<storage, read> hole: array<f32>;
+      @group(0) @binding(0) var<storage, read> gap: array<f32>;
       @group(0) @binding(1) var<storage, read> data: array<vec2f>;
       @group(0) @binding(2) var<storage, read> peak: array<u32>;
 
@@ -218,14 +218,14 @@ viewof passNumber = {
         let y = min(u32(in.uv.y * f32(n)), n - 1u);
         if (abs(in.uv.x - 0.5) < 0.0015) { return vec4f(0.5, 0.5, 0.5, 1.0); }
 
-        // The hole, on the left
+        // The gap, on the left
         if (in.uv.x < 0.5) {
           let x = min(u32(in.uv.x * 2.0 * f32(n)), n - 1u);
-          return vec4f(vec3f(mix(0.10, 0.92, hole[y * n + x])), 1.0);
+          return vec4f(vec3f(mix(0.10, 0.92, gap[y * n + x])), 1.0);
         }
 
         // The transform so far, on the right, shifted by half to put the middle of the
-        // hole in the middle, and shown on a log scale of four factors of ten below the
+        // gap in the middle, and shown on a log scale of four factors of ten below the
         // brightest cell
         let x = min(u32((in.uv.x - 0.5) * 2.0 * f32(n)), n - 1u);
         let v = data[((y + n / 2u) % n) * n + (x + n / 2u) % n];
@@ -399,7 +399,7 @@ viewof passNumber = {
   };
   on(shapeInput, () => shapeMask(shapeInput.value));
 
-  // It runs by itself from the hole to the pattern until the pass is taken over
+  // It runs by itself from the gap to the pattern until the pass is taken over
   let running = true;
   on(passInput, () => (running = false));
   let start = null;
@@ -407,7 +407,7 @@ viewof passNumber = {
 
   const describe = (p) =>
     p === 0
-      ? "the hole itself"
+      ? "the gap itself"
       : p < 9
         ? `along the rows, in blocks of ${2 ** p}`
         : p === 9
@@ -425,7 +425,7 @@ viewof passNumber = {
     const p = passInput.value;
     readout.textContent = `pass ${p}: ${describe(p)}`;
 
-    // Make the hole into the first array again and do the first p passes of the transform
+    // Make the gap into the first array again and do the first p passes of the transform
     device.queue.writeBuffer(peakBuffer, 0, new Uint32Array([0]));
     const encoder = device.createCommandEncoder();
     const load = encoder.beginComputePass();
@@ -473,7 +473,7 @@ charts = {
 How long a transform takes, measured in this browser. The red and grey lines are a line of
 numbers on the CPU. By the definition the time grows as the square of the length: twice as
 many numbers take four times as long. The fast method takes barely more than twice as long.
-At two thousand numbers it is already tens of times quicker and the gap keeps widening: for
+At two thousand numbers it is already tens of times quicker and the difference keeps widening: for
 a million numbers it would be about fifty thousand to one.
 
 The blue line is the GPU, which transforms a whole picture at once. A 512 by 512 picture
