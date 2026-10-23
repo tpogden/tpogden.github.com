@@ -15,7 +15,23 @@
 <link>https://ogden.eu/</link>
 </image>
 <generator>quarto-1.10.19</generator>
-<lastBuildDate>Sun, 18 Oct 2026 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Mon, 19 Oct 2026 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>022: The Fast Fourier Transform</title>
+  <link>https://ogden.eu/webgpu-fast-fourier-transform/</link>
+  <description><![CDATA[ 2026-10-19 ]]></description>
+  <category>mf</category>
+  <guid>https://ogden.eu/webgpu-fast-fourier-transform/</guid>
+  <pubDate>Mon, 19 Oct 2026 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>021: Fourier’s Window</title>
+  <link>https://ogden.eu/webgpu-fft/</link>
+  <description><![CDATA[ 2026-10-18 ]]></description>
+  <category>mf</category>
+  <guid>https://ogden.eu/webgpu-fft/</guid>
+  <pubDate>Sun, 18 Oct 2026 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>020: A Step too Far</title>
   <link>https://ogden.eu/webgpu-courant-number/</link>
@@ -159,22 +175,6 @@
   <category>mf</category>
   <guid>https://ogden.eu/webgpu-bouncing-particles/</guid>
   <pubDate>Mon, 12 Oct 2026 00:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>002: Animation Loop</title>
-  <link>https://ogden.eu/webgpu-animation-loop/</link>
-  <description><![CDATA[ Fifty pulsing particles drawn by instancing with a storage buffer and a uniform buffer. ]]></description>
-  <category>mf</category>
-  <guid>https://ogden.eu/webgpu-animation-loop/</guid>
-  <pubDate>Sun, 11 Oct 2026 00:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>001: Three Particles</title>
-  <link>https://ogden.eu/webgpu-three-particles/</link>
-  <description><![CDATA[ Three points on the canvas from a GPU buffer, a shader module and a render pipeline. ]]></description>
-  <category>mf</category>
-  <guid>https://ogden.eu/webgpu-three-particles/</guid>
-  <pubDate>Sun, 11 Oct 2026 00:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>
