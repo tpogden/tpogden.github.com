@@ -27,8 +27,8 @@ changes how finely time is cut up.
 
 Try these:
 
-- _Start at 0.50 and move it down._ Nothing you can see changes. The same waves in more and
-  smaller steps. Half the Courant number is twice the work for the same picture.
+- _Start at 0.50._ This is the value the earlier tanks used and the waves are clean. Smaller
+  values would look the same in more and smaller steps, so the slider does not go there.
 - _Move it up a little at a time._ The waves look fine for a while.
 - _Keep going._ At some point a fine red and blue checkerboard starts where the waves are made,
   spreads across the tank and grows without limit. It is not a rare accident or a bug in
@@ -41,7 +41,7 @@ viewof courant = {
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
   return ui.slider({
     label: "Courant number",
-    min: 0.2,
+    min: 0.5,
     max: 0.9,
     step: 0.01,
     value: 0.5,
@@ -161,14 +161,14 @@ viewof courant = {
     return b <= 2 ? 1 : (b + Math.sqrt(b * b - 4)) / 2;
   };
   const curve = Array.from({ length: 141 }, (_, k) => {
-    const C = 0.2 + (0.7 * k) / 140;
+    const C = 0.5 + (0.4 * k) / 140;
     return { C, g: theory(C) };
   });
 
   function drawChart() {
     draw(growthHost, {
       height: 240,
-      x: { label: "Courant number", grid: true, domain: [0.2, 0.9] },
+      x: { label: "Courant number", grid: true, domain: [0.5, 0.9] },
       y: { label: "growth in one step (times)", grid: true, type: "log", domain: [0.9, 6] },
       marks: [
         Plot.ruleX([1 / Math.SQRT2], { stroke: "currentColor", strokeOpacity: 0.3 }),
