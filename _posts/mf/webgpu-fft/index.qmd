@@ -24,8 +24,14 @@ of: a few broad ripples and a few fine ones, in every direction. A hole is a pic
 open where the wave gets through and shut where it does not. The wave leaves the hole in
 all directions and each direction sees a different ripple of the hole.
 
-On the left below is a hole in a wall, white where it is open. On the right is the pattern
-a long way behind it, brightest in the middle. **Paint on the hole with the mouse** and
+The picture has changed from last time. Then we looked down on the tank from above and the
+wall was a line with gaps in it. Now we look at the wall head-on, as a wave coming towards
+us would see it. The wall is a flat sheet and the hole is a shape cut out of it. The slits
+are tall bars and the pattern falls on a flat screen a long way behind, so it spreads in two
+directions and not one.
+
+On the left below is the hole in the wall, white where it is open. On the right is the
+pattern on the screen, brightest in the middle. **Paint on the hole with the mouse** and
 the pattern follows.
 
 Each point in the pattern stands for one ripple. Where it is says how many crests of the
