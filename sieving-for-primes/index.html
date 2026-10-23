@@ -84,9 +84,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-fdc9504aa9980169313e76520b292ebf.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-8c84e42240de7adff89c7e608b3a0d6a.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../site_libs/bootstrap/bootstrap-fdc9504aa9980169313e76520b292ebf.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-d519376a6bea5dc6332262399014858a.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-35d0e34e867d3dda94688c0b0891f172.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-d519376a6bea5dc6332262399014858a.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -413,7 +413,7 @@ window.Quarto = {
 <p>Our first approach is to iteratively build a list of primes up to a limit <span class="math inline">n</span>.</p>
 <p>When checking a number <span class="math inline">i</span> for primality, we only need to check prime factors, so we can check the list as we’re building it. Also, in checking if a number <span class="math inline">i</span> is prime, we only need to check for factors up to <span class="math inline">\sqrt{i}</span>.</p>
 <p>We’ll write a method that appends the next prime to an existing list of primes.</p>
-<div id="2541e6d7" class="cell" data-execution_count="1">
+<div id="eca7eabc" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> primes_next(primes):</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Take an ordered list of prime numbers and append the next</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">        prime.</span></span>
@@ -438,14 +438,14 @@ window.Quarto = {
 <span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>                <span class="cf">break</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>So for example, if we have the list <code>[2, 3, 5]</code> we expect to return <code>[2, 3, 5, 7]</code>.</p>
-<div id="a6c04357" class="cell" data-execution_count="2">
+<div id="9c1d8538" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(primes_next([<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">5</span>]))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[2, 3, 5, 7]</code></pre>
 </div>
 </div>
 <p>Now we repeat this until we get to <span class="math inline">n</span>.</p>
-<div id="d454388a" class="cell" data-execution_count="3">
+<div id="c18486bf" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> primes_iterative(n):</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">""" Build a list of the primes up to n iteratively. """</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -455,19 +455,19 @@ window.Quarto = {
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    p.pop() <span class="co">#&nbsp;Discard the last one.</span></span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> p</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="ff931f32" class="cell" data-execution_count="4">
+<div id="c7ed850e" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(primes_iterative(n<span class="op">=</span><span class="dv">20</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[2, 3, 5, 7, 11, 13, 17, 19]</code></pre>
 </div>
 </div>
 <p>We’ll compare the methods later by counting the number of primes up to <span class="math inline">n</span> each returns.</p>
-<div id="fa4a5720" class="cell" data-execution_count="5">
+<div id="b472c00b" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sol_a(n):</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">""" Count the number of primes up to n iteratively."""</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">len</span>(primes_iterative(n))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="144e12d4" class="cell" data-execution_count="6">
+<div id="25121779" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"The number of primes up to 1000 is </span><span class="sc">{0}</span><span class="st">."</span>.<span class="bu">format</span>(sol_a(n<span class="op">=</span><span class="dv">1000</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>The number of primes up to 1000 is 168.</code></pre>
@@ -477,7 +477,7 @@ window.Quarto = {
 <section id="solution-b-sieve-of-eratosthenes" class="level2">
 <h2 class="anchored" data-anchor-id="solution-b-sieve-of-eratosthenes">Solution B: Sieve of Eratosthenes</h2>
 <p>For the Sieve of Eratosthenes algorithm, we’ll use some helper functions. First we want a method to sieve out the multiples of a factor <span class="math inline">f</span>.</p>
-<div id="d6d8e7d8" class="cell" data-execution_count="7">
+<div id="a7396b67" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sieve_multiples(A, f):</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Set the primality of multiples of f to False.</span></span>
@@ -495,7 +495,7 @@ window.Quarto = {
 <span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>        A[i] <span class="op">=</span> <span class="va">False</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Note that we only need to sieve for factors greater than <span class="math inline">f^2</span>, as the smaller multiples will already have been discarded.</p>
-<div id="4cb5ae9c" class="cell" data-execution_count="8">
+<div id="df9fa3a6" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> [<span class="va">True</span>]<span class="op">*</span><span class="dv">10</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(A)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>sieve_multiples(A, <span class="dv">2</span>)</span>
@@ -508,19 +508,19 @@ window.Quarto = {
 </div>
 </div>
 <p>Next a couple of simple helper methods. One to get us the next <code>True</code> value in a boolean list.</p>
-<div id="7bc5708e" class="cell" data-execution_count="9">
+<div id="1f3b80fb" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> next_factor(A, start<span class="op">=</span><span class="dv">0</span>):</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Returns the next True index in A, after start."""</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">next</span>((i <span class="cf">for</span> i, a <span class="kw">in</span> <span class="bu">enumerate</span>(A[start:], start<span class="op">=</span>start) <span class="cf">if</span> a), <span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Another to return all the indexes of all remaining <code>True</code> values, shifted by 1. Once we’ve performed the sieve, this will represent the reminaing primes.</p>
-<div id="3e9a8078" class="cell" data-execution_count="10">
+<div id="a4668952" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> remaining(A):</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Returns the indexes of all remaining True values, shifted by 1."""</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> [i<span class="op">+</span><span class="dv">1</span> <span class="cf">for</span> i, a <span class="kw">in</span> <span class="bu">enumerate</span>(A) <span class="cf">if</span> a]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Now we’re ready to perform the sieve.</p>
-<div id="21addf61" class="cell" data-execution_count="11">
+<div id="84aaca69" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> primes_eratosthenes(n):</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">""" Build a list of the primes below n by the Sieve of Eratosthenes. """</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -540,19 +540,19 @@ window.Quarto = {
 <span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> primes</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="05acfa76" class="cell" data-execution_count="12">
+<div id="48ec5bd7" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(primes_eratosthenes(n<span class="op">=</span><span class="dv">20</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[2, 3, 5, 7, 11, 13, 17, 19]</code></pre>
 </div>
 </div>
 <p>Again we’ll write a count method to compare.</p>
-<div id="e45c493c" class="cell" data-execution_count="13">
+<div id="5378c255" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sol_b(n):</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">""" Count the number of primes up to n by the Sieve of Eratosthenes. """</span></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">len</span>(primes_eratosthenes(n))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="5c346a5e" class="cell" data-execution_count="14">
+<div id="49a1a5dc" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"The number of primes up to 1000 is </span><span class="sc">{0}</span><span class="st">."</span>.<span class="bu">format</span>(sol_b(n<span class="op">=</span><span class="dv">1000</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>The number of primes up to 1000 is 168.</code></pre>
@@ -562,7 +562,7 @@ window.Quarto = {
 <section id="compare-counts" class="level2">
 <h2 class="anchored" data-anchor-id="compare-counts">Compare Counts</h2>
 <p>To check the result of the methods against each other, we’ll try a few values of <span class="math inline">n</span>. The methods could both be wrong of course.</p>
-<div id="64e3e340" class="cell" data-execution_count="15">
+<div id="c03d451f" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> [<span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">17</span>, <span class="dv">20</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">1000</span>, <span class="dv">10000</span>, <span class="dv">100000</span>] <span class="co">#, 1000000]</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, n <span class="kw">in</span> <span class="bu">enumerate</span>(N):</span>
@@ -572,7 +572,7 @@ window.Quarto = {
 <section id="complexity-analysis" class="level2">
 <h2 class="anchored" data-anchor-id="complexity-analysis">Complexity Analysis</h2>
 <p>Finally, we’ll compare timings by solving the problem over a range of <span class="math inline">n</span> values.</p>
-<div id="49993bae" class="cell" data-execution_count="16">
+<div id="a76f96b0" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> [<span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">1000</span>, <span class="dv">10000</span>, <span class="dv">100000</span>] <span class="co">#, 1000000, 10000000]</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>sol_times_a <span class="op">=</span> [<span class="fl">0.0</span>]<span class="op">*</span><span class="bu">len</span>(N)</span>
@@ -585,23 +585,23 @@ window.Quarto = {
 <span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> <span class="op">%</span>timeit <span class="op">-</span>o sol_b(n)</span>
 <span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>    sol_times_b[i] <span class="op">=</span> result.best</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>524 ns ± 2.57 ns per loop (mean ± std. dev. of 7 runs, 1,000,000 loops each)
-1.32 μs ± 28.4 ns per loop (mean ± std. dev. of 7 runs, 1,000,000 loops each)
-1.27 μs ± 10.5 ns per loop (mean ± std. dev. of 7 runs, 1,000,000 loops each)
-2.07 μs ± 86.2 ns per loop (mean ± std. dev. of 7 runs, 100,000 loops each)
-3.46 μs ± 30.2 ns per loop (mean ± std. dev. of 7 runs, 100,000 loops each)
-3.37 μs ± 25.3 ns per loop (mean ± std. dev. of 7 runs, 100,000 loops each)
-7.13 μs ± 37.9 ns per loop (mean ± std. dev. of 7 runs, 100,000 loops each)
-4.59 μs ± 26.6 ns per loop (mean ± std. dev. of 7 runs, 100,000 loops each)
-98.5 μs ± 975 ns per loop (mean ± std. dev. of 7 runs, 10,000 loops each)
-47.5 μs ± 358 ns per loop (mean ± std. dev. of 7 runs, 10,000 loops each)
-1.43 ms ± 3.55 μs per loop (mean ± std. dev. of 7 runs, 1,000 loops each)
-517 μs ± 3.65 μs per loop (mean ± std. dev. of 7 runs, 1,000 loops each)
-23 ms ± 110 μs per loop (mean ± std. dev. of 7 runs, 10 loops each)
-7.57 ms ± 91.4 μs per loop (mean ± std. dev. of 7 runs, 100 loops each)</code></pre>
+<pre><code>770 ns ± 10.9 ns per loop (mean ± std. dev. of 7 runs, 1,000,000 loops each)
+1.68 μs ± 14.3 ns per loop (mean ± std. dev. of 7 runs, 1,000,000 loops each)
+1.81 μs ± 14.4 ns per loop (mean ± std. dev. of 7 runs, 1,000,000 loops each)
+2.6 μs ± 42.5 ns per loop (mean ± std. dev. of 7 runs, 100,000 loops each)
+4.73 μs ± 13.6 ns per loop (mean ± std. dev. of 7 runs, 100,000 loops each)
+4.34 μs ± 21.2 ns per loop (mean ± std. dev. of 7 runs, 100,000 loops each)
+9.72 μs ± 13.9 ns per loop (mean ± std. dev. of 7 runs, 100,000 loops each)
+6.36 μs ± 59.4 ns per loop (mean ± std. dev. of 7 runs, 100,000 loops each)
+135 μs ± 513 ns per loop (mean ± std. dev. of 7 runs, 10,000 loops each)
+67.4 μs ± 311 ns per loop (mean ± std. dev. of 7 runs, 10,000 loops each)
+2.01 ms ± 4.13 μs per loop (mean ± std. dev. of 7 runs, 100 loops each)
+836 μs ± 14 μs per loop (mean ± std. dev. of 7 runs, 1,000 loops each)
+33.4 ms ± 125 μs per loop (mean ± std. dev. of 7 runs, 10 loops each)
+12.6 ms ± 143 μs per loop (mean ± std. dev. of 7 runs, 100 loops each)</code></pre>
 </div>
 </div>
-<div id="85726543" class="cell" data-execution_count="17">
+<div id="5f6d4322" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>matplotlib inline</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -623,7 +623,7 @@ window.Quarto = {
 </div>
 <p>In figure 1 we compare the best-of-three timings on my laptop of the two methods over a range of <span class="math inline">n</span> values. We see that the iterative search is quicker for <span class="math inline">n =
 10</span>, but for <span class="math inline">n = 20</span> and beyond, the Eratosthenes method is quicker. Over this range, both are polynomial below quadratic.</p>
-<div id="fc473f89" class="cell" data-execution_count="18">
+<div id="58b889cd" class="cell" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>speedup <span class="op">=</span> [sol_times_a[i]<span class="op">/</span>sol_times_b[i] <span class="cf">for</span> i, x <span class="kw">in</span> <span class="bu">enumerate</span>(sol_times_b)]</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))</span>
