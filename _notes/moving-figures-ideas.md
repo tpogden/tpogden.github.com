@@ -1,20 +1,21 @@
 # Moving Figures: ideas
 
-Brainstorm of future series, written 2026-10-18. This file lives in `_notes/` so Quarto ignores it (underscore-prefixed directories are not rendered). Nothing here is committed to; it is a menu.
+Brainstorm of future series, written 2026-10-18 and updated the same day after the first three waves posts (018 to 020). This file lives in `_notes/` so Quarto ignores it (underscore-prefixed directories are not rendered). Nothing here is committed to; it is a menu.
 
 ## Where things stand
 
-Posts 000 to 017 are done:
+Posts 000 to 017 are published, and 018 to 020 are in PR #142:
 
 | Range | Arc |
 |---|---|
 | 000 to 004 | GPU basics: hello world, animation loop, bouncing particles, compute shader |
 | 005 to 012 | Molecular dynamics: Lennard-Jones, gravity, energy conservation, phases, Brownian motion, 20k atoms, weather in a box, blast wave |
 | 013 to 017 | Monte Carlo interlude: Buffon's needle, Mandelbrot darts, many-dimensional darts, Metropolis walkers, Ising model |
+| 018 to 020 | Waves, first steps: Skimming Stones (a 2D wave tank), Hole in the Wall (one and two slits), A Step too Far (the Courant number) |
 
 Shared code in `lib/`: `gpu.js` (setup, buffers, loop), `random.js` (per-thread RNG, Gaussians), `md.js` (cell lists, MD), `ui.js` (controls, charts).
 
-Already planned (see memory `moving-figures-waves-to-solitons-plan`): a waves-to-solitons arc, 018 to 024, then a later optics arc (NLSE bright solitons, Maxwell-Bloch self-induced transparency).
+The waves-to-solitons arc (see memory `moving-figures-waves-to-solitons-plan`) is under way and continues in section A, followed by a later optics arc (NLSE bright solitons, Maxwell-Bloch self-induced transparency). The three tank posts each carry their own copy of the engine (the height arrays, the step kernel and the beaches). As with `md.js`, extract it into a `lib/` module once a fourth post needs it.
 
 ## How every post works: four strands
 
@@ -33,13 +34,25 @@ The strands are not sections. A post should interleave them (a historical hook, 
 
 Some arcs lean on one strand more than the others (the waves arc on physics, Trefethen's papers on history and maths, mazes and deep learning on computer science). That is fine as long as none is missing.
 
+## House style, learned from 018 to 020
+
+- **One idea per post, few controls.** 018 began as one post with stones, a plane wave, slits, a lens, rain, a beaches switch and a Courant slider. It became three posts and lost rain, the beaches switch and the lens. When a post feels like too much, split it (the early molecular dynamics posts were built up the same way). Two to five controls is the range.
+- **The chart sits under the canvas, not far below.** Put the Analysis charts directly after the simulation, ahead of the text that explains them, short enough that canvas and chart can be seen together. A second picture that reacts to a slider (the stencil diamond in 020) belongs beside the chart.
+- **Measure the claim.** Each post has a chart that measures what the picture shows and sets it against a prediction: the ring height against 1/sqrt(r) (018), the pattern on the far wall against the Fraunhofer formula (019), the growth per step against the von Neumann curve (020). Check the numbers in the browser before writing the text around them.
+- **Maths in the open.** Equations and calculations are ordinary sections, not collapsed boxes.
+- **At least one source per post,** in a Sources section, with only the date that matters (the publication date) and "around" where a date is loose. Check any story against a primary or named secondary source before it goes in, and leave it out if it cannot be checked. Where a Trefethen paper is the topic, add the "Trefethen's 13, no. N" callout.
+- **Leave the reveal to the explanation.** In 020 the limit (1/sqrt(2)) is not named until the section that explains it. Do not give the answer away in the controls text or the chart text.
+- **No forward-looking comments** ("a later post explains", "next time"). A short "We'll find out why later" is fine when the reader needs it.
+- **Voice.** Few commas (keep one after an opening date when a name follows), no semicolons, no Oxford commas. Titles are playful (Skimming Stones, Hole in the Wall, A Step too Far) and the page addresses stay descriptive.
+- **Testing.** Run each post in the browser with the page-visibility workaround in CLAUDE.md. A pane that is not painting throttles the frame loop, so a real-time check can look broken when it is not.
+
 ## Series at a glance
 
 | # | Series | Size | Needs first | Reuses |
 |---|---|---|---|---|
-| A | Waves to solitons (planned) | 7 posts | none | `gpu.js` stencils |
+| A | Waves to solitons | 3 of about 8 done (018 to 020) | none | `gpu.js` stencils |
 | B | Trefethen's 13 (absorbed into other arcs, flagged in each) | 13 papers across ~11 posts | varies | MD, FFT, stencils |
-| C | Numerical electrodynamics (FDTD) | 4 to 5 posts | ripple tank (018) | 2D stencil |
+| C | Numerical electrodynamics (FDTD) | 4 to 5 posts | the tank and slits (018, 019) | 2D stencil |
 | D | Computational cosmology | 3 to 4 posts | FFT post, gravity (006) | `md.js`, FFT |
 | E | From Metropolis to ML | 5 to 7 posts | Ising (017) | `random.js` |
 | F | Deep learning | 5 to 8 posts | a backprop kernel post | new GPU code |
@@ -48,23 +61,37 @@ Some arcs lean on one strand more than the others (the waves arc on physics, Tre
 | I | Maze algorithms | 3 to 4 posts | none | `random.js` |
 | J | Durham project-book picks | mixed | varies | varies |
 
-## A. Waves to solitons (planned)
+## A. Waves to solitons
+
+Done, in PR #142 (page addresses are `webgpu-ripple-tank`, `webgpu-two-holes-in-a-wall`, `webgpu-courant-number`):
 
 | # | Post | Picture | Idea |
 |---|---|---|---|
-| 018 | Ripple tank | click for pebbles; walls, gap, double slit | 2D stencil, reflection, diffraction, interference |
-| 019 | Ship wakes | V-shaped Kelvin wake | dispersion alone (deep water is non-local: needs FFT or a stated simplification) |
-| 020 | Waves on a beach | depth shelf, steepening, breaking | nonlinearity alone |
-| 021 | Scott Russell's canal | long channel and piston | nonlinearity and dispersion cancel: a soliton |
-| 022 | Soliton collisions | overtaking, head-on, 2D KP line solitons | pass through with a phase shift |
-| 023 | Sine-Gordon in 2D | ring kinks on a pendulum surface | topological soliton |
-| 024 | FPU / Toda | particle chain | recurrence; bridge back to MD |
+| 018 | Skimming Stones | click or drag to drop stones; two rings crossing | 2D stencil, interference, why a ring fades as 1/sqrt(r); source: d'Alembert 1747 |
+| 019 | Hole in the Wall | a plane wave through one slit or two | diffraction and the double slit, measured against the Fraunhofer formula; Huygens and Young |
+| 020 | A Step too Far | the tank blowing up, with the stencil diamond beside the chart | the Courant number and the stability limit; Trefethen no. 2 |
 
-018 as drafted had a shallow-water lens (refraction and focusing, with a depth field that slows the waves) and a Rain source and Beaches toggle; all three were cut as too much for one post. The lens is in git history (commit 7adcdcc) and is a candidate for a later refraction post, which would also suit the shoaling and beach posts.
+Still to do. Numbers are provisional because arcs interleave and a new post takes the next number:
+
+| Post | Picture | Idea |
+|---|---|---|
+| Ship wakes | V-shaped Kelvin wake | dispersion alone (deep water is non-local: needs the FFT post first, or a stated simplification). Opens with what 018 left out: every wavelength moves at the same speed in the tank, but not in real water |
+| Waves on a beach | depth shelf, steepening, breaking | nonlinearity alone |
+| Scott Russell's canal | long channel and piston | nonlinearity and dispersion cancel: a soliton |
+| Soliton collisions | overtaking, head-on, 2D KP line solitons | pass through with a phase shift |
+| Sine-Gordon in 2D | ring kinks on a pendulum surface | topological soliton |
+| FPU / Toda | particle chain | recurrence; bridge back to MD |
+
+Side posts the first three suggested:
+
+- **Refraction, a lens of shallow water.** Prototyped in 018 and cut (commit 7adcdcc): a depth field that slows the waves, so a plane wave bends and focuses. It fits the beach and shoaling posts.
+- **Numerical dispersion.** 020 ends on "safe is not the same as right": even a stable scheme carries short waves too slowly (about 2% for 8 cells to a wavelength, 8% for 4) and a smaller step makes it worse along an axis. This could be a short post of its own, with a measured wave speed against the formula, and it sets up real dispersion in the ship wakes post.
+- **Standing waves and drum modes.** With the beaches off the tank turns to a mess; with walls it has modes. This links to finite elements (B6) and to 019's walls.
+- **The far field is a Fourier transform.** The pattern on the far wall in 019 is the Fourier transform of the slits. An FFT post (B1) can draw an aperture and show its diffraction pattern, which gives the FFT a physical reason to exist.
 
 Later: NLSE bright solitons (split-step FFT) and Maxwell-Bloch, linking to the existing optical-solitons and simultons posts.
 
-This arc is the foundation for C (FDTD), D (FFT) and the optics arc, so it goes first. 018 can carry a "what goes wrong" section on the CFL condition (item B2).
+This arc is the foundation for C (FDTD), D (FFT) and the optics arc, so it goes first.
 
 ## B. Trefethen's 13 classic papers
 
@@ -72,8 +99,8 @@ Source: <https://web.stanford.edu/class/cme324/classics/>. The list is numerical
 
 | # | Paper | Topic | GPU and visual fit | Post idea |
 |---|---|---|---|---|
-| 1 | Cooley & Tukey 1965 | FFT | strong | Image filtering and diffraction patterns; the shared FFT module for D and the NLSE |
-| 2 | Courant, Friedrichs & Lewy 1928 | finite differences, stability | strong | Fold into 018: raise the timestep until the tank explodes |
+| 1 | Cooley & Tukey 1965 | FFT | strong | Done in two posts: 021 Fourier's Window (paint a gap, hover a point to see its ripple) and 022 The Fast Fourier Transform (a Pass slider steps through the 18 passes, the cost chart with the GPU line). `lib/fft.js` is the shared 2D FFT for ship wakes, D and the NLSE |
+| 2 | Courant, Friedrichs & Lewy 1928 | finite differences, stability | strong | Done: 020 A Step too Far |
 | 3 | Householder 1958 | QR | weak | Possible: Gram-Schmidt vs Householder loss of orthogonality, shown as a drifting basis |
 | 4 | Curtiss & Hirschfelder 1952 | stiff ODEs | medium | A stiff chemical oscillator: explicit steps shatter, implicit ones do not |
 | 5 | de Boor 1972 | B-splines | medium | Drag control points, watch basis functions; fits a curve-fitting post |
@@ -94,7 +121,7 @@ FDTD on a Yee grid is the EM version of the ripple tank.
 
 1. A dipole antenna radiating: fields E and B on the grid.
 2. A waveguide and cutoff frequency.
-3. Double slit with real fields, a direct comparison with 018.
+3. Double slit with real fields, a direct comparison with 019.
 4. Absorbing boundaries (PML): the reason waves do not bounce off the edge of the screen.
 5. Photonic crystal or a lens: refraction from a dielectric map you can paint.
 
@@ -104,7 +131,7 @@ Connects to the research (Maxwell-Bloch): the final step is putting a two-level 
 
 1. Particle-mesh gravity: deposit particles on a grid, solve Poisson with the FFT, interpolate the force back. Needs the FFT post.
 2. Structure formation from a Gaussian random field: the cosmic web emerging from tiny initial ripples, in comoving coordinates.
-3. Zel'dovich pancake: the 1D collapse that predicts caustics (ties to waves breaking in 020).
+3. Zel'dovich pancake: the 1D collapse that predicts caustics (ties to waves breaking on the beach).
 4. Optional: a power-spectrum plot that reads back the clustering, in the Analysis section style.
 
 Fast multipole (B13) is the alternative to particle-mesh and can feed a comparison post.
@@ -155,7 +182,7 @@ Path-integral Monte Carlo of the harmonic oscillator: a ring polymer of beads, w
 3. Double well: tunnelling as paths crossing the barrier.
 4. Optional: bosons, with exchange as polymer cross-linking.
 
-Reuses the spring and chain machinery from `md.js`, and links to 024 (a particle chain).
+Reuses the spring and chain machinery from `md.js`, and links to the FPU / Toda post (a particle chain).
 
 ## I. Maze algorithms
 
@@ -191,8 +218,8 @@ Source: `project_book.pdf`, 16 chapters. Only the contents page and chapter 1 we
 
 ## Suggested order
 
-1. Waves arc A (018 to 024).
-2. FFT post (B1), which unlocks ship wakes, D and the NLSE.
+1. Waves arc A: 018 to 022 are done (021 and 022 are the Fourier transform and the FFT, B1, with the diffraction picture from 019 as the physical reason). Ship wakes is next.
+2. The FFT post unlocks ship wakes, D and the NLSE.
 3. C (FDTD) while the 2D stencil is fresh, and the Poisson trio (B8, B9) in the same stretch.
 4. D (cosmology), using the FFT.
 5. E1 (Hopfield), cheap after 017, then the rest of E.
@@ -204,8 +231,12 @@ Source: `project_book.pdf`, 16 chapters. Only the contents page and chapter 1 we
 
 - **Interleaved**, not strict sequence, so a heavy arc does not stall the site.
 - **Numbering:** a new post always takes the next number. Arcs do not get number blocks, so the arc tables above list post titles but their numbers (018 to 024 for waves, etc.) are provisional and will shift as arcs interleave.
+- **018 to 020 split** (2026-10-18). The ripple tank became three posts, and the house style above came out of it.
 - **Trefethen's 13 (B) is not a standalone series.** Each paper is absorbed into whichever arc needs it, and is pointed out where it appears. See `trefethen-13.md`, section 6, for the paper-to-arc mapping and the pointer.
 
 ## Open questions
 
 - For ML (F): train real networks in WebGPU, or keep to energy-based models? Undecided. Not blocking: E (Metropolis to ML) starts with Hopfield either way.
+- What comes straight after 020: the FFT post, or a side post (refraction, numerical dispersion) while the tank engine is fresh? An FFT post first keeps ship wakes unblocked.
+- Does the Trefethen's 13 pointer need a list page or a category, or is the callout in each post enough? Only 020 has a callout so far.
+- When to extract the tank engine into `lib/`: the three posts each carry a copy now. The next one that needs it is the moment.

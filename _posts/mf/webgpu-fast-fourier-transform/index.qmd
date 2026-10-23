@@ -1,0 +1,566 @@
+---
+title: "022: The Fast Fourier Transform"
+date: "2026-10-19"
+categories: [mf]
+page-layout: article
+listing:
+  - id: mf-series
+    contents: "../*/index.qmd"
+    type: default
+    categories: false
+    include:
+      categories: "mf"
+    fields: [title]
+    sort: "title asc"
+---
+
+[Last time](../webgpu-fft/) every point in the pattern was a sum. To find how much of one
+ripple a gap contains you multiply the gap by the ripple, cell by cell and add up. The
+gap is 512 by 512 cells and the pattern has a point for each of 512 by 512 ripples. That is
+a sum over 262,144 cells for each of 262,144 points, about 69 billion multiplications for
+one picture.
+
+The GPU does a picture in a fraction of a millisecond, and the readout under the canvas
+gives the time on this machine. No GPU does 69 billion multiplications that fast, so it is
+not doing it that way. This post is how it does it.
+
+The gap is on the left below. On the right is the transform part-way through, the same
+brightness scale as last time. **Pass** is how far along it is: 0 is the gap itself and 18
+is the finished pattern. It runs by itself from 0 to 18 when the page loads. Drag **Pass**
+to take over.
+
+Try these:
+
+- _Drag Pass slowly from 0 to 18._ Each pass joins pairs of small transforms into bigger
+  ones. Part-way through, the picture is part where and part which ripple.
+- _Passes 1 to 9 work along the rows and 10 to 18 down the columns._ After 9 every row
+  of the gap has become its own pattern of fringes and the picture is a band. The last nine
+  spread the band up and down.
+- _Try the Circle._ The same 18 passes on a different gap.
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof shape = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.segmented({
+    label: "Gap",
+    options: [
+      ["one", "One slit"],
+      ["two", "Two slits"],
+      ["grating", "Grating"],
+      ["circle", "Circle"],
+    ],
+    value: "two",
+  });
+}
+```
+
+```{ojs}
+//| echo: false
+//| output: false
+// The gap and its transform are this many cells on a side. A transform takes twice
+// log2 of that many passes: along the rows and then down the columns
+size = 512
+```
+
+```{ojs}
+//| echo: false
+//| output: false
+viewof passNumber = {
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  const passes = 2 * Math.log2(size);
+  return ui.slider({
+    label: "Pass",
+    min: 0,
+    max: passes,
+    step: 1,
+    value: 0,
+    format: (v) => `${v} of ${passes}`,
+  });
+}
+```
+
+```{ojs}
+//| echo: false
+//| column: screen-inset
+//| code-fold: true
+//| code-summary: "Show code"
+{
+  // Shared WebGPU boilerplate: setup, buffers and the animation loop (lib/gpu.js), and
+  // the fast Fourier transform (lib/fft.js)
+  const gpu = await import(new URL("../lib/gpu.js", document.baseURI).href);
+  const fft = await import(new URL("../lib/fft.js", document.baseURI).href);
+  const aperture = await import(new URL("../lib/aperture.js", document.baseURI).href);
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+
+  // Controls are read live from their elements, so moving them does not restart
+  // this cell.
+  const shapeInput = viewof shape;
+  const passInput = viewof passNumber;
+
+  // The gap on the left and the transform on the right, each 512 by 512 cells
+  const N = size;
+  const { canvas, device, context, format } = await gpu.setup({
+    width: 1024,
+    height: 512,
+    resolution: "auto",
+  });
+
+  // The gap: 1 where it is open and 0 where it is wall
+  const mask = new Float32Array(N * N);
+  const maskBuffer = gpu.storageBuffer(device, mask);
+
+  function shapeMask(kind) {
+    aperture.fill(mask, N, kind);
+    device.queue.writeBuffer(maskBuffer, 0, mask);
+  }
+
+  // ------------------------------------------------------------------- the transform
+  const transform = fft.create(device, N);
+
+  // Copy the gap into the transform's input: real part from the gap, imaginary zero.
+  // The gap is put with its middle in the corner, so that the picture of the pattern
+  // can always be shifted by half to put its middle in the middle
+  const loadModule = device.createShaderModule({
+    code: `
+      @group(0) @binding(0) var<storage, read> gap: array<f32>;
+      @group(0) @binding(1) var<storage, read_write> data: array<vec2f>;
+
+      @compute @workgroup_size(16, 16)
+      fn load(@builtin(global_invocation_id) id: vec3u) {
+        if (id.x >= ${N}u || id.y >= ${N}u) { return; }
+        let to = ((id.y + ${N / 2}u) % ${N}u) * ${N}u + (id.x + ${N / 2}u) % ${N}u;
+        data[to] = vec2f(gap[id.y * ${N}u + id.x], 0.0);
+      }
+    `,
+  });
+  const loadPipeline = device.createComputePipeline({
+    layout: "auto",
+    compute: { module: loadModule, entryPoint: "load" },
+  });
+  const loadGroup = device.createBindGroup({
+    layout: loadPipeline.getBindGroupLayout(0),
+    entries: [
+      { binding: 0, resource: { buffer: maskBuffer } },
+      { binding: 1, resource: { buffer: transform.data } },
+    ],
+  });
+
+  // The biggest brightness in whichever buffer is being shown, so that the picture is
+  // scaled to it at every pass. Brightness is never negative and for such numbers the
+  // order of the bits is the order of the values, so a maximum of the bits will do
+  const peakBuffer = device.createBuffer({
+    size: 4,
+    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+  });
+  const peakModule = device.createShaderModule({
+    code: `
+      @group(0) @binding(0) var<storage, read> data: array<vec2f>;
+      @group(0) @binding(1) var<storage, read_write> peak: array<atomic<u32>, 1>;
+
+      @compute @workgroup_size(16, 16)
+      fn findPeak(@builtin(global_invocation_id) id: vec3u) {
+        if (id.x >= ${N}u || id.y >= ${N}u) { return; }
+        let v = data[id.y * ${N}u + id.x];
+        atomicMax(&peak[0], bitcast<u32>(dot(v, v)));
+      }
+    `,
+  });
+  const peakPipeline = device.createComputePipeline({
+    layout: "auto",
+    compute: { module: peakModule, entryPoint: "findPeak" },
+  });
+  const peakGroups = transform.buffers.map((buffer) =>
+    device.createBindGroup({
+      layout: peakPipeline.getBindGroupLayout(0),
+      entries: [
+        { binding: 0, resource: { buffer } },
+        { binding: 1, resource: { buffer: peakBuffer } },
+      ],
+    }),
+  );
+
+  // ---------------------------------------------------------------------- drawing
+  const cornerBuffer = gpu.unitSquare(device);
+  const showModule = device.createShaderModule({
+    code: `
+      @group(0) @binding(0) var<storage, read> gap: array<f32>;
+      @group(0) @binding(1) var<storage, read> data: array<vec2f>;
+      @group(0) @binding(2) var<storage, read> peak: array<u32>;
+
+      struct Out {
+        @builtin(position) position: vec4f,
+        @location(0) uv: vec2f,
+      }
+
+      @vertex
+      fn showVertex(@location(0) corner: vec2f) -> Out {
+        return Out(
+          vec4f(corner, 0.0, 1.0),
+          vec2f(corner.x * 0.5 + 0.5, 0.5 - corner.y * 0.5),
+        );
+      }
+
+      @fragment
+      fn showFragment(in: Out) -> @location(0) vec4f {
+        let n = ${N}u;
+        let y = min(u32(in.uv.y * f32(n)), n - 1u);
+        if (abs(in.uv.x - 0.5) < 0.0015) { return vec4f(0.5, 0.5, 0.5, 1.0); }
+
+        // The gap, on the left
+        if (in.uv.x < 0.5) {
+          let x = min(u32(in.uv.x * 2.0 * f32(n)), n - 1u);
+          return vec4f(vec3f(mix(0.10, 0.92, gap[y * n + x])), 1.0);
+        }
+
+        // The transform so far, on the right, shifted by half to put the middle of the
+        // gap in the middle, and shown on a log scale of four factors of ten below the
+        // brightest cell
+        let x = min(u32((in.uv.x - 0.5) * 2.0 * f32(n)), n - 1u);
+        let v = data[((y + n / 2u) % n) * n + (x + n / 2u) % n];
+        let brightest = max(bitcast<f32>(peak[0]), 1e-12);
+        let t = clamp((log(dot(v, v) / brightest + 1e-9) / 2.302585 + 4.0) / 4.0, 0.0, 1.0);
+        let dark = vec3f(0.10, 0.10, 0.10);
+        let red = vec3f(1.0, 0.282, 0.204);   // #FF4834
+        let white = vec3f(1.0, 0.95, 0.9);
+        let colour = select(mix(dark, red, t / 0.6), mix(red, white, (t - 0.6) / 0.4), t > 0.6);
+        return vec4f(colour, 1.0);
+      }
+    `,
+  });
+  const showPipeline = device.createRenderPipeline({
+    layout: "auto",
+    vertex: { module: showModule, entryPoint: "showVertex", buffers: [gpu.squareLayout] },
+    fragment: { module: showModule, entryPoint: "showFragment", targets: [{ format }] },
+    primitive: { topology: "triangle-list" },
+  });
+  const showGroups = transform.buffers.map((buffer) =>
+    device.createBindGroup({
+      layout: showPipeline.getBindGroupLayout(0),
+      entries: [
+        { binding: 0, resource: { buffer: maskBuffer } },
+        { binding: 1, resource: { buffer } },
+        { binding: 2, resource: { buffer: peakBuffer } },
+      ],
+    }),
+  );
+
+  // -------------------------------------------------------------------- the charts
+  const [costHost] = charts.children;
+  const draw = ui.plotter(Plot);
+
+  const costs = []; // {n, method, us}
+  function drawCost() {
+    draw(costHost, {
+      height: 220,
+      x: { label: "numbers transformed", type: "log", grid: true, domain: [16, 1.1e6] },
+      y: { label: "time for one transform (microseconds)", type: "log", grid: true },
+      color: {
+        legend: true,
+        domain: ["by the definition", "the fast way", "the fast way on the GPU"],
+        range: ["#FF4834", "currentColor", "#3a9ad9"],
+      },
+      marks: [
+        Plot.line(costs, { x: "n", y: "us", stroke: "method" }),
+        Plot.dot(costs, { x: "n", y: "us", stroke: "method", r: 2.5 }),
+      ],
+    });
+  }
+
+  // How long a transform of a line of n numbers takes on the CPU by the definition and by
+  // the fast method. It runs in a worker so that the page never stalls. Both methods get
+  // the same table of sines and cosines, made before the clock starts, so that what is
+  // timed is the sums and not the trigonometry
+  function benchmarks() {
+    self.onmessage = (event) => {
+      for (const n of event.data) {
+        const cos = Float64Array.from({ length: n }, (_, j) => Math.cos((-2 * Math.PI * j) / n));
+        const sin = Float64Array.from({ length: n }, (_, j) => Math.sin((-2 * Math.PI * j) / n));
+        const re = Float64Array.from({ length: n }, () => Math.random());
+        const im = new Float64Array(n);
+        const outRe = new Float64Array(n);
+        const outIm = new Float64Array(n);
+
+        // The definition: each of the n results adds up n terms
+        const naive = () => {
+          for (let k = 0; k < n; k++) {
+            let sr = 0;
+            let si = 0;
+            for (let j = 0; j < n; j++) {
+              const w = (j * k) % n;
+              sr += re[j] * cos[w] - im[j] * sin[w];
+              si += re[j] * sin[w] + im[j] * cos[w];
+            }
+            outRe[k] = sr;
+            outIm[k] = si;
+          }
+        };
+
+        // The fast way: put the numbers in bit-reversed order, then join pairs, then pairs
+        // of pairs
+        const workRe = new Float64Array(n);
+        const workIm = new Float64Array(n);
+        const fast = () => {
+          workRe.set(re);
+          workIm.set(im);
+          for (let i = 1, j = 0; i < n; i++) {
+            let bit = n >> 1;
+            for (; j & bit; bit >>= 1) j ^= bit;
+            j ^= bit;
+            if (i < j) {
+              [workRe[i], workRe[j]] = [workRe[j], workRe[i]];
+              [workIm[i], workIm[j]] = [workIm[j], workIm[i]];
+            }
+          }
+          for (let size = 2; size <= n; size *= 2) {
+            const stride = n / size;
+            for (let start = 0; start < n; start += size) {
+              for (let k = 0; k < size / 2; k++) {
+                const wr = cos[k * stride];
+                const wi = sin[k * stride];
+                const a = start + k;
+                const b = a + size / 2;
+                const tr = workRe[b] * wr - workIm[b] * wi;
+                const ti = workRe[b] * wi + workIm[b] * wr;
+                workRe[b] = workRe[a] - tr;
+                workIm[b] = workIm[a] - ti;
+                workRe[a] += tr;
+                workIm[a] += ti;
+              }
+            }
+          }
+        };
+
+        // The best of three, so that a busy moment does not show up as a bump
+        const time = (method) => {
+          let best = Infinity;
+          for (let attempt = 0; attempt < 3; attempt++) {
+            let runs = 0;
+            const start = performance.now();
+            do {
+              method();
+              runs++;
+            } while (performance.now() - start < 10);
+            best = Math.min(best, ((performance.now() - start) * 1000) / runs);
+          }
+          return best;
+        };
+        self.postMessage({ n, method: "by the definition", us: time(naive) });
+        self.postMessage({ n, method: "the fast way", us: time(fast) });
+      }
+    };
+  }
+  const worker = new Worker(
+    URL.createObjectURL(new Blob([`(${benchmarks})()`], { type: "text/javascript" })),
+  );
+  worker.onmessage = (event) => {
+    costs.push(event.data);
+    drawCost();
+  };
+  invalidation.then(() => worker.terminate());
+  drawCost();
+
+  // ------------------------------------------------------------------- the picture
+  const readout = ui.readout(); // where the transform has got to
+  const speed = ui.readout(); // how fast the GPU is
+
+  // How long a transform of a whole picture takes on this GPU, size by size: a batch of
+  // them, timed, with the first one thrown away. Each size gets a transform of its own,
+  // freed afterwards
+  async function gpuTime(size) {
+    const test = fft.create(device, size);
+    const warm = device.createCommandEncoder();
+    test.encode(warm);
+    device.queue.submit([warm.finish()]);
+    await device.queue.onSubmittedWorkDone();
+    const runs = 50;
+    const encoder = device.createCommandEncoder();
+    for (let r = 0; r < runs; r++) test.encode(encoder);
+    const start = performance.now();
+    device.queue.submit([encoder.finish()]);
+    await device.queue.onSubmittedWorkDone();
+    const ms = (performance.now() - start) / runs;
+    test.destroy();
+    return ms;
+  }
+
+  shapeMask(shapeInput.value);
+  const on = (element, handler) => {
+    element.addEventListener("input", handler);
+    invalidation.then(() => element.removeEventListener("input", handler));
+  };
+  on(shapeInput, () => shapeMask(shapeInput.value));
+
+  // It runs by itself from the gap to the pattern until the pass is taken over
+  let running = true;
+  on(passInput, () => (running = false));
+  let start = null;
+  const pause = 450; // milliseconds a pass
+
+  const describe = (p) =>
+    p === 0
+      ? "the gap itself"
+      : p < 9
+        ? `along the rows, in blocks of ${2 ** p}`
+        : p === 9
+          ? "the rows are done"
+          : p < 18
+            ? `down the columns, in blocks of ${2 ** (p - 9)}`
+            : "the pattern";
+
+  function frame(ms) {
+    if (running) {
+      start ??= ms;
+      passInput.value = Math.min(transform.passes, Math.floor((ms - start) / pause));
+      if (passInput.value === transform.passes) running = false;
+    }
+    const p = passInput.value;
+    readout.textContent = `pass ${p}: ${describe(p)}`;
+
+    // Make the gap into the first array again and do the first p passes of the transform
+    device.queue.writeBuffer(peakBuffer, 0, new Uint32Array([0]));
+    const encoder = device.createCommandEncoder();
+    const load = encoder.beginComputePass();
+    load.setPipeline(loadPipeline);
+    load.setBindGroup(0, loadGroup);
+    load.dispatchWorkgroups(N / 16, N / 16);
+    load.end();
+    const result = transform.encode(encoder, p);
+    const which = transform.buffers.indexOf(result);
+
+    const find = encoder.beginComputePass();
+    find.setPipeline(peakPipeline);
+    find.setBindGroup(0, peakGroups[which]);
+    find.dispatchWorkgroups(N / 16, N / 16);
+    find.end();
+
+    const render = gpu.beginRenderPass(encoder, context);
+    render.setPipeline(showPipeline);
+    render.setBindGroup(0, showGroups[which]);
+    render.setVertexBuffer(0, cornerBuffer);
+    render.draw(6);
+    render.end();
+    device.queue.submit([encoder.finish()]);
+  }
+
+  // The page is shown at once. The GPU is timed first, while nothing else is using it, and
+  // then the animation and the CPU timings start
+  let gone = false;
+  invalidation.then(() => (gone = true));
+  (async () => {
+    for (let side = 32; side <= 1024; side *= 2) {
+      const ms = await gpuTime(side);
+      if (gone) return;
+      costs.push({ n: side * side, method: "the fast way on the GPU", us: ms * 1000 });
+      if (side === N) speed.textContent = `${N} by ${N} transform: ${ms.toFixed(2)} ms`;
+      drawCost();
+    }
+    gpu.run(invalidation, device, frame);
+    worker.postMessage(Array.from({ length: 8 }, (_, k) => 16 * 2 ** k));
+  })();
+
+  // The canvas with the controls laid over its corner
+  yield ui.stage(canvas, [shapeInput, passInput, readout, speed]);
+}
+```
+
+## Analysis
+
+```{ojs}
+//| echo: false
+//| column: page
+charts = {
+  // An empty host; the simulation cell above draws into it as data arrives
+  const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  return ui.chartHosts(["cost"]);
+}
+```
+
+How long a transform takes, measured in this browser. The red and grey lines are a line of
+numbers on the CPU. By the definition the time grows as the square of the length: twice as
+many numbers take four times as long. The fast method takes barely more than twice as long.
+At two thousand numbers it is already a couple of hundred times quicker, which is about what
+the step counts predict: 2,048 steps for each of 2,048 results against about 11. The difference
+keeps widening: for a million numbers it would be about fifty thousand to one.
+
+The blue line is the GPU, which transforms a whole picture at once. A 512 by 512 picture
+is 262,144 numbers, 128 times as many as a line of two thousand. Compare its time with the
+CPU's for that line: it is nowhere near 128 times longer. At the small sizes the blue line
+sits above the others, since getting the work started costs more than the work.
+
+## Gauss and a Cold War
+
+In about 1805, Carl Friedrich Gauss was working out the orbits of the asteroids Pallas and
+Juno from a handful of observations and needed the ripples that the measurements were made
+of. He found a way to do it with far fewer sums, wrote it up and did not publish it. It
+turned up in his collected works long after his death.
+
+It was found again, more than once. The time it stuck was in 1963 and it was because of
+the Cold War. John Tukey was at a meeting of President Kennedy's science advisory
+committee, which was talking about how to detect underground nuclear tests from seismometers
+placed in the ground. The measurements needed transforms that were too slow to calculate.
+Tukey had a way to do them with far fewer sums. Richard Garwin, who was at the meeting,
+saw what it could do and passed it to James Cooley at IBM to turn into a program. They
+published it in 1965.
+
+::: {.callout-note appearance="simple"}
+## Trefethen's 13, no. 1
+
+This is the first paper on [Nick Trefethen's list of 13 classic papers in applied
+mathematics](https://web.stanford.edu/class/cme324/classics/): Cooley and Tukey, 1965.
+:::
+
+## The shortcut
+
+A line of $N$ numbers $x_j$ has the transform
+
+$$X_k = \sum_{j=0}^{N-1} x_j \, e^{-2\pi i j k / N},$$
+
+which is $N$ sums of $N$ terms each, $N^2$ in all. Split the $x_j$ into the even-numbered
+ones and the odd-numbered ones and each half has a transform of its own, $E_k$ and $O_k$,
+that is only $N/2$ numbers long. Putting them back together takes one multiplication each:
+
+$$X_k = E_k + e^{-2\pi i k / N} O_k, \qquad X_{k+N/2} = E_k - e^{-2\pi i k / N} O_k.$$
+
+That joins two half-size transforms into a whole one for the price of about $N$ steps and
+each half can be split the same way, down to lines of one number, which are their own
+transform. There are $\log_2 N$ levels of $N$ steps. A million numbers needs about twenty
+million steps and not a million million.
+
+You can see the levels in the picture. After $s$ passes along a row the row is made of
+blocks $2^s$ long and each block is a small transform of every $(N/2^s)$th number of the
+line. At the start there are 512 blocks of one number each, which is the line itself. At the
+end there is one block of 512, which is the whole transform. Each pass halves the number of
+blocks and doubles the length of each, trading a doubling of where for a doubling of which
+ripple.
+
+## How the computer does it
+
+A picture is a two-dimensional transform. It is done on the rows and then on the columns,
+each of them a line like the one above, so there are $2 \log_2 512 = 18$ passes over the
+512 by 512 grid.
+
+Each pass is the joining step above. One thread on the GPU takes one pair of numbers
+and writes out the two they combine to. The passes alternate between two arrays, each one
+reading the last one's result and writing into the other, so the numbers come out in order
+without a separate shuffle. This form is named for Stockham and the whole of it is in
+`lib/fft.js`. All 262,144 numbers go through each pass at once. The slider stops after the
+first few passes and shows whichever array has the half-finished result.
+
+## Sources
+
+- Cooley, J. W. and Tukey, J. W. (1965), "An algorithm for the machine calculation of
+  complex Fourier series", _Mathematics of Computation_ 19, 297 to 301,
+  [doi:10.1090/S0025-5718-1965-0178586-1](https://doi.org/10.1090/S0025-5718-1965-0178586-1).
+- Heideman, M. T., Johnson, D. H. and Burrus, C. S. (1984), "Gauss and the history of the
+  fast Fourier transform", _IEEE ASSP Magazine_ 1 (4), 14 to 21.
+- IEEE, [First demonstration of the fast Fourier transform, 1964](https://ethw.org/Milestones:First_Demonstration_of_the_Fast_Fourier_Transform_(FFT),_1964),
+  for the story of the 1963 meeting.
+
+::: {.mf-series-bar}
+Moving Figures
+
+:::{#mf-series}
+:::
+:::
