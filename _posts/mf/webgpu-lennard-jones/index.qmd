@@ -2,6 +2,7 @@
 title: "005: Jiggling Atoms"
 date: "2026-10-12"
 categories: [mf]
+description: "Particles that push and pull on each other through the Lennard-Jones potential."
 page-layout: article
 listing:
   - id: mf-series
@@ -252,6 +253,15 @@ when a little way apart and repel when squeezed together.
 > temperature, we increase the motion.
 >
 > — Richard Feynman, _The Feynman Lectures on Physics_, Vol. I, ch. 1
+
+## Sources
+
+- Jones, J. E. (1924), "On the Determination of Molecular Fields. II. From the
+  Equation of State of a Gas", _Proceedings of the Royal Society A_ 106, 463 to 477,
+  [doi:10.1098/rspa.1924.0082](https://doi.org/10.1098/rspa.1924.0082).
+- Verlet, L. (1967), "Computer 'Experiments' on Classical Fluids. I. Thermodynamical
+  Properties of Lennard-Jones Molecules", _Physical Review_ 159, 98 to 103,
+  [doi:10.1103/PhysRev.159.98](https://doi.org/10.1103/PhysRev.159.98).
 
 ::: {.mf-series-bar}
 Moving Figures

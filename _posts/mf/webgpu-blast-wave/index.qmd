@@ -2,6 +2,7 @@
 title: "012: Blast Wave"
 date: "2026-10-13"
 categories: [mf]
+description: "A hundred hot atoms at the centre of a gas launch an expanding shock ring."
 page-layout: article
 listing:
   - id: mf-series
@@ -479,6 +480,14 @@ charts = {
   return ui.chartHosts(["profile", "radius"]);
 }
 ```
+
+## Sources
+
+- Taylor, G. I. (1950), "The formation of a blast wave by a very intense explosion. I.
+  Theoretical discussion", _Proceedings of the Royal Society A_ 201, 159 to 174,
+  [doi:10.1098/rspa.1950.0049](https://doi.org/10.1098/rspa.1950.0049).
+- Sedov, L. I. (1946), "Propagation of strong blast waves", _Journal of Applied Mathematics
+  and Mechanics_ 10, 241 to 250.
 
 ::: {.mf-series-bar}
 Moving Figures

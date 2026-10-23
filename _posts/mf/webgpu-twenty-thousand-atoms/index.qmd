@@ -2,6 +2,7 @@
 title: "010: Twenty Thousand Atoms"
 date: "2026-10-13"
 categories: [mf]
+description: "Ten times more atoms than before and the things that only appear at that scale."
 page-layout: article
 listing:
   - id: mf-series
@@ -673,6 +674,13 @@ charts = {
   return ui.chartHosts(["fraction", "benchmark"]);
 }
 ```
+
+## Sources
+
+- Allen, M. P. and Tildesley, D. J. (1987), _Computer Simulation of Liquids_ (Oxford
+  University Press).
+- Quentrec, B. and Brot, C. (1973), "New method for searching for neighbors in molecular
+  dynamics computations", _Journal of Computational Physics_ 13, 430 to 432.
 
 ::: {.mf-series-bar}
 Moving Figures

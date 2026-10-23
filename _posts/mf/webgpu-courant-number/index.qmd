@@ -2,6 +2,7 @@
 title: "020: A Step too Far"
 date: "2026-10-18"
 categories: [mf]
+description: "Why the time step of a wave simulation cannot be too large."
 page-layout: article
 listing:
   - id: mf-series
@@ -26,8 +27,8 @@ changes how finely time is cut up.
 
 Try these:
 
-- _Start at 0.50 and move it down._ Nothing you can see changes. The same waves in more and
-  smaller steps. Half the Courant number is twice the work for the same picture.
+- _Start at 0.50._ This is the value the earlier tanks used and the waves are clean. Smaller
+  values would look the same in more and smaller steps, so the slider does not go there.
 - _Move it up a little at a time._ The waves look fine for a while.
 - _Keep going._ At some point a fine red and blue checkerboard starts where the waves are made,
   spreads across the tank and grows without limit. It is not a rare accident or a bug in
@@ -40,7 +41,7 @@ viewof courant = {
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
   return ui.slider({
     label: "Courant number",
-    min: 0.2,
+    min: 0.5,
     max: 0.9,
     step: 0.01,
     value: 0.5,
@@ -58,6 +59,8 @@ viewof courant = {
   // Shared WebGPU boilerplate: setup, buffers and the animation loop (lib/gpu.js)
   const gpu = await import(new URL("../lib/gpu.js", document.baseURI).href);
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  // The wave-tank kernels and bookkeeping shared by the wave posts (lib/wave.js)
+  const wave = await import(new URL("../lib/wave.js", document.baseURI).href);
 
   // Controls are read live from their elements, so moving them does not restart
   // this cell.
@@ -73,179 +76,40 @@ viewof courant = {
   const W = 640;
   const H = 360;
   const cells = W * H;
-  const groupSide = 16;
   const beachWidth = 24; // cells of damping at each edge
   const sourceX = 28; // the paddle, just inside the beach
   const amplitude = 0.25; // height of the plane wave
   const wavelength = 16; // in cells
-  const wave = 100; // wave speed, in cells a second
+  const speed = 100; // wave speed, in cells a second
 
   // --------------------------------------------------------------- the shaders
-  const common = `
-    struct Params {
-      width: u32,
-      height: u32,
-      courant2: f32,
-      sponge: f32,        // damping per step at the very edge of the tank
-      edge: f32,          // width of the beach, in cells
-      sourceX: u32,
-      sourceStart: u32,   // step at which the paddle started
-      rampSteps: f32,
-      sourceAmp: f32,     // forcing added each step
-      sourceOmega: f32,   // radians a step
-      gain: f32,
-      pad: u32,
-    }
-
-    @group(0) @binding(0) var<uniform> params: Params;
-
-    // 0 in open water, rising to 1 at the border: how far into the beach a cell is
-    fn beachFraction(x: u32, y: u32) -> f32 {
-      let ex = min(f32(x), f32(params.width - 1u - x));
-      let ey = min(f32(y), f32(params.height - 1u - y));
-      let e = min(ex, ey);
-      return select(0.0, (params.edge - e) / params.edge, e < params.edge);
-    }
-  `;
-
-  const stepModule = device.createShaderModule({
-    code: `
-      ${common}
-      @group(0) @binding(2) var<storage, read> before: array<f32>;
-      @group(0) @binding(3) var<storage, read> now: array<f32>;
-      @group(0) @binding(4) var<storage, read_write> after: array<f32>;
-      @group(0) @binding(5) var<storage, read_write> clock: array<u32>;
-
-      @compute @workgroup_size(${groupSide}, ${groupSide})
-      fn step(@builtin(global_invocation_id) id: vec3u) {
-        let w = params.width;
-        let h = params.height;
-        if (id.x >= w || id.y >= h) { return; }
-        let x = id.x;
-        let y = id.y;
-        let i = y * w + x;
-        let here = now[i];
-
-        var pull = 0.0;
-        if (x > 0u)     { pull += now[i - 1u] - here; }
-        if (x + 1u < w) { pull += now[i + 1u] - here; }
-        if (y > 0u)     { pull += now[i - w] - here; }
-        if (y + 1u < h) { pull += now[i + w] - here; }
-
-        let q = beachFraction(x, y);
-        let sigma = params.sponge * q * q;
-        var next = (2.0 * here - (1.0 - sigma) * before[i] + params.courant2 * pull) / (1.0 + sigma);
-
-        if (x == params.sourceX) {
-          let t = f32(clock[0]) - f32(params.sourceStart);
-          let ramp = smoothstep(0.0, 1.0, t / params.rampSteps);
-          next += params.sourceAmp * ramp * cos(params.sourceOmega * t);
-        }
-        // Past the stability limit the numbers grow without bound: stop them
-        // overflowing so the picture stays drawable
-        after[i] = clamp(next, -1e6, 1e6);
-      }
-
-      @compute @workgroup_size(1)
-      fn tick() {
-        clock[0] = clock[0] + 1u;
-      }
-    `,
-  });
-  const stepPipeline = device.createComputePipeline({
-    layout: "auto",
-    compute: { module: stepModule, entryPoint: "step" },
-  });
-  const tickPipeline = device.createComputePipeline({
-    layout: "auto",
-    compute: { module: stepModule, entryPoint: "tick" },
-  });
-
-  const showModule = device.createShaderModule({
-    code: `
-      ${common}
-      @group(0) @binding(3) var<storage, read> now: array<f32>;
-
-      struct Out {
-        @builtin(position) position: vec4f,
-        @location(0) uv: vec2f,
-      }
-
-      @vertex
-      fn showVertex(@location(0) corner: vec2f) -> Out {
-        return Out(
-          vec4f(corner, 0.0, 1.0),
-          vec2f(corner.x * 0.5 + 0.5, 0.5 - corner.y * 0.5),
-        );
-      }
-
-      @fragment
-      fn showFragment(in: Out) -> @location(0) vec4f {
-        let w = params.width;
-        let h = params.height;
-        let x = min(u32(in.uv.x * f32(w)), w - 1u);
-        let y = min(u32(in.uv.y * f32(h)), h - 1u);
-        let i = y * w + x;
-
-        let flat = vec3f(0.10, 0.10, 0.10);
-        let v = now[i] * params.gain;
-        let crest = vec3f(1.0, 0.282, 0.204);   // #FF4834
-        let trough = vec3f(0.22, 0.60, 0.85);
-        var colour = mix(flat, select(trough, crest, v > 0.0), clamp(abs(v), 0.0, 1.0));
-        colour *= 1.0 - 0.45 * beachFraction(x, y);
-        if (x == params.sourceX || x == params.sourceX + 1u) {
-          colour = vec3f(0.92);
-        }
-        return vec4f(colour, 1.0);
-      }
-    `,
-  });
-  const showPipeline = device.createRenderPipeline({
-    layout: "auto",
-    vertex: { module: showModule, entryPoint: "showVertex", buffers: [gpu.squareLayout] },
-    fragment: { module: showModule, entryPoint: "showFragment", targets: [{ format }] },
-    primitive: { topology: "triangle-list" },
-  });
+  // The shared kernels, with the paddle on and the heights clamped (lib/wave.js)
+  const stepCode = wave.stepWGSL({ source: true, clamp: true });
+  const stepPipeline = wave.computePipeline(device, stepCode, "step");
+  const tickPipeline = wave.computePipeline(device, stepCode, "tick");
+  const showPipeline = wave.showPipeline(
+    device,
+    wave.showWGSL({ source: true }),
+    format,
+    gpu.squareLayout,
+  );
 
   // --------------------------------------------------------------------- buffers
   // Three height arrays that take turns: one step ago, now, and the one being made
-  const heights = [0, 1, 2].map(() => gpu.storageBuffer(device, new Float32Array(cells)));
+  const heights = wave.heightBuffers(gpu, device, cells);
   const clock = gpu.storageBuffer(device, new Uint32Array(1));
   const snapshot = gpu.storageBuffer(device, new Float32Array(cells));
-  const paramBuffer = device.createBuffer({
-    size: 48,
-    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
-  });
-  const paramBytes = new ArrayBuffer(48);
-  const paramU32 = new Uint32Array(paramBytes);
-  const paramF32 = new Float32Array(paramBytes);
+  const params = wave.paramBlock(device);
 
   // Bind groups for each way the three arrays can be taking turns
-  const stepGroups = [0, 1, 2].map((r) =>
-    device.createBindGroup({
-      layout: stepPipeline.getBindGroupLayout(0),
-      entries: [
-        { binding: 0, resource: { buffer: paramBuffer } },
-        { binding: 2, resource: { buffer: heights[r] } },
-        { binding: 3, resource: { buffer: heights[(r + 1) % 3] } },
-        { binding: 4, resource: { buffer: heights[(r + 2) % 3] } },
-        { binding: 5, resource: { buffer: clock } },
-      ],
-    }),
-  );
+  const fixed = [{ binding: 0, resource: { buffer: params.buffer } }];
+  const clockEntry = { binding: 5, resource: { buffer: clock } };
+  const stepGroups = wave.turnGroups(device, stepPipeline, heights, [...fixed, clockEntry], wave.stepSlots);
   const tickGroup = device.createBindGroup({
     layout: tickPipeline.getBindGroupLayout(0),
-    entries: [{ binding: 5, resource: { buffer: clock } }],
+    entries: [clockEntry],
   });
-  const showGroups = [0, 1, 2].map((r) =>
-    device.createBindGroup({
-      layout: showPipeline.getBindGroupLayout(0),
-      entries: [
-        { binding: 0, resource: { buffer: paramBuffer } },
-        { binding: 3, resource: { buffer: heights[(r + 1) % 3] } },
-      ],
-    }),
-  );
+  const showGroups = wave.turnGroups(device, showPipeline, heights, fixed, wave.showSlots);
   const cornerBuffer = gpu.unitSquare(device);
 
   // ------------------------------------------------------------------- the state
@@ -297,14 +161,14 @@ viewof courant = {
     return b <= 2 ? 1 : (b + Math.sqrt(b * b - 4)) / 2;
   };
   const curve = Array.from({ length: 141 }, (_, k) => {
-    const C = 0.2 + (0.7 * k) / 140;
+    const C = 0.5 + (0.4 * k) / 140;
     return { C, g: theory(C) };
   });
 
   function drawChart() {
     draw(growthHost, {
       height: 240,
-      x: { label: "Courant number", grid: true, domain: [0.2, 0.9] },
+      x: { label: "Courant number", grid: true, domain: [0.5, 0.9] },
       y: { label: "growth in one step (times)", grid: true, type: "log", domain: [0.9, 6] },
       marks: [
         Plot.ruleX([1 / Math.SQRT2], { stroke: "currentColor", strokeOpacity: 0.3 }),
@@ -367,7 +231,7 @@ viewof courant = {
   let owed = 0; // steps due but not yet done
   let lastTime = null;
   let frameCount = 0;
-  const groups = { x: Math.ceil(W / groupSide), y: Math.ceil(H / groupSide) };
+  const groups = wave.groups(W, H);
 
   function frame(ms) {
     const dt = lastTime === null ? 0 : Math.min((ms - lastTime) / 1000, 0.1);
@@ -376,24 +240,21 @@ viewof courant = {
 
     // Waves travel at the chosen speed whatever the Courant number: a smaller one
     // just means more, smaller steps
-    owed += (wave / C) * dt;
+    owed += (speed / C) * dt;
     let count = Math.min(Math.floor(owed), 40);
     owed = Math.min(owed - count, 1);
     // While a blow-up is growing, go a step a frame: slow enough to read it
     if (peak > 1 && peak < 1e5) count = Math.min(count, 1);
 
-    paramU32[0] = W;
-    paramU32[1] = H;
-    paramF32[2] = C * C;
-    paramF32[3] = 0.3 * C; // damping per step at the edge: a wave crosses the beach once
-    paramF32[4] = beachWidth;
-    paramU32[5] = sourceX;
-    paramU32[6] = sourceStart;
-    paramF32[7] = (3 * wavelength) / C;
-    paramF32[8] = (4 * Math.PI * C * C * amplitude) / wavelength;
-    paramF32[9] = (2 * Math.PI * C) / wavelength;
-    paramF32[10] = 2.5;
-    device.queue.writeBuffer(paramBuffer, 0, paramBytes);
+    params.write({
+      width: W,
+      height: H,
+      ...wave.beach({ C, width: beachWidth }),
+      sourceX,
+      sourceStart,
+      ...wave.paddle({ C, wavelength, amplitude }),
+      gain: wave.heightGain,
+    });
 
     const encoder = device.createCommandEncoder();
     const compute = encoder.beginComputePass();

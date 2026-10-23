@@ -2,6 +2,7 @@
 title: "011: Weather in a Box"
 date: "2026-10-13"
 categories: [mf]
+description: "A heated and cooled box of atoms that develops its own weather."
 page-layout: article
 listing:
   - id: mf-series
@@ -710,6 +711,14 @@ charts = {
   return ui.chartHosts(["density", "temperature"]);
 }
 ```
+
+## Sources
+
+- Feynman, R. P., Leighton, R. B. and Sands, M. (1963), _The Feynman Lectures on Physics_,
+  volume I, chapter 42, [Applications of kinetic theory](https://www.feynmanlectures.caltech.edu/I_42.html).
+- Lorenz, E. N. (1963), "Deterministic Nonperiodic Flow", _Journal of the Atmospheric
+  Sciences_ 20, 130 to 141,
+  [doi:10.1175/1520-0469(1963)020<0130:DNF>2.0.CO;2](https://doi.org/10.1175/1520-0469(1963)020%3C0130:DNF%3E2.0.CO;2).
 
 ::: {.mf-series-bar}
 Moving Figures

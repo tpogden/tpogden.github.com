@@ -2,6 +2,7 @@
 title: "003: Bouncing Particles"
 date: "2026-10-12"
 categories: [mf]
+description: "Particles with velocities that bounce off the walls on a fixed timestep."
 page-layout: article
 listing:
   - id: mf-series
@@ -155,6 +156,10 @@ into the storage buffer each frame with `writeBuffer`.
   yield canvas;
 }
 ```
+
+## Sources
+
+- Fiedler, G. (2004), [Fix Your Timestep!](https://gafferongames.com/post/fix_your_timestep/), _Gaffer on Games_.
 
 ::: {.mf-series-bar}
 Moving Figures

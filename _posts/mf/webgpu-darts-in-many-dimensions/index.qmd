@@ -2,6 +2,7 @@
 title: "015: Lost in the Corners"
 date: "2026-10-15"
 categories: [mf]
+description: "Darts measuring the volume of a ball in higher dimensions and missing nearly every time."
 page-layout: article
 listing:
   - id: mf-series
@@ -611,6 +612,13 @@ charts = {
   return ui.chartHosts(["fraction", "error"]);
 }
 ```
+
+## Sources
+
+- Bellman, R. (1957), _Dynamic Programming_ (Princeton University Press).
+- Metropolis, N. and Ulam, S. (1949), "The Monte Carlo Method", _Journal of the American
+  Statistical Association_ 44, 335 to 341,
+  [doi:10.1080/01621459.1949.10483310](https://doi.org/10.1080/01621459.1949.10483310).
 
 ::: {.mf-series-bar}
 Moving Figures

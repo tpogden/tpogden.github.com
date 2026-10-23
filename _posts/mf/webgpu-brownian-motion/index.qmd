@@ -2,6 +2,7 @@
 title: "009: Brownian Motion"
 date: "2026-10-13"
 categories: [mf]
+description: "One big particle kicked about by thousands of small atoms."
 page-layout: article
 listing:
   - id: mf-series
@@ -497,6 +498,14 @@ charts = {
   return ui.chartHosts(["msd", "velocity"]);
 }
 ```
+
+## Sources
+
+- Einstein, A. (1905), "Über die von der molekularkinetischen Theorie der Wärme geforderte
+  Bewegung von in ruhenden Flüssigkeiten suspendierten Teilchen", _Annalen der Physik_
+  322, 549 to 560, [doi:10.1002/andp.19053220806](https://doi.org/10.1002/andp.19053220806).
+- Perrin, J. (1909), "Mouvement brownien et réalité moléculaire", _Annales de chimie et de
+  physique_ 8th series 18, 5 to 114.
 
 ::: {.mf-series-bar}
 Moving Figures

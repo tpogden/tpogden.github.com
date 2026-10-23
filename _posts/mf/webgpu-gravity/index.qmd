@@ -2,6 +2,7 @@
 title: "006: Falling Atoms"
 date: "2026-10-12"
 categories: [mf]
+description: "A box with a floor and a ceiling and gravity pulling every atom down."
 page-layout: article
 listing:
   - id: mf-series
@@ -263,6 +264,11 @@ viewof gravity = {
   yield ui.stage(canvas, [temperatureInput, gravityInput]);
 }
 ```
+
+## Sources
+
+- Feynman, R. P., Leighton, R. B. and Sands, M. (1963), _The Feynman Lectures on Physics_,
+  volume I, chapter 40, [The principles of statistical mechanics](https://www.feynmanlectures.caltech.edu/I_40.html).
 
 ::: {.mf-series-bar}
 Moving Figures
