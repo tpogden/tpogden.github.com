@@ -55,7 +55,7 @@ Try these:
   pattern.
 - _Circle._ A round hole makes rings. It is how a telescope blurs a star.
 - _Grating._ Five slits instead of two. The fringes get sharper.
-- _Blank,_ then draw anything you like.
+- _Clear,_ then draw anything you like.
 
 ```{ojs}
 //| echo: false
@@ -69,7 +69,6 @@ viewof shape = {
       ["two", "Two slits"],
       ["grating", "Grating"],
       ["circle", "Circle"],
-      ["blank", "Blank"],
     ],
     value: "two",
   });
@@ -431,6 +430,18 @@ viewof shape = {
     invalidation.then(() => element.removeEventListener("input", handler));
   };
   on(shapeInput, () => shapeMask(shapeInput.value));
+  // Pressing the shape that is already chosen puts it back as it was
+  const again = () => shapeMask(shapeInput.value);
+  shapeInput.addEventListener("click", again);
+  invalidation.then(() => shapeInput.removeEventListener("click", again));
+  const clearButton = ui.button({
+    label: "Clear",
+    onClick: () => {
+      mask.fill(0);
+      painted = true;
+      dirty = true;
+    },
+  });
   drawRow();
 
   function frame(ms) {
@@ -491,7 +502,7 @@ viewof shape = {
   gpu.run(invalidation, device, frame);
 
   // The canvas with the controls laid over its corner
-  yield ui.stage(canvas, [shapeInput, rippleReadout, readout]);
+  yield ui.stage(canvas, [shapeInput, clearButton, rippleReadout, readout]);
 }
 ```
 
