@@ -262,7 +262,7 @@ viewof shape = {
   // ky up and down. How much of it the hole contains is the sum, over the open cells, of
   // exp(-2 pi i (kx x + ky y) / N). The transform on the GPU does this for every ripple at
   // once. Here it is done for just the one picked, to show it on the hole
-  let pick = { kx: 11, ky: 0 }; // starts on the first bright fringe of the two slits
+  let pick = { kx: 0, ky: 0 }; // the middle of the pattern, where the ripple is flat
   let brightness = 0; // how much of the ripple the hole holds, relative to the most it could
   let anchor = 0; // puts a crest of the ripple on the first open cell of the hole
   function updateRipple() {
@@ -324,6 +324,12 @@ viewof shape = {
       needRipple = true;
     }
   }
+  function back() {
+    if (pick.kx !== 0 || pick.ky !== 0) {
+      pick = { kx: 0, ky: 0 };
+      needRipple = true;
+    }
+  }
   canvas.addEventListener("pointerdown", (event) => {
     const at = place(event);
     if (at[0] >= N) return choose(at); // the pattern side is not paintable
@@ -339,7 +345,13 @@ viewof shape = {
       last = at;
     } else if (at[0] >= N) {
       choose(at);
+    } else if (event.pointerType !== "touch") {
+      back();
     }
+  });
+  // With the mouse off the pattern the pick goes back to the middle
+  canvas.addEventListener("pointerleave", (event) => {
+    if (event.pointerType !== "touch") back();
   });
   const stop = () => (painting = false);
   canvas.addEventListener("pointerup", stop);
