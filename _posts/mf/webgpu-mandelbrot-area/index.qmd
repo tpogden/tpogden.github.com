@@ -629,7 +629,6 @@ Two things stand in the way of a clean answer:
 
 ```{ojs}
 //| echo: false
-//| column: page
 charts = {
   // Two empty hosts; the simulation cell above draws into them as data arrives
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);

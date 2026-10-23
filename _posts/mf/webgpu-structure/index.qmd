@@ -454,7 +454,6 @@ The right chart is the fraction of atoms with $|\psi_6| > 0.8$ over time.
 
 ```{ojs}
 //| echo: false
-//| column: page
 charts = {
   // Two empty hosts; the simulation cell above draws into them as data arrives
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
