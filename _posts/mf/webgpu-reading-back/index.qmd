@@ -402,7 +402,6 @@ the pool below does not because a liquid is nearly incompressible.
 
 ```{ojs}
 //| echo: false
-//| column: page
 charts = {
   // Two empty hosts; the simulation cell above draws into them as data arrives
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);

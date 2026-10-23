@@ -283,7 +283,6 @@ viewof stoneSize = {
 
 ```{ojs}
 //| echo: false
-//| column: page
 charts = {
   // An empty host; the simulation cell above draws into it as data arrives
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);

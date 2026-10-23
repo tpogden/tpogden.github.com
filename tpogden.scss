@@ -376,6 +376,11 @@ div.quarto-post {
         grid-template-columns: minmax(0, 1fr);
     }
 
+    // A lone chart takes the whole row
+    > :only-child {
+        grid-column: 1 / -1;
+    }
+
     svg {
         max-width: 100%;
     }
