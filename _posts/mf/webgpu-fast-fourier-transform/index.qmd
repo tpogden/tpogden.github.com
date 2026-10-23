@@ -20,8 +20,9 @@ gap is 512 by 512 cells and the pattern has a point for each of 512 by 512 rippl
 a sum over 262,144 cells for each of 262,144 points, about 69 billion multiplications for
 one picture.
 
-The GPU does a picture in about a third of a millisecond. No GPU does 69 billion
-multiplications in that time, so it is not doing it that way. This post is how it does it.
+The GPU does a picture in a fraction of a millisecond, and the readout under the canvas
+gives the time on this machine. No GPU does 69 billion multiplications that fast, so it is
+not doing it that way. This post is how it does it.
 
 The gap is on the left below. On the right is the transform part-way through, the same
 brightness scale as last time. **Pass** is how far along it is: 0 is the gap itself and 18
@@ -58,15 +59,24 @@ viewof shape = {
 ```{ojs}
 //| echo: false
 //| output: false
+// The gap and its transform are this many cells on a side. A transform takes twice
+// log2 of that many passes: along the rows and then down the columns
+size = 512
+```
+
+```{ojs}
+//| echo: false
+//| output: false
 viewof passNumber = {
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
+  const passes = 2 * Math.log2(size);
   return ui.slider({
     label: "Pass",
     min: 0,
-    max: 18,
+    max: passes,
     step: 1,
     value: 0,
-    format: (v) => `${v} of 18`,
+    format: (v) => `${v} of ${passes}`,
   });
 }
 ```
@@ -81,6 +91,7 @@ viewof passNumber = {
   // the fast Fourier transform (lib/fft.js)
   const gpu = await import(new URL("../lib/gpu.js", document.baseURI).href);
   const fft = await import(new URL("../lib/fft.js", document.baseURI).href);
+  const aperture = await import(new URL("../lib/aperture.js", document.baseURI).href);
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
 
   // Controls are read live from their elements, so moving them does not restart
@@ -89,7 +100,7 @@ viewof passNumber = {
   const passInput = viewof passNumber;
 
   // The gap on the left and the transform on the right, each 512 by 512 cells
-  const N = 512;
+  const N = size;
   const { canvas, device, context, format } = await gpu.setup({
     width: 1024,
     height: 512,
@@ -100,29 +111,8 @@ viewof passNumber = {
   const mask = new Float32Array(N * N);
   const maskBuffer = gpu.storageBuffer(device, mask);
 
-  // The slits are tall bars, 80 cells high, with their widths and centres in cells
-  const slitHeight = 80;
-  const slits = {
-    one: { width: 12, centres: [0] },
-    two: { width: 8, centres: [-24, 24] },
-    grating: { width: 6, centres: [-64, -32, 0, 32, 64] },
-  };
   function shapeMask(kind) {
-    mask.fill(0);
-    if (kind === "circle") {
-      for (let y = 0; y < N; y++) {
-        for (let x = 0; x < N; x++) {
-          if ((x - N / 2) ** 2 + (y - N / 2) ** 2 < 40 ** 2) mask[y * N + x] = 1;
-        }
-      }
-    } else {
-      const { width, centres } = slits[kind];
-      for (const c of centres) {
-        for (let y = N / 2 - slitHeight / 2; y < N / 2 + slitHeight / 2; y++) {
-          for (let x = N / 2 + c - width / 2; x < N / 2 + c + width / 2; x++) mask[y * N + x] = 1;
-        }
-      }
-    }
+    aperture.fill(mask, N, kind);
     device.queue.writeBuffer(maskBuffer, 0, mask);
   }
 
@@ -260,82 +250,7 @@ viewof passNumber = {
   const [costHost] = charts.children;
   const draw = ui.plotter(Plot);
 
-  // How long a transform takes to do by the definition and by the fast method, measured
-  // here, for a line of n numbers. The definition adds up n terms for each of the n
-  // results. The fast method splits the line in two again and again
-  function naive(n, re, im) {
-    const cos = new Float64Array(n);
-    const sin = new Float64Array(n);
-    for (let j = 0; j < n; j++) {
-      cos[j] = Math.cos((-2 * Math.PI * j) / n);
-      sin[j] = Math.sin((-2 * Math.PI * j) / n);
-    }
-    const outRe = new Float64Array(n);
-    const outIm = new Float64Array(n);
-    for (let k = 0; k < n; k++) {
-      let sr = 0;
-      let si = 0;
-      for (let j = 0; j < n; j++) {
-        const w = (j * k) % n;
-        sr += re[j] * cos[w] - im[j] * sin[w];
-        si += re[j] * sin[w] + im[j] * cos[w];
-      }
-      outRe[k] = sr;
-      outIm[k] = si;
-    }
-    return outRe;
-  }
-
-  function fast(n, re, im) {
-    re = Float64Array.from(re);
-    im = Float64Array.from(im);
-    // Put the numbers in bit-reversed order, then join pairs, then pairs of pairs
-    for (let i = 1, j = 0; i < n; i++) {
-      let bit = n >> 1;
-      for (; j & bit; bit >>= 1) j ^= bit;
-      j ^= bit;
-      if (i < j) {
-        [re[i], re[j]] = [re[j], re[i]];
-        [im[i], im[j]] = [im[j], im[i]];
-      }
-    }
-    for (let size = 2; size <= n; size *= 2) {
-      const step = (-2 * Math.PI) / size;
-      for (let start = 0; start < n; start += size) {
-        for (let k = 0; k < size / 2; k++) {
-          const wr = Math.cos(step * k);
-          const wi = Math.sin(step * k);
-          const a = start + k;
-          const b = a + size / 2;
-          const tr = re[b] * wr - im[b] * wi;
-          const ti = re[b] * wi + im[b] * wr;
-          re[b] = re[a] - tr;
-          im[b] = im[a] - ti;
-          re[a] += tr;
-          im[a] += ti;
-        }
-      }
-    }
-    return re;
-  }
-
   const costs = []; // {n, method, us}
-  // The best of three, so that a busy moment in the browser does not show up as a bump
-  function time(method, n) {
-    const re = Float64Array.from({ length: n }, () => Math.random());
-    const im = new Float64Array(n);
-    let best = Infinity;
-    for (let attempt = 0; attempt < 3; attempt++) {
-      let runs = 0;
-      const start = performance.now();
-      do {
-        method(n, re, im);
-        runs++;
-      } while (performance.now() - start < 10);
-      best = Math.min(best, ((performance.now() - start) * 1000) / runs);
-    }
-    return best;
-  }
   function drawCost() {
     draw(costHost, {
       height: 220,
@@ -353,12 +268,106 @@ viewof passNumber = {
     });
   }
 
+  // How long a transform of a line of n numbers takes on the CPU by the definition and by
+  // the fast method. It runs in a worker so that the page never stalls. Both methods get
+  // the same table of sines and cosines, made before the clock starts, so that what is
+  // timed is the sums and not the trigonometry
+  function benchmarks() {
+    self.onmessage = (event) => {
+      for (const n of event.data) {
+        const cos = Float64Array.from({ length: n }, (_, j) => Math.cos((-2 * Math.PI * j) / n));
+        const sin = Float64Array.from({ length: n }, (_, j) => Math.sin((-2 * Math.PI * j) / n));
+        const re = Float64Array.from({ length: n }, () => Math.random());
+        const im = new Float64Array(n);
+        const outRe = new Float64Array(n);
+        const outIm = new Float64Array(n);
+
+        // The definition: each of the n results adds up n terms
+        const naive = () => {
+          for (let k = 0; k < n; k++) {
+            let sr = 0;
+            let si = 0;
+            for (let j = 0; j < n; j++) {
+              const w = (j * k) % n;
+              sr += re[j] * cos[w] - im[j] * sin[w];
+              si += re[j] * sin[w] + im[j] * cos[w];
+            }
+            outRe[k] = sr;
+            outIm[k] = si;
+          }
+        };
+
+        // The fast way: put the numbers in bit-reversed order, then join pairs, then pairs
+        // of pairs
+        const workRe = new Float64Array(n);
+        const workIm = new Float64Array(n);
+        const fast = () => {
+          workRe.set(re);
+          workIm.set(im);
+          for (let i = 1, j = 0; i < n; i++) {
+            let bit = n >> 1;
+            for (; j & bit; bit >>= 1) j ^= bit;
+            j ^= bit;
+            if (i < j) {
+              [workRe[i], workRe[j]] = [workRe[j], workRe[i]];
+              [workIm[i], workIm[j]] = [workIm[j], workIm[i]];
+            }
+          }
+          for (let size = 2; size <= n; size *= 2) {
+            const stride = n / size;
+            for (let start = 0; start < n; start += size) {
+              for (let k = 0; k < size / 2; k++) {
+                const wr = cos[k * stride];
+                const wi = sin[k * stride];
+                const a = start + k;
+                const b = a + size / 2;
+                const tr = workRe[b] * wr - workIm[b] * wi;
+                const ti = workRe[b] * wi + workIm[b] * wr;
+                workRe[b] = workRe[a] - tr;
+                workIm[b] = workIm[a] - ti;
+                workRe[a] += tr;
+                workIm[a] += ti;
+              }
+            }
+          }
+        };
+
+        // The best of three, so that a busy moment does not show up as a bump
+        const time = (method) => {
+          let best = Infinity;
+          for (let attempt = 0; attempt < 3; attempt++) {
+            let runs = 0;
+            const start = performance.now();
+            do {
+              method();
+              runs++;
+            } while (performance.now() - start < 10);
+            best = Math.min(best, ((performance.now() - start) * 1000) / runs);
+          }
+          return best;
+        };
+        self.postMessage({ n, method: "by the definition", us: time(naive) });
+        self.postMessage({ n, method: "the fast way", us: time(fast) });
+      }
+    };
+  }
+  const worker = new Worker(
+    URL.createObjectURL(new Blob([`(${benchmarks})()`], { type: "text/javascript" })),
+  );
+  worker.onmessage = (event) => {
+    costs.push(event.data);
+    drawCost();
+  };
+  invalidation.then(() => worker.terminate());
+  drawCost();
+
   // ------------------------------------------------------------------- the picture
   const readout = ui.readout(); // where the transform has got to
   const speed = ui.readout(); // how fast the GPU is
 
   // How long a transform of a whole picture takes on this GPU, size by size: a batch of
-  // them, timed, with the first one thrown away
+  // them, timed, with the first one thrown away. Each size gets a transform of its own,
+  // freed afterwards
   async function gpuTime(size) {
     const test = fft.create(device, size);
     const warm = device.createCommandEncoder();
@@ -371,26 +380,10 @@ viewof passNumber = {
     const start = performance.now();
     device.queue.submit([encoder.finish()]);
     await device.queue.onSubmittedWorkDone();
-    return (performance.now() - start) / runs;
+    const ms = (performance.now() - start) / runs;
+    test.destroy();
+    return ms;
   }
-  let ms = 0;
-  for (const size of [32, 64, 128, 256, 512, 1024]) {
-    const t = await gpuTime(size);
-    if (size === N) ms = t;
-    costs.push({ n: size * size, method: "the fast way on the GPU", us: t * 1000 });
-  }
-  drawCost();
-  speed.textContent = `${N} by ${N} transform: ${ms.toFixed(2)} ms`;
-
-  // Time a size at a time, so that the page is never stuck for long
-  (async () => {
-    for (let n = 16; n <= 2048; n *= 2) {
-      await new Promise((resolve) => setTimeout(resolve, 30));
-      costs.push({ n, method: "by the definition", us: time(naive, n) });
-      costs.push({ n, method: "the fast way", us: time(fast, n) });
-      drawCost();
-    }
-  })();
 
   shapeMask(shapeInput.value);
   const on = (element, handler) => {
@@ -451,7 +444,21 @@ viewof passNumber = {
     device.queue.submit([encoder.finish()]);
   }
 
-  gpu.run(invalidation, device, frame);
+  // The page is shown at once. The GPU is timed first, while nothing else is using it, and
+  // then the animation and the CPU timings start
+  let gone = false;
+  invalidation.then(() => (gone = true));
+  (async () => {
+    for (let side = 32; side <= 1024; side *= 2) {
+      const ms = await gpuTime(side);
+      if (gone) return;
+      costs.push({ n: side * side, method: "the fast way on the GPU", us: ms * 1000 });
+      if (side === N) speed.textContent = `${N} by ${N} transform: ${ms.toFixed(2)} ms`;
+      drawCost();
+    }
+    gpu.run(invalidation, device, frame);
+    worker.postMessage(Array.from({ length: 8 }, (_, k) => 16 * 2 ** k));
+  })();
 
   // The canvas with the controls laid over its corner
   yield ui.stage(canvas, [shapeInput, passInput, readout, speed]);
@@ -473,13 +480,14 @@ charts = {
 How long a transform takes, measured in this browser. The red and grey lines are a line of
 numbers on the CPU. By the definition the time grows as the square of the length: twice as
 many numbers take four times as long. The fast method takes barely more than twice as long.
-At two thousand numbers it is already tens of times quicker and the difference keeps widening: for
-a million numbers it would be about fifty thousand to one.
+At two thousand numbers it is already a couple of hundred times quicker, which is about what
+the step counts predict: 2,048 steps for each of 2,048 results against about 11. The difference
+keeps widening: for a million numbers it would be about fifty thousand to one.
 
 The blue line is the GPU, which transforms a whole picture at once. A 512 by 512 picture
-is 262,144 numbers and the GPU does it in less time than the CPU needs for a line of two
-thousand. At the small sizes the blue line is above the others, since getting the work
-started costs more than the work.
+is 262,144 numbers, 128 times as many as a line of two thousand. Compare its time with the
+CPU's for that line: it is nowhere near 128 times longer. At the small sizes the blue line
+sits above the others, since getting the work started costs more than the work.
 
 ## Gauss and a Cold War
 

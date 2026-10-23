@@ -85,6 +85,8 @@ viewof shape = {
   // the fast Fourier transform (lib/fft.js)
   const gpu = await import(new URL("../lib/gpu.js", document.baseURI).href);
   const fft = await import(new URL("../lib/fft.js", document.baseURI).href);
+  const aperture = await import(new URL("../lib/aperture.js", document.baseURI).href);
+  const { slits } = aperture;
   const ui = await import(new URL("../lib/ui.js", document.baseURI).href);
 
   // Controls are read live from their elements, so moving them does not restart
@@ -108,30 +110,8 @@ viewof shape = {
   let dirty = true; // the gap has changed since the pattern was made
   let needRipple = true; // the ripple shown on the gap has to be worked out again
 
-  // The slits are tall bars, 80 cells high, with their widths and spacings in cells
-  const slitHeight = 80;
-  const slits = {
-    one: { width: 12, centres: [0] },
-    two: { width: 8, centres: [-24, 24] },
-    grating: { width: 6, centres: [-64, -32, 0, 32, 64] },
-  };
-
   function shapeMask(kind) {
-    mask.fill(0);
-    if (kind === "circle") {
-      for (let y = 0; y < N; y++) {
-        for (let x = 0; x < N; x++) {
-          if ((x - N / 2) ** 2 + (y - N / 2) ** 2 < 40 ** 2) mask[y * N + x] = 1;
-        }
-      }
-    } else if (slits[kind]) {
-      const { width, centres } = slits[kind];
-      for (const c of centres) {
-        for (let y = N / 2 - slitHeight / 2; y < N / 2 + slitHeight / 2; y++) {
-          for (let x = N / 2 + c - width / 2; x < N / 2 + c + width / 2; x++) mask[y * N + x] = 1;
-        }
-      }
-    }
+    aperture.fill(mask, N, kind);
     painted = false;
     dirty = true;
   }
@@ -264,22 +244,28 @@ viewof shape = {
   let pick = { kx: 0, ky: 0 }; // the middle of the pattern, where the ripple is flat
   let brightness = 0; // how much of the ripple the gap holds, relative to the most it could
   let anchor = 0; // puts a crest of the ripple on the first open cell of the gap
+  let open = new Uint32Array(0); // the open cells, in order, found again whenever the gap changes
+  // cos and sin of 2 pi j / N for each whole j, so that the sum below needs no trigonometry
+  const cosine = Float64Array.from({ length: N }, (_, j) => Math.cos((2 * Math.PI * j) / N));
+  const sine = Float64Array.from({ length: N }, (_, j) => Math.sin((2 * Math.PI * j) / N));
   function updateRipple() {
     let re = 0;
     let im = 0;
-    let first = null;
-    const w = (2 * Math.PI) / N;
-    for (let y = 0; y < N; y++) {
-      for (let x = 0; x < N; x++) {
-        if (mask[y * N + x]) {
-          first ??= [x, y];
-          const angle = w * (pick.kx * x + pick.ky * y);
-          re += Math.cos(angle);
-          im -= Math.sin(angle);
-        }
-      }
+    for (const cell of open) {
+      const x = cell % N;
+      const y = (cell - x) / N;
+      // The ripple's phase at this cell, in steps of 2 pi / N
+      const step = (((pick.kx * x + pick.ky * y) % N) + N) % N;
+      re += cosine[step];
+      im -= sine[step];
     }
-    anchor = first ? -w * (pick.kx * first[0] + pick.ky * first[1]) : 0;
+    if (open.length) {
+      const x = open[0] % N;
+      const y = (open[0] - x) / N;
+      anchor = (-2 * Math.PI * (pick.kx * x + pick.ky * y)) / N;
+    } else {
+      anchor = 0;
+    }
     // The size of the sum is how bright the point is. As the ripple pulses on the gap
     // the sum swings up and down by that much
     brightness = (re * re + im * im) / Math.max(area * area, 1);
@@ -425,12 +411,8 @@ viewof shape = {
   readout.textContent = `${N} by ${N} transform: ${ms.toFixed(2)} ms`;
 
   shapeMask(shapeInput.value);
-  const on = (element, handler) => {
-    element.addEventListener("input", handler);
-    invalidation.then(() => element.removeEventListener("input", handler));
-  };
-  on(shapeInput, () => shapeMask(shapeInput.value));
-  // Pressing the shape that is already chosen puts it back as it was
+  // A press on the shape selector builds the shape. That includes pressing the one that
+  // is already chosen, which puts it back as it was
   const again = () => shapeMask(shapeInput.value);
   shapeInput.addEventListener("click", again);
   invalidation.then(() => shapeInput.removeEventListener("click", again));
@@ -449,7 +431,10 @@ viewof shape = {
     let sample = false;
     if (dirty) {
       dirty = false;
-      area = mask.reduce((sum, v) => sum + v, 0);
+      const cells = [];
+      for (let i = 0; i < mask.length; i++) if (mask[i]) cells.push(i);
+      open = Uint32Array.from(cells);
+      area = open.length;
       device.queue.writeBuffer(maskBuffer, 0, mask);
       const load = encoder.beginComputePass();
       load.setPipeline(loadPipeline);
