@@ -55,7 +55,6 @@ viewof stoneSize = {
 ```
 
 ```{ojs}
-//| echo: false
 //| column: screen-inset
 //| code-fold: true
 //| code-summary: "Show code"
